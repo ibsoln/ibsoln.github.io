@@ -97,7 +97,7 @@
 <img src="../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2pBeta/81520</span></h4>
+<h4 class="title"><span class="">P2pBeta/81620</span></h4>
 <a class="navbar-item component" href="../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -198,7 +198,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../index.html">P2pBeta/81520</a></li>
+<li class="crumb"><a href="../index.html">P2pBeta/81620</a></li>
 <li class="crumb"><a href="java-platform.html">Couchbase Lite Java Framework</a></li>
 </ul>
 </nav>
@@ -3095,6 +3095,9 @@ While this is true of any user defined functions, app developers must be strongl
 </div>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset4_local-wins">
+<div class="paragraph">
+<p>Using <code>replConfig.setConflictResolver(new LocalWinConflictResolver());</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/ROOT/pages/_partials/handling-conflicts.adoc - include::example$java/src/com/couchbase/code_snippets/Examples.java[]</code></pre>
@@ -3102,6 +3105,9 @@ While this is true of any user defined functions, app developers must be strongl
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset4_remote-wins">
+<div class="paragraph">
+<p>Using <code>replConfig.setConflictResolver(new RemoteWinConflictResolver());</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/ROOT/pages/_partials/handling-conflicts.adoc - include::example$java/src/com/couchbase/code_snippets/Examples.java[]</code></pre>
@@ -3109,6 +3115,9 @@ While this is true of any user defined functions, app developers must be strongl
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset4_merge">
+<div class="paragraph">
+<p>Using <code>replConfig.setConflictResolver(new MergeConflictResolver());</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/ROOT/pages/_partials/handling-conflicts.adoc - include::example$java/src/com/couchbase/code_snippets/Examples.java[]</code></pre>
@@ -3316,10 +3325,10 @@ In this case, the app can detect the error that is being thrown, and handle it b
 <div class="sect2">
 <h3 id="custom-conflict-resolution-2"><a class="anchor" href="#custom-conflict-resolution-2"></a>Custom Conflict Resolution</h3>
 <div class="paragraph">
-<p>Starting in Couchbase Lite 2.6, we allow developers to hook a conflict handler when saving a document so that developers can easily handle the conflict in a single save method call.</p>
+<p>Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.</p>
 </div>
 <div class="paragraph">
-<p>To implement custom conflict resolution when saving a document, apps must call the <code>save()</code> method with a conflict handler.</p>
+<p>To implement custom conflict resolution when saving a document, apps must call the <code>save</code> method with a conflict handler block ( {url-api-method-database-save-conflict}).</p>
 </div>
 <div class="paragraph">
 <p>The following code snippet shows an example of merging properties from the existing document (<code>current</code>) into the one being saved (<code>new</code>).
@@ -3333,26 +3342,10 @@ In the event of conflicting keys, it will pick the key value from <code>new</cod
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/ROOT/pages/_partials/handling-conflicts.adoc - include::example$java/src/com/couchbase/code_snippets/Examples.java[]</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/_partials/handling-conflicts.adoc - include::example$java/src/com/couchbase/code_snippets/Examples.java[]</p>
 </div>
 </div>
-<div class="ulist">
-<div class="title">Points of Note:</div>
-<ul>
-<li>
-<p>Within the conflict handlefr, you can modify the <code>document</code> parameter which is the same instance of <code>Document</code> that is passed to the <code>save()</code> method.
-So in effect, you will be directly modifying the document that is being saved.</p>
-</li>
-<li>
-<p>When handling is done, the method must return <code>true</code>.</p>
-</li>
-<li>
-<p>If the handler could not resolve the conflict, it can return <code>false</code>.
-In this case, the save method will cancel the save operation and return <code>false</code> the same way as using the <code>save()</code> method with the <code>failOnConflict</code> concurrency control.</p>
-</li>
-<li>
-<p>If there is an exception thrown in the <code>handle()</code> method, the exception will be caught and rethrown in the <code>save()</code> method.</p>
-</li>
-</ul>
 </div>
 </div>
 </div>

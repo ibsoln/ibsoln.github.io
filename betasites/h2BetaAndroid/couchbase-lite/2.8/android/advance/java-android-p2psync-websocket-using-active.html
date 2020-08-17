@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/betasites/h2BetaAndroid/couchbase-lite/2.8/android/advance/java-android-p2psync-websocket-using-active.html">
 <link rel="stylesheet" href="../../../../_/css/site.css">
 <script src="../../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Couchbase Lite - this content covers how to set up an active peer to replicate CBL database changes using peer-to-peer sync over websockets">
+<meta name="description" content="Couchbase Lite - this content covers how to set up an active peer to replicate Couchbase Lite database changes using peer-to-peer sync over websockets">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="couchbase-lite">
 <meta name="dcterms.identifier" content="2.8">
@@ -98,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2pBeta/81520</span></h4>
+<h4 class="title"><span class="">P2pBeta/81620</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -202,7 +202,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2pBeta/81520</a></li>
+<li class="crumb"><a href="../../index.html">P2pBeta/81620</a></li>
 <li class="crumb"><a href="../learn/java-android-p2psync.html">Introduction to P2P Sync</a></li>
 <li class="crumb"><a href="java-android-p2psync-websocket-using-active.html">Active Peer</a></li>
 </ul>
@@ -214,7 +214,7 @@
 <div class="labels">
 <ul>
 <li class="edition"><a href="https://www.couchbase.com/products/editions">Enterprise</a></li>
-<li class="status"><span>beta -- H2-CBL 81520</span></li>
+<li class="status"><span>beta -- H2-CBL 81620</span></li>
 </ul>
 </div>
 </div>
@@ -227,7 +227,7 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Couchbase Lite - this content covers how to set up an active peer to replicate CBL database changes using peer-to-peer sync over websockets</p>
+<p>Couchbase Lite - this content covers how to set up an active peer to replicate Couchbase Lite database changes using peer-to-peer sync over websockets</p>
 </div>
 <div class="paragraph">
 <p>Related Concepts: <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android">API Reference</a> | <a href="../learn/java-android-p2psync-websocket.html" class="page">Peer-to-peer sync over web sockets</a> | <a href="../learn/java-android-p2psync-custom.html" class="page">Peer-to-peer sync (custom)</a></p>
@@ -243,7 +243,7 @@
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This content provides sample code covering the implementation of peer-to-peer sync over websockets. Specifically it covers the implementation of an <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a>, that will sync database changes with a connected <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a>.</p>
+<p>This content provides sample code covering the implementation of peer-to-peer sync over websockets. Specifically it covers the implementation of an <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a>, that will initiate replication with a <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a>.</p>
 </div>
 <div class="paragraph">
 <p>The code snippet in <a href="#simple-replication-to-listener">Example 1</a> covers the configuration, initialization and replication is expanded upon in subsequent sections in this content.</p>
@@ -283,12 +283,7 @@ replConfig.setContinuous(true); // default value
 // Configure Server Security -- only accept CA Certs
 replConfig.setAcceptOnlySelfSignedServerCertificate(false); <i class="conum" data-value="2"></i><b>(2)</b>
 
-
-// Configure Server Security -- only accept self-signed certs
-replConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="3"></i><b>(3)</b>
-
-
-// Configure Client Security <i class="conum" data-value="4"></i><b>(4)</b>
+// Configure Client Security <i class="conum" data-value="3"></i><b>(3)</b>
 // Configure basic auth using user credentials
 
 BasicAuthenticator thisAuth = new BasicAuthenticator("thisUsername", "thisPasswordValue"));
@@ -296,10 +291,7 @@ BasicAuthenticator thisAuth = new BasicAuthenticator("thisUsername", "thisPasswo
 replConfig.setAuthenticator(thisAuth)
 
 
-
-
-/* Optionally set custom conflict resolver call back */ replConfig.setConflictResolver( /* define resolver function */);
-
+/* Optionally set custom conflict resolver call back */ replConfig.setConflictResolver( /* define resolver function */); <i class="conum" data-value="4"></i><b>(4)</b>
 
 // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
 Replicator thisReplicator = new Replicator(replConfig); <i class="conum" data-value="5"></i><b>(5)</b>
@@ -325,26 +317,32 @@ thisReplicator.start(); <i class="conum" data-value="7"></i><b>(7)</b></code></p
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>By default only CA Certs are accepted Self-signed Certs are disallowed. The provided certificate must be from a trusted root.
+<td>By default only CA Certificates are accepted Self-signed Certificates are disallowed.
+The provided certificate must be from a trusted root.
 <div class="paragraph">
-<p>use <code>setAcceptOnlySelfSignedServerCertificate(true)</code> to ONLY accept self-signed certs. Validation of the cert is bypassed&#8201;&#8212;&#8201;see: <a href="#server-authentication">Server Authentication</a></p>
+<p>use <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-">setAcceptOnlySelfSignedServerCertificate</a>(true) to ONLY accept self-signed certificates.
+Validation of the certificate is bypassed&#8201;&#8212;&#8201;see: <a href="#server-authentication">[server-authentication]</a></p>
 </div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>The <code>authenticator</code> mode is configured to use basic authentication.
-Other supported options are <code>ClientCertificateAuthenticator</code> if you want to use client cert based authentication&#8201;&#8212;&#8201;see: <a href="#client-authentication">Client Authentication</a></td>
+Other supported options are <code>ClientCertificateAuthenticator</code> if you want to use client certificate based authentication&#8201;&#8212;&#8201;see: <a href="#client-authentication">Client Authentication</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Initialize the replicator with specified configuration</td>
+<td>Handle <a href="#conflict-resolution">Conflict Resolution</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Register an observer to be notified of changes to the replication status</td>
+<td>Initialize the replicator with specified configuration</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Register an observer to be notified of changes to the replication status</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Start the replicator</td>
 </tr>
 </table>
@@ -379,7 +377,7 @@ Other supported options are <code>ClientCertificateAuthenticator</code> if you w
 <h2 id="configure-replicator"><a class="anchor" href="#configure-replicator"></a>Configure Replicator</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><a href="#sync-mode">Sync Mode</a>  |  <a href="#server-authentication">Server Authentication</a>  | <a href="#client-authentication">Client Authentication</a></p>
+<p>In this section: <a href="#sync-mode">Sync Mode</a>  |  <a href="#listener-authentication">Listener Authentication</a>  | <a href="#client-authentication">Client Authentication</a></p>
 </div>
 <div class="sect2">
 <h3 id="configure-target"><a class="anchor" href="#configure-target"></a>Configure Target</h3>
@@ -463,15 +461,15 @@ replConfig.setContinuous(true); // default value</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="server-authentication"><a class="anchor" href="#server-authentication"></a>Server Authentication</h3>
+<h3 id="listener-authentication"><a class="anchor" href="#listener-authentication"></a>Listener Authentication</h3>
 <div class="paragraph">
 <p>Use <code><a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a></code>, with its <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-">setAcceptOnlySelfSignedServerCertificate</a> parameter, to tell the replicator how to verify TLS server certificates.</p>
 </div>
 <div class="paragraph">
-<p>If setAcceptOnlySelfSignedServerCertificate is <code>false</code> (default) then only CA Certs are accepted.</p>
+<p>If setAcceptOnlySelfSignedServerCertificate is <code>false</code> (default) then only CA Certificates are accepted.</p>
 </div>
 <div class="paragraph">
-<p>If setAcceptOnlySelfSignedServerCertificate is <code>true</code> then only Self-Signed  Certs are accepted.</p>
+<p>If setAcceptOnlySelfSignedServerCertificate is <code>true</code> then only Self-Signed  Certificates are accepted.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -499,9 +497,9 @@ replConfig.setAcceptOnlySelfSignedServerCertificate(false); <i class="conum" dat
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>This is the default. Only CA Certs are allowed.
-They must be a cert from a trusted root
-Self signed certs disallowed.</td>
+<td>This is the default. Only CA Certificates are allowed.
+They must be a certificate from a trusted root
+Self signed certificates disallowed.</td>
 </tr>
 </table>
 </div>
@@ -518,7 +516,7 @@ replConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>Set this to <code>true</code> to accept any self signed cert.
-Any certs that are not self-signed are rejected.</td>
+Any certificates that are not self-signed are rejected.</td>
 </tr>
 </table>
 </div>
@@ -543,7 +541,7 @@ config.setPinnedServerCertificate(thisPinnedCert)</code></pre>
 <div class="sect2">
 <h3 id="client-authentication"><a class="anchor" href="#client-authentication"></a>Client Authentication</h3>
 <div class="paragraph">
-<p>Use <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a>'s <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAuthenticator-com.couchbase.lite.Authenticator-">setAuthenticator</a> method to define the authentication method to the replicator.</p>
+<p>Use <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a>'s <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setAuthenticator-com.couchbase.lite.Authenticator-">setAuthenticator</a> method to define the authentication method to the replicator - see <a href="#configuring-client-authentication">Example 4</a>.</p>
 </div>
 <div class="paragraph">
 <p>Valid authenticators include:</p>
@@ -554,7 +552,7 @@ config.setPinnedServerCertificate(thisPinnedCert)</code></pre>
 <p>The <code><a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/BasicAuthenticator.html">BasicAuthenticator</a></code> to use basic authentication with the username and password credentials.</p>
 </li>
 <li>
-<p>The <code><a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ClientCertificateAuthenticator.html">ClientCertificateAuthenticator</a></code> parameter to configure the client TLS certs to be presented to the server, on connection. This applies only to the <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListener.html">URLEndpointListener</a>.</p>
+<p>The <code><a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ClientCertificateAuthenticator.html">ClientCertificateAuthenticator</a></code> parameter to configure the client TLS certificates to be presented to the server, on connection. This applies only to the <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListener.html">URLEndpointListener</a>.</p>
 </li>
 </ul>
 </div>
@@ -576,68 +574,31 @@ Our convenience API also gives you the flexibility to bring your own TLS identit
 </li>
 </ul>
 </div>
+<div id="configuring-client-authentication" class="exampleblock">
+<div class="title">Example 4. Configuring client authentication</div>
+<div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
-<li>
-<p><a id="tabset2_client-cert-authentication"></a>Client Cert Authentication</p>
-</li>
 <li>
 <p><a id="tabset2_basic-authentication"></a>Basic Authentication</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_client-cert-authentication">
-<div class="paragraph">
-<p>This example shows client cert authentication using an identity from secure storage.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">SNIPPET 4 --- STILL NEED CODE
-
-[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java]
-
-// Configure TLS Cert CA auth using key-stored cert id alias 'doc-sync-server'
-
-// TLSIdentity thisIdentity = new TLSIdentity.getIdentity("doc-sync-server"); // Get existing TLS ID from sec storage
-
-// ClientCertificateAuthenticator thisAuth = new ClientCertificateAuthenticator(thisIdentity);
-
-// replConfig.setAuthenticator(thisAuth);
-
-
-
-// USE KEYCHAIN IDENTITY IF EXISTS
-// Check if Id exists in keychain. If so use that Id
-
-// STILL NEED TO REFACTOR
-
-do {
-  if let thisIdentity = try TLSIdentity.identity(withLabel: "doco-sync-server") {
-      print("An identity with label : doco-sync-server already exists in keychain")
-      return thisIdentity
-      }
-} catch
-{return nil}
-thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity )
-config.thisAuthenticator</code></pre>
-</div>
-</div>
-</div>
 <div class="tab-pane" aria-labelledby="tabset2_basic-authentication">
 <div class="paragraph">
 <p>This example shows basic authentication using user name and password:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">SNIPPET 5 --- STILL NEED CODE
-
-// Configure basic auth using user credentials
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Configure basic auth using user credentials
 
 BasicAuthenticator thisAuth = new BasicAuthenticator("thisUsername", "thisPasswordValue"));
 
 replConfig.setAuthenticator(thisAuth)</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -654,7 +615,7 @@ replConfig.setAuthenticator(thisAuth)</code></pre>
 You can, optionally, add a change listener (see <a href="#monitor-sync">Monitor Sync</a>) before starting the replicator running using <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#start-boolean-">start()</a>.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 4. Initialize and run replicator</div>
+<div class="title">Example 5. Initialize and run replicator</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -677,7 +638,7 @@ thisReplicator.start(); <i class="conum" data-value="2"></i><b>(2)</b></code></p
 <div class="sect2">
 <h3 id="change-listeners"><a class="anchor" href="#change-listeners"></a>Change Listeners</h3>
 <div class="paragraph">
-<p>Use the <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Replicator.html">Replicator</a> class to add a change listener as a callback to the Replicator (<a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#addChangeListener-java.util.concurrent.Executor-com.couchbase.lite.ReplicatorChangeListener-">addChangeListener()</a>).
+<p>Use the <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/Replicator.html">Replicator</a> class to add a change listener as a callback to the Replicator (<a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#addChangeListener-java.util.concurrent.Executor-com.couchbase.lite.ReplicatorChangeListener-">addChangeListener()</a>)&#8201;&#8212;&#8201;see <a href="#monitor-replication">Example 6</a>.
 You will then be asynchronously notified of state changes.
 Use this to monitor changes and to inform on sync progress, as shown below; this is an optional step.</p>
 </div>
@@ -717,6 +678,9 @@ That is, when it is actively transferring data and when it has stopped.</p>
 <div class="paragraph">
 <p>For more on replication status, see: <a href="../learn/java-android-replication.html#replication-status" class="page">Replication Status</a></p>
 </div>
+<div id="monitor-replication" class="exampleblock">
+<div class="title">Example 6. Monitor replication</div>
+<div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
@@ -762,15 +726,21 @@ if (thisReplicator.getStatus().getActivityLevel() == Replicator.ActivityLevel.BU
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="stop-sync"><a class="anchor" href="#stop-sync"></a>Stop Sync</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Stopping the replication is straightforward using the <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#stop--">stop()</a> method.
-If you added an optional change listener <a href="#monitor-sync">Monitor Sync</a> you should also remove it using the <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#removeChangeListener-com.couchbase.lite.ListenerToken-">removeChangeListener(ListenerToken token)</a> method.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Stopping the replication is straightforward using the <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#stop--">stop()</a> method.</td>
+</tr>
+</table>
 </div>
 <div class="exampleblock">
-<div class="title">Example 5. Stop replicator</div>
+<div class="title">Example 7. Stop replicator</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -780,16 +750,26 @@ thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pr
 </div>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If you added an optional change listener (see <a href="#monitor-sync">Monitor Sync</a> for how) you should also remove it using the <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/AbstractReplicator.html#removeChangeListener-com.couchbase.lite.ListenerToken-">removeChangeListener(ListenerToken token)</a> method.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="conflict-resolution"><a class="anchor" href="#conflict-resolution"></a>Conflict Resolution</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The default conflict resolver is applied (see <a href="../learn/java-android-conflict.html#automatic-conflict-resolution" class="page">Automatic Conflict Resolution</a>) unless you use the <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setConflictResolver-com.couchbase.lite.ConflictResolver-">conflictResolver</a> parameter to specify a custom conflict resolver object (see: <a href="../learn/java-android-conflict.html#custom-conflict-resolution" class="page">Custom Conflict Resolution</a>).</p>
-</div>
-<div class="paragraph">
-<p>For more on replicator conflict resolution see: <a href="../learn/java-android-conflict.html" class="page">Handling Conflicts</a>.</p>
+<p>Couchbase Lite&#8217;s default conflict resolution policy is applied&#8201;&#8212;&#8201;see <a href="../learn/java-android-conflict.html#automatic-conflict-resolution" class="page">Automatic Conflict Resolution</a>.
+To use a different policy, specify a <em>conflict resolver</em> using <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/ReplicatorConfiguration.html#setConflictResolver-com.couchbase.lite.ConflictResolver-">conflictResolver</a>&#8201;&#8212;&#8201;see: <a href="../learn/java-android-conflict.html#custom-conflict-resolution" class="page">Custom Conflict Resolution</a>.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -807,9 +787,12 @@ thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pr
 </div>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset4_local-wins">
+<div class="paragraph">
+<p>Using <code>replConfig.setConflictResolver(new LocalWinConflictResolver());</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1048-L1052">class LocalWinConflictResolver implements ConflictResolver {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1062-L1066">class LocalWinConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         return conflict.getLocalDocument();
     }
@@ -818,9 +801,12 @@ thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pr
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset4_remote-wins">
+<div class="paragraph">
+<p>Using <code>replConfig.setConflictResolver(new RemoteWinConflictResolver());</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1056-L1060">class RemoteWinConflictResolver implements ConflictResolver {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1070-L1074">class RemoteWinConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         return conflict.getRemoteDocument();
     }
@@ -829,9 +815,12 @@ thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pr
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset4_merge">
+<div class="paragraph">
+<p>Using <code>replConfig.setConflictResolver(new MergeConflictResolver());</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1064-L1070">class MergeConflictResolver implements ConflictResolver {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1078-L1084">class MergeConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         Map&lt;String, Object&gt; merge = conflict.getLocalDocument().toMap();
         merge.putAll(conflict.getRemoteDocument().toMap());
@@ -842,6 +831,61 @@ thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pr
 </div>
 </div>
 </div>
+</div>
+<div class="paragraph">
+<p>The following code snippet shows an example of merging properties from the existing document (<code>current</code>) into the one being saved (<code>new</code>).
+In the event of conflicting keys, it will pick the key value from <code>new</code>.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 8. Merging Document Properties</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1029-L1042">Document doc = database.getDocument("xyz");
+if (doc == null) { return; }
+MutableDocument mutableDocument = doc.toMutable();
+mutableDocument.setString("name", "apples");
+
+database.save(
+    mutableDocument,
+    (newDoc, curDoc) -&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
+        if (curDoc == null) { return false; } <i class="conum" data-value="2"></i><b>(2)</b>
+        Map&lt;String, Object&gt; dataMap = curDoc.toMap();
+        dataMap.putAll(newDoc.toMap()); <i class="conum" data-value="3"></i><b>(3)</b>
+        newDoc.setData(dataMap);
+        return true; <i class="conum" data-value="4"></i><b>(4)</b>
+    }); <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The conflict handler code is provided as a block</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If the handler cannot resolve a conflict, it can return false.
+In this case, the save method will cancel the save operation and return false the same way as using the save() method with the failOnConflict concurrency control.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Within the conflict handler, you can modify the document parameter which is the same instance of Document that is passed to the save() method. So in effect, you will be directly modifying the document that is being saved.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>When handling is done, the method must return true.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>If there is an exception thrown in the handle() method, the exception will be caught and re-thrown in the save() method</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For more on replicator conflict resolution see: <a href="../learn/java-android-conflict.html" class="page">Handling Conflicts</a>.</p>
 </div>
 </div>
 </div>

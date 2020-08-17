@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Untitled | Couchbase Docs</title>
+<title>Conflict Handling&#8201;&#8212;&#8201;Working with Replications | Couchbase Docs</title>
 <link rel="canonical" href="https://ibsoln.github.io/betasites/h2BetaAndroid/couchbase-lite/2.8/android/learn/java-android-conflict.html">
 <link rel="stylesheet" href="../../../../_/css/site.css">
 <script src="../../../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Couchbase Lite database replication - Conflict Handling">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="couchbase-lite">
 <meta name="dcterms.identifier" content="2.8">
@@ -97,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2pBeta/81520</span></h4>
+<h4 class="title"><span class="">P2pBeta/81620</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -198,17 +199,26 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2pBeta/81520</a></li>
+<li class="crumb"><a href="../../index.html">P2pBeta/81620</a></li>
+<li class="crumb"><a href="java-android-conflict.html">Conflict Handling&#8201;&#8212;&#8201;Working with Replications</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
+<div class="page-heading-title">
+<h1 class="page">Conflict Handling&#8201;&#8212;&#8201;Working with Replications</h1>
+<div class="labels">
+<ul>
+<li class="edition"><a href="https://www.couchbase.com/products/editions">Under Development</a></li>
+<li class="status"><span>beta -- H2-CBL 81620</span></li>
+</ul>
+</div>
+</div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div class="sect1">
-<h2 id="conflict-handlingworking-with-replications"><a class="anchor" href="#conflict-handlingworking-with-replications"></a>Conflict Handling&#8201;&#8212;&#8201;Working with Replications</h2>
+</div><div id="preamble">
 <div class="sectionbody">
 <div class="quoteblock abstract">
 <blockquote>
@@ -425,9 +435,12 @@ While this is true of any user defined functions, app developers must be strongl
 </div>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset1_local-wins">
+<div class="paragraph">
+<p>Using <code>replConfig.setConflictResolver(new LocalWinConflictResolver());</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1048-L1052">class LocalWinConflictResolver implements ConflictResolver {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1062-L1066">class LocalWinConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         return conflict.getLocalDocument();
     }
@@ -436,9 +449,12 @@ While this is true of any user defined functions, app developers must be strongl
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_remote-wins">
+<div class="paragraph">
+<p>Using <code>replConfig.setConflictResolver(new RemoteWinConflictResolver());</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1056-L1060">class RemoteWinConflictResolver implements ConflictResolver {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1070-L1074">class RemoteWinConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         return conflict.getRemoteDocument();
     }
@@ -447,9 +463,12 @@ While this is true of any user defined functions, app developers must be strongl
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_merge">
+<div class="paragraph">
+<p>Using <code>replConfig.setConflictResolver(new MergeConflictResolver());</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1064-L1070">class MergeConflictResolver implements ConflictResolver {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1078-L1084">class MergeConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         Map&lt;String, Object&gt; merge = conflict.getLocalDocument().toMap();
         merge.putAll(conflict.getRemoteDocument().toMap());
@@ -666,10 +685,10 @@ In this case, the app can detect the error that is being thrown, and handle it b
 <div class="sect2">
 <h3 id="custom-conflict-resolution-2"><a class="anchor" href="#custom-conflict-resolution-2"></a>Custom Conflict Resolution</h3>
 <div class="paragraph">
-<p>Starting in Couchbase Lite 2.6, we allow developers to hook a conflict handler when saving a document so that developers can easily handle the conflict in a single save method call.</p>
+<p>Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.</p>
 </div>
 <div class="paragraph">
-<p>To implement custom conflict resolution when saving a document, apps must call the <code>save()</code> method with a conflict handler.</p>
+<p>To implement custom conflict resolution when saving a document, apps must call the <code>save</code> method with a conflict handler block ( <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/database.html#save-com.couchbase.lite.MutableDocument-com.couchbase.lite.ConflictHandler-">database.save(MutableDocument, ConflictHandler)</a>).</p>
 </div>
 <div class="paragraph">
 <p>The following code snippet shows an example of merging properties from the existing document (<code>current</code>) into the one being saved (<code>new</code>).
@@ -687,35 +706,41 @@ mutableDocument.setString("name", "apples");
 
 database.save(
     mutableDocument,
-    (newDoc, curDoc) -&gt; {
-        if (curDoc == null) { return false; }
+    (newDoc, curDoc) -&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
+        if (curDoc == null) { return false; } <i class="conum" data-value="2"></i><b>(2)</b>
         Map&lt;String, Object&gt; dataMap = curDoc.toMap();
-        dataMap.putAll(newDoc.toMap());
+        dataMap.putAll(newDoc.toMap()); <i class="conum" data-value="3"></i><b>(3)</b>
         newDoc.setData(dataMap);
-        return true;
-    });</code></pre>
+        return true; <i class="conum" data-value="4"></i><b>(4)</b>
+    }); <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The conflict handler code is provided as a block</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If the handler cannot resolve a conflict, it can return false.
+In this case, the save method will cancel the save operation and return false the same way as using the save() method with the failOnConflict concurrency control.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Within the conflict handler, you can modify the document parameter which is the same instance of Document that is passed to the save() method. So in effect, you will be directly modifying the document that is being saved.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>When handling is done, the method must return true.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>If there is an exception thrown in the handle() method, the exception will be caught and re-thrown in the save() method</td>
+</tr>
+</table>
 </div>
 </div>
-<div class="ulist">
-<div class="title">Points of Note:</div>
-<ul>
-<li>
-<p>Within the conflict handlefr, you can modify the <code>document</code> parameter which is the same instance of <code>Document</code> that is passed to the <code>save()</code> method.
-So in effect, you will be directly modifying the document that is being saved.</p>
-</li>
-<li>
-<p>When handling is done, the method must return <code>true</code>.</p>
-</li>
-<li>
-<p>If the handler could not resolve the conflict, it can return <code>false</code>.
-In this case, the save method will cancel the save operation and return <code>false</code> the same way as using the <code>save()</code> method with the <code>failOnConflict</code> concurrency control.</p>
-</li>
-<li>
-<p>If there is an exception thrown in the <code>handle()</code> method, the exception will be caught and rethrown in the <code>save()</code> method.</p>
-</li>
-</ul>
 </div>
 </div>
 </div>
@@ -727,7 +752,7 @@ In this case, the save method will cancel the save operation and return <code>fa
 <div class="title">How-to &#8230;&#8203;</div>
 <ul>
 <li>
-<p>Deploying CBL for android</p>
+<p>Deploying Couchbase Lite for android</p>
 <div class="ulist">
 <ul>
 <li>
