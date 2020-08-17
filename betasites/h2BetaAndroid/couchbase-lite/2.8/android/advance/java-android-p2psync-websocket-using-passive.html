@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/betasites/h2BetaAndroid/couchbase-lite/2.8/android/advance/java-android-p2psync-websocket-using-passive.html">
 <link rel="stylesheet" href="../../../../_/css/site.css">
 <script src="../../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="CCouchbase Lite&#x27;s peer-to-peer sync enables edge devices to synchronize securely without consuming centralized cloud-server resources">
+<meta name="description" content="Couchbase Lite&#x27;s peer-to-peer sync enables edge devices to synchronize securely without consuming centralized cloud-server resources">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="couchbase-lite">
 <meta name="dcterms.identifier" content="2.8">
@@ -98,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2pBeta/81620</span></h4>
+<h4 class="title"><span class="">P2pBeta/81620-2</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -202,7 +202,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2pBeta/81620</a></li>
+<li class="crumb"><a href="../../index.html">P2pBeta/81620-2</a></li>
 <li class="crumb"><a href="../learn/java-android-p2psync.html">Introduction to P2P Sync</a></li>
 <li class="crumb"><a href="java-android-p2psync-websocket-using-passive.html">Passive Peer</a></li>
 </ul>
@@ -214,7 +214,7 @@
 <div class="labels">
 <ul>
 <li class="edition"><a href="https://www.couchbase.com/products/editions">Enterprise</a></li>
-<li class="status"><span>beta -- H2-CBL 81620</span></li>
+<li class="status"><span>beta -- H2-CBL 81620-2</span></li>
 </ul>
 </div>
 </div>
@@ -227,9 +227,9 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Topic Group&#8201;&#8212;&#8201;<em>Topic Group: Working with Peer-to-Peer Sync (web sockets)</em><br>
-Description&#8201;&#8212;&#8201;<em>CCouchbase Lite&#8217;s peer-to-peer sync enables edge devices to synchronize securely without consuming centralized cloud-server resources</em><br>
-Abstract&#8201;&#8212;&#8201;<em>Related Concepts: <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android">API Reference</a> | <a href="../learn/java-android-p2psync-websocket.html" class="page">Peer-to-peer sync over web sockets</a> | <a href="../learn/java-android-p2psync-custom.html" class="page">Peer-to-peer sync (custom)</a></em><br>
+<p>Topic Group&#8201;&#8212;&#8201;<em>Peer-to-Peer Synchronization</em><br>
+Description&#8201;&#8212;&#8201;<em>Couchbase Lite&#8217;s peer-to-peer sync enables edge devices to synchronize securely without consuming centralized cloud-server resources</em><br>
+Abstract&#8201;&#8212;&#8201;<em>This content covers how to set up a listener ready to accept a replicator connection to sync using peer-to-peer over websockets</em><br>
 Related Content&#8201;&#8212;&#8201;<a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android">API Reference</a>  |  <a href="java-android-p2psync-websocket-using-passive.html" class="page">Passive Peer</a>  |  <a href="java-android-p2psync-websocket-using-active.html" class="page">Active Peer</a></p>
 </div>
 </blockquote>
@@ -244,7 +244,7 @@ Related Content&#8201;&#8212;&#8201;<a href="https://ibsoln.github.io/betasites/
 Specifically it covers the implementation of a <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a> listener, that will accept and apply database changes replicated by a connected <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a>. In this context the term <em>client</em> refers to the <em>active peer</em> and the term <em>server</em> to the <em>passive peer</em></p>
 </div>
 <div class="paragraph">
-<p>You will need to initialize and configure a listener for each Couchbase Lite database instance that you want to sync with other peers.</p>
+<p>You will need to initialize and configure a Listener for each Couchbase Lite database instance that you want to sync with other peers.</p>
 </div>
 <div class="paragraph">
 <p><a href="#simple-listener-initialization">Example 1</a> shows a simple initialization and configuration process.</p>
@@ -354,14 +354,23 @@ The connection is established once the passive peer has authenticated and accept
 <p>Initialize the Listener config with the local database.
 All other configuration values will take their default setting.</p>
 </div>
+<div class="paragraph">
+<p>Each Listener instance serves one Couchbase Lite database.
+There is no limit on the number of instances except a practical limit</p>
+</div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Database name</dt>
 <dd>
 <div class="openblock">
 <div class="content">
-<div class="paragraph">
-<p>The database name is set using the <code><a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html">URLEndpointListenerConfiguration</a></code> constructor <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration-com.couchbase.lite.Database-">(Database database)</a>.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the local database name using the <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html">URLEndpointListenerConfiguration</a>'s constructor <a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html#URLEndpointListenerConfiguration-com.couchbase.lite.Database-">(Database database)</a>.</td>
+</tr>
+</table>
 </div>
 <div class="exampleblock">
 <div class="title">Example 2. Specify Local Database</div>
@@ -397,7 +406,7 @@ URLEndpointListenerConfiguration listenerConfig = new URLEndpointListenerConfigu
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The listener will auto-select an available port.</p>
+<p>The Listener will auto-select an available port.</p>
 </div>
 <div class="colist arabic">
 <table>
@@ -421,7 +430,7 @@ URLEndpointListenerConfiguration listenerConfig = new URLEndpointListenerConfigu
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The listener will listen on all network interfaces by default.</p>
+<p>The Listener will listen on all network interfaces by default.</p>
 </div>
 <div class="colist arabic">
 <table>
@@ -547,8 +556,8 @@ This doesn&#8217;t authenticate or verify trust (on the client side) but it does
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Typically, you will configure the listener&#8217;s TLS Identity once during initial launch.
-Subsequent starts of the listener will then reuse the identity from secure storage, or (re)create it if it doesn&#8217;t exist
+Typically, you will configure the Listener&#8217;s TLS Identity once during initial launch.
+Subsequent starts of the Listener will then reuse the identity from secure storage, or (re)create it if it doesn&#8217;t exist
 .
 </td>
 </tr>
@@ -917,7 +926,7 @@ if (thisAlias != null) {
 <h2 id="start-listener"><a class="anchor" href="#start-listener"></a>Start Listener</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Once you have completed the listener&#8217;s configuration settings you can initialize the listener instance and start it running&#8201;&#8212;&#8201;see: <a href="#initialize-and-start-listener">Example 8</a></p>
+<p>Once you have completed the Listener&#8217;s configuration settings you can initialize the Listener instance and start it running&#8201;&#8212;&#8201;see: <a href="#initialize-and-start-listener">Example 8</a></p>
 </div>
 <div id="initialize-and-start-listener" class="exampleblock">
 <div class="title">Example 8. Initialize and start listener</div>
@@ -951,7 +960,7 @@ thisListener.start(); <i class="conum" data-value="2"></i><b>(2)</b></code></pre
 <h2 id="monitor-listener"><a class="anchor" href="#monitor-listener"></a>Monitor Listener</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Use the listener&#8217;s <code>getStatus</code> method to get counts of total and active connections&#8201;&#8212;&#8201;see: <a href="#get-connection-counts">Example 9</a>.</p>
+<p>Use the Listener&#8217;s <code>getStatus</code> method to get counts of total and active connections&#8201;&#8212;&#8201;see: <a href="#get-connection-counts">Example 9</a>.</p>
 </div>
 <div id="get-connection-counts" class="exampleblock">
 <div class="title">Example 9. Get connection counts</div>
@@ -1054,65 +1063,6 @@ Closing the database will also close the listener.
 </div>
 <div class="sect5 column">
 <h6 id="-3"><a class="anchor" href="#-3"></a></h6>
-<div class="ulist">
-<div class="title">Community Resources ...</div>
-<ul>
-<li>
-<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="related-content-2"><a class="anchor" href="#related-content-2"></a>Related Content</h2>
-<div class="sectionbody">
-<div class="card-row three-column-row">
-<div class="sect5 column">
-<h6 id="-4"><a class="anchor" href="#-4"></a></h6>
-<div class="ulist">
-<div class="title">How to</div>
-<ul>
-<li>
-<p><a href="java-android-p2psync-websocket-using-passive.html" class="page">Passive Peer</a></p>
-</li>
-<li>
-<p><a href="java-android-p2psync-websocket-using-active.html" class="page">Active Peer</a></p>
-</li>
-<li>
-<p><a href="java-android-p2p-managing-tls-id.html" class="page">Manage TLS Identities</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
-<h6 id="-5"><a class="anchor" href="#-5"></a></h6>
-<div class="ulist">
-<div class="title">Concepts</div>
-<ul>
-<li>
-<p><a href="../learn/java-android-p2psync.html" class="page">Peer-to-peer Synchronization</a></p>
-</li>
-<li>
-<p><a href="../learn/java-android-p2psync-custom.html" class="page">Peer-to-peer sync (custom)</a></p>
-</li>
-<li>
-<p><a href="../learn/java-android-replication.html" class="page">Sync Gateway Replications</a></p>
-</li>
-<li>
-<p><a href="../learn/java-android-conflict.html" class="page">Handling Conflicts</a></p>
-</li>
-<li>
-<p><a href="https://ibsoln.github.io/betasites/api/mobile/2.8.0/couchbase-lite-android">API References</a>
-.</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
-<h6 id="-6"><a class="anchor" href="#-6"></a></h6>
 <div class="ulist">
 <div class="title">Community Resources ...</div>
 <ul>
