@@ -783,34 +783,9 @@ The actual authentication is provided by the application code. Often in the form
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">/**
- *
- * Start a listener for db that accepts connections using exactly the passed username and password
-
- *
- * @param db       the database to which the listener is attached
- * @param username the name of the single valid user
- * @param password the password for the user
- * @return the url at which the listener can be reached.
- * @throws CouchbaseLiteException on failure
- */
-@Nullable
-public URI startServer(@NonNull Database db, @NonNull String username, @NonNull char[] password) <i class="conum" data-value="1"></i><b>(1)</b>
-throws CouchbaseLiteException {
-  final URLEndpointListenerConfiguration config = new URLEndpointListenerConfiguration(db);
-
-  config.setPort(0); // this is the default
-  config.setDisableTls(true);
-  config.setAuthenticator(new ListenerPasswordAuthenticator(
-    (thisUser, pwd) -&gt; username.equals(thisUser) &amp;&amp; Arrays.equals(thisPassword, pwd)));
-
-    final URLEndpointListener listener = new URLEndpointListener(config);
-    listener.start();
-
-    final List&lt;URI&gt; urls = listener.getUrls();
-    if (urls.isEmpty()) { return null; }
-    return urls.get(0);
-  }</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Configure the client authenticator (if using Basic Authentication) <i class="conum" data-value="1"></i><b>(1)</b>
+config.setAuthenticator(new ListenerPasswordAuthenticator(
+  (thisUser, thisPassword) -&gt; username.equals(thisUser) &amp;&amp; Arrays.equals(password, thisPassword)));</code></pre>
 </div>
 </div>
 <div class="colist arabic">
