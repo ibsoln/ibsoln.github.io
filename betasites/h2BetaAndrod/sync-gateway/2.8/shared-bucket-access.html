@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mobile-Server Data Sync | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/betasites/h2BetaAndrod/sync-gateway/2.8/shared-bucket-access.html">
+<link rel="stylesheet" href="../../_/css/site.css">
+<script src="../../_/js/vendor/jquery.js"></script>
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+<meta name="dcterms.subject" content="sync-gateway">
+<meta name="dcterms.identifier" content="2.8">
+<meta name="generator" content="Antora 2.3.3">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+
+              <a class="navbar-brand" href="../..">
+                <img src="../../_/img/couchbase-documentation-logo.svg" alt="Couchbase" />
+              </a>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/mobile.html">
+                      Mobile
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <form class="navbar-item search">
+                  <input type="text" placeholder="Search Docs" class="query" id="search-query" />
+                  <button type="button" class="search-btn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+                <div class="parent-site">
+                  <a href="https://www.couchbase.com">
+                    Couchbase.com
+                  </a>
+                </div>
+                <a class="btn btn-primary try-btn" href="https://www.couchbase.com/downloads">
+                  Try Free
+                </a>
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container panes">
+<nav class="nav">
+<div class="left-sidebar-menu">
+<div class="version-control-box">
+<div class="component-frame">
+<div class="frame-icon">
+<img src="../../_/img/server-icon.png" alt="">
+</div>
+<div class="frame-body">
+<h4 class="title"><span class="">Sync Gateway H2-714 23July20-1512</span></h4>
+<a class="navbar-item component" href="introduction.html"> <span class="version">2.8</span></a>
+</div>
+</div>
+</div>
+<div class="nav-menu">
+<div class="main-nav-parent new " data-depth="0">
+<span class="back-to-menu"><i class="fas fa-chevron-left"></i> Main Menu </span>
+</div>
+<ul class="nav-list">
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Start</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="introduction.html">About SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="sgw-whatsnew.html">What&#8217;s New</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="start/gs-sgw-prereqs.html">Before You Start</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="start/gs-sgw-svr-cfg.html">Configure Server for SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="start/gs-sgw-install.html">Install SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="start/gs-sgw-config.html">Configure SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="start/gs-sgw-api-access.html">Test the Installation</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Advance</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Cloud-to-Edge Operations</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-running.html">Initialize Inter-sync-gateway Replication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-conflict-resolution-build-custom.html">Build a Custom Conflict Resolver</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-admin.html">Manage inter-sync-gateway replications</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-monitoring.html">Monitoring Inter-sync-gateway replications</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-sgreplicate.html">&#8230;&#8203; view the Concept</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="refer/config-properties.html">&#8230;&#8203; view Configuration reference</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Configure</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="advance/adv-sgw-cfg-sync-function.html">Use Sync functions?</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="advance/adv-sgw-cfg-import-filter.html">Use Import filters?</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="advance/adv-rest-api-client.html">Use the REST API?</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Manage</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Statistics and Logging</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="advance/logging.html">Use the Logging API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="stats-monitoring.html">View Statistics and Metrics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sgcollect-info.html">Collect Node Statistics</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<a class="nav-link" href="deployment.html">Deploy</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="command-line-options.html">Use Command Line Configuration</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="security.html">Security Best Practices</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="load-balancer.html">Use a Load Balancer</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="os-level-tuning.html">Tune Operating System Parameters</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="database-offline.html">Taking Databases Offline and Online</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="upgrade.html">Notes on Upgrading</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Kubernetes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="advance/kubernetes/deploy-cluster.html">Deploy SGW Clusters</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Learn</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="shared-bucket-access.html">Mobile-Server Replication Concept</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Access Control Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/users-and-roles.html">Users and Roles</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/authentication.html">Authentication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/sync-gateway-channels.html">Sync Gateway Channels</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/read-access.html">Read Access</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/write-access.html">Write Access</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/defining-sync-functions.html">Defining Sync Functions</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Cloud-to-Edge Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-sgreplicate.html">Inter-sync-gateway replication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-sgreplicate-sgr2.html">Inter-sync-gateway Replication vn:2</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="refer/config-properties.html">&#8230;&#8203; view Configuration reference</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-running.html">&#8230;&#8203; view the How-to</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Replication Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/concept-fundamentals-data.html">Mobile data learn/concepts</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="resolving-conflicts.html">Conflict Resolution</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#sync-gateway::learn/concept-fundamentals-logging.adoc">Logging</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/concept-fundamentals-data-tombstones.html">Tombstones</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="managing-tombstones.html">Managing Tombstones</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="indexing.html">Indexing</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-integration.html">Webhooks and Changes Feed</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="integrating-external-stores.html">Integrating External Stores</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Refer</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="refer/config-properties.html">Configuration Details</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Sync Gateway API</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="refer/rest-api-public.html">Public REST API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="refer/rest-api-admin.html">Admin REST API</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<a class="nav-link" href="refer/refer-sgw-glossary.html">Sync Gateway Glossary</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-sgreplicate.html">&#8230;&#8203; view the Concept</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-running.html">&#8230;&#8203; view the How-to</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Product Notes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="prodnotes/pn-change-log-config.html">Configuration Change Log</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Exit to . . .</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../home/mobile.html">back to Mobile</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/2.8/introduction.html">go to Couchbase Lite</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<a href="#" class="menu-expand-toggle"> <span>Navigation</span> <i class="fas fa-times-circle"></i> <i class="fas fa-chevron-circle-left"></i></a>
+</div></nav>
+<aside class="toc sidebar">
+  <div class="sidebar-box">
+      <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/shared-bucket-access.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+</ul>
+</div>
+      <div class="toc-menu"></div>
+        <div class="is-this-helpful-box">
+          <h4> Is this page helpful?</h4>
+            <div class="btn-row">
+              <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                     <i class="far fa-thumbs-up"></i>
+                 Yes
+
+                 </a>
+              <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+            </div>
+            <div class="any-feedback">
+              <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+            </div>
+            <div class="dialog-box" id="dialogBox">
+              <form>
+                  <div class="form-group " id="additionalFeedbackBox">
+                    <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+                    <div class="action-btn-row ">
+                      <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                       <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                       <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+                    </div>
+
+
+                  </div>
+
+              </form>
+
+            </div>
+      </div>
+   </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<button class="nav-control"></button>
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="introduction.html">Sync Gateway H2-714 23July20-1512</a></li>
+<li class="crumb">Learn</li>
+<li class="crumb"><a href="shared-bucket-access.html">Mobile-Server Replication Concept</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">Mobile-Server Data Sync</h1>
+<div class="labels">
+<ul>
+<li class="status"><span>betaAndroid--81502 -- H2 81720-1</span></li>
+</ul>
+</div>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="title">Author&#8217;s Notes</div>
+CONTENT UNDER DEVELOPMENT
+</td>
+</tr>
+</table>
+</div>
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Topic Group&#8201;&#8212;&#8201;<em>Replication</em><br>
+Description&#8201;&#8212;&#8201;<em>Sync Gateway replication keeps distributed database changes in sync</em><br>
+Abstract&#8201;&#8212;&#8201;<em>This content describes how Sync Gateway synchronizes document changes made through Couchbase SDKs and N1QL queries.</em><br>
+Related Content&#8201;&#8212;&#8201;<a href="refer/config-properties.html" class="page">Configuration Details</a> | <a href="refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="shared-bucket-access"><a class="anchor" href="#shared-bucket-access"></a>Shared Bucket Access</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sync Gateway uses the <em>Shared Bucket Access</em> feature to synchronize document changes made through Couchbase SDKs and N1QL queries with Couchbase Lite clients, and vice versa.
+The following diagram shows different client types (mobile, web, desktop) writing data to the same bucket in Couchbase Server.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/shared-bucket-access.png" alt="shared bucket access">
+</div>
+</div>
+<div class="paragraph">
+<p>In previous releases, you either had to ensure all writes happened through Sync Gateway, or had to set up bucket shadowing to ensure that the security and replication metadata needed by mobile applications was preserved.</p>
+</div>
+<div class="paragraph">
+<p>As of Sync Gateway 1.5, the metadata created by the Sync Gateway is abstracted from applications reading and writing data directly to Couchbase Server.
+Sync Gateway 1.5 utilizes a new feature of Couchbase Server 5.0 called XATTRs (e<strong>X</strong>tended <strong>ATTR</strong>ibutes) to store that metadata into an external document fragment.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-enable-it"><a class="anchor" href="#how-to-enable-it"></a>How to enable it</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Shared bucket access is an opt-in feature, and can be enabled without bringing down the entire Sync Gateway cluster.</p>
+</div>
+<div class="paragraph">
+<p>The <a href="start/gs-sgw-install.html" class="page">getting started</a> page includes step-by-step instructions to:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install Couchbase Server 5.0 or above.</p>
+</li>
+<li>
+<p>Configure Couchbase Server with RBAC.</p>
+</li>
+<li>
+<p>Install Sync Gateway with a configuration file that enables Mobile-Web data synchronization.</p>
+<div class="listingblock">
+<div class="title">Enable mobile web data synchronization</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "databases": {
+        "db": {
+            "bucket": "my-bucket",
+            "username": "my-user",
+            "password": "my-password",
+            "server": "http://localhost:8091",
+            "enable_shared_bucket_access": true, <i class="conum" data-value="1"></i><b>(1)</b>
+            "import_docs": true <i class="conum" data-value="2"></i><b>(2)</b>
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>enable_shared_bucket_access</code> property is used to enable Web-Server data sync and must be <code><em>true</em></code> on all nodes participating in such a configuration.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The <code>import_docs</code> property is used to specify that a Sync Gateway node should (only) import document changes using the <a href="#import-process">Import process</a>.</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Once enabled, documents can be inserted on the Server directly (using <em>N1QL</em> or <em>SDKs</em>) or through the <a href="refer/rest-api-public.html" class="page">Sync Gateway REST API</a>.
+The mobile metadata is no longer kept in the document, but in a system extended attribute in Couchbase Server.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="import-process"><a class="anchor" href="#import-process"></a>Import process</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The import process is a key part of mobile convergence.</p>
+</div>
+<div class="paragraph">
+<p>It is the means by which Sync Gateway becomes aware of non-Sync Gateway data changes and obtains the mobile metadata it requires to replicate changes.
+Any <a href="glossary.adoc#non-sync-gateway">non-Sync Gateway change</a> is eligible for import.</p>
+</div>
+<div class="paragraph">
+<p>The document is first run through the Sync Function to compute read security and routing, with the following differences:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The import is processed with an admin user context in the Sync Function, similar to writes made through the Sync Gateway Admin API.
+This means that <code>requireAccess</code>, <code>requireUser</code> and <code>requireRole</code> calls in the Sync Function are treated as no-ops.</p>
+</li>
+<li>
+<p>During import, <code>oldDoc</code> is <code>nil</code> when the Sync Function is executed.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can specify a filter function using the <a href="#config-properties.adoc#databases-this_db_import_filter" class="page unresolved">import_filter</a>  property, which will only import specific documents.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Use the <a href="#config-properties.adoc#log" class="page unresolved">Import+</a> log key to troubleshoot import processing issues in the logs.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Note that <code>import_docs</code> only takes effect if the <code>enabled_shared_bucket_access</code> is set to <code>true</code>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></dt>
+<dd>
+<p>The <code>import_docs</code> parameter defaults to <code>true</code>, implying that, by default, all nodes in a cluster participate in import processing.
+To exclude a node, set <code>"import_docs": false</code>.</p>
+</dd>
+<dt class="hdlist1"><a href="https://www.couchbase.com/products/editions">COMMUNITY EDITION</a></dt>
+<dd>
+<p>The <code>import_docs</code> parameter defaults to false and must be explicitly set to <code>true</code>.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The following table describes the key behavior differences between Community Edition and Enterprise Edition when <code>import_docs</code> is enabled, disabled or not set at all.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"><code>enabled_shared_bucket_access</code></th>
+<th class="tableblock halign-left valign-top"><code>import_docs</code></th>
+<th class="tableblock halign-left valign-top">Behavior (EE)</th>
+<th class="tableblock halign-left valign-top">Behavior (CE)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not set</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assumes <code>import: true</code> by default</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Assumes <code>import: false</code> by default</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node omitted from import processing (supported for workload isolation)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node omitted from import processing</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node participates in import processing, and is assigned import partitions.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node performs import processing for all server mutations.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">not set</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">import docs is false by default</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">import docs is false by default</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">import docs property ignored, warning logged</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">import docs property ignored, warning logged</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Import docs is false</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Import docs is false</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="high-availability-of-import-processing"><a class="anchor" href="#high-availability-of-import-processing"></a>High Availability of Import processing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In <em>Enterprise Edition</em>, import processing work is sharded across all Sync Gateway nodes with import enabled.
+This implies that if one of the nodes fail, the failed shard is automatically picked up by the remaining nodes in the cluster.
+This way, you get High Availability of import processing.</p>
+</div>
+<div class="paragraph">
+<p>In <em>Community Edition</em>, there is no sharding of import across the nodes participating in the import processing. Each import node processes all server mutations.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="workload-isolation"><a class="anchor" href="#workload-isolation"></a>Workload Isolation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As described in the table above, if <code>import_docs</code> is set to <code>false</code>, the node will not be participating in the import process.
+This configuration is specifically recommended for workload isolation: to isolate import nodes from the client-facing nodes.
+Workload isolation may be preferable in deployments with high write throughput.</p>
+</div>
+<div class="paragraph">
+<p>The following diagram shows an example architecture of two Sync Gateway nodes handling the incoming client connections (<code>import_docs: false</code>) and two nodes sharing the import processing (<code>import_docs: true</code>).</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="_images/workload-isolation.png" alt="workload isolation"></span></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="metadata-purge-interval"><a class="anchor" href="#metadata-purge-interval"></a>Metadata Purge Interval</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When <a href="config-properties.html#databases-this_db-enable_shared_bucket_access">$dbname.enable_shared_bucket_access</a> is enabled, <a href="refer/refer-sgw-glossary.html" class="page">mobile tombstones</a> are <strong>not</strong> retained indefinitely.
+They are purged based on the server&#8217;s <em>metadata purge interval</em>.
+To ensure tombstones are replicated to clients, you should set the server&#8217;s metadata purge interval based on your expected replication frequency (see the <a href="config-properties.html#databases-this_db-enable_shared_bucket_access">$dbname.enable_shared_bucket_access</a> reference).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="reference"><a class="anchor" href="#reference"></a>Reference</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The reference to the configuration properties can be found below.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="config-properties.html#databases-this_db-enable_shared_bucket_access">$dbname.enable_shared_bucket_access</a> to enable convergence for a given database.</p>
+</li>
+<li>
+<p><a href="config-properties.html#databases-this_db-import_docs">$dbname.import_docs</a> to give a particular Sync Gateway node the role of importing the documents.</p>
+</li>
+<li>
+<p><a href="config-properties.html#databases-this_db-import_filter">$dbname.import_filter</a> to select which document(s) to make aware to mobile clients.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="faq"><a class="anchor" href="#faq"></a>FAQ</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="how-do-i-query-the-documents-sync-metadata"><a class="anchor" href="#how-do-i-query-the-documents-sync-metadata"></a>How do I query the document&#8217;s sync metadata?</h3>
+<div class="paragraph">
+<p>Starting in Couchbase Server 5.5, the N1QL query language supports the ability to select extended attributes (xattrs) where the document&#8217;s sync metadata is stored.
+The following query shows an example of that feature.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT meta().xattrs._sync FROM `travel-sample` WHERE meta().id = "mydocId"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Prior to 5.5, there is no way to query the mobile metadata with <code>shared_bucket_access_enabled: true</code>.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+The sync metadata is maintained internally by Sync Gateway and its structure can change at any time.
+It should not be used to drive business logic of applications. The direct use of the N1QL query is <strong>unsupported</strong> and must not be used in production environments.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-do-i-access-a-blob-stored-in-couchbase-lite"><a class="anchor" href="#how-do-i-access-a-blob-stored-in-couchbase-lite"></a>How do I access a blob stored in Couchbase Lite?</h3>
+<div class="paragraph">
+<p>See the <a href="#couchbase-lite:ROOT:swift.adoc#blobs" class="page unresolved">Blob</a> example.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="how-do-i-access-an-attachment-from-a-webapp"><a class="anchor" href="#how-do-i-access-an-attachment-from-a-webapp"></a>How do I access an attachment from a WebApp?</h3>
+<div class="paragraph">
+<p>Attachments can be accessed through Sync Gateway&#8217;s REST API using the <a href="refer/rest-api-public.html#/attachment/get__db___doc___attachment_" class="page">/{db}/{doc}/{attachment}</a> endpoint.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="migrating-from-bucket-shadowing"><a class="anchor" href="#migrating-from-bucket-shadowing"></a>Migrating from Bucket Shadowing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As of Sync Gateway 1.5, the Bucket Shadowing feature is deprecated and no longer supported.
+The following steps outline a recommended method for migrating from Bucket Shadowing to the latest version with interoperability between Couchbase Server SDKs and Couchbase Mobile.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Follow the recommendations in the <a href="#server:install:upgrade-online.adoc" class="page unresolved">Couchbase Server documentation</a> to upgrade all instances to 5.0.</p>
+</li>
+<li>
+<p>Create a new bucket on Couchbase Server (<strong>bucket 2</strong>).</p>
+</li>
+<li>
+<p>Install Sync Gateway 1.5 on a separate node with shared access enabled and connect it to the new bucket (<strong>bucket 2</strong>).</p>
+</li>
+<li>
+<p>Setup a <a href="running-replications.html">push replication</a> from the Sync Gateway instance used for Bucket Shadowing to the Sync Gateway 1.5 instance.</p>
+</li>
+<li>
+<p>Once the replication has completed, test your application is performing as expected.</p>
+</li>
+<li>
+<p>Update the load balancer to direct incoming traffic to the Sync Gateway 1.5 instance when you are ready to upgrade.</p>
+</li>
+<li>
+<p>Delete the first bucket (<strong>bucket 1</strong>).</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="_images/bucket-shadowing-migration.png" alt="bucket shadowing migration"></span></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">API Topics</div>
+<ul>
+<li>
+<p><a href="refer/rest-api-public.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference</div>
+<ul>
+<li>
+<p><a href="refer/config-properties.html" class="page">Configuration Details</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community Resources ...</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../_/img/couchbase_logo_black.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2020 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script async src="../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
