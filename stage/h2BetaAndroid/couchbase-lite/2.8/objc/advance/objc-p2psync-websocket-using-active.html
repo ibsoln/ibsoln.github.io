@@ -555,7 +555,20 @@ Any certificates that are not self-signed are rejected.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">Work-in-progress. Code snippet coming soon.</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// Get bundled resource and read into localcert
+guard let pathToCert = Bundle.main.path(forResource: "listener-pinned-cert", ofType: "cer")
+  else { /* process error */ }
+guard let localCertificate:NSData = NSData(contentsOfFile: pathToCert!)
+  else { /* process error */ }
+
+// Create certificate
+// using its DER representation as a CFData
+guard let pinnedCert = SecCertificateCreateWithData(nil, localCertificate)
+  else { /* process error */ }
+
+// Add `pinnedCert` and `.cacert` to `ReplicatorConfiguration`
+config.serverCertificateVerificationMode = .caCert
+config.pinnedServerCertificate = pinnedCert</code></pre>
 </div>
 </div>
 </div>
