@@ -98,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2pBeta/81720-1</span></h4>
+<h4 class="title"><span class="">P2pBeta/82120-1</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -199,7 +199,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2pBeta/81720-1</a></li>
+<li class="crumb"><a href="../../index.html">P2pBeta/82120-1</a></li>
 <li class="crumb"><a href="objc-p2psync-websocket-using-passive.html">Set-up the Passive Peer</a></li>
 </ul>
 </nav>
@@ -240,14 +240,14 @@ Related Content&#8201;&#8212;&#8201;<a href="https://ibsoln.github.io/stage/api/
 <div class="title">Android enablers</div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Manifest</dt>
+<dt class="hdlist1">Allow Unencrypted Network Traffic</dt>
 <dd>
-<p><strong>Always</strong> include <code>android:usesCleartextTraffic="true"</code> in the manifest.
-This allows use of cleartext (un-encrypted) network traffic such as http.</p>
+<p>To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <code>ws://</code>),  include <code>android:usesCleartextTraffic="true"</code> in the manifest; <strong>not recommended in production</strong>.</p>
 </dd>
-<dt class="hdlist1">Threads</dt>
+<dt class="hdlist1">Use Background Threads</dt>
 <dd>
-<p><strong>Always</strong> use a <strong>background</strong> thread when working with TLS Identities, Listeners and Replicators; do <strong>NOT</strong> use the UI thread.</p>
+<p>As with any network or file I/O activity, CouchbaseLite activities should not be performed on the UI thread.
+<strong>Always</strong> use a <strong>background</strong> thread.</p>
 </dd>
 </dl>
 </div>
@@ -269,6 +269,19 @@ Use them as inspiration and adapt these examples to best practice when developin
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <code>ws://</code>),  include <code>android:usesCleartextTraffic="true"</code> in the manifest; <strong>not recommended in production</strong>.</p>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>]</p>
 </div>
 </div>
 </div>
@@ -349,34 +362,39 @@ fileprivate var thisDB:Database?
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#initialize-the-listener-configuration">Initialize the Listener Configuration</a></td>
+<td>You will need to include this database initializer in the application&#8217;s <code>onCreate()</code> method.
+endif::[android-platform]</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>By default the system will assign a port&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
+<td><a href="#initialize-the-listener-configuration">Initialize the Listener Configuration</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>By default the system will listen on all network interfaces&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
+<td>By default the system will assign a port&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#delta-sync">Delta Sync</a></td>
+<td>By default the system will listen on all network interfaces&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#tls-security">TLS Security</a></td>
+<td><a href="#delta-sync">Delta Sync</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Validate the user credentials (<code>thisUser</code> and <code>thisPassword</code>), where <code>username</code> and <code>password</code> are the valid credentials and <code>thisUser</code> and <code>thisPassword</code> are the presented credentials-- see <a href="#client-authentication">Client Authentication</a> for more</td>
+<td><a href="#tls-security">TLS Security</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Initialize the listener using the configuration settings</td>
+<td>Validate the user credentials (<code>thisUser</code> and <code>thisPassword</code>), where <code>username</code> and <code>password</code> are the valid credentials and <code>thisUser</code> and <code>thisPassword</code> are the presented credentials-- see <a href="#client-authentication">Client Authentication</a> for more</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Initialize the listener using the configuration settings</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><a href="#start-listener">Start Listener</a></td>
 </tr>
 </table>
@@ -469,7 +487,7 @@ listenerConfig.networkInterface = thisURL;</code></pre>
 <h2 id="set-network-and-port"><a class="anchor" href="#set-network-and-port"></a>Set Network and Port</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If required you can define the port number and-or network-interface to be used by the listener.</p>
+<p>A Listener will automatically select an available port.  if you want to use a canonical port&#8201;&#8212;&#8201;one known to other applications - you can specify it explicitly here.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -569,6 +587,9 @@ Use <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc
 <div class="paragraph">
 <p>TLS based encryption is enabled by default.
 Although it <em>can</em> be disabled, this is not recommended on production environments.</p>
+</div>
+<div class="paragraph">
+<p>To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <code>ws://</code>),  include <code>android:usesCleartextTraffic="true"</code> in the manifest; <strong>not recommended in production</strong>.</p>
 </div>
 <div class="paragraph">
 <p>When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity (<a href="#configure-tls-identity-for-listener">[configure-tls-identity-for-listener]</a>).</p>
@@ -739,7 +760,7 @@ listenerConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Ensure TLS is enabled.</td>
+<td>These are are the default settings; authentication using an anonymous self-signed certificate is assumed.</td>
 </tr>
 </table>
 </div>
@@ -923,10 +944,10 @@ The logic should take the form of function or block (such as, a closure expressi
 <td class="tableblock halign-left valign-top"><div class="content"><div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>TLS is disabled.</p>
-</li>
-<li>
-<p>Communication is plain text.</p>
+<p>TLS is disabled; all communication is plain text.</p>
+<div class="paragraph">
+<p>To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <code>ws://</code>),  include <code>android:usesCleartextTraffic="true"</code> in the manifest; <strong>not recommended in production</strong>.</p>
+</div>
 </li>
 </ol>
 </div></div></td>

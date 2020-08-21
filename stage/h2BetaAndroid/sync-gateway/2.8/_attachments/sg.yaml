@@ -920,7 +920,7 @@ properties:
                     description: |+
                       **About**
 
-                      Use `direction` to specify the replication is *push*, *pull* or *push_and_pull* relative to this node.
+                      Use `direction` to specify the replication is *push*, *pull* or *pushAndPull* relative to this node.
 
                       **Behavior**
 
@@ -928,7 +928,7 @@ properties:
 
                       - `pull` -- changes are pulled from the `remote` database
                       - `push` -- changes are pushed to the `remote` database
-                      - `push_and_pull` -- changes are both pushed-to and pulled-from the `remote` database
+                      - `pushAndPull` -- changes are both pushed-to and pulled-from the `remote` database
 
                       **Constraints**
 
@@ -940,20 +940,21 @@ properties:
                     description: |+
                       **About**
 
-                      Use `enable_delta_sync` to specify use of delta sync for this replication.
-
-                      It works in conjunction with [database.this_db.delta_sync.enabled](config-properties.html#databases-this_db-delta_sync-enabled), which specifies whether the database can use delta sync or not.
+                      Use `enable_delta_sync` to specify use of delta sync for a replication.
 
                       **Options**
 
                       To use delta sync or not.
 
-                      - `"enable_delta_sync": true`, the replication can use delta sync (depending on `delta_sync.enabled` setting
-                      - `"enable_delta_sync": false` -- the replication cannot use delta sync
+                      - `enable_delta_sync=true` -- the replication runs using delta sync
+                      - `enable_delta_sync=false` -- the replication runs without delta sync
 
                       **Behavior**
 
-                      The optional `enable_delta_sync` property works in conjunction with the database level [database.this_db.delta_sync.enabled](config-properties.html#databases-this_db-delta_sync-enabled) setting, to determine whether this replication uses delta sync.
+                      The optional `enable_delta_sync` property turns on delta sync for a replication.
+                      It works in conjunction with the database level [database.this_db.delta_sync.enabled](config-properties.html#databases-this_db-delta_sync-enabled).
+
+                      The impact of this property is dependent on the [database.this_db.delta_sync.enabled](config-properties.html#databases-this_db-delta_sync-enabled) property setting for the relevant databases as indicated here.
 
                       - **If** `"delta_sync.enabled": true` for both databases involved in the replication, then this parameter enables or disables its use for this specific replication.
 
@@ -962,7 +963,6 @@ properties:
                       **Constraints**
 
                       - Requires *Enterprise Edition*
-                      - Depends upon setting of [database.this_db.delta_sync.enabled](config-properties.html#databases-this_db-delta_sync)
                       - Replications created prior to version 2.8 run with `"enable_delta_sync": false`
                   filter:
                     type: string
@@ -1007,20 +1007,6 @@ properties:
                       **Constraints**
 
                       The value defaults to five minutes for replications created prior to version 2.8.
-
-                  password:
-                    type: string
-                    default: Mandatory
-                    description: |+
-                      **About**
-
-                        Use `password` to provide the login password value for the accredited user running this replication.
-
-                      **Behavior**
-
-                        These details are used to authenticate credentials and approve access to data.
-
-                        Once provided and recorded, the password data is redacted and will not be displayed in either the configuration file or Admin REST API. A string of `****` will be displayed in its place.
 
                   perf_tuning_params:
                     type: array
@@ -1084,7 +1070,7 @@ properties:
 
                   remote:
                     type: string
-                    default: mandatory
+                    default: None - this is mandatory
                     description: |+
                       **About**
 
@@ -1098,25 +1084,27 @@ properties:
 
                       **Behavior**
 
-                      The `remote` property identifies the remote Sync Gateway database that is the subject of this replication's push, pull or push_and_pull action. Typically it includes URI, Port and Database name elements.
+                      The `remote` property represents a database endpoint for the remote Sync Gateway cluster.
+                      That is, it identifies the remote cluster that is the subject of this replication's *push*, *pull* or *pushAndPull action*.
 
-                      The effect of this setting is dependent upon the setting of the [direction](./../refer/config-properties.html#databases-this_db-replications-direction) configuration property.
+                      Dependent upon the setting of the [direction](./../refer/config-properties.html#databases-this_db-replications-direction) configuration property.
 
-                      If `direction` is :
-                      - `pull`, then `remote` defines the remote cluster *from* which data is pulled
-                      - `push`, then `remote` defines the remote cluster *to* which data is pushed
-                      - `push_and_pull`, then `remote` defines the remote cluster *to* which data is pushed.
+                      If direction is :
+                      - `direction=pull`, then `remote` defines the remote cluster *from* which data is pulled
+                      - `direction=push`, then `remote` defines the remote cluster *to* which data is pushed
+                      - `direction=pushAndPull`, then `remote` defines the remote cluster *to* which data is pushed.
 
                       **Example**
 
                       ```
-                       "remote": "http://www.example.com:4984/db2name",
+                       "remote": "http://user1:password@11.222.333.5:4984/db2name",
                       ```
 
                       **Constraints**
 
                       - You must specify the 'remote' database's url even if it is located on the same cluster as the replication's database.
                       - OPTIONAL for stops and removes
+
 
                   replication_id:
                     type: string
@@ -1154,20 +1142,6 @@ properties:
                       **Constraints**
 
                       Replications created prior to version 2.8 will all default to a state of ```running```.
-
-                  username:
-                    type: string
-                    default: Mandatory
-                    description: |+
-                      **About**
-
-                        Use `username` to provide the name of the accredited user running this replication.
-
-                        **Behavior**
-
-                        These details are used to authenticate credentials and approve access to data
-
-                        Once provided and recorded, the username data is redacted and will not be displayed in either the configuration file or Admin REST API. A string of `****` will be displayed in its place.
   facebook:
     description: Configuration for Facebook Login authentication.
     type: object
@@ -1420,19 +1394,19 @@ properties:
     type: string
 
   replications:
-    type: array
     description: |+
-      **Support Notice**
+      <h4>Support Notice</h4>
       (**Deprecated**) This SG-Replicate 1.0 method of configuring replication is deprecated at version 2.8. For replication using the SG-Replicate 2.0 protocol configure the replication properties under _database.replications_ instead -- see [SG-Replicate 2.0 Replications](./../refer/config-properties.html#databases-this_db-replications).
 
       **NOTE:** Sync Gateway will fail to start if any replications defined at this level do involve at least one local database (source and-or target); an error is recorder in the log.
 
-      **About**
+      <h4>About</h4>
       SG-Replicate 1.0 replications :
 
       - default to a 'Running' state
       - do not support built-in, or custom, conflict resolution -- see [Resolving Conflicts](./../resolving-conflicts.html) and [SG-Replicate 2.0 Conflict Resolution](./../learn/icr-conflict-resolution.html)
       - use `source` and `target` to derive replication direction
+      -
     items:
       type: object
       properties:
