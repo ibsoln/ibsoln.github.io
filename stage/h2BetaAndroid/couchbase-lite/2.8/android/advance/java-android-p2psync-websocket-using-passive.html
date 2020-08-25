@@ -274,19 +274,6 @@ Use them as inspiration and adapt these examples to best practice when developin
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>+</p>
-</div>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <code>ws://</code>),  include <code>android:usesCleartextTraffic="true"</code> in the manifest; <strong>not recommended in production</strong>.</p>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>]</p>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -311,7 +298,7 @@ You do not need to provide configuration values for all properties, only those n
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java">// . . . preceding application logic . . .
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// . . . preceding application logic . . .
 CouchbaseLite.init(context); <i class="conum" data-value="1"></i><b>(1)</b>
 Database thisDB = new Database("passivepeerdb");
 
@@ -321,11 +308,7 @@ final URLEndpointListenerConfiguration listenerConfig
 listenerConfig.setPort(55990); <i class="conum" data-value="3"></i><b>(3)</b>
 listenerConfig.setNetworkInterface("10.1.1.10"); <i class="conum" data-value="4"></i><b>(4)</b>
 listenerConfig.setEnableDeltaSync(true); <i class="conum" data-value="5"></i><b>(5)</b>
-listenerConfig.setDisableTLS(false); <i class="conum" data-value="6"></i><b>(6)</b>
-
-// Use an Anonymous Self-Signed Cert
-listenerConfig.setTlsIdentity(null);
-
+listenerConfig.setDisableTLS(true); <i class="conum" data-value="6"></i><b>(6)</b>
 
 // Configure the client authenticator (if using Basic Authentication) <i class="conum" data-value="7"></i><b>(7)</b>
 config.setAuthenticator(new ListenerPasswordAuthenticator(
@@ -344,8 +327,7 @@ thisListener.start(); <i class="conum" data-value="9"></i><b>(9)</b></code></pre
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>You will need to include this database initializer in the application&#8217;s <code>onCreate()</code> method.
-endif::[android-platform]</td>
+<td>You will need to include this database initializer in the application&#8217;s <code>onCreate()</code> method.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -365,11 +347,13 @@ endif::[android-platform]</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#tls-security">TLS Security</a></td>
+<td>TLS is enabled by default.
+It is <strong>not</strong> advisable to switch it off in production.
+This setting is ignored when <em>Basic Authentication</em> is required; but must be 'false' when <em>Client Cert Authentication</em> is required&#8201;&#8212;&#8201;see also:  <a href="#tls-security">TLS Security</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Validate the user credentials (<code>thisUser</code> and <code>thisPassword</code>), where <code>username</code> and <code>password</code> are the valid credentials and <code>thisUser</code> and <code>thisPassword</code> are the presented credentials-- see <a href="#client-authentication">Client Authentication</a> for more</td>
+<td>Apply basic authentication to validate the user credentials (<code>thisUser</code> and <code>thisPassword</code>), where <code>username</code> and <code>password</code> are the valid credentials and <code>thisUser</code> and <code>thisPassword</code> are the presented credentials-- see <a href="#client-authentication">Client Authentication</a> for more</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
@@ -403,7 +387,9 @@ endif::[android-platform]</td>
 <p>Prior to initiating the listener you may execute a peer discovery phase.</p>
 </div>
 <div class="paragraph">
-<p>For the passive peer, this involves advertising the service using, for example <em>Network Service Discovery</em> (see: <a href="https://developer.android.com/training/connect-devices-wirelessly/nsd" class="bare">https://developer.android.com/training/connect-devices-wirelessly/nsd</a>) and waiting for an invite from the active peer.</p>
+<p>For the passive peer, this involves advertising the service using, for example
+<em>Network Service Discovery</em> (see: <a href="https://developer.android.com/training/connect-devices-wirelessly/nsd" class="bare">https://developer.android.com/training/connect-devices-wirelessly/nsd</a>)
+ and waiting for an invite from the active peer.</p>
 </div>
 <div class="paragraph">
 <p>The connection is established once the passive peer has authenticated and accepted an active peer&#8217;s invitation.</p>
@@ -460,9 +446,6 @@ final URLEndpointListenerConfiguration listenerConfig
 <div class="sect1">
 <h2 id="set-network-and-port"><a class="anchor" href="#set-network-and-port"></a>Set Network and Port</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>A Listener will automatically select an available port.  if you want to use a canonical port&#8201;&#8212;&#8201;one known to other applications - you can specify it explicitly here.</p>
-</div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Port number</dt>
@@ -470,10 +453,12 @@ final URLEndpointListenerConfiguration listenerConfig
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The Listener will auto-select an available port.</p>
+<p>The Listener will automatically select an available port.</p>
 </div>
+<div class="exampleblock">
+<div class="title">Example 3. Specify a Port to Use</div>
+<div class="content">
 <div class="listingblock">
-<div class="title">Specify a Port to Use</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java">listenerConfig.setPort(55990); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
@@ -482,9 +467,11 @@ final URLEndpointListenerConfiguration listenerConfig
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Alternatively, use the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-">setPort</a> method to specify a known port.</td>
+<td>To use a canonical port&#8201;&#8212;&#8201;one known to other applications - specify it explicitly using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html#setPort-int-">setPort</a> method shown here.</td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -496,24 +483,22 @@ final URLEndpointListenerConfiguration listenerConfig
 <div class="paragraph">
 <p>The Listener will listen on all network interfaces by default.</p>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Alternatively, use
-<a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html#setNetworkInterface-java.lang.String-">setNetworkInterface</a> parameter
-to specify the network interface.
-This must be either an IP Address or network interface name such as <code>en0</code>.</td>
-</tr>
-</table>
-</div>
 <div class="exampleblock">
-<div class="title">Example 3. Specify a Network Interface to Use</div>
+<div class="title">Example 4. Specify a Network Interface to Use</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/p2psync-websocket.java">listenerConfig.setNetworkInterface("10.1.1.10"); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To specify an interface&#8201;&#8212;&#8201;one known to other applications - identify it explicitly, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html#setNetworkInterface-java.lang.String-">setNetworkInterface</a> method shown here.
+This must be either an IP Address or network interface name such as <code>en0</code>.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -532,7 +517,7 @@ This must be either an IP Address or network interface name such as <code>en0</c
 Both valuable benefits, especially when network bandwidth is constrained.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 4. Enable delta sync</div>
+<div class="title">Example 5. Enable delta sync</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -544,7 +529,7 @@ Both valuable benefits, especially when network bandwidth is constrained.</p>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>Delta sync replication is not enabled by default.
-Use <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html">URLEndpointListenerConfiguration</a>'s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html#setEnableDeltaSync-boolean-">setEnableDeltaSync</a> method  to activate or deactivate it.</td>
+Use <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html">URLEndpointListenerConfiguration</a>'s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/URLEndpointListenerConfiguration.html#setEnableDeltaSync-boolean-">setEnableDeltaSync</a> method to activate or deactivate it.</td>
 </tr>
 </table>
 </div>
@@ -560,10 +545,8 @@ Use <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-andr
 Although it <em>can</em> be disabled, this is not recommended on production environments.</p>
 </div>
 <div class="paragraph">
-<p>To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <code>ws://</code>),  include <code>android:usesCleartextTraffic="true"</code> in the manifest; <strong>not recommended in production</strong>.</p>
-</div>
-<div class="paragraph">
-<p>When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity (<a href="#configure-tls-identity-for-listener">[configure-tls-identity-for-listener]</a>).</p>
+<p>To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <code>ws://</code>),  include <code>android:usesCleartextTraffic="true"</code> in the manifest; <strong>not recommended in production</strong>.
+When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity (<a href="#configure-tls-identity-for-listener">[configure-tls-identity-for-listener]</a>).</p>
 </div>
 <div class="dlist">
 <dl>
@@ -636,7 +619,7 @@ Subsequent starts of the Listener will then reuse the identity from secure stora
 </dl>
 </div>
 <div class="exampleblock">
-<div class="title">Example 5. Set Listener&#8217;s TLS identity</div>
+<div class="title">Example 6. Set Listener&#8217;s TLS identity</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -655,7 +638,7 @@ Subsequent starts of the Listener will then reuse the identity from secure stora
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset1_import-from-key-pair">
 <div class="paragraph">
-<p>Import a key pair into secure storage and create an TLSIdentity from the imported key-pair.</p>
+<p>Import a key pair into secure storage and create a TLSIdentity from the imported key-pair.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -688,6 +671,10 @@ listenerConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="2"></i
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>Ensure TLS is enabled.</td>
 </tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use the imported identity.</td>
+</tr>
 </table>
 </div>
 </div>
@@ -702,7 +689,7 @@ listenerConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="2"></i
 // Use a self-signed certificate
 //    Create a TLSIdentity for the server using convenience API.
 //    System generates self-signed cert
-
+// Work-in-progress. Code snippet coming soon.
 private static final Map&lt;String, String&gt; CERT_ATTRIBUTES; <i class="conum" data-value="2"></i><b>(2)</b>
 static {
     final Map&lt;String, String&gt; thisMap = new HashMap&lt;&gt;();
@@ -804,7 +791,7 @@ For how to authenticate using client certificates see: <a href="#authenticate-us
 The actual authentication is provided by the application code. Often in the form of a closure where the platform permits.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 6. Password authentication</div>
+<div class="title">Example 7. Password authentication</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -859,7 +846,7 @@ The logic should take the form of function or block (such as, a closure expressi
 </ul>
 </div>
 <div class="exampleblock">
-<div class="title">Example 7. Set Certificate Authorization</div>
+<div class="title">Example 8. Set Certificate Authorization</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -876,14 +863,16 @@ The logic should take the form of function or block (such as, a closure expressi
 <div class="tab-pane" aria-labelledby="tabset2_root-ca">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Work-in-progress. Code snippet coming soon.</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// cert is a pre-populated object of type:SecCertificate representing a certificate
+// Work in progress. Code snippet to be provided.</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_application-logic">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Work-in-progress. Code snippet coming soon.</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">  // Work in progress. Code snippet to be provided.
+// Work in progress. Code snippet to be provided.</code></pre>
 </div>
 </div>
 </div>
@@ -895,10 +884,10 @@ The logic should take the form of function or block (such as, a closure expressi
 <div class="sect2">
 <h3 id="delete-tls-identity"><a class="anchor" href="#delete-tls-identity"></a>Delete TLS Identity</h3>
 <div class="paragraph">
-<p>You can remove unwanted TLS identities from secure storage using the KeyStore API (see&#8201;&#8212;&#8201;<a href="https://developer.android.com/reference/java/security/KeyStore#deleteEntry(java.lang.String)" class="bare">https://developer.android.com/reference/java/security/KeyStore#deleteEntry(java.lang.String)</a>).</p>
+<p>You can remove unwanted TLS identities from Keystore using the KeyStore API (see&#8201;&#8212;&#8201;<a href="https://developer.android.com/reference/java/security/KeyStore#deleteEntry(java.lang.String)" class="bare">https://developer.android.com/reference/java/security/KeyStore#deleteEntry(java.lang.String)</a>).</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 8. Deleting TLS Identities</div>
+<div class="title">Example 9. Deleting TLS Identities</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -907,18 +896,6 @@ final KeyStore thisKeyStore =  KeyStore.getInstance("PKCS12");
 thisKeyStore.load(null);
 thisKeyStore.deleteEntry(thisAlias);</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Specify the cryptography standard type corresponding to your secure storage</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Specify the alias (label) of the identity to be deleted.</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -946,15 +923,12 @@ thisKeyStore.deleteEntry(thisAlias);</code></pre>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ignored</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="olist arabic">
-<ol class="arabic">
-<li>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>TLS is disabled; all communication is plain text.</p>
-<div class="paragraph">
-<p>To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <code>ws://</code>),  include <code>android:usesCleartextTraffic="true"</code> in the manifest; <strong>not recommended in production</strong>.</p>
 </div>
-</li>
-</ol>
+<div class="paragraph">
+<p>+
+To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <code>ws://</code>),  include <code>android:usesCleartextTraffic="true"</code> in the manifest; <strong>not recommended in production</strong>.</p>
 </div></div></td>
 </tr>
 <tr>
@@ -982,10 +956,10 @@ thisKeyStore.deleteEntry(thisAlias);</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>On first use&#8201;&#8212;&#8201;Bring your own certificate and private key; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html#importIdentity-java.lang.String-java.io.InputStream-char:A-java.lang.String-char:A-java.lang.String-">importIdentity()</a> method to add it to the secure storage.</p>
+<p>On first use&#8201;&#8212;&#8201;Bring your own certificate and private key; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html#importIdentity-java.lang.String-java.io.InputStream-char:A-java.lang.String-char:A-java.lang.String-">importIdentity()</a> method to add it to the Keystore.</p>
 </li>
 <li>
-<p>Each time&#8201;&#8212;&#8201;Use the server identity from the certificate stored in the secure storage; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html#getIdentity-java.lang.String-">getIdentity()</a> method with the alias you want to retrieve..</p>
+<p>Each time&#8201;&#8212;&#8201;Use the server identity from the certificate stored in the Keystore; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html#getIdentity-java.lang.String-">getIdentity()</a> method with the alias you want to retrieve..</p>
 </li>
 </ul>
 </div></div></td>
@@ -1009,10 +983,10 @@ thisKeyStore.deleteEntry(thisAlias);</code></pre>
 <h2 id="start-listener"><a class="anchor" href="#start-listener"></a>Start Listener</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Once you have completed the Listener&#8217;s configuration settings you can initialize the Listener instance and start it running&#8201;&#8212;&#8201;see: <a href="#initialize-and-start-listener">Example 9</a></p>
+<p>Once you have completed the Listener&#8217;s configuration settings you can initialize the Listener instance and start it running&#8201;&#8212;&#8201;see: <a href="#initialize-and-start-listener">Example 10</a></p>
 </div>
 <div id="initialize-and-start-listener" class="exampleblock">
-<div class="title">Example 9. Initialize and start listener</div>
+<div class="title">Example 10. Initialize and start listener</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1044,10 +1018,10 @@ thisListener.start(); <i class="conum" data-value="2"></i><b>(2)</b></code></pre
 <h2 id="monitor-listener"><a class="anchor" href="#monitor-listener"></a>Monitor Listener</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Use the Listener&#8217;s <code>getStatus</code> method to get counts of total and active connections&#8201;&#8212;&#8201;see: <a href="#get-connection-counts">Example 10</a>.</p>
+<p>Use the Listener&#8217;s <code>getStatus</code> method to get counts of total and active connections&#8201;&#8212;&#8201;see: <a href="#get-connection-counts">Example 11</a>.</p>
 </div>
 <div id="get-connection-counts" class="exampleblock">
-<div class="title">Example 10. Get connection counts</div>
+<div class="title">Example 11. Get connection counts</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">

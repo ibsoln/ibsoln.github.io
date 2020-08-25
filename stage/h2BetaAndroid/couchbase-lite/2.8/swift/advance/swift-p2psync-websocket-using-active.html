@@ -307,20 +307,27 @@ let targetEndpoint = URLEndpoint(url: tgtUrl)
 var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="1"></i><b>(1)</b>
 
 config.replicatorType = .pushAndPull
-config.continuous = true
-// serverCertificateVerificationMode=.selfSignedCert effectively disables cert validation
-config.serverCertificateVerificationMode = .selfSignedCert <i class="conum" data-value="2"></i><b>(2)</b>
 
+// Configure Sync Mode
+config.continuous = true
+
+// Configure Server Security -- only accept CA Certs
+config.acceptOnlySelfSignedServerCertificate = false <i class="conum" data-value="2"></i><b>(2)</b>
+
+// Configure Client Security <i class="conum" data-value="3"></i><b>(3)</b>
 //  Set Authentication Mode
-let authenticator = BasicAuthenticator(username: user, password: password) <i class="conum" data-value="3"></i><b>(3)</b>
-config.authenticator = authenticator
+let thisAuthenticator = BasicAuthenticator(username: thisUser, password: thisPassword)
+config.authenticator = thisAuthenticator
+
+/* Optionally set custom conflict resolver call back */
+config.conflictResolver = ( /* define resolver function */); <i class="conum" data-value="4"></i><b>(4)</b>
 
 // Apply configuration settings to the replicator
-thisReplicator = Replicator.init( config: config) <i class="conum" data-value="4"></i><b>(4)</b>
+thisReplicator = Replicator.init( config: config) <i class="conum" data-value="5"></i><b>(5)</b>
 
 // Optionally add a change listener
-// add change listener and retain token for use in deletion
-let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="5"></i><b>(5)</b>
+// Retain token for use in deletion
+let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="6"></i><b>(6)</b>
   if change.status.activity == .stopped {
       print("Replication stopped")
   }
@@ -329,50 +336,45 @@ let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (c
   }
 })
 
-// Run the replicator using the config settings
-thisReplicator?.start()  <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+
+    // Run the replicator using the config settings
+    thisReplicator?.start()  <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>
-As with any network or file I/O activity, CouchbaseLite activities should not be performed on the UI thread.
-<strong>Always</strong> use a <strong>background</strong> thread.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Use the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html">ReplicatorConfiguration</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC8database6targetAcA8DatabaseC_AA8Endpoint_ptcfc">init(database:, target:)</a> constructor to initialize the replicator configuration with the local database&#8201;&#8212;&#8201;see <a href="#configure-target">Configure Target</a></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>By default only CA Certificates are accepted; self-signed Certificates are disallowed.
 The provided certificate must be from a trusted root.
 <div class="paragraph">
-<p>use {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate}(true) to accept ONLY self-signed certificates.
+<p>use <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#//s:18CouchbaseLiteSwift23ReplicatorConfigurationC37acceptOnlySelfSignedServerCertificateSbvp">acceptOnlySelfSignedServerCertificate</a>(true) to accept ONLY self-signed certificates.
 Validation of the certificate is bypassed&#8201;&#8212;&#8201;see: <a href="#listener-authentication">Listener Authentication</a></p>
 </div></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>The <code>authenticator</code> is configured to use basic authentication.
 Other supported options are <code>ClientCertificateAuthenticator</code> if you want to use client certificate based authentication&#8201;&#8212;&#8201;see: <a href="#client-authentication">Client Authentication</a></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Handle <a href="#conflict-resolution">Conflict Resolution</a></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Initialize the replicator with specified configuration</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
 <td>Register an observer to be notified of changes to the replication status</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
 <td>Start the replicator</td>
 </tr>
 </table>
@@ -399,7 +401,7 @@ Other supported options are <code>ClientCertificateAuthenticator</code> if you w
 <p>Prior to connecting with a listener you may execute a peer discovery phase to dynamically discover peers.</p>
 </div>
 <div class="paragraph">
-<p>For the active peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as <em>Network Service Discovery</em>&#8201;&#8212;&#8201;see: <a href="https://developer.android.com/training/connect-devices-wirelessly/nsd" class="bare">https://developer.android.com/training/connect-devices-wirelessly/nsd</a>.</p>
+<p>For the active peer this involves browsing-for and selecting the appropriate service using a zero-config protocol such as <em>Bonjour</em>-- see: <a href="https://developer.apple.com/bonjour/" class="bare">https://developer.apple.com/bonjour/</a>.</p>
 </div>
 </div>
 </div>
@@ -431,8 +433,7 @@ Other supported options are <code>ClientCertificateAuthenticator</code> if you w
 <div class="openblock">
 <div class="content">
 <div class="paragraph">
-<p>The URL scheme for web socket URLs uses <code>ws:</code> (non-TLS) or <code>wss:</code> (SSL/TLS) prefixes.
-To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <code>ws://</code>),  include <code>android:usesCleartextTraffic="true"</code> in the manifest; <strong>not recommended in production</strong>.</p>
+<p>The URL scheme for web socket URLs uses <code>ws:</code> (non-TLS) or <code>wss:</code> (SSL/TLS) prefixes.</p>
 </div>
 </div>
 </div>
@@ -456,7 +457,7 @@ var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Note use of TLS (<code>wss://</code>) prefix to URI to ensure TLS encrypted communication(recommended).</td>
+<td>Note use of the <code>wss://</code> prefix, to ensures use of TLS encryption (strongly recommended in production).</td>
 </tr>
 </table>
 </div>
@@ -495,6 +496,8 @@ var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">config.replicatorType = .pushAndPull
+
+// Configure Sync Mode
 config.continuous = true</code></pre>
 </div>
 </div>
@@ -504,13 +507,13 @@ config.continuous = true</code></pre>
 <div class="sect2">
 <h3 id="listener-authentication"><a class="anchor" href="#listener-authentication"></a>Listener Authentication</h3>
 <div class="paragraph">
-<p>Use <code><a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html">ReplicatorConfiguration</a></code>, with its {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate} parameter, to tell the replicator how to verify TLS server certificates.</p>
+<p>Use <code><a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html">ReplicatorConfiguration</a></code>, with its <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#//s:18CouchbaseLiteSwift23ReplicatorConfigurationC37acceptOnlySelfSignedServerCertificateSbvp">acceptOnlySelfSignedServerCertificate</a> parameter, to tell the replicator how to verify TLS server certificates.</p>
 </div>
 <div class="paragraph">
-<p>If setAcceptOnlySelfSignedServerCertificate is <code>false</code> (default) then only CA Certificates are accepted.</p>
+<p>If <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#//s:18CouchbaseLiteSwift23ReplicatorConfigurationC37acceptOnlySelfSignedServerCertificateSbvp">acceptOnlySelfSignedServerCertificate</a> is <code>false</code> (default) then only CA Certificates are accepted.</p>
 </div>
 <div class="paragraph">
-<p>If setAcceptOnlySelfSignedServerCertificate is <code>true</code> then only Self-Signed  Certificates are accepted.</p>
+<p>If <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#//s:18CouchbaseLiteSwift23ReplicatorConfigurationC37acceptOnlySelfSignedServerCertificateSbvp">acceptOnlySelfSignedServerCertificate</a> is <code>true</code> then only Self-Signed Certificates are accepted.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -530,7 +533,8 @@ config.continuous = true</code></pre>
 <div class="tab-pane" aria-labelledby="tabset1_ca-cert">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift"></code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">// Configure Server Security -- only accept CA Certs
+config.acceptOnlySelfSignedServerCertificate = false <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -547,9 +551,8 @@ Self signed certificates disallowed.</td>
 <div class="tab-pane" aria-labelledby="tabset1_self-signed-cert">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">// Use serverCertificateVerificationMode set to `.selfSignedCert` to disable cert validation
-config.disableTLS = false
-config.serverCertificateVerificationMode = .selfSignedCert</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">// Configure Server Security -- only accept self-signed certs
+config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -579,8 +582,8 @@ guard let localCertificate:NSData = NSData(contentsOfFile: pathToCert!)
 guard let pinnedCert = SecCertificateCreateWithData(nil, localCertificate)
   else { /* process error */ }
 
-// Add `pinnedCert` and `.cacert` to `ReplicatorConfiguration`
-config.serverCertificateVerificationMode = .caCert
+// Add `pinnedCert` and `acceptOnlySelfSignedServerCertificate=false` to `ReplicatorConfiguration`
+config.acceptOnlySelfSignedServerCertificate = false
 config.pinnedServerCertificate = pinnedCert</code></pre>
 </div>
 </div>
@@ -610,8 +613,8 @@ config.pinnedServerCertificate = pinnedCert</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">//  Set Authentication Mode
-let authenticator = BasicAuthenticator(username: user, password: password) <i class="conum" data-value="1"></i><b>(1)</b>
-config.authenticator = authenticator</code></pre>
+let thisAuthenticator = BasicAuthenticator(username: thisUser, password: thisPassword)
+config.authenticator = thisAuthenticator</code></pre>
 </div>
 </div>
 </div>
@@ -664,7 +667,7 @@ do {
 } catch
   {return nil}
 thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity )
-config.thisAuthenticator</code></pre>
+config.authenticator = thisAuthenticator</code></pre>
 </div>
 </div>
 </div>
@@ -688,10 +691,9 @@ You can, optionally, add a change listener (see <a href="#monitor-sync">Monitor 
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code-snippets/p2psync-websocket.swift">// Apply configuration settings to the replicator
 thisReplicator = Replicator.init( config: config) <i class="conum" data-value="1"></i><b>(1)</b>
 
-// Optionally add a change listener
 
-// Run the replicator using the config settings
-thisReplicator?.start()  <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+    // Run the replicator using the config settings
+    thisReplicator?.start()  <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 </div>
@@ -762,7 +764,8 @@ That is, when it is actively transferring data and when it has stopped.</p>
 <div class="tab-pane" aria-labelledby="tabset2_addchangelistener">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code-snippets/p2psync-websocket.swift">// add change listener and retain token for use in deletion
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code-snippets/p2psync-websocket.swift">// Optionally add a change listener
+// Retain token for use in deletion
 let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="1"></i><b>(1)</b>
   if change.status.activity == .stopped {
       print("Replication stopped")

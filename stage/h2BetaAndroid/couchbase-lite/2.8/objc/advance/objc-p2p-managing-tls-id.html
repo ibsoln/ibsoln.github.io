@@ -323,7 +323,7 @@ listenerConfig.tlsIdentity = nil</code></pre>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m#L288-L297">// USE KEYCHAIN IDENTITY IF EXISTS
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m#L348-L357">// USE KEYCHAIN IDENTITY IF EXISTS
 // Check if Id exists in keychain. If so use that Id
 do {
     if let thisIdentity = try TLSIdentity.identity(withLabel: "doco-sync-server") {
@@ -343,7 +343,7 @@ do {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m#L305-L312">// CREATE IDENTITY FROM BUNDLED RESOURCE IF FOUND
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m#L365-L372">// CREATE IDENTITY FROM BUNDLED RESOURCE IF FOUND
 
         // Check for a resource bundle with required label to generate identity from
         // return nil identify if not found
@@ -362,7 +362,7 @@ do {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m#L316-L346">// Use SecPKCS12Import to import the contents (identities and certificates)
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m#L376-L406">// Use SecPKCS12Import to import the contents (identities and certificates)
 // of the required resource bundle (PKCS #12 formatted blob).
 //
 // Set passphrase using kSecImportExportPassphrase.
@@ -404,7 +404,7 @@ guard let pKey = thisPrivateKey, let pubCerts = thisCertChain else {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m#L350-L378">// STORE THE IDENTITY AND ITS CERT CHAIN IN THE KEYCHAIN
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m#L410-L438">// STORE THE IDENTITY AND ITS CERT CHAIN IN THE KEYCHAIN
 
         // Store Private Key in Keychain
         let params: [String : Any] = [
@@ -444,7 +444,7 @@ guard let pKey = thisPrivateKey, let pubCerts = thisCertChain else {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m#L382-L388">// RETURN A TLSIDENTITY FROM THE KEYCHAIN FOR USE IN CONFIGURING TLS COMMUNICATION
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m#L442-L448">// RETURN A TLSIDENTITY FROM THE KEYCHAIN FOR USE IN CONFIGURING TLS COMMUNICATION
 do {
     return try TLSIdentity.identity(withIdentity: thisSecId, certs: [pubCerts[0]])
 } catch {
@@ -463,50 +463,16 @@ do {
 <div class="sect1">
 <h2 id="delete-tls-identity"><a class="anchor" href="#delete-tls-identity"></a>Delete TLS Identity</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<div class="title"><code>deleteIdentity(label)</code></div>
-<p></p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 80%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Form</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
+<div class="listingblock">
 <div class="content">
-<pre>deleteIdentity(label: String) throws</pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">do {
+    try TLSIdentity.identity(withIdentity: thisSecId)
+} catch {
+    print("Error while deleting cert : \(error)")
+    return nil
+}</code></pre>
 </div>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Explanation</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Delete the identity of the given label or alias from the secure storage.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Preconditions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Postconditions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The identity is deleted from the storage. If the identity doesn’t exist, this operation will be no-ops.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Exceptions</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CouchbaseLiteException will be thrown when the identity cannot be deleted. The error code will be determined during the technical design phase.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Example</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/SampleCodeTest.m]</code></pre>
 </div>
-</div></div></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 <div class="sect1">
