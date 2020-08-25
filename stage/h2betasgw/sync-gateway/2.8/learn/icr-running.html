@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Running Replications | Couchbase Docs</title>
-<link rel="canonical" href="https://ibsoln.github.io/stage/h2betasgw2-slim/sync-gateway/2.8/learn/icr-running.html">
+<title>Initializing Replications | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/h2-714/sync-gateway/2.8/learn/icr-running.html">
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="This content covers how to run inter-cluster replication (replication between Sync Gateway clusters)">
+<meta name="description" content="This content covers how to initialize and run inter-cluster replication (replication between Sync Gateway clusters)">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -39,17 +39,17 @@
               <div class="navbar-collapse collapse" id="navbar2">
                 <ul class="navbar-nav w-100 justify-content-start">
                   <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="../../../home/server.html">
                       Server
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="../../../home/mobile.html">
                       Mobile
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="../../../home/cloud.html">
                       Cloud
                     </a>
                   </li>
@@ -98,8 +98,8 @@
 <img src="../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">Sync Gateway  H2-BETA 15July20-0800</span></h4>
-<a class="navbar-item component" href="icr-overview.html"> <span class="version">2.8</span></a>
+<h4 class="title"><span class="">Sync Gateway H2-714 23July20-1512</span></h4>
+<a class="navbar-item component" href="../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
 </div>
@@ -109,13 +109,13 @@
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
-<span class="nav-text ">Learn</span>
+<a class="nav-link" href="icr-sgreplicate.html">Inter-cluster Replication</a>
 </span>
 <ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="icr-overview.html">Inter-Cluster Replication</a>
+<a class="nav-link" href="icr-sgreplicate.html">Inter-cluster Replication</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -124,15 +124,6 @@
 <a class="nav-link" href="icr-conflict-resolution.html">Conflict Resolution</a>
 </span>
 </li>
-</ul>
-</li>
-<li class="nav-item " data-depth="0">
-
-<span class="nav-line "  data-depth="0">
-<span class="in-toggle" data-depth="0"></span>
-<span class="nav-text ">Refer</span>
-</span>
-<ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
@@ -142,31 +133,7 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<span class="in-toggle" data-depth="1"></span>
-<span class="nav-text ">Sync Gateway API</span>
-</span>
-<ul class="nav-list">
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../refer/rest-api-admin.html">Admin REST API</a>
-</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="nav-item " data-depth="0">
-
-<span class="nav-line "  data-depth="0">
-<span class="in-toggle" data-depth="0"></span>
-<span class="nav-text ">Product Notes</span>
-</span>
-<ul class="nav-list">
-<li class="nav-item  is-inactive " data-depth="1">
-
-<span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../prodnotes/pn-change-log-config.html">Configuration Change Log</a>
 </span>
 </li>
 </ul>
@@ -238,18 +205,18 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="icr-overview.html">Sync Gateway  H2-BETA 15July20-0800</a></li>
-<li class="crumb"><a href="icr-running.html">Running Replications</a></li>
+<li class="crumb"><a href="../index.html">Sync Gateway H2-714 23July20-1512</a></li>
+<li class="crumb"><a href="icr-running.html">Initializing Replications</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Running Replications</h1>
+<h1 class="page">Initializing Replications</h1>
 <div class="labels">
 <ul>
 <li class="edition"><a href="https://www.couchbase.com/products/editions">Under Development</a></li>
-<li class="status"><span>beta -- H2-SGW as at 10Jul20</span></li>
+<li class="status"><span>stage -- {release-comments-sgw}</span></li>
 </ul>
 </div>
 </div>
@@ -259,6 +226,484 @@
 <span  id="otherContributor"> + </span>
 </div><div id="preamble">
 <div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p><em>Topic Group</em>&#8201;&#8212;&#8201;Inter-cluster Replication<br>
+This content covers how to initialize and run inter-cluster replication (replication between Sync Gateway clusters)<br>
+<br>
+<em>Related</em>&#8201;&#8212;&#8201;<a href="../refer/config-properties.html" class="page">Configuration Schema</a> | <a href="../refer/rest-api-admin.html" class="page">Admin REST API</a> | <a href="icr-admin.html" class="page">Replication Admin</a></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="initialization"><a class="anchor" href="#initialization"></a>Initialization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All replications operate within the context of a local database:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Configured replications use the <code>database.{db-name}.replications</code> property to add a replication definition to a local database.</p>
+</li>
+<li>
+<p>REST API replications specify the local database and replication identity in the API POST/PUT request.
+Providing the replication definition parameters in the request body as a JSON string.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Both of these scenarios and a summary of the available replication properties are shown in <a href="#replication-properties">Example 1</a>.
+It is a brief introduction to the replication properties, which are covered in more detail in <a href="../refer/config-properties.html" class="page">Configuration Schema</a> (the definitions apply to configured and API replications).</p>
+</div>
+<div class="paragraph">
+<p>Replication highlights:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>There are two types of replication: persistent and ad hoc (REST API only).</p>
+</li>
+<li>
+<p>Replications of both types can run in one-shot or continuous replications modes.</p>
+</li>
+<li>
+<p>All replications involve at least one local database.</p>
+</li>
+<li>
+<p>Replications can be configured to purge documents when channel access is revoked (a removal notification is received).</p>
+</li>
+<li>
+<p>Persistent continuous replications can be:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Reset&#8201;&#8212;&#8201;checkpoint back to starting value ?? check</p>
+</li>
+<li>
+<p>Updated&#8201;&#8212;&#8201;only the parameter values provided in the PUT request body will be updated</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Persistent and ad hoc replications can be:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Removed&#8201;&#8212;&#8201;only the replication_id is needed to delete ongoing continuous or one-shot replications.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a> only:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Replications can use delta-sync mode, whereby only the changed data-items are replicated.</p>
+<div class="literalblock">
+<div class="content">
+<pre>Running highlights</pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Multiple identical replicators can be initiated on a Sync Gateway node provided each has a unique <code>replication_Id</code>.</p>
+</li>
+<li>
+<p>SGR-1 and SGR-2 replications can run on the same node, but you must ensure that they each have a different <code>replication_id</code>.</p>
+</li>
+<li>
+<p>The user under which replication is being run must have read and write access to the data being replicated.</p>
+</li>
+<li>
+<p>Exponential backoff when connection lost. Doesn&#8217;t apply to <code>adhoc</code>.</p>
+</li>
+<li>
+<p>SGR-2 will continue trying to connect for 30 minutes following authentication failure (including user-invalid/doesn&#8217;t exist).</p>
+</li>
+<li>
+<p>Running replications can be stopped. Stopped replications can be (re)Started.</p>
+</li>
+<li>
+<p>If ALL the Sync Gateway nodes in a source or target Sync Gateway cluster go down in the middle of continuous replication, by default, the system should pick up from the last document that was successfully processed by both sides when the replication/cluster is restarted</p>
+</li>
+<li>
+<p>REST ONLY</p>
+<div class="ulist">
+<ul>
+<li>
+<p>POST databases/{db}/_replication creates a replication using the {rep-id} specified in the body or if none specified, a unique UUID.</p>
+</li>
+<li>
+<p>PUT databases/{db}/_replication/{rep-id} upserts replication {rep-id}.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a> only:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Replications are distributed even across all available Sync Gateway nodes and so are not guaranteed to run on their originating node.</p>
+</li>
+<li>
+<p>If a multi-node Sync Gateway cluster loses a subset of sync gateway nodes, the remaining nodes continue replication uninterrupted IF they have been configured to handle the replication (continuous and one-shot replications).</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div id="replication-properties" class="exampleblock">
+<div class="title">Example 1. Replication Definition</div>
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_summary-of-parameters"></a>Summary of Parameters</p>
+</li>
+<li>
+<p><a id="tabset1_configured-example"></a>Configured Example</p>
+</li>
+<li>
+<p><a id="tabset1_rest-api-example"></a>REST API Example</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_summary-of-parameters">
+<div class="paragraph">
+<p>This table summarize all the available configurable items. It includes a link to a detailed description of each.</p>
+</div>
+<table id="replication-definiton-summary" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 70%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name and Link</th>
+<th class="tableblock halign-left valign-top">Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-adhoc" class="page">adhoc</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>REST API ONLY<br>
+Use the Admin REST API&#8217;s <code>adhoc</code> parameter to specify that a replication is ad hoc rather than persistent.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-batch_size" class="page">batch_size</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-cancel" class="page">cancel</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>REST API ONLY<br>
+Use the Admin REST API&#8217;s <code>cancel</code> parameter only when you want to want to cancel an existing active replication.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-conflict_resolution_type" class="page">conflict_resolution_type</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>conflict_resolution_type</code> to specify how Sync Gateway should resolve conflicts. By default the automatic conflict</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-continuous" class="page">continuous</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>continuous</code> to specify whether this replication will run continuously, or be one-shot.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-custom_conflict_resolver" class="page">custom_conflict_resolver</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>custom_conflict_resolver</code> to provide the Javascript function used to resolve conflicts if <code>"conflict_resolution_type": "custom"</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-direction" class="page">direction</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>direction</code> to specify the replication is <strong>push</strong>, <strong>pull</strong> or <strong>pushAndPull</strong> relative to this node.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-enable_delta_sync" class="page">enable_delta_sync</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>enable_delta_sync</code> to specify use of delta sync for a replication.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-filter" class="page">filter</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>filter</code> to specify the name of the function to be used to filter documents.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-max_backoff_time" class="page">max_backoff_time</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>max_backoff_time</code> to specify the number of minutes Sync Gateway will spend trying to reconnect lost or unreachable <code>remote</code> targets.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-purge_on_removal" class="page">purge_on_removal</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>purge_on_removal</code> to specify (per replication) whether removing a <code>channel</code> should trigger a purge.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-query_params" class="page">query_params</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>query_params</code> to specify the key/value pairs to be passed to the filter named in <code>filter</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-remote" class="page">remote</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>remote</code> to specify the database endpoint on the remote Sync Gateway custer.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-replication_id" class="page">replication_id</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>replication_id</code> to specify an identifying name for the replication.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-state" class="page">state</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>state</code> to specify the state in which to launch the replication.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_configured-example">
+<div class="paragraph">
+<p>This is an example of a replication definition. Its purpose is to illustrate all configurable items in use and so should not be considered a working example.</p>
+</div>
+<div class="paragraph">
+<p>It creates a replication with the replication_ID of <code>db1-rep-id1-pull-oneshot</code> on a local database <code>db1-local_</code>, pulling data from a remote database <code>db1-remote</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/configuration/sync-gateway-config.json#L932-L948">"db1-rep-id1-pull-oneshot":
+  "direction": "pull",                              <i class="conum" data-value="1"></i><b>(1)</b>
+  "remote": "https://example.com:4984/remote_db1",
+  "user": "user1",                                  <i class="conum" data-value="2"></i><b>(2)</b>
+  "password": "password",
+  "batch_size": 1000,                               <i class="conum" data-value="3"></i><b>(3)</b>
+  "conflict_resolution_type": "custom",             <i class="conum" data-value="4"></i><b>(4)</b>
+  "custom_conflict_resolver": "",                   <i class="conum" data-value="5"></i><b>(5)</b>
+  "continuous": false,                              <i class="conum" data-value="6"></i><b>(6)</b>
+  "enable_delta_sync": false,                       <i class="conum" data-value="7"></i><b>(7)</b>
+  "filter": "sync_gateway/bychannel",               <i class="conum" data-value="8"></i><b>(8)</b>
+  "query_params": ["channel.user1"]                 <i class="conum" data-value="9"></i><b>(9)</b>
+  "max_backoff_time": 5,                            <i class="conum" data-value="10"></i><b>(10)</b>
+  "purge_on_removal": false                         <i class="conum" data-value="11"></i><b>(11)</b>
+  "state": "running"                                <i class="conum" data-value="12"></i><b>(12)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Pull changes from the <code>remote</code> database at the specified url.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Authenticate with the provided credentials. This user must have read and write access to both the local and remote databases.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Batch together up to 1000 revisions at a time. This improve replication performance but consumes more memory resources.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Apply a custom conflict resolution policy.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Provide a working Javascript function to apply the required resolution policy.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>By setting continuous=false, we are creating a one-shot replication. We could also have omitted this parameter as it defaults to <code>false</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Don&#8217;t use delta-sync; the default behavior.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Filter documents by channel.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Replicate only those documents tagged with the channel names "user1".<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Wait no more than 5 minutes between retries after network failure; default behavior.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Don&#8217;t purge following removal of a channel; the default behavior.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>Start the replicator immediately and on Sync Gateway node re(start);. We could also have omitted this parameter as this is the default behavior.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_rest-api-example">
+<div class="paragraph">
+<p>This is an example of a replication definition as you might submit it to the Admin REST API.using <code>curl</code>.
+Its purpose is to illustrate all configurable items in use and so should not be considered a working example.</p>
+</div>
+<div class="paragraph">
+<p>It creates a replication with the replication_ID of <code>db1-rep-id1-pull-oneshot</code> on a local database <code>db1-local_</code>, pulling data from a remote database <code>db1-remote</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl --location --request POST 'http://localhost:4985/db1-local/_replication/db1-rep-id1-pull-oneshot' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic ZGVtbzpwYXNzd29yZA==' \
+--dataraw '{
+"replication_id": "db1-rep-id1-pull-oneshot"
+        "direction": "pull",                              <i class="conum" data-value="1"></i><b>(1)</b>
+        "remote": "https://example.com:4984/remote_db1",
+        "user": "user1",                                  <i class="conum" data-value="2"></i><b>(2)</b>
+        "password": "password",
+        "batch_size": 1000,                               <i class="conum" data-value="3"></i><b>(3)</b>
+        "conflict_resolution_type": "custom",             <i class="conum" data-value="4"></i><b>(4)</b>
+        "custom_conflict_resolver": "",                   <i class="conum" data-value="5"></i><b>(5)</b>
+        "continuous": false,                              <i class="conum" data-value="6"></i><b>(6)</b>
+        "enable_delta_sync": false,                       <i class="conum" data-value="7"></i><b>(7)</b>
+        "filter": "sync_gateway/bychannel",               <i class="conum" data-value="8"></i><b>(8)</b>
+        "query_params": ["channel.user1"]                 <i class="conum" data-value="9"></i><b>(9)</b>
+        "max_backoff_time": 5,                            <i class="conum" data-value="10"></i><b>(10)</b>
+        "purge_on_removal": false                         <i class="conum" data-value="11"></i><b>(11)</b>
+        "state": "running"                                <i class="conum" data-value="12"></i><b>(12)</b>
+  "adhoc": false, <i class="conum" data-value="13"></i><b>(13)</b>
+  "cancel": false <i class="conum" data-value="14"></i><b>(14)</b>
+}'</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Pull changes from the <code>remote</code> database at the specified url.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Authenticate with the provided credentials. This user must have read and write access to both the local and remote databases.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Batch together up to 1000 revisions at a time. This improve replication performance but consumes more memory resources.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Apply a custom conflict resolution policy.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Provide a working Javascript function to apply the required resolution policy.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>By setting continuous=false, we are creating a one-shot replication. We could also have omitted this parameter as it defaults to <code>false</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Don&#8217;t use delta-sync; the default behavior.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Filter documents by channel.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Replicate only those documents tagged with the channel names "user1".<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Wait no more than 5 minutes between retries after network failure; default behavior.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Don&#8217;t purge following removal of a channel; the default behavior.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>Start the replicator immediately and on Sync Gateway node re(start);. We could also have omitted this parameter as this is the default behavior.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td>Setting <code>adhoc=false</code> marks this as a persistent replication. The definition will survive Sync Gateway node restarts. This the default behaviour if this parameter is omitted.+</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td>Set <code>cancel=true</code> to cancel an initialized replication; otherwise you can omit this parameter.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="generic-constraints"><a class="anchor" href="#generic-constraints"></a>Generic Constraints</h2>
+<div class="sectionbody">
 <div class="admonitionblock caution">
 <table>
 <tr>
@@ -266,225 +711,257 @@
 <i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
-<div class="title">Author&#8217;s Notes</div>
-CONTENT UNDER DEVELOPMENT
+<div class="title">To run SGR-2 replications</div>
+<div class="paragraph">
+<p>All active nodes in active cluster must be running Sync Gateway version 2.8 or higher.</p>
+</div>
 </td>
 </tr>
 </table>
 </div>
-<div class="quoteblock abstract">
-<blockquote>
-<div class="paragraph">
-<p>This content covers how to run inter-cluster replication (replication between Sync Gateway clusters)</p>
-</div>
-<div class="paragraph">
-<p></p>
-</div>
-<div class="paragraph">
-<p><em>Related</em>&#8201;&#8212;&#8201;<a href="../refer/config-properties.html" class="page">Configuration Schema</a> | <a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
-</div>
-<div class="paragraph">
-<p><em>Topic Group</em>&#8201;&#8212;&#8201;Inter-cluster Replication</p>
-</div>
-</blockquote>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></dt>
+<dd>
+<p>All replications are distributed evenly across available nodes. This means they cannot be guaranteed to run on the node from which they originate.</p>
+</dd>
+<dt class="hdlist1">Access rights</dt>
+<dd>
+<p>The user running the replication must have read and write access to the data being replicated.
+This is not enforced by the system.
+Use your <code>sync</code> function to ensure a consistent approach is applied across all clusters.</p>
+</dd>
+<dt class="hdlist1">Mixing SGR1 and SGR2 replications</dt>
+<dd>
+<p>Both protocols can legitimately be in use at the same time, especially during transition. However, you should avoid initializing identical SGR1 and SGR2 replications.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="running-via-the-rest-api"><a class="anchor" href="#running-via-the-rest-api"></a>Running via the REST API</h2>
+<h2 id="running-configured-replications"><a class="anchor" href="#running-configured-replications"></a>Running Configured Replications</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A replication is run by sending a POST request to the server endpoint <code>replication</code>, with a JSON object defining the replication parameters.
-Both one-shot and continuous replications can be run.</p>
-</div>
-<div class="paragraph">
-<p>Each replication is one-way between two local or a local and a remote Sync Gateway databases.</p>
-</div>
-<div class="paragraph">
-<p>Multiple replications can run simultaneously, supporting bi-directional replications and different replication topologies.
-Be aware that both databases being synchronized should have the same sync function, otherwise it could lead to unexpected behavior.</p>
-</div>
-<div class="paragraph">
-<p>You can submit the request using the <code>curl</code> utility or an application such as <em>Postman</em></p>
+<p>Replications in the configuration file start automatically whenever Sync Gateway is (re)started.
+Unless you inhibit this by adding a <code>"state": "stopped"</code> parameter to the replication definition&#8201;&#8212;&#8201;see: <a href="../refer/config-properties.html#databases-this_db-replications-this_rep-state" class="page">state</a>.
+You can manually start 'stopped' replication using <a href="icr-admin.html#starting-a-replication" class="page">Starting a replication</a>.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 1. Submitting API Requests</div>
+<div class="title">Example 2. Configured Replications&#8201;&#8212;&#8201;Continuous and One-shot</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
-<li>
-<p><a id="tabset1_using-curl"></a>Using CURL</p>
-</li>
-<li>
-<p><a id="tabset1_using-postman"></a>Using Postman</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_using-curl">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -X PUT "http://localhost:4985/db1/_replication/rep1" -H "accept: application/json" -H "Content-Type: application/json" -d "{ \"adhoc\": false, \"batch_size\": 0, \"conflict_resolution_type\": \"string\", \"continuous\": false, \"custom_conflict_resolver\": \"string\", \"direction\": \"string\", \"enable_delta_sync\": false, \"filter\": \"string\", \"max_backoff_time\": 0, \"perf_tuning_params\": [ \"string\" ], \"purge_on_removal\": false, \"query_params\": [ \"string\" ], \"remote\": \"string\", \"replication_id\": \"string\", \"state\": \"string\"}"</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset1_using-postman">
-<div class="imageblock">
-<div class="content">
-<img src="../_images/postman.png" alt="postman" width="800">
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset2_one-shot"></a>One-shot</p>
-</li>
 <li>
 <p><a id="tabset2_continuous"></a>Continuous</p>
 </li>
+<li>
+<p><a id="tabset2_one-shot"></a>One-shot</p>
+</li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_one-shot">
-<div class="paragraph">
-<p>These parameters start a one-shot replication between one database on the local Sync Gateway instance and one on a remote Sync Gateway instance, with user credentials.
-The request will return immediately and the replication will run asynchronously.</p>
-</div>
+<div class="tab-pane" aria-labelledby="tabset2_continuous">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">{
-  "replication_id": "our-rep-1",
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/configuration/sync-gateway-config.json">//  . . . other configuration entries
+"db1-rep-id1-pull-cont":
+  "replication_id": "db1-rep-id1-pull-cont",
   "direction": "pull",
-  "remote": "http://user:password@example.com:4985/db1",
+  "continuous": true <i class="conum" data-value="1"></i><b>(1)</b>
+  "purge-on-removal": true,
+  "remote": "http://user:password@example.com:4985/db1-remote",
   "filter":"sync_gateway/bychannel",
   "query_params": {
     "channels": ["channel1.user1"]
   }
-}</code></pre>
+//  . . . other configuration entries</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Make this a continuous replication that remains running, listening for changes to process.
+Because it is also persistent, it will start automatically following Sync Gateway node restarts (<code>state</code> defaults to <code>running</code>).</td>
+</tr>
+</table>
 </div>
-<div class="tab-pane" aria-labelledby="tabset2_continuous">
-<div class="paragraph">
-<p>These parameters start a continuous replication between one database on the local Sync Gateway instance and one on a remote Sync Gateway instance.
-The replicator will batch up to 1000 revisions at a time, this will improve replication performance but will use more memory resources.
-Source database documents will be filtered so that only those tagged with the channel names "channel1" or "channel2" are replicated.</p>
 </div>
+<div class="tab-pane" aria-labelledby="tabset2_one-shot">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">{
-  "replication_id": "our-rep1",
-  "direction": "pull",
-  "purge-on-removal": true,
-  "remote": "http://user:password@example.com:4985/db1",
-  "filter":"sync_gateway/bychannel",
-  "query_params": {
-    "channels": ["channel1.user1"]
-  },
-  "continuous": true
-
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/configuration/sync-gateway-config.json#L874-L883">//. . . other configuration entries
+"db1-rep-id3-pull-oneshot":
+"replication_id": "db1-rep-id3-pull-oneshot", <i class="conum" data-value="1"></i><b>(1)</b>
+"direction": "pull",
+"remote": "http://user:password@example.com:4985/db1-remote",
+"filter": "sync_gateway/bychannel",
+"query_params": { "channels": ["channel1.user1"] }
+//  . . . other configuration entries</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This a a one-shot replication because the <code>continuous</code> parameter defaults to <code>false</code>.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="paragraph">
-<p>See: <a href="../refer/config-properties.html" class="page">Configuration Schema</a> for a full description of the available configuration properties.</p>
-</div>
-<div class="paragraph">
-<p>You will find the replication properties defined here: <a href="../refer/config-properties.html#databases-this_db-replications" class="page">replications</a>.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="running-replication-on-startup"><a class="anchor" href="#running-replication-on-startup"></a>Running replication on startup</h2>
+<h2 id="running-admin-rest-api-replications"><a class="anchor" href="#running-admin-rest-api-replications"></a>Running Admin REST API Replications</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If you want to run replications as soon as Sync Gateway starts, you can define replications in the JSON configuration file&#8201;&#8212;&#8201;see: <a href="../refer/config-properties.html" class="page">Configuration Schema</a> for a full description of the available configuration properties.</p>
+<p>Replications initialized by sending a <code>POST</code>, or <code>PUT</code>, request to the <code>_replication</code> endpoint will start running automatically, unless the <code>"state": "stopped"</code> parameter is specified. with a JSON object defining the replication parameters&#8201;&#8212;&#8201;as shown in  <a href="#submitting-api-requests">Example 3</a>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You can run multiple replications simultaneously with different replication topologies, provided both databases being synchronized have the same sync function.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Replications are defined in the context of a local database; that is they are defined under the <code>databases.&lt;db&gt;</code> property.
-You will find the replication properties defined here: <a href="../refer/config-properties.html#databases-this_db-replications" class="page">replications</a>.</p>
+<p>You can submit requests using the <code>curl</code> utility (as in these examples) or an application such as <em>Postman</em>.</p>
 </div>
-<div class="paragraph">
-<p>The <code>replications</code> value is an array of objects. Each object defines a single replication. The object properties are, in the main, the same as those for the <code>replication</code> end-point on the Admin REST API.</p>
-</div>
-<div class="paragraph">
-<p>One-shot replications are always run asynchronously even if the <code>async</code> property is not set to true.</p>
-</div>
-<div class="paragraph">
-<p>One-shot replications are run after a short delay (5 seconds), which allows the local REST API&#8217;s to come up.</p>
-</div>
-<div class="paragraph">
-<p>Replications may be given a user defined <code>replication_id</code> otherwise Sync Gateway will generate a random UUID.</p>
-</div>
-<div class="paragraph">
-<p>Replications defined in config may not contain the <code>cancel</code> property.</p>
-</div>
-<div class="exampleblock">
-<div class="title">Example 2. Simple replication config</div>
+<div id="submitting-api-requests" class="exampleblock">
+<div class="title">Example 3. Submitting API Requests</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_continuous-pull-replication"></a>Continuous Pull Replication</p>
+</li>
+<li>
+<p><a id="tabset3_one-shot"></a>One-shot</p>
+</li>
+<li>
+<p><a id="tabset3_ad-hoc"></a>Ad-hoc</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_continuous-pull-replication">
+<div class="paragraph">
+<p>This example initializes a persistent, continuous, replication between a local database and one on a remote Sync Gateway instance.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">//
-{
-//  ... may be preceded by additional configuration data as required by the user ...
-
-"databases": {
-  "db": {
-    "replications": {
-      "repl_id_1": {
-        "remote": "https://remoteSG:4984/remoteDB",
-      	"direction": "pull",
-      	"purge_on_removal":true,
-      	"continuous":true,
-      	"filter":"sync_gateway/bychannel",
-      	"conflict_resolution_type":"custom",
-      	"custom_conflict_resolver": `func(local, remote) {...}`,
-      }
-
-    }
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl --location --request POST 'http://localhost:4985/db1-local/_replication/' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic ZGVtbzpwYXNzd29yZA==' \
+--dataraw '{
+  "replication_id": "db1-rep-id1-pull-cont",
+  "direction": "pull",
+  "continuous": true <i class="conum" data-value="1"></i><b>(1)</b>
+  "purge-on-removal": true,
+  "remote": "http://user:password@example.com:4985/db1-remote",
+  "filter":"sync_gateway/bychannel",
+  "query_params": {
+    "channels": ["channel1.user1"]
   }
-  //  ... may be followed by additional configuration data as required by the user ...
-}
-//</code></pre>
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_one-shot">
+<div class="paragraph">
+<p>This example initializes a persistent, one-shot, replication between a local database and one on a remote Sync Gateway instance.</p>
+</div>
+<div class="paragraph">
+<p>The replication will run once, after a short delay to allow the Rest API to start.
+It will then run once after each Sync Gateway restart and-or when manually initiated using the <code>_replicationStatus</code> endpoint&#8201;&#8212;&#8201;see <a href="icr-admin.html" class="page">Replication Admin</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl --location --request POST 'http://localhost:4985/db1-local/_replication/' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic ZGVtbzpwYXNzd29yZA==' \
+--dataraw '{
+"replication_id": "db1-rep-id3-pull-oneshot", <i class="conum" data-value="1"></i><b>(1)</b>
+"direction": "pull",
+"remote": "http://user:password@example.com:4985/db1-remote",
+"filter": "sync_gateway/bychannel",
+"query_params": { "channels": ["channel1.user1"] }
+}'</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This a a one-shot replication because the <code>continuous</code> parameter defaults to <code>false</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_ad-hoc">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">curl --location --request POST 'http://localhost:4985/db1-local/_replication/' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic ZGVtbzpwYXNzd29yZA==' \
+--dataraw '{
+  "replication_id": "db1-rep-id1-pull-adhoc",
+  "adhoc": true, <i class="conum" data-value="1"></i><b>(1)</b>
+  "direction": "pull",
+  "purge-on-removal": true,
+  "remote": "http://user:password@example.com:4985/db1-remote",
+  "filter":"sync_gateway/bychannel",
+  "query_params": {
+    "channels": ["channel1.user1"]
+  }
+}'</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Run this replication as an ad hoc one. It will run once only, process all changes but not survive Sync Gateway restarts</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="sect1 pane__frames cols-3">
+</div>
+</div>
+<div class="sect1">
 <h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
 <div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
 <div class="ulist">
 <div class="title">Learn more ...</div>
 <ul>
 <li>
-<p></p>
-</li>
-<li>
-<p><a href="icr-overview.html#introduction" class="page">Introducing Inter-Cluster Replication</a></p>
-</li>
-<li>
-<p><a href="icr-delta-sync.html" class="page">Delta-sync</a></p>
+<p><a href="icr-sgreplicate.html" class="page">Inter-cluster Replication</a></p>
 </li>
 <li>
 <p><a href="icr-conflict-resolution.html" class="page">Conflict Resolution</a></p>
 </li>
-<li>
-<p><a href="icr-replication-types.html" class="page">Replication Types</a></p>
-</li>
 </ul>
 </div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
 <div class="ulist">
 <div class="title">Reference material ...</div>
 <ul>
@@ -492,26 +969,35 @@ You will find the replication properties defined here: <a href="../refer/config-
 <p><a href="../refer/config-properties.html" class="page">Configuration Schema</a></p>
 </li>
 <li>
-<p><a href="../refer/rest-api-public.html" class="page">Public REST API</a></p>
-</li>
-<li>
 <p><a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
-</li>
-<li>
-<p><a href="../advance/adv-rest-api-client.html" class="page">Use the REST API</a></p>
 </li>
 </ul>
 </div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
 <div class="ulist">
-<div class="title">Additional Resources ...</div>
+<div class="title">Community Resources ...</div>
 <ul>
 <li>
 <p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
 </li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Conflict Related Blogs</div>
+<ul>
 <li>
-<p>Conflict Related Blogs: <a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Document Conflicts and Automatic Conflict Resolution</a>   <strong>|</strong>  <a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+<p><a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
 </li>
 </ul>
+</div>
 </div>
 </div>
 </div>

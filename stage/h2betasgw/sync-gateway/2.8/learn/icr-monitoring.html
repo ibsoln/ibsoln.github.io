@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Replication monitoring | Couchbase Docs</title>
-<link rel="canonical" href="https://ibsoln.github.io/stage/h2betasgw2-slim/sync-gateway/2.8/learn/icr-monitoring.html">
+<title>Replication Monitoring and Statistics | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/h2-714/sync-gateway/2.8/learn/icr-monitoring.html">
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Inter-cluster replication (Sync Gateway to Sync Gateway) monitoring using SG-Replicate protocol">
+<meta name="description" content="This content covers the retrieval of status and statistical data relating to Sync Gateway inter-cluster replication (SGR-2)">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -39,17 +39,17 @@
               <div class="navbar-collapse collapse" id="navbar2">
                 <ul class="navbar-nav w-100 justify-content-start">
                   <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="../../../home/server.html">
                       Server
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="../../../home/mobile.html">
                       Mobile
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="../../../home/cloud.html">
                       Cloud
                     </a>
                   </li>
@@ -98,8 +98,8 @@
 <img src="../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">Sync Gateway  H2-BETA 15July20-0800</span></h4>
-<a class="navbar-item component" href="icr-overview.html"> <span class="version">2.8</span></a>
+<h4 class="title"><span class="">Sync Gateway H2-714 23July20-1512</span></h4>
+<a class="navbar-item component" href="../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
 </div>
@@ -109,13 +109,13 @@
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
-<span class="nav-text ">Learn</span>
+<a class="nav-link" href="icr-sgreplicate.html">Inter-cluster Replication</a>
 </span>
 <ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="icr-overview.html">Inter-Cluster Replication</a>
+<a class="nav-link" href="icr-sgreplicate.html">Inter-cluster Replication</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -124,15 +124,6 @@
 <a class="nav-link" href="icr-conflict-resolution.html">Conflict Resolution</a>
 </span>
 </li>
-</ul>
-</li>
-<li class="nav-item " data-depth="0">
-
-<span class="nav-line "  data-depth="0">
-<span class="in-toggle" data-depth="0"></span>
-<span class="nav-text ">Refer</span>
-</span>
-<ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
@@ -142,31 +133,7 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<span class="in-toggle" data-depth="1"></span>
-<span class="nav-text ">Sync Gateway API</span>
-</span>
-<ul class="nav-list">
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../refer/rest-api-admin.html">Admin REST API</a>
-</span>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="nav-item " data-depth="0">
-
-<span class="nav-line "  data-depth="0">
-<span class="in-toggle" data-depth="0"></span>
-<span class="nav-text ">Product Notes</span>
-</span>
-<ul class="nav-list">
-<li class="nav-item  is-inactive " data-depth="1">
-
-<span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../prodnotes/pn-change-log-config.html">Configuration Change Log</a>
 </span>
 </li>
 </ul>
@@ -238,18 +205,18 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="icr-overview.html">Sync Gateway  H2-BETA 15July20-0800</a></li>
-<li class="crumb"><a href="icr-monitoring.html">Replication monitoring</a></li>
+<li class="crumb"><a href="../index.html">Sync Gateway H2-714 23July20-1512</a></li>
+<li class="crumb"><a href="icr-monitoring.html">Replication Monitoring and Statistics</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Replication monitoring</h1>
+<h1 class="page">Replication Monitoring and Statistics</h1>
 <div class="labels">
 <ul>
 <li class="edition"><a href="https://www.couchbase.com/products/editions">Under Development</a></li>
-<li class="status"><span>beta -- H2-SGW as at 10Jul20</span></li>
+<li class="status"><span>stage -- {release-comments-sgw}</span></li>
 </ul>
 </div>
 </div>
@@ -259,32 +226,13 @@
 <span  id="otherContributor"> + </span>
 </div><div id="preamble">
 <div class="sectionbody">
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-<div class="title">Author&#8217;s Notes</div>
-CONTENT UNDER DEVELOPMENT
-</td>
-</tr>
-</table>
-</div>
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Inter-cluster replication (Sync Gateway to Sync Gateway) monitoring using SG-Replicate protocol</p>
-</div>
-<div class="paragraph">
-<p>This content covers the monitoring aspects of inter-cluster  replication</p>
-</div>
-<div class="paragraph">
-<p><em>Related</em>&#8201;&#8212;&#8201;<a href="../refer/config-properties.html" class="page">Configuration Schema</a> | <a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
-</div>
-<div class="paragraph">
-<p><em>Topic Group</em>&#8201;&#8212;&#8201;Inter-cluster Replication</p>
+<p><em>Topic Group</em>&#8201;&#8212;&#8201;Inter-cluster Replication<br>
+This content covers the retrieval of status and statistical data relating to Sync Gateway inter-cluster replication (SGR-2)<br>
+Use this content to understand the status and statistical data available in Sync Gateway and how to access it.<br>
+<em>Related</em>&#8201;&#8212;&#8201;<a href="../refer/config-properties.html" class="page">Configuration Schema</a> | <a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
 </div>
 </blockquote>
 </div>
@@ -293,47 +241,58 @@ CONTENT UNDER DEVELOPMENT
 <div class="sect1">
 <h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="status-information"><a class="anchor" href="#status-information"></a>Status Information</h3>
 <div class="paragraph">
-<p>Use the <a href="../refer/rest-api-admin.html#/replication/get__db___replicationStatus__replicationID_" class="page">_replicationStatus(replicationID)</a> Admin REST API endpoint to check the status of replications.</p>
+<p>Sync Gateway provides a replication status Admin REST API endpoint to enable effective monitoring of replications.</p>
 </div>
 <div class="paragraph">
-<p>By default a simple one-shot replication blocks until it is complete and returns the stats for the completed task.
-Async one-shot and continuous replications return immediately with the in flight task stats.</p>
+<p>Use the <a href="../refer/rest-api-admin.html#/replication/get__db___replicationStatus__replicationID_" class="page">_replicationStatus(replicationID)</a> endpoint to check the status of individual replications and-or the <a href="../refer/rest-api-admin.html#/replication/get__db___replicationStatus__queryString_" class="page">_replicationStatus?{querystring}</a> endpoint to get status information on all replications, filtered by the querystring criteria.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sync-gateway-statistics"><a class="anchor" href="#sync-gateway-statistics"></a>Sync Gateway Statistics</h3>
+<div class="paragraph">
+<p>Sync Gateway maintains a comprehensive set of statistics, including a replication-specific subset.</p>
 </div>
 <div class="paragraph">
-<p>You can get a list of active replication tasks by sending a GET request to the <code>_active_tasks</code> endpoint, this will return a list of all running one-shot and continuous replications for the current Sync Gateway instance.</p>
+<p>You can access these statistics using the <code>_expvars</code>  endpoint.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="retrieving-replication-status-data"><a class="anchor" href="#retrieving-replication-status-data"></a>Retrieving Replication Status Data</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="#retrieving-status-data-for-a-specific-replication">Retrieving Status Data for a Specific Replication</a>  | <a href="#retrieving-status-data-for-all-replications">Retrieving Status Data for All Replications</a></p>
 </div>
 <div class="paragraph">
-<p>The response is a JSON array of active task objects, each object contains the original request parameters for the replication, a unique <code>replication_id</code> and some stats for the replication instance.
-The list of returned stats and their meaning can be found on the API reference of the <a href="#admin-rest-api.adoc#/server/get\__active_tasks" class="page unresolved"><code>_active_tasks</code></a> endpoint.</p>
+<p>Sync Gateway provides easy access to replication status data through the Admin REST API.</p>
 </div>
-<div class="listingblock">
+<div class="paragraph">
+<p>You can obtain the replication status details for a specific replication, or for all replications across all nodes.
+This option can be useful, for example, to find any auto-generated replication_id details needed to enable further replication management activities.</p>
+</div>
+<div class="paragraph">
+<p>Note:
+With <a href="https://www.couchbase.com/products/editions">COMMUNITY EDITION</a> replications always run on the node on which they are configured.
+Users can only access replications on the node from which they make the request.</p>
+</div>
+<div class="sect2">
+<h3 id="retrieving-status-data-for-a-specific-replication"><a class="anchor" href="#retrieving-status-data-for-a-specific-replication"></a>Retrieving Status Data for a Specific Replication</h3>
+<div class="paragraph">
+<p>Use the Admin REST API endpoint <code>replicationStatus</code> to easily access replication status data for a specific replication id.
+Status data is returned regardless of the node the replication is running (or ran) on.</p>
+</div>
+<div class="paragraph">
+<p><em>Action</em>: Send a <code>GET</code> request to the <code>_replicationStatus</code> endpoint with the required <code>replication_id</code></p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 1. Get status data for a specified replication</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">[
-    {
-        "type":"replication",
-        "replication_id":"6a4924c24424b635a80f50cd660fb192",
-        "continuous":true,
-        "source":"http://example.com:4985/source",
-        "target":"http://example.com:4985/target",
-        "docs_read":0,
-        "docs_written":0,
-        "doc_write_failures":0,
-        "end_last_seq":null
-    },
-    {
-        "type":"replication",
-        "replication_id":"active-to-backup",
-        "continuous":true,
-        "source":"http://example2.com:4985/active",
-        "target":"http://example2.com:4985/backup",
-        "docs_read":1000,
-        "docs_written":850,
-        "doc_write_failures":10,
-        "end_last_seq":25680
-    }
-]</code></pre>
-</div>
+<div class="paragraph">
+<p>This example returns status information for replication id  'db1-rep-id2'.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -350,29 +309,30 @@ The list of returned stats and their meaning can be found on the API reference o
 <div class="tab-pane" aria-labelledby="tabset1_request">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -X GET "http://localhost:4985/travel-sample/_replicationStatus/pull-from-target-continuous-2" -H "accept: application/json"</code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl --location --request GET 'http://localhost:4985/db1/_replicationStatus/db1-rep-id2' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic ZGVtbzpwYXNzd29yZA==' \</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_response">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "replication_id": "string",
-  "continuous": true,
-  "source": "string",
-  "target": "string",
-  "status": "string",
-  "docs_read": 0,
-  "docs_written": 0,
-  "doc_write_failures": 0,
-  "rejected_by_remote": 0,
-  "rejected_by_local": 0,
-  "error_message": "string",
-  "delta_enabled": true,
-  "last_seq_pull": "string",
-  "last_seq_push": "string"
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+  {
+    "replication_id": "db1-rep-id2",
+    "docs_read": 0,
+    "docs_written": 10,
+    "doc_write_failures": 0,
+    "doc_write_conflict": 0,
+    "status": "running",
+    "rejected_by_remote": 0,
+    "rejected_by_local": 0,
+    "last_seq_pull": "8851",
+    "last_seq_push": "10402"
+}
+]</code></pre>
 </div>
 </div>
 </div>
@@ -380,184 +340,454 @@ The list of returned stats and their meaning can be found on the API reference o
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="statistics-captured"><a class="anchor" href="#statistics-captured"></a>Statistics Captured</h2>
-<div class="sectionbody">
+</div>
+<div class="sect2">
+<h3 id="retrieving-status-data-for-all-replications"><a class="anchor" href="#retrieving-status-data-for-all-replications"></a>Retrieving Status Data for All Replications</h3>
 <div class="paragraph">
-<p>Use the <code>_expvars</code> Admin REST API to access Sync Gateway stats shown in <a href="#rep-related-stats">Example 1</a>.</p>
+<p>Use the Admin REST API&#8217;s <code>_replicationStatus</code> endpoint to access replication status data for all replications run, or running, on any node within the cluster. The JSON response comprises an array of results, one per replication.</p>
 </div>
+<div class="paragraph">
+<p>You can easily filter the results using the query string: <code>?activeOnly=false&amp;includeConfig=true&amp;localOnly=false&amp;includeError=true`</code></p>
+</div>
+<div class="paragraph">
+<p>Available query string filters comprise:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>activeOnly - return only active replications (default=false)</p>
+</li>
+<li>
+<p>localOnly - return replications from the local node only (default=false)</p>
+</li>
+<li>
+<p>includeError - return replications even if their status is "error" (default=true)</p>
+</li>
+<li>
+<p>includeConfig - return the replication definition details (configuration) as well as the status data.
+This will include remote configuration definitions if <code>localOnly=false</code> (default=false)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><em>Action</em>: Send a <code>GET</code> request to the <code>_replicationStatus</code> endpoint with an optional query string</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 2. Get status data for all replications meeting criteria</div>
+<div class="content">
+<div class="paragraph">
+<p>This example retrieves status data, from across all nodes, for all replications that meet the specified criteria.
+The results are returned in an array; one entry per replication.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_request"></a>Request</p>
+</li>
+<li>
+<p><a id="tabset2_response"></a>Response</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_request">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -X GET "http://localhost:4985/_expvar" -H "accept: application/json"</code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl --location --request GET "http://localhost:4985/db1-local/_replicationStatus?activeOnly=false&amp;includeConfig=true&amp;localOnly=false&amp;includeError=true" \ <i class="conum" data-value="1"></i><b>(1)</b>
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic ZGVtbzpwYXNzd29yZA==' \
+--data-raw ''</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>You can find further details on the statistics here&#8201;&#8212;&#8201;<a href="../stats-monitoring.html" class="page">Stats and Monitoring</a>.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This example&#8217;s criteria selects replications with any status (including errors), on local and remote nodes. The returned status details also include replication definition details.</td>
+</tr>
+</table>
 </div>
-<div id="rep-related-stats" class="exampleblock">
-<div class="title">Example 1. Replication related statistics</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_response">
+<div class="listingblock">
 <div class="content">
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Item</th>
-<th class="tableblock halign-left valign-top">Notes</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"sgr_num_attachment_bytes_transferred": 0,</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Y (unchanged)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"sgr_num_attachments_transferred": 0,</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Y (unchanged)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"sgr_num_docs_failed_to_push": 0,</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Y (unchanged)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"sgr_num_docs_failed_to_push_access": 0,</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>NEW</p>
-</div>
-<div class="paragraph">
-<p>Cases when documents are rejected because user does not have read write permissions?</p>
-</div>
-</div>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"sgr_num_docs_pushed":</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Y (unchanged)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"sgr_delta_pull_replication_count"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NEW</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"sgr_delta_push_doc_count"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NEW</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"sgr_deltas_requested":</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NEW</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">"sgr_deltas_sent":</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NEW</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">sgr_conflict_delected</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>NEW</p>
-</div>
-<div class="paragraph">
-<p>Count of documents where conflicts were detected</p>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+  {
+    "replication_id": "db1-rep-id1-pull",
+    "docs_read": 0,
+    "docs_written": 0,
+    "doc_write_failures": 0,
+    "doc_write_conflict": 0,
+    "status": "running",
+    "rejected_by_remote": 0,
+    "rejected_by_local": 0,
+    "config": { <i class="conum" data-value="1"></i><b>(1)</b>
+        "replication_id": "db1-rep-id1-pull",
+        "cancel": true,
+        "direction": "pull",
+        "purge-on-removal": true,
+        "remote": "http://user:password@example.com:4985/db1-remote",
+        "filter":"sync_gateway/bychannel",
+        "query_params": {
+          "channels": ["channel1.user1"]
+        },
+        "continuous": true
+    }
+  },
+  {
+    "replication_id": "db1-rep-id2",
+    "docs_read": 0,
+    "docs_written": 0,
+    "doc_write_failures": 0,
+    "doc_write_conflict": 0,
+    "status": "stopped",  <i class="conum" data-value="2"></i><b>(2)</b>
+    "rejected_by_remote": 0,
+    "rejected_by_local": 0,
+    "config": {
+        "replication_id": "db1-rep-id2",
+        "direction": "pull",
+        "remote": "http://user:password@example.com:4985/db1-remote",
+        "continuous": true
+      }
+  },
+  {
+    "replication_id": "db2-rep-id1",
+    "docs_read": 0,
+    "docs_written": 0,
+    "doc_write_failures": 0,
+    "doc_write_conflict": 0,
+    "status": "error", <i class="conum" data-value="3"></i><b>(3)</b>
+    "rejected_by_remote": 0,
+    "rejected_by_local": 0,
+    "config": {
+      "replication_id": "db2-rep-id1",
+      "direction": "pull",
+      "remote": "http://user:password@example2.com:4985/db2-remote",
+      "continuous": true
+    }
+  }
+]</code></pre>
 </div>
 </div>
-</div></div></td>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The configuration details included because <code>includeConfig=true</code></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>sgr_conflict_resolved</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>NEW</p>
-</div>
-<div class="paragraph">
-<p>Count of conflicting documents that were resolved successfully (by the active node)</p>
-</div>
-</div>
-</div></div></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>"Stopped" replications included because <code>activeOnly=false</code></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">sgw_conflict_skipped_error</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>NEW</p>
-</div>
-<div class="paragraph">
-<p>Count of documents that were skipped during sync because of an error in conflict resolution</p>
-</div>
-</div>
-</div></div></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>"error" replications included because <code>includeError=true</code></td>
 </tr>
-</tbody>
 </table>
 </div>
 </div>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="sect1">
-<h2 id="sgr1"><a class="anchor" href="#sgr1"></a>SGR1</h2>
+<h2 id="retrieving-sync-gateway-statistics"><a class="anchor" href="#retrieving-sync-gateway-statistics"></a>Retrieving Sync Gateway Statistics</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>Use <code>_active_tasks</code> to monitor SG-Replicate 1.0 replications  (<code>GET</code>)</p>
 <div class="paragraph">
-<p>The content returned will be the same as that returned by <code>_replicationStatus</code> and contains additional content over the SG-Replicate 1.0 version:</p>
+<p>Sync Gateway maintains a comprehensive set of metrics covering performance and resource utilization.</p>
 </div>
+<div class="paragraph">
+<p>The statistics schema includes replication metrics collected on a per-replication basis.
+These can be especially useful in monitoring the health of Sync Gateway nodes. An increasingly important activity as deployments scale to support cloud-to-edge use cases.</p>
+</div>
+<div class="paragraph">
+<p>Access to this data is provided through the Admin REST API endpoint <code>/_expvars</code>.</p>
+</div>
+<div class="paragraph">
+<p>See: <a href="../stats-monitoring.html" class="page">Stats and Monitoring</a> for a full description of the available metrics.</p>
+</div>
+<div class="sect2">
+<h3 id="available-replication-metrics"><a class="anchor" href="#available-replication-metrics"></a>Available Replication Metrics</h3>
+<div class="paragraph">
+<p>The metrics specifically related to replication are introduced in: <a href="#metrics-item-descriptions">Metrics item descriptions</a>, with the schema shown in <a href="#per-replication-metrics-schema">Example 3</a>.</p>
+</div>
+<div class="paragraph">
+<p>For how to retrieve the metrics see: <a href="#retrieve-the-metrics">Retrieve the metrics</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="metrics-item-descriptions"><a class="anchor" href="#metrics-item-descriptions"></a>Metrics item descriptions</h3>
+<div id="per-replication-metrics-schema" class="exampleblock">
+<div class="title">Example 3. Per-replication metrics schema</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  "<a href="#per_replication">per_replication</a>": {
+    "<a href="#replname">$replname</a>": {
+      "<a href="#sgr_active">sgr_active</a>": true,
+      "<a href="#sgr_docs_checked_sent">sgr_docs_checked_sent</a>": 0,
+      "<a href="#sgr_num_attachment_bytes_transferred">sgr_num_attachment_bytes_transferred</a>": 0,
+      "<a href="#sgr_num_attachments_transferred">sgr_num_attachments_transferred</a>": 0,
+      "<a href="#sgr_num_docs_failed_to_push">sgr_num_docs_failed_to_push</a>": 0,
+      "<a href="#sgr_num_docs_pushed">sgr_num_docs_pushed</a>": 0,
+      "<a href="#sgr_delta_pull_replication_count">sgr_delta_pull_replication_count</a>": 0,
+      "<a href="#sgr_delta_push_doc_count">sgr_delta_push_doc_count</a>": 0,
+      "<a href="#sgr_deltas_requested">sgr_deltas_requested</a>":  0,
+      "<a href="#sgr_deltas_sent">sgr_deltas_sent</a>": 0,
+      "<a href="#sgr_conflict_detected">sgr_conflict_detected</a>": 0,
+      "<a href="#sgr_conflict_resolved">sgr_conflict_resolved</a>": 0,
+      "<a href="#sgr_conflict_skipped_error">sgr_conflict_skipped_error</a>": 0
+    }
+  }</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="replname"><a class="anchor" href="#replname"></a>$replname</h3>
+<div class="paragraph">
+<p>This is the group header for the stats for each replication between two Sync Gateway instances declared in the config file.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_active"><a class="anchor" href="#sgr_active"></a>sgr_active</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>Whether the replication is active at this time.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_docs_checked_sent"><a class="anchor" href="#sgr_docs_checked_sent"></a>sgr_docs_checked_sent</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>The total number of documents checked for changes since replication started.
+This represents the number of potential change notifications pushed by Sync Gateway.</p>
+</dd>
+<dt class="hdlist1">Constraints</dt>
+<dd>
+<p>This is not necessarily the number of documents pushed, as a given target might already have the change.</p>
+</dd>
+<dt class="hdlist1">Values</dt>
+<dd>
 <div class="ulist">
 <ul>
 <li>
-<p>direction</p>
+<p>Continuous replication:</p>
+<div class="paragraph">
+<p>The value is true for the duration of the replication, and also once it has caught up (i.e is in the idle state).
+  The value is false if the replication is explicitly cancelled.</p>
+</div>
 </li>
 <li>
-<p>is_persistent</p>
-</li>
-<li>
-<p>status (stopped/running).</p>
-</li>
-<li>
-<p>last_seq_push</p>
-</li>
-<li>
-<p>last_seq_pull</p>
-</li>
-</ul>
+<p>One-shot replication</p>
+<div class="paragraph">
+<p>The value is true for the duration of the replication, and then false when it has completed or if it is cancelled.</p>
 </div>
 </li>
 </ul>
 </div>
+</dd>
+<dt class="hdlist1">Use Case</dt>
+<dd>
+<p>This metric can be useful when analyzing replication history, and to filter by active replications.</p>
+</dd>
+</dl>
 </div>
 </div>
-<div class="sect1 pane__frames cols-3">
+<div class="sect2">
+<h3 id="sgr_num_attachments_transferred"><a class="anchor" href="#sgr_num_attachments_transferred"></a>sgr_num_attachments_transferred</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>The total number of attachments transferred since replication started.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_num_attachment_bytes_transferred"><a class="anchor" href="#sgr_num_attachment_bytes_transferred"></a>sgr_num_attachment_bytes_transferred</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>The total number of attachment bytes transferred since replication started.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_num_docs_failed_to_push"><a class="anchor" href="#sgr_num_docs_failed_to_push"></a>sgr_num_docs_failed_to_push</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>The total number of documents that failed to be pushed since replication started.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_num_docs_pushed"><a class="anchor" href="#sgr_num_docs_pushed"></a>sgr_num_docs_pushed</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Description</dt>
+<dd>
+<p>The total number of documents that were pushed since replication started.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_delta_pull_replication_count"><a class="anchor" href="#sgr_delta_pull_replication_count"></a>sgr_delta_pull_replication_count</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Desciption</dt>
+<dd>
+<p>The total number documents with deltas pulled</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_delta_push_doc_count"><a class="anchor" href="#sgr_delta_push_doc_count"></a>sgr_delta_push_doc_count</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Desciption</dt>
+<dd>
+<p>The total number of documents with deltas pushed</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_deltas_sent"><a class="anchor" href="#sgr_deltas_sent"></a>sgr_deltas_sent</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Desciption</dt>
+<dd>
+<p>The total number of deltas sent</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_deltas_requested"><a class="anchor" href="#sgr_deltas_requested"></a>sgr_deltas_requested</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Desciption</dt>
+<dd>
+<p>The total number of deltas requested</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_conflict_detected"><a class="anchor" href="#sgr_conflict_detected"></a>sgr_conflict_detected</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Desciption</dt>
+<dd>
+<p>The total number of documents where conflicts were detected</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgr_conflict_resolved"><a class="anchor" href="#sgr_conflict_resolved"></a>sgr_conflict_resolved</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Desciption</dt>
+<dd>
+<p>The total number of conflicting documents that were resolved successfully (by the active node)</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sgw_conflict_skipped_error"><a class="anchor" href="#sgw_conflict_skipped_error"></a>sgw_conflict_skipped_error</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Desciption</dt>
+<dd>
+<p>The total number of documents that were skipped during sync because of an error in conflict resolution</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="retrieve-the-metrics"><a class="anchor" href="#retrieve-the-metrics"></a>Retrieve the metrics</h3>
+<div class="exampleblock">
+<div class="title">Example 4. Using expvars</div>
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_request"></a>Request</p>
+</li>
+<li>
+<p><a id="tabset3_response"></a>Response</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_request">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[data-source-url=https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/configuration/sync-gateway-config.json]</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_response">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// . . . other metrics items
+
+
+// . . . other metrics items</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
 <div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
 <div class="ulist">
 <div class="title">Learn more ...</div>
 <ul>
 <li>
-<p></p>
-</li>
-<li>
-<p><a href="icr-overview.html#introduction" class="page">Introducing Inter-Cluster Replication</a></p>
-</li>
-<li>
-<p><a href="icr-delta-sync.html" class="page">Delta-sync</a></p>
+<p><a href="icr-sgreplicate.html" class="page">Inter-cluster Replication</a></p>
 </li>
 <li>
 <p><a href="icr-conflict-resolution.html" class="page">Conflict Resolution</a></p>
 </li>
-<li>
-<p><a href="icr-replication-types.html" class="page">Replication Types</a></p>
-</li>
 </ul>
 </div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
 <div class="ulist">
 <div class="title">Reference material ...</div>
 <ul>
@@ -565,26 +795,35 @@ The list of returned stats and their meaning can be found on the API reference o
 <p><a href="../refer/config-properties.html" class="page">Configuration Schema</a></p>
 </li>
 <li>
-<p><a href="../refer/rest-api-public.html" class="page">Public REST API</a></p>
-</li>
-<li>
 <p><a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
-</li>
-<li>
-<p><a href="../advance/adv-rest-api-client.html" class="page">Use the REST API</a></p>
 </li>
 </ul>
 </div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
 <div class="ulist">
-<div class="title">Additional Resources ...</div>
+<div class="title">Community Resources ...</div>
 <ul>
 <li>
 <p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
 </li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Conflict Related Blogs</div>
+<ul>
 <li>
-<p>Conflict Related Blogs: <a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Document Conflicts and Automatic Conflict Resolution</a>   <strong>|</strong>  <a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+<p><a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
 </li>
 </ul>
+</div>
 </div>
 </div>
 </div>
