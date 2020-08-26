@@ -98,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2pBeta/82120-1</span></h4>
+<h4 class="title"><span class="">P2PAndroid/82620</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -199,7 +199,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2pBeta/82120-1</a></li>
+<li class="crumb"><a href="../../index.html">P2PAndroid/82620</a></li>
 <li class="crumb"><a href="objc-p2psync-websocket-using-passive.html">Set-up the Passive Peer</a></li>
 </ul>
 </nav>
@@ -251,21 +251,23 @@ Use them as inspiration and adapt these examples to best practice when developin
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This content provides sample code covering the implementation of <a href="../../refer-glossary.html#peer-to-peer-sync" class="page">Peer-to-Peer Sync</a> over websockets.
-Specifically it covers the implementation of a <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a> listener, that will accept and apply database changes replicated by a connected <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a>. In this context the term <em>client</em> refers to the <em>active peer</em> and the term <em>server</em> to the <em>passive peer</em></p>
+<p>This content provides code and configuration examples covering the implementation of <a href="../../refer-glossary.html#peer-to-peer-sync" class="page">Peer-to-Peer Sync</a> over websockets.</p>
 </div>
 <div class="paragraph">
-<p>You will need to initialize and configure a Listener for each Couchbase Lite database instance that you want to sync with other peers.</p>
+<p>Specifically it covers the implementation of a <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a>.
+This <em>listener</em> will accept a connection from an <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a> and participate in the replication of database changes to bring both databases into sync.</p>
 </div>
 <div class="paragraph">
-<p><a href="#simple-listener-initialization">Example 1</a> shows a simple initialization and configuration process.</p>
+<p>In this context the <em>passive peer</em> (listener) acts as the <em>server</em> and the
+ <em>active peer</em> (replicator) acts as the <em>client</em>.</p>
 </div>
 <div class="paragraph">
-<p>The subsequent sections show additional details on the configuration options with examples.
-You do not need to provide configuration values for all properties, only those necessary to meet the requirements of your sync process.</p>
+<p>You should initialize and configure a Listener for each Couchbase Lite database instance you want to to sync.
+<a href="#simple-listener-initialization">Example 1</a> shows a simple initialization and configuration process.
+Subsequent sections provide additional details and examples for the main configuration options.</p>
 </div>
 <div id="simple-listener-initialization" class="exampleblock">
-<div class="title">Example 1. Simple Listener Initialization</div>
+<div class="title">Example 1. Listener configuration and initialization</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -288,7 +290,10 @@ fileprivate var thisDB:Database?
   listenerConfig.networkInterface = thisURL;
   listenerConfig.enableDeltaSync = true <i class="conum" data-value="2"></i><b>(2)</b>
 
-  listenerConfig.disableTLS  = true; <i class="conum" data-value="3"></i><b>(3)</b>
+  listenerConfig.disableTLS  = false; <i class="conum" data-value="3"></i><b>(3)</b>
+
+  // Use an anonymous self-signed cert
+  listenerConfig.tlsIdentity = nil;
 
   // Configure the client authenticator for Basic Authentication) <i class="conum" data-value="4"></i><b>(4)</b>
   - (BOOL) isValidCredentials: (NSString*)u password: (NSString*)p { return YES; } // helper
@@ -315,36 +320,42 @@ fileprivate var thisDB:Database?
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#initialize-the-listener-configuration">Initialize the Listener Configuration</a></td>
+<td>Identify the local database to be used&#8201;&#8212;&#8201;see: <a href="#initialize-the-listener-configuration">Initialize the Listener Configuration</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>By default the system will assign a port&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
+<td>Optionally, choose a port to use.
+By default the system will automatically assign a port&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>By default the system will listen on all network interfaces&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
+<td>Optionally, choose a network-interface to use. By default the system will listen on all network interfaces&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#delta-sync">Delta Sync</a></td>
+<td>Optionally, choose to sync only changes, the default is not to enabld edelta-sync&#8201;&#8212;&#8201;see: <a href="#delta-sync">Delta Sync</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>TLS is enabled by default.
-It is <strong>not</strong> advisable to switch it off in production.
-This setting is ignored when <em>Basic Authentication</em> is required; but must be 'false' when <em>Client Cert Authentication</em> is required&#8201;&#8212;&#8201;see also:  <a href="#tls-security">TLS Security</a></td>
+<td>Set server security.
+TLS is always enabled out-of-the-box, so you can usually omit this line.
+But you <em>can</em>, optionally, disable TLS (<strong>not</strong> advisable in production)&#8201;&#8212;&#8201;see: <a href="#tls-security">TLS Security</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Apply basic authentication to validate the user credentials (<code>thisUser</code> and <code>thisPassword</code>), where <code>username</code> and <code>password</code> are the valid credentials and <code>thisUser</code> and <code>thisPassword</code> are the presented credentials-- see <a href="#client-authentication">Client Authentication</a> for more</td>
+<td>Optionally, apply the default TLS authentication, which is by anonymous self-signed certificate.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Initialize the listener using the configuration settings</td>
+<td>Set client security.
+Optionally, apply basic authentication to validate the user&#8217;s presented credentials (<code>thisUser</code> and <code>thisPassword</code>), where <code>username</code> and <code>password</code> are the valid credentials&#8201;&#8212;&#8201;see <a href="#client-authentication">Client Authentication</a> for more options.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Initialize the listener using the configuration settings.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><a href="#start-listener">Start Listener</a></td>
 </tr>
 </table>
@@ -389,14 +400,8 @@ All other configuration values will take their default setting.</p>
 </div>
 <div class="paragraph">
 <p>Each Listener instance serves one Couchbase Lite database.
-There is no limit on the number of instances except a practical limit</p>
+Couchbase sets no hard limit on the number of instances you can initialize.</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Database name</dt>
-<dd>
-<div class="openblock">
-<div class="content">
 <div class="exampleblock">
 <div class="title">Example 2. Specify Local Database</div>
 <div class="content">
@@ -420,11 +425,6 @@ listenerConfig = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: 
 </table>
 </div>
 </div>
-</div>
-</div>
-</div>
-</dd>
-</dl>
 </div>
 </div>
 </div>
@@ -501,7 +501,8 @@ This must be either an IP Address or network interface name such as <code>en0</c
 <h2 id="delta-sync"><a class="anchor" href="#delta-sync"></a>Delta Sync</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Delta Sync allows clients to sync only those parts of a document that have changed. This can result in significant savings in bandwidth consumption as well as throughput improvements.
+<p>Delta Sync allows clients to sync only those parts of a document that have changed.
+This can result in significant savings in bandwidth consumption as well as throughput improvements.
 Both valuable benefits, especially when network bandwidth is constrained.</p>
 </div>
 <div class="exampleblock">
@@ -529,8 +530,10 @@ Use <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc
 <h2 id="tls-security"><a class="anchor" href="#tls-security"></a>TLS Security</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TLS based encryption is enabled by default.
-Although it <em>can</em> be disabled, this is not recommended on production environments.</p>
+<p>TLS based encryption is enabled by default and this setting ought to be used in any production environment. However, it <em>can</em> be disabled, for example for development and-or test environments.</p>
+</div>
+<div class="paragraph">
+<p>The <code>disableTLS</code> setting is ignored when using <em>Basic Authentication</em>, but is must be 'false' when <em>Client Cert Authentication</em> is required.</p>
 </div>
 <div class="paragraph">
 <p>When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity (<a href="#configure-tls-identity-for-listener">[configure-tls-identity-for-listener]</a>).</p>
@@ -674,7 +677,7 @@ listenerConfig.tlsIdentity =
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Store the generated identity as alias <code>couchbase-demo-cert</code>.</td>
+<td>Store the generated identity as alias <code>couchbase-docs-cert</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -919,16 +922,13 @@ listenerConfig.authenticator = ListenerCertificateAuthenticator.init {
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ignored</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>TLS is disabled; all communication is plain text.</p>
-</div>
-<div class="paragraph">
-<p>+</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">set to <code>nil</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="olist arabic">
-<ol class="arabic">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>The system will auto generate an <em>anonymous</em> self signed cert.</p>
 </li>
@@ -938,7 +938,7 @@ listenerConfig.authenticator = ListenerCertificateAuthenticator.init {
 <li>
 <p>Communication is encrypted</p>
 </li>
-</ol>
+</ul>
 </div></div></td>
 </tr>
 <tr>

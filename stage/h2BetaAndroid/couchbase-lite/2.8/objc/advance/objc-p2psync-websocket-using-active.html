@@ -98,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2pBeta/82120-1</span></h4>
+<h4 class="title"><span class="">P2PAndroid/82620</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -199,7 +199,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2pBeta/82120-1</a></li>
+<li class="crumb"><a href="../../index.html">P2PAndroid/82620</a></li>
 <li class="crumb"><a href="objc-p2psync-websocket-using-active.html">Set-up the Active Peer</a></li>
 </ul>
 </nav>
@@ -270,24 +270,42 @@ Use them as inspiration and adapt these examples to best practice when developin
 </tr>
 </table>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Enterprise Edition only</div>
+This an <a href="https://www.couchbase.com/products/editions">Enterprise Edition</a> feature.
+Purchase the <em>Enterprise License</em>, which includes official <a href="https://www.couchbase.com/support-policy">Couchbase Support</a>, to use it in production (see the license and support <a href="https://www.couchbase.com/licensing-and-support-faq">Licensing</a>).
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This content provides sample code covering the implementation of peer-to-peer sync over websockets. Specifically it covers the implementation of an <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a>, that will initiate replication with a <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a>.</p>
+<p>This content provides sample code and configuration examples covering the implementation of <a href="../../refer-glossary.html#peer-to-peer-sync" class="page">Peer-to-Peer Sync</a> over websockets.</p>
 </div>
 <div class="paragraph">
-<p>The code snippet in <a href="#simple-replication-to-listener">Example 1</a> covers the configuration, initialization and replication is expanded upon in subsequent sections in this content.</p>
+<p>Specifically it covers the implementation of an <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a>.
+This <em>replicator</em> will initiate connection with a <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a> and participate in the replication of database changes to bring both databases into sync.</p>
 </div>
 <div class="paragraph">
-<p>To compare the peer-to-peer context with the typical client-server communication model, the:
-* Active peer is analogous to a client,
-* Passive peer is analogous to a server.</p>
+<p>In this context the <em>active peer</em> (replicator) acts as the <em>client</em>, whilst the <em>passive peer</em> (listener) acts as the <em>server</em>.</p>
+</div>
+<div class="paragraph">
+<p>You will need to initialize and configure a replicator for each Couchbase Lite database instance you want to sync.
+<a href="#simple-replication-to-listener">Example 1</a> shows the initialization and configuration process.
+Subsequent sections provide additional details and examples for the main configuration options.</p>
 </div>
 <div id="simple-replication-to-listener" class="exampleblock">
-<div class="title">Example 1. Simple Replication to Listener</div>
+<div class="title">Example 1. Replication configuration and initialization</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -310,8 +328,8 @@ config.replicatorType = .pushAndPull
 
 config.continuous = true
 
-// Configure Server Security -- only accept CA Certs
-config.acceptOnlySelfSignedServerCertificate=false <i class="conum" data-value="2"></i><b>(2)</b>
+// Configure Server Security -- only accept self-signed certs
+config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="2"></i><b>(2)</b>
 
 // Configure Client Security <i class="conum" data-value="3"></i><b>(3)</b>
 //  Set Authentication Mode
@@ -344,21 +362,18 @@ thisReplicator?.start()  <i class="conum" data-value="7"></i><b>(7)</b></code></
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html">ReplicatorConfiguration</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(im)initWithDatabase:target:">-initWithDatabase:target:</a> constructor to initialize the replicator configuration with the local database&#8201;&#8212;&#8201;see <a href="#configure-target">Configure Target</a></td>
+<td>Use the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html">ReplicatorConfiguration</a> class&#8217;s constructor&#8201;&#8212;&#8201;<a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(im)initWithDatabase:target:">-initWithDatabase:target:</a>&#8201;&#8212;&#8201;to initialize the replicator configuration with the local database&#8201;&#8212;&#8201;see also: <a href="#configure-target">Configure Target</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>By default only CA Certificates are accepted; self-signed Certificates are disallowed.
-The provided certificate must be from a trusted root.
-<div class="paragraph">
-<p>use {url-api-prop-replicator-config-AcceptOnlySelfSignedServerCertificate}(true) to accept ONLY self-signed certificates.
-Validation of the certificate is bypassed&#8201;&#8212;&#8201;see: <a href="#listener-authentication">Listener Authentication</a></p>
-</div></td>
+<td>Here we have configured server security to use only self-signed certificates.
+By default only CA Certificates are accepted&#8201;&#8212;&#8201;see: <a href="#listener-authentication">Listener Authentication</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The <code>authenticator</code> is configured to use basic authentication.
-Other supported options are <code>ClientCertificateAuthenticator</code> if you want to use client certificate based authentication&#8201;&#8212;&#8201;see: <a href="#client-authentication">Client Authentication</a></td>
+<td>Here the we have configured client security to use <em>Basic Authentication</em>.
+Other options are available, for example to authenticate using certificates.
+To use client certificate based authentication&#8201;&#8212;&#8201;see: <a href="#client-authentication">Client Authentication</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -456,7 +471,7 @@ var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Note use of the <code>wss://</code> prefix, to ensures use of TLS encryption (strongly recommended in production).</td>
+<td>Note use of the <code>wss://</code> prefix to ensure TLS encryption (strongly recommended in production).</td>
 </tr>
 </table>
 </div>
@@ -625,10 +640,16 @@ config.authenticator = thisAuthenticator</code></pre>
 <div class="sect3">
 <h4 id="certificate-authentication"><a class="anchor" href="#certificate-authentication"></a>Certificate Authentication</h4>
 <div class="paragraph">
-<p>Use the <code><a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLClientCertificateAuthenticator.html">ClientCertificateAuthenticator</a></code> to configure the client TLS certificates to be presented to the server, on connection. This applies only to the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLURLEndpointListener.html">URLEndpointListener</a>.</p>
+<p>Use the <code><a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLClientCertificateAuthenticator.html">ClientCertificateAuthenticator</a></code> to configure the client TLS certificates to be presented to the server, on connection.
+This applies only to the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLURLEndpointListener.html">URLEndpointListener</a>.</p>
 </div>
 <div class="paragraph">
-<p>The server will verify the certificate&#8201;&#8212;&#8201;checking the chain of trust&#8201;&#8212;&#8201;<strong>before</strong> offering the certificate to the listener’s authenticator.</p>
+<p>Note that TLS validates a certificate before passing it over for authentication.
+If an invalid certificate is detected then control is never passed over, and the connection is denied.
+The decision to be made by the authenticator is simply: "do I trust this certificate, or not"?</p>
+</div>
+<div class="paragraph">
+<p>The decision is usually based on the certificate being signed by a source we trust.</p>
 </div>
 <div class="paragraph">
 <p>For certificate authentication the <code>disableTLS</code> configuration setting must be <code>false</code>.</p>
@@ -717,11 +738,11 @@ Use this to monitor changes and to inform on sync progress, as shown below; this
 <div class="sect2">
 <h3 id="replicator-status"><a class="anchor" href="#replicator-status"></a>Replicator Status</h3>
 <div class="paragraph">
-<p>You can also use <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(py)status">status</a> to monitor replicator status.
-That is, when it is actively transferring data and when it has stopped.</p>
+<p>You can use the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLReplicator.html">Replicator</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(py)status">status</a> property to check the replicator status.
+That is, whether it is actively transferring data or if it has stopped.</p>
 </div>
 <div class="paragraph">
-<p>The <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLReplicatorStatus.html">CBLReplicatorStatus</a> structure comprises the following elements:</p>
+<p>Alternatively, use the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLReplicatorStatus.html">CBLReplicatorStatus</a> class to get status information. The returned <em>ReplicationStatus</em> structure comprises:</p>
 </div>
 <div class="ulist">
 <ul>
