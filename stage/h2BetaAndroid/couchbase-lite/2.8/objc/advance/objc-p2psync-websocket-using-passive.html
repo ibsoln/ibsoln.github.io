@@ -305,6 +305,15 @@ fileprivate var thisDB:Database?
       return NO;
   }];
 
+  // Authenticate using Cert Authority
+  // cert is a pre-populated object of type:SecCertificate representing a certificate
+  NEEDS CODE CONVERSION
+
+  let rootCertData = SecCertificateCopyData(cert) as Data
+  let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
+  // Listener:
+  listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])
+
   // Initialize the listener
   CBLURLEndpointListener* websocketListener = nil;
   websocketListener = [[CBLURLEndpointListener alloc] initWithConfig: listenerConfig]; <i class="conum" data-value="5"></i><b>(5)</b>
@@ -627,9 +636,6 @@ Subsequent starts of the Listener will then reuse the identity from secure stora
 </div>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset1_import-from-key-pair">
-<div class="paragraph">
-<p>Import a key pair into secure storage and create a TLSIdentity from the imported key-pair.</p>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">listenerConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
@@ -647,7 +653,7 @@ listenerConfig.tlsIdentity =
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Use the imported identity.</td>
+<td>Use the new TLS identity.</td>
 </tr>
 </table>
 </div>
@@ -825,20 +831,7 @@ The logic should take the form of function or block (such as, a closure expressi
 <div class="tab-pane" aria-labelledby="tabset2_root-ca">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">  // Authenticate using Cert Authority
-  // cert is a pre-populated object of type:SecCertificate representing a certificate
-  NEEDS CODE CONVERSION
-
-  let rootCertData = SecCertificateCopyData(cert) as Data
-  let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
-  // Listener:
-  listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])
-
-// cert is a pre-populated object of type:SecCertificate representing a certificate
-let rootCertData = SecCertificateCopyData(cert) as Data
-let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
-// Listener:
-listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
 </div>
 </div>
 </div>
