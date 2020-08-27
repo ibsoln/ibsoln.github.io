@@ -98,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2PUWP/82420-1</span></h4>
+<h4 class="title"><span class="">P2PUWP/82720</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -115,7 +115,25 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="#android:learn/p2psync.adoc">about p2p</a>
+<a class="nav-link" href="#couchbase-lite:{param-module}:advance/{param-name}-p2psync-websocket-using-passive.adoc">Passive Peer</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="#couchbase-lite:{param-module}:advance/{param-name}-p2psync-websocket-using-active.adoc">Active Peer</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">{url-api-references}[API Reference]</span>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="#csharp:learn/csharp.p2psync.adoc">about p2p</a>
 </span>
 </li>
 </ul>
@@ -187,7 +205,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2PUWP/82420-1</a></li>
+<li class="crumb"><a href="../../index.html">P2PUWP/82720</a></li>
 <li class="crumb"><a href="objc-p2psync-websocket-using-passive.html">Set-up the Passive Peer</a></li>
 </ul>
 </nav>
@@ -239,49 +257,48 @@ Use them as inspiration and adapt these examples to best practice when developin
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This content provides sample code covering the implementation of <a href="../../refer-glossary.html#peer-to-peer-sync" class="page">Peer-to-Peer Sync</a> over websockets.
-Specifically it covers the implementation of a <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a> listener, that will accept and apply database changes replicated by a connected <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a>. In this context the term <em>client</em> refers to the <em>active peer</em> and the term <em>server</em> to the <em>passive peer</em></p>
+<p>This content provides code and configuration examples covering the implementation of <a href="../../refer-glossary.html#peer-to-peer-sync" class="page">Peer-to-Peer Sync</a> over websockets.</p>
 </div>
 <div class="paragraph">
-<p>You will need to initialize and configure a Listener for each Couchbase Lite database instance that you want to sync with other peers.</p>
+<p>Specifically it covers the implementation of a <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a>.
+This <em>listener</em> will accept a connection from an <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a> and participate in the replication of database changes to bring both databases into sync.</p>
 </div>
 <div class="paragraph">
-<p><a href="#simple-listener-initialization">Example 1</a> shows a simple initialization and configuration process.</p>
+<p>In this context the <em>passive peer</em> (listener) acts as the <em>server</em> and the
+ <em>active peer</em> (replicator) acts as the <em>client</em>.</p>
 </div>
 <div class="paragraph">
-<p>The subsequent sections show additional details on the configuration options with examples.
-You do not need to provide configuration values for all properties, only those necessary to meet the requirements of your sync process.</p>
+<p>You should initialize and configure a Listener for each Couchbase Lite database instance you want to to sync.
+<a href="#simple-listener-initialization">Example 1</a> shows a simple initialization and configuration process.
+Subsequent sections provide additional details and examples for the main configuration options.</p>
 </div>
 <div id="simple-listener-initialization" class="exampleblock">
-<div class="title">Example 1. Simple Listener Initialization</div>
+<div class="title">Example 1. Listener configuration and initialization</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">fileprivate  var _allowlistedUsers:[[String:String]] = []
-fileprivate var _websocketListener:URLEndpointListener?
-fileprivate var thisDB:Database?
-  // Include websockets listener initializer code
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// Initialize the listener config
+CBLURLEndpointListenerConfiguration* thisConfig; <i class="conum" data-value="1"></i><b>(1)</b>
+thisConfig = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];
 
-  // func fMyPassListener() {
-  CBLDatabase *db = self.db;
-
-  CBLURLEndpointListenerConfiguration* listenerConfig; <i class="conum" data-value="1"></i><b>(1)</b>
-  listenerConfig = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];
-
-  /* optionally */ int *wsPort = 4984;
-  /* optionally */ int *wssPort = 4985;
-  listenerConfig.port =  wssPort;
+  thisConfig.port =  55990; <i class="conum" data-value="2"></i><b>(2)</b>
 
   NSURL *thisURL = [NSURL URLWithString:@"10.1.1.10"];
-  listenerConfig.networkInterface = thisURL;
-  listenerConfig.enableDeltaSync = true <i class="conum" data-value="2"></i><b>(2)</b>
+  thisConfig.networkInterface = thisURL; <i class="conum" data-value="3"></i><b>(3)</b>
 
-  listenerConfig.disableTLS  = true; <i class="conum" data-value="3"></i><b>(3)</b>
+  thisConfig.enableDeltaSync = true <i class="conum" data-value="4"></i><b>(4)</b>
 
-  // Configure the client authenticator for Basic Authentication) <i class="conum" data-value="4"></i><b>(4)</b>
+  // Configure server security
+  thisConfig.disableTLS  = false; <i class="conum" data-value="5"></i><b>(5)</b>
+
+  // Use an anonymous self-signed cert
+  thisConfig.tlsIdentity = nil;
+
+  // Configure Client Security using an Authenticator
+  // For example, Basic Authentication <i class="conum" data-value="6"></i><b>(6)</b>
   - (BOOL) isValidCredentials: (NSString*)u password: (NSString*)p { return YES; } // helper
 
-  listenerConfig.authenticator = [[CBLListenerPasswordAuthenticator alloc] initWithBlock: ^BOOL(NSString * thisUser, NSString * thisPassword) {
+  thisConfig.authenticator = [[CBLListenerPasswordAuthenticator alloc] initWithBlock: ^BOOL(NSString * thisUser, NSString * thisPassword) {
       if ([self isValidCredentials: thisUser password:thisPassword]) {
           return  YES;
       }
@@ -289,50 +306,57 @@ fileprivate var thisDB:Database?
   }];
 
   // Initialize the listener
-  CBLURLEndpointListener* websocketListener = nil;
-  websocketListener = [[CBLURLEndpointListener alloc] initWithConfig: listenerConfig]; <i class="conum" data-value="5"></i><b>(5)</b>
+  CBLURLEndpointListener* thisListener = nil;
+  thisListener = [[CBLURLEndpointListener alloc] initWithConfig: listenerConfig]; <i class="conum" data-value="7"></i><b>(7)</b>
   }
 
-  BOOL success = [websocketListener startWithError: &amp;error];
+  // start the listener
+  BOOL success = [thisListener startWithError: &amp;error];
   if (!success) {
       NSLog(@"Cannot start the listener: %@", error);
-  } <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+  } <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#initialize-the-listener-configuration">Initialize the Listener Configuration</a></td>
+<td>Identify the local database to be used&#8201;&#8212;&#8201;see: <a href="#initialize-the-listener-configuration">Initialize the Listener Configuration</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>By default the system will assign a port&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
+<td>Optionally, choose a port to use.
+By default the system will automatically assign a port&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>By default the system will listen on all network interfaces&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
+<td>Optionally, choose a network-interface to use. By default the system will listen on all network interfaces&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#delta-sync">Delta Sync</a></td>
+<td>Optionally, choose to sync only changes, the default is not to enabld edelta-sync&#8201;&#8212;&#8201;see: <a href="#delta-sync">Delta Sync</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>TLS is enabled by default.
-It is <strong>not</strong> advisable to switch it off in production.
-This setting is ignored when <em>Basic Authentication</em> is required; but must be 'false' when <em>Client Cert Authentication</em> is required&#8201;&#8212;&#8201;see also:  <a href="#tls-security">TLS Security</a></td>
+<td>Set server security.
+TLS is always enabled out-of-the-box, so you can usually omit this line.
+But you <em>can</em>, optionally, disable TLS (<strong>not</strong> advisable in production)&#8201;&#8212;&#8201;see: <a href="#tls-security">TLS Security</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Apply basic authentication to validate the user credentials (<code>thisUser</code> and <code>thisPassword</code>), where <code>username</code> and <code>password</code> are the valid credentials and <code>thisUser</code> and <code>thisPassword</code> are the presented credentials-- see <a href="#client-authentication">Client Authentication</a> for more</td>
+<td>Optionally, apply the default TLS authentication, which is by anonymous self-signed certificate.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Initialize the listener using the configuration settings</td>
+<td>Set client security.
+Optionally, apply basic authentication to validate the user&#8217;s presented credentials (<code>thisUser</code> and <code>thisPassword</code>), where <code>username</code> and <code>password</code> are the valid credentials&#8201;&#8212;&#8201;see <a href="#client-authentication">Client Authentication</a> for more options.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Initialize the listener using the configuration settings.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><a href="#start-listener">Start Listener</a></td>
 </tr>
 </table>
@@ -377,14 +401,8 @@ All other configuration values will take their default setting.</p>
 </div>
 <div class="paragraph">
 <p>Each Listener instance serves one Couchbase Lite database.
-There is no limit on the number of instances except a practical limit</p>
+Couchbase sets no hard limit on the number of instances you can initialize.</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Database name</dt>
-<dd>
-<div class="openblock">
-<div class="content">
 <div class="exampleblock">
 <div class="title">Example 2. Specify Local Database</div>
 <div class="content">
@@ -393,10 +411,9 @@ There is no limit on the number of instances except a practical limit</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">CBLDatabase *db = self.db;
-
-CBLURLEndpointListenerConfiguration* listenerConfig; <i class="conum" data-value="1"></i><b>(1)</b>
-listenerConfig = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// Initialize the listener config
+CBLURLEndpointListenerConfiguration* thisConfig; <i class="conum" data-value="1"></i><b>(1)</b>
+thisConfig = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: database];</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -408,11 +425,6 @@ listenerConfig = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: 
 </table>
 </div>
 </div>
-</div>
-</div>
-</div>
-</dd>
-</dl>
 </div>
 </div>
 </div>
@@ -433,9 +445,7 @@ listenerConfig = [[CBLURLEndpointListenerConfiguration alloc] initWithDatabase: 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">/* optionally */ int *wsPort = 4984;
-/* optionally */ int *wssPort = 4985;
-listenerConfig.port =  wssPort;</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">thisConfig.port =  55990; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -464,7 +474,7 @@ listenerConfig.port =  wssPort;</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">NSURL *thisURL = [NSURL URLWithString:@"10.1.1.10"];
-listenerConfig.networkInterface = thisURL;</code></pre>
+thisConfig.networkInterface = thisURL; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -489,7 +499,8 @@ This must be either an IP Address or network interface name such as <code>en0</c
 <h2 id="delta-sync"><a class="anchor" href="#delta-sync"></a>Delta Sync</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Delta Sync allows clients to sync only those parts of a document that have changed. This can result in significant savings in bandwidth consumption as well as throughput improvements.
+<p>Delta Sync allows clients to sync only those parts of a document that have changed.
+This can result in significant savings in bandwidth consumption as well as throughput improvements.
 Both valuable benefits, especially when network bandwidth is constrained.</p>
 </div>
 <div class="exampleblock">
@@ -497,7 +508,7 @@ Both valuable benefits, especially when network bandwidth is constrained.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">thisConfig.enableDeltaSync = true <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -517,8 +528,10 @@ Use <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc
 <h2 id="tls-security"><a class="anchor" href="#tls-security"></a>TLS Security</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TLS based encryption is enabled by default.
-Although it <em>can</em> be disabled, this is not recommended on production environments.</p>
+<p>TLS based encryption is enabled by default and this setting ought to be used in any production environment. However, it <em>can</em> be disabled, for example for development and-or test environments.</p>
+</div>
+<div class="paragraph">
+<p>The <code>disableTLS</code> setting is ignored when using <em>Basic Authentication</em>, but is must be 'false' when <em>Client Cert Authentication</em> is required.</p>
 </div>
 <div class="paragraph">
 <p>When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity (<a href="#configure-tls-identity-for-listener">[configure-tls-identity-for-listener]</a>).</p>
@@ -617,10 +630,14 @@ Subsequent starts of the Listener will then reuse the identity from secure stora
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">listenerConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">thisConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
+
+// Use CA Cert
+// Create a TLSIdentity from a key-pair and
+// certificate in secure storage
 
 // set the TLS Identity
-listenerConfig.tlsIdentity =
+thisConfig.tlsIdentity =
   TLSIdentity(withLabel:thisIdentity)</code></pre>
 </div>
 </div>
@@ -630,9 +647,13 @@ listenerConfig.tlsIdentity =
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>Ensure TLS is enabled.</td>
 </tr>
+</table>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Use the imported identity.</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the new TLS identity.</td>
 </tr>
 </table>
 </div>
@@ -643,10 +664,15 @@ listenerConfig.tlsIdentity =
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">listenerConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">thisConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
+
+// Use a self-signed certificate
+// Create a TLSIdentity for the server using convenience API.
+// System generates self-signed cert
+// Work-in-progress. Code snippet coming soon.
 
 // set the TLS Identity
-listenerConfig.tlsIdentity =
+thisConfig.tlsIdentity =
   TLSIdentity(withLabel:thisIdentity)</code></pre>
 </div>
 </div>
@@ -662,7 +688,7 @@ listenerConfig.tlsIdentity =
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Store the generated identity as alias <code>couchbase-demo-cert</code>.</td>
+<td>Store the generated identity as alias <code>couchbase-docs-cert</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -678,10 +704,10 @@ These are self signed certificates generated by Couchbase Lite. The generated ce
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">listenerConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">thisConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Use an anonymous self-signed cert
-listenerConfig.tlsIdentity = nil;</code></pre>
+thisConfig.tlsIdentity = nil;</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -737,10 +763,11 @@ The actual authentication is provided by the application code. Often in the form
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// Configure the client authenticator for Basic Authentication) <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// Configure Client Security using an Authenticator
+// For example, Basic Authentication <i class="conum" data-value="1"></i><b>(1)</b>
 - (BOOL) isValidCredentials: (NSString*)u password: (NSString*)p { return YES; } // helper
 
-listenerConfig.authenticator = [[CBLListenerPasswordAuthenticator alloc] initWithBlock: ^BOOL(NSString * thisUser, NSString * thisPassword) {
+thisConfig.authenticator = [[CBLListenerPasswordAuthenticator alloc] initWithBlock: ^BOOL(NSString * thisUser, NSString * thisPassword) {
     if ([self isValidCredentials: thisUser password:thisPassword]) {
         return  YES;
     }
@@ -810,29 +837,26 @@ The logic should take the form of function or block (such as, a closure expressi
 <div class="tab-pane" aria-labelledby="tabset2_root-ca">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">  // Authenticate using Cert Authority
-  // cert is a pre-populated object of type:SecCertificate representing a certificate
-  NEEDS CODE CONVERSION
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// Configure the client authenticator
+// to validate using ROOT CA <i class="conum" data-value="1"></i><b>(1)</b>
+// cert is a pre-populated object of
+// type:SecCertificate representing a certificate
+NEEDS CODE CONVERSION
 
-  let rootCertData = SecCertificateCopyData(cert) as Data
-  let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
-  // Listener:
-  listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])
-
-// cert is a pre-populated object of type:SecCertificate representing a certificate
 let rootCertData = SecCertificateCopyData(cert) as Data
 let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
 // Listener:
-listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])</code></pre>
+thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_application-logic">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">    // Authenticate self-signed cert using application logic
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">    // Authenticate self-signed cert
+    // using application logic
     NEEDS CODE CONVERSION
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init {
+    thisConfig.authenticator = ListenerCertificateAuthenticator.init {
       (cert) -&gt; Bool in
         var cert:SecCertificate
         var certCommonName:CFString?
@@ -843,7 +867,7 @@ listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts:
         return false
     }
 
-listenerConfig.authenticator = ListenerCertificateAuthenticator.init {
+thisConfig.authenticator = ListenerCertificateAuthenticator.init {
   (cert) -&gt; Bool in
     var cert:SecCertificate
     var certCommonName:CFString?
@@ -907,16 +931,13 @@ listenerConfig.authenticator = ListenerCertificateAuthenticator.init {
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ignored</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>TLS is disabled; all communication is plain text.</p>
-</div>
-<div class="paragraph">
-<p>+</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">set to <code>nil</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="olist arabic">
-<ol class="arabic">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>The system will auto generate an <em>anonymous</em> self signed cert.</p>
 </li>
@@ -926,7 +947,7 @@ listenerConfig.authenticator = ListenerCertificateAuthenticator.init {
 <li>
 <p>Communication is encrypted</p>
 </li>
-</ol>
+</ul>
 </div></div></td>
 </tr>
 <tr>
@@ -937,7 +958,7 @@ listenerConfig.authenticator = ListenerCertificateAuthenticator.init {
 <div class="ulist">
 <ul>
 <li>
-<p>On first use&#8201;&#8212;&#8201;Bring your own certificate and private key; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLTLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLTLSIdentity.html#/c:objc(cs)CBLTLSIdentity(cm)importIdentityWithData:password:label:error:">importIdentity(withData:password:label:error:)</a> method to add it to the Keychain.</p>
+<p>On first use&#8201;&#8212;&#8201;Bring your own certificate and private key; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLTLSIdentity.html">TLSIdentity</a> class&#8217;s {url-api-method-tls-identity-create} method to add it to the Keychain.</p>
 </li>
 <li>
 <p>Each time&#8201;&#8212;&#8201;Use the server identity from the certificate stored in the Keychain; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc/Classes/CBLTLSIdentity.html">TLSIdentity</a> class&#8217;s {url-api-method-tls-identity-get} method with the alias you want to retrieve..</p>
@@ -972,11 +993,12 @@ listenerConfig.authenticator = ListenerCertificateAuthenticator.init {
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// Initialize the listener
-CBLURLEndpointListener* websocketListener = nil;
-websocketListener = [[CBLURLEndpointListener alloc] initWithConfig: listenerConfig]; <i class="conum" data-value="1"></i><b>(1)</b>
+CBLURLEndpointListener* thisListener = nil;
+thisListener = [[CBLURLEndpointListener alloc] initWithConfig: listenerConfig]; <i class="conum" data-value="1"></i><b>(1)</b>
 }
 
-BOOL success = [websocketListener startWithError: &amp;error];
+// start the listener
+BOOL success = [thisListener startWithError: &amp;error];
 if (!success) {
     NSLog(@"Cannot start the listener: %@", error);
 } <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
@@ -997,8 +1019,8 @@ if (!success) {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">let totalConnections = websocketListener.status.connectionCount
-let activeConnections = websocketListener.status.activeConnectionCount</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">let totalConnections = thisListener.status.connectionCount
+let activeConnections = thisListener.status.activeConnectionCount</code></pre>
 </div>
 </div>
 </div>

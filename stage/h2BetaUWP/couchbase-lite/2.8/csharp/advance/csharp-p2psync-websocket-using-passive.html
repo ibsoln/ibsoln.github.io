@@ -98,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2PUWP/82420-1</span></h4>
+<h4 class="title"><span class="">P2PUWP/82720</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -115,7 +115,25 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="#android:learn/p2psync.adoc">about p2p</a>
+<a class="nav-link" href="#couchbase-lite:{param-module}:advance/{param-name}-p2psync-websocket-using-passive.adoc">Passive Peer</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="#couchbase-lite:{param-module}:advance/{param-name}-p2psync-websocket-using-active.adoc">Active Peer</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">{url-api-references}[API Reference]</span>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="#csharp:learn/csharp.p2psync.adoc">about p2p</a>
 </span>
 </li>
 </ul>
@@ -187,7 +205,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2PUWP/82420-1</a></li>
+<li class="crumb"><a href="../../index.html">P2PUWP/82720</a></li>
 <li class="crumb"><a href="csharp-p2psync-websocket-using-passive.html">Passive Peer</a></li>
 </ul>
 </nav>
@@ -239,46 +257,54 @@ Use them as inspiration and adapt these examples to best practice when developin
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This content provides sample code covering the implementation of <a href="../../refer-glossary.html#peer-to-peer-sync" class="page">Peer-to-Peer Sync</a> over websockets.
-Specifically it covers the implementation of a <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a> listener, that will accept and apply database changes replicated by a connected <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a>. In this context the term <em>client</em> refers to the <em>active peer</em> and the term <em>server</em> to the <em>passive peer</em></p>
+<p>This content provides code and configuration examples covering the implementation of <a href="../../refer-glossary.html#peer-to-peer-sync" class="page">Peer-to-Peer Sync</a> over websockets.</p>
 </div>
 <div class="paragraph">
-<p>You will need to initialize and configure a Listener for each Couchbase Lite database instance that you want to sync with other peers.</p>
+<p>Specifically it covers the implementation of a <a href="../../refer-glossary.html#passive-peer" class="page">Passive Peer</a>.
+This <em>listener</em> will accept a connection from an <a href="../../refer-glossary.html#active-peer" class="page">Active Peer</a> and participate in the replication of database changes to bring both databases into sync.</p>
 </div>
 <div class="paragraph">
-<p><a href="#simple-listener-initialization">Example 1</a> shows a simple initialization and configuration process.</p>
+<p>In this context the <em>passive peer</em> (listener) acts as the <em>server</em> and the
+ <em>active peer</em> (replicator) acts as the <em>client</em>.</p>
 </div>
 <div class="paragraph">
-<p>The subsequent sections show additional details on the configuration options with examples.
-You do not need to provide configuration values for all properties, only those necessary to meet the requirements of your sync process.</p>
+<p>You should initialize and configure a Listener for each Couchbase Lite database instance you want to to sync.
+<a href="#simple-listener-initialization">Example 1</a> shows a simple initialization and configuration process.
+Subsequent sections provide additional details and examples for the main configuration options.</p>
 </div>
 <div id="simple-listener-initialization" class="exampleblock">
-<div class="title">Example 1. Simple Listener Initialization</div>
+<div class="title">Example 1. Listener configuration and initialization</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// . . . preceding application logic . . .
-CouchbaseLite.init(context); <i class="conum" data-value="1"></i><b>(1)</b>
-Database thisDB = new Database("passivepeerdb");
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Initialize the listener config
+var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="1"></i><b>(1)</b>
 
-// Initialize the listener config
-final URLEndpointListenerConfiguration listenerConfig
-   = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="2"></i><b>(2)</b>
-listenerConfig.setPort(55990); <i class="conum" data-value="3"></i><b>(3)</b>
-listenerConfig.setNetworkInterface("10.1.1.10"); <i class="conum" data-value="4"></i><b>(4)</b>
-listenerConfig.setEnableDeltaSync(true); <i class="conum" data-value="5"></i><b>(5)</b>
-listenerConfig.setDisableTLS(true); <i class="conum" data-value="6"></i><b>(6)</b>
+thisConfig.Port = 55990; <i class="conum" data-value="2"></i><b>(2)</b>
+
+thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="3"></i><b>(3)</b>
+
+thisConfig.EnableDeltaSync = true; <i class="conum" data-value="4"></i><b>(4)</b>
+
+thisConfig.DisableTLS = false; <i class="conum" data-value="5"></i><b>(5)</b>
+
+// Use an Anonymous Self-Signed Cert
+thisConfig.TlsIdentity = null; <i class="conum" data-value="6"></i><b>(6)</b>
 
 // Configure the client authenticator (if using Basic Authentication) <i class="conum" data-value="7"></i><b>(7)</b>
-thisConfig.setAuthenticator(new ListenerPasswordAuthenticator(
-  (thisUser, thisPassword) -&gt;
-    username.equals(thisUser) &amp;&amp; Arrays.equals(password, thisPassword)));
+SecureString thisPassword = "valid.password"; /* example only */
+var thisUser = "valid.user";
+thisConfig.Authenticator = new ListenerPasswordAuthenticator(
+  (sender, thisUser, thisPassword) =&gt;
+    {
+      return username.equals("valid.user")  &amp;&amp; thisPassword == "valid.password");
+    }
+  );
 
 // Initialize the listener
-final URLEndpointListener thisListener
-  = new URLEndpointListener(listenerConfig); <i class="conum" data-value="8"></i><b>(8)</b>
+var thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="8"></i><b>(8)</b>
 
-// start the listener
+// Start the listener
 thisListener.start(); <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
@@ -286,36 +312,42 @@ thisListener.start(); <i class="conum" data-value="9"></i><b>(9)</b></code></pre
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="#initialize-the-listener-configuration">Initialize the Listener Configuration</a></td>
+<td>Identify the local database to be used&#8201;&#8212;&#8201;see: <a href="#initialize-the-listener-configuration">Initialize the Listener Configuration</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>By default the system will assign a port&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
+<td>Optionally, choose a port to use.
+By default the system will automatically assign a port&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>By default the system will listen on all network interfaces&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
+<td>Optionally, choose a network-interface to use. By default the system will listen on all network interfaces&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">Set Network and Port</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#delta-sync">Delta Sync</a></td>
+<td>Optionally, choose to sync only changes, the default is not to enabld edelta-sync&#8201;&#8212;&#8201;see: <a href="#delta-sync">Delta Sync</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>TLS is enabled by default.
-It is <strong>not</strong> advisable to switch it off in production.
-This setting is ignored when <em>Basic Authentication</em> is required; but must be 'false' when <em>Client Cert Authentication</em> is required&#8201;&#8212;&#8201;see also:  <a href="#tls-security">TLS Security</a></td>
+<td>Set server security.
+TLS is always enabled out-of-the-box, so you can usually omit this line.
+But you <em>can</em>, optionally, disable TLS (<strong>not</strong> advisable in production)&#8201;&#8212;&#8201;see: <a href="#tls-security">TLS Security</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Apply basic authentication to validate the user credentials (<code>thisUser</code> and <code>thisPassword</code>), where <code>username</code> and <code>password</code> are the valid credentials and <code>thisUser</code> and <code>thisPassword</code> are the presented credentials-- see <a href="#client-authentication">Client Authentication</a> for more</td>
+<td>Optionally, apply the default TLS authentication, which is by anonymous self-signed certificate.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Initialize the listener using the configuration settings</td>
+<td>Set client security.
+Optionally, apply basic authentication to validate the user&#8217;s presented credentials (<code>thisUser</code> and <code>thisPassword</code>), where <code>username</code> and <code>password</code> are the valid credentials&#8201;&#8212;&#8201;see <a href="#client-authentication">Client Authentication</a> for more options.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Initialize the listener using the configuration settings.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td><a href="#start-listener">Start Listener</a></td>
 </tr>
 </table>
@@ -359,14 +391,8 @@ All other configuration values will take their default setting.</p>
 </div>
 <div class="paragraph">
 <p>Each Listener instance serves one Couchbase Lite database.
-There is no limit on the number of instances except a practical limit</p>
+Couchbase sets no hard limit on the number of instances you can initialize.</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Database name</dt>
-<dd>
-<div class="openblock">
-<div class="content">
 <div class="exampleblock">
 <div class="title">Example 2. Specify Local Database</div>
 <div class="content">
@@ -376,8 +402,7 @@ There is no limit on the number of instances except a practical limit</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Initialize the listener config
-final URLEndpointListenerConfiguration listenerConfig
-   = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -389,11 +414,6 @@ final URLEndpointListenerConfiguration listenerConfig
 </table>
 </div>
 </div>
-</div>
-</div>
-</div>
-</dd>
-</dl>
 </div>
 </div>
 </div>
@@ -414,7 +434,7 @@ final URLEndpointListenerConfiguration listenerConfig
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code-snippets/p2psync-websocket.cs">listenerConfig.setPort(55990); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code-snippets/p2psync-websocket.cs">thisConfig.Port = 55990; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -442,7 +462,7 @@ final URLEndpointListenerConfiguration listenerConfig
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code-snippets/p2psync-websocket.cs">listenerConfig.setNetworkInterface("10.1.1.10"); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code-snippets/p2psync-websocket.cs">thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -467,7 +487,8 @@ This must be either an IP Address or network interface name such as <code>en0</c
 <h2 id="delta-sync"><a class="anchor" href="#delta-sync"></a>Delta Sync</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Delta Sync allows clients to sync only those parts of a document that have changed. This can result in significant savings in bandwidth consumption as well as throughput improvements.
+<p>Delta Sync allows clients to sync only those parts of a document that have changed.
+This can result in significant savings in bandwidth consumption as well as throughput improvements.
 Both valuable benefits, especially when network bandwidth is constrained.</p>
 </div>
 <div class="exampleblock">
@@ -475,7 +496,7 @@ Both valuable benefits, especially when network bandwidth is constrained.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">listenerConfig.setEnableDeltaSync(true); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">thisConfig.EnableDeltaSync = true; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -495,8 +516,10 @@ Use <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/
 <h2 id="tls-security"><a class="anchor" href="#tls-security"></a>TLS Security</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>TLS based encryption is enabled by default.
-Although it <em>can</em> be disabled, this is not recommended on production environments.</p>
+<p>TLS based encryption is enabled by default and this setting ought to be used in any production environment. However, it <em>can</em> be disabled, for example for development and-or test environments.</p>
+</div>
+<div class="paragraph">
+<p>The <code>disableTLS</code> setting is ignored when using <em>Basic Authentication</em>, but is must be 'false' when <em>Client Cert Authentication</em> is required.</p>
 </div>
 <div class="paragraph">
 <p>When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity (<a href="#configure-tls-identity-for-listener">[configure-tls-identity-for-listener]</a>).</p>
@@ -595,27 +618,21 @@ Subsequent starts of the Listener will then reuse the identity from secure stora
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">listenerConfig.setDisableTLS(false); <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">thisConfig.DisableTLS = false; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Use CA Cert
 //    Import a key pair into secure storage
 //    Create a TLSIdentity from the imported key-pair
-InputStream thisKeyPair = new FileInputStream();
+byte[] thisKeyPair = File.ReadAllBytes("serverkeypair.p12");
+var thisIdentity = TLSIdentity.ImportIdentity(
+                      _store, // x509store
+                      thisKeyPair, // byte array of PKCS12 data
+                      "123", // store password
+                      "couchbase-demo-cert", // alias label
+                      null); <i class="conum" data-value="2"></i><b>(2)</b>
 
-thisKeyPair.getClass().getResourceAsStream("serverkeypair.p12");
-
-TLSIdentity thisIdentity = new TLSIdentity.importIdentity(
-  EXTERNAL_KEY_STORE_TYPE,  // KeyStore type, eg: "PKCS12"
-  thisKeyPair,              // An InputStream from the keystore
-  password,                 // The keystore password
-  EXTERNAL_KEY_ALIAS,       // The alias, in the external keystore, of the entry to be used.
-  null,                     // The key password
-"test-alias"                // The alias for the imported key
-);
-
-
-// set the TLS Identity
-listenerConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+// Set the TLS Identity
+thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -624,9 +641,13 @@ listenerConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="2"></i
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>Ensure TLS is enabled.</td>
 </tr>
+</table>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Use the imported identity.</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the new TLS identity.</td>
 </tr>
 </table>
 </div>
@@ -637,28 +658,26 @@ listenerConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="2"></i
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">listenerConfig.setDisableTLS(false); <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">thisConfig.DisableTLS = false; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Use a self-signed certificate
-//    Create a TLSIdentity for the server using convenience API.
-//    System generates self-signed cert
+// Create a TLSIdentity for the server using convenience API.
+// System generates self-signed cert
 // Work-in-progress. Code snippet coming soon.
-private static final Map&lt;String, String&gt; CERT_ATTRIBUTES; <i class="conum" data-value="2"></i><b>(2)</b>
-static {
-    final Map&lt;String, String&gt; thisMap = new HashMap&lt;&gt;();
-    m.put(TLSIdentity.CERT_ATTRIBUTE_COMMON_NAME, "Couchbase Demo");
-    m.put(TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION, "Couchbase");
-    m.put(TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION_UNIT, "Mobile");
-    m.put(TLSIdentity.CERT_ATTRIBUTE_EMAIL_ADDRESS, "noreply@couchbase.com");
-    CERT_ATTRIBUTES = Collections.unmodifiableMap(thisMap);
-}
+// Store the TLS identity in secure storage
+// under the label 'couchbase-demo-cert'
+var thisTlsID = new TLSIdentity.createIdentity(
+      true,
+      new Dictionary&lt;string,string&gt;() {
+        {Certificate.CommonNameAttribute, "CBL-Server"};
+        },
+      null,
+      _ourX509store,
+      "couchbase-demo-cert"
+      );  <i class="conum" data-value="2"></i><b>(2)</b>
 
-// Store the TLS identity in secure storage under the label 'couchbase-demo-cert'
-TLSIdentity thisIdentity = new TLSIdentity.createIdentity(true, CERT_ATTRIBUTES, null, "couchbase-demo-cert"); <i class="conum" data-value="3"></i><b>(3)</b>
-
-
-// set the TLS Identity
-listenerConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+// Set the TLS Identity
+thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -673,7 +692,7 @@ listenerConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="4"></i
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Store the generated identity as alias <code>couchbase-demo-cert</code>.</td>
+<td>Store the generated identity as alias <code>couchbase-docs-cert</code>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -689,10 +708,10 @@ These are self signed certificates generated by Couchbase Lite. The generated ce
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">listenerConfig.setDisableTLS(false); <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">thisConfig.DisableTLS = false; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Use an Anonymous Self-Signed Cert
-listenerConfig.setTlsIdentity(null);</code></pre>
+thisConfig.TlsIdentity = null; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -729,7 +748,7 @@ listenerConfig.setTlsIdentity(null);</code></pre>
 <p><a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.P2P.ListenerPasswordAuthenticator.html">ListenerPasswordAuthenticator</a>&#8201;&#8212;&#8201;which authenticates using a client&#8217;s username and password</p>
 </li>
 <li>
-<p><a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.P2P.ListenerCertificateAuthenticator.html" class="bare">https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.P2P.ListenerCertificateAuthenticator.html</a>[ListenerCertificateAuthenticator&#8201;&#8212;&#8201;which authenticates using  a clients certificate.</p>
+<p><a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.P2P.ListenerCertificateAuthenticator.html">ListenerCertificateAuthenticator</a>&#8201;&#8212;&#8201;which authenticates using  a clients certificate.</p>
 </li>
 </ul>
 </div>
@@ -749,9 +768,14 @@ The actual authentication is provided by the application code. Often in the form
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Configure the client authenticator (if using Basic Authentication) <i class="conum" data-value="1"></i><b>(1)</b>
-thisConfig.setAuthenticator(new ListenerPasswordAuthenticator(
-  (thisUser, thisPassword) -&gt;
-    username.equals(thisUser) &amp;&amp; Arrays.equals(password, thisPassword)));</code></pre>
+SecureString thisPassword = "valid.password"; /* example only */
+var thisUser = "valid.user";
+thisConfig.Authenticator = new ListenerPasswordAuthenticator(
+  (sender, thisUser, thisPassword) =&gt;
+    {
+      return username.equals("valid.user")  &amp;&amp; thisPassword == "valid.password");
+    }
+  );</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -816,8 +840,18 @@ The logic should take the form of function or block (such as, a closure expressi
 <div class="tab-pane" aria-labelledby="tabset2_root-ca">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// cert is a pre-populated object of type:SecCertificate representing a certificate
-// Work in progress. Code snippet to be provided.</code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Configure the client authenticator
+// to validate using ROOT CA <i class="conum" data-value="1"></i><b>(1)</b>
+byte[] thisCaData; // byte array for CA data
+using (var thisReader = new BinaryReader(stream)) {
+  thisCaData = thisReader.ReadBytes(int stream.Length);
+}; // Get cert data
+
+var thisRootCert = new X509Certificate(thisCaData); //
+
+thisConfig.Authenticator = new ListenerCertificateAuthenticator(
+  new X509Certificate2XXollection(thisRootCert)
+);</code></pre>
 </div>
 </div>
 </div>
@@ -841,10 +875,7 @@ The logic should take the form of function or block (such as, a closure expressi
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">String thisAlias = "alias-to-delete";
-final KeyStore thisKeyStore =  KeyStore.getInstance("PKCS12");
-thisKeyStore.load(null);
-thisKeyStore.deleteEntry(thisAlias);</code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">TLSIdentity.DeleteIdentity(_store, "alias-to-delete", null);</code></pre>
 </div>
 </div>
 </div>
@@ -875,16 +906,13 @@ thisKeyStore.deleteEntry(thisAlias);</code></pre>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Ignored</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>TLS is disabled; all communication is plain text.</p>
-</div>
-<div class="paragraph">
-<p>+</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">set to <code>nil</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="olist arabic">
-<ol class="arabic">
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>The system will auto generate an <em>anonymous</em> self signed cert.</p>
 </li>
@@ -894,7 +922,7 @@ thisKeyStore.deleteEntry(thisAlias);</code></pre>
 <li>
 <p>Communication is encrypted</p>
 </li>
-</ol>
+</ul>
 </div></div></td>
 </tr>
 <tr>
@@ -905,7 +933,7 @@ thisKeyStore.deleteEntry(thisAlias);</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>On first use&#8201;&#8212;&#8201;Bring your own certificate and private key; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html#Couchbase_Lite_P2P_TLSIdentity_ImportIdentity_System_Security_Cryptography_X509Certificates_X509Store_System_Byte___System_String_System_String_System_String_">ImportIdentity()</a> method to add it to the secure storage.</p>
+<p>On first use&#8201;&#8212;&#8201;Bring your own certificate and private key; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html#Couchbase_Lite_P2P_TLSIdentity_CreateIdentity_System_Boolean_System_Collections_Generic_Dictionary_System_String_System_String__System_Nullable_System_DateTimeOffset__System_Security_Cryptography_X509Certificates_X509Store_System_String_System_String_">CreateIdentity()</a> method to add it to the secure storage.</p>
 </li>
 <li>
 <p>Each time&#8201;&#8212;&#8201;Use the server identity from the certificate stored in the secure storage; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html#Couchbase_Lite_P2P_TLSIdentity_GetIdentity_System_Security_Cryptography_X509Certificates_X509Store_System_String_System_String_">GetIdentity(X509Store, String, String)</a> method with the alias you want to retrieve..</p>
@@ -940,10 +968,9 @@ thisKeyStore.deleteEntry(thisAlias);</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Initialize the listener
-final URLEndpointListener thisListener
-  = new URLEndpointListener(listenerConfig); <i class="conum" data-value="1"></i><b>(1)</b>
+var thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="1"></i><b>(1)</b>
 
-// start the listener
+// Start the listener
 thisListener.start(); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
@@ -974,9 +1001,7 @@ thisListener.start(); <i class="conum" data-value="2"></i><b>(2)</b></code></pre
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code-snippets/p2psync-websocket.cs">
-int connectionCount = thisListener.getStatus().getConnectionCount(); <i class="conum" data-value="1"></i><b>(1)</b>
-
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code-snippets/p2psync-websocket.cs">int connectionCount = thisListener.getStatus().getConnectionCount(); <i class="conum" data-value="1"></i><b>(1)</b>
 int activeConnectionCount = thisListener.getStatus().getActiveConnectionCount();  <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
