@@ -98,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2pBeta/82120-1</span></h4>
+<h4 class="title"><span class="">P2PAndroid/82620</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -202,7 +202,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2pBeta/82120-1</a></li>
+<li class="crumb"><a href="../../index.html">P2PAndroid/82620</a></li>
 <li class="crumb"><a href="../learn/java-android-p2psync.html">Introduction to P2P Sync</a></li>
 <li class="crumb"><a href="java-android-p2psync-websocket-using-passive.html">Passive Peer</a></li>
 </ul>
@@ -312,6 +312,7 @@ thisConfig.setEnableDeltaSync(false); <i class="conum" data-value="4"></i><b>(4)
 
 // Configure server security
 thisConfig.setDisableTLS(false); <i class="conum" data-value="5"></i><b>(5)</b>
+
 
 // Use an Anonymous Self-Signed Cert
 thisConfig.setTlsIdentity(null); <i class="conum" data-value="6"></i><b>(6)</b>
@@ -699,9 +700,13 @@ thisConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="2"></i><b>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>Ensure TLS is enabled.</td>
 </tr>
+</table>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Use the imported identity.</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the new TLS identity.</td>
 </tr>
 </table>
 </div>
@@ -713,7 +718,6 @@ thisConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="2"></i><b>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">thisConfig.setDisableTLS(false); <i class="conum" data-value="1"></i><b>(1)</b>
-
 
 // Use a self-signed certificate
 // Create a TLSIdentity for the server using convenience API.
@@ -737,6 +741,7 @@ TLSIdentity thisIdentity =
     CERT_ATTRIBUTES,
     null,
     "couchbase-docs-cert"); <i class="conum" data-value="3"></i><b>(3)</b>
+
 
 
 // set the TLS Identity
@@ -900,8 +905,19 @@ The logic should take the form of function or block (such as, a closure expressi
 <div class="tab-pane" aria-labelledby="tabset2_root-ca">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// cert is a pre-populated object of type:SecCertificate representing a certificate
-// Work in progress. Code snippet to be provided.</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Configure the client authenticator
+// to validate using ROOT CA <i class="conum" data-value="1"></i><b>(1)</b>
+// thisClientID.certs is a list containing a client cert to accept
+// and any other certs needed to complete a chain between the client cert
+// and a CA
+TLSIdentity thisServerID = getIdentity(“server”)
+TLSIdentity thisClientID = getIdentity(“authorizedClient”)
+
+thisConfig.setTlsIdentity = thisServerID;
+thisConfig.setAuthenticator(
+  new ListenerCertificateAuthenticator(thisClientID.getCerts()));
+
+URLEndpointListener thisListener = new URLEndpointListener(thisConfig)</code></pre>
 </div>
 </div>
 </div>
@@ -989,7 +1005,7 @@ thisKeyStore.deleteEntry(thisAlias);</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>On first use&#8201;&#8212;&#8201;Bring your own certificate and private key; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html#importIdentity-java.lang.String-java.io.InputStream-char:A-java.lang.String-char:A-java.lang.String-">importIdentity()</a> method to add it to the Keystore.</p>
+<p>On first use&#8201;&#8212;&#8201;Bring your own certificate and private key; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html#createIdentity-boolean-java.util.Map-java.util.Date-java.lang.String-">createIdentity()</a> method to add it to the Keystore.</p>
 </li>
 <li>
 <p>Each time&#8201;&#8212;&#8201;Use the server identity from the certificate stored in the Keystore; for example, using the <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-android/com/couchbase/lite/TLSIdentity.html#getIdentity-java.lang.String-">getIdentity()</a> method with the alias you want to retrieve..</p>
