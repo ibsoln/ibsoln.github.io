@@ -98,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2PAndroid/82620</span></h4>
+<h4 class="title"><span class="">P2pBeta/82120-1</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -202,7 +202,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2PAndroid/82620</a></li>
+<li class="crumb"><a href="../../index.html">P2pBeta/82120-1</a></li>
 <li class="crumb"><a href="../learn/java-android-p2psync.html">Introduction to P2P Sync</a></li>
 <li class="crumb"><a href="java-android-p2psync-websocket-using-passive.html">Passive Peer</a></li>
 </ul>
@@ -665,34 +665,32 @@ Subsequent starts of the Listener will then reuse the identity from secure stora
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset1_import-from-key-pair">
 <div class="paragraph">
-<p>Importing an existing keystore entry is difficult to do securely&#8201;&#8212;&#8201;see: <a href="https://developer.android.com/training/articles/keystore" class="bare">https://developer.android.com/training/articles/keystore</a>. A better approach is to create the entry using <code>TLSIdentity.createIdentity</code>.</p>
-</div>
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-<div class="title">For development and testing purposes only:</div>
-You can use the utility <code>com.couchbase.lite.KeyStoreUtils.importEntry</code> to copy an external keystore entry  into the Android keystore.<br>
-<strong>This method is not secure. Do not use in production code.</strong>
-</td>
-</tr>
-</table>
+<p>Import a key pair into secure storage and create a TLSIdentity from the imported key-pair.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">thisConfig.setDisableTLS(false); <i class="conum" data-value="1"></i><b>(1)</b>
 
+
 // Use CA Cert
-// Create a TLSIdentity from a key-pair and
-// certificate in Android's canonical keystore
-TLSIdentity thisIdentity = new TLSIdentity.getIdentity("server"); <i class="conum" data-value="2"></i><b>(2)</b>
+// Import a key pair into secure storage
+// Create a TLSIdentity from the imported key-pair
+InputStream thisKeyPair = new FileInputStream();
+
+thisKeyPair.getClass().getResourceAsStream("serverkeypair.p12");
+
+TLSIdentity thisIdentity = new TLSIdentity.importIdentity(
+  EXTERNAL_KEY_STORE_TYPE,  // KeyStore type, eg: "PKCS12"
+  thisKeyPair,              // An InputStream from the keystore
+  password,                 // The keystore password
+  EXTERNAL_KEY_ALIAS,       // The alias to be used (in external keystore)
+  null,                     // The key password
+  "test-alias"              // The alias for the imported key
+);
 
 
 // set the TLS Identity
-thisConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+thisConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -703,11 +701,7 @@ thisConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="3"></i><b>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The alias ("server" in this case) must refer to an entry in Android&#8217;s canonical keystore, which has a private key and at least one certificate.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Use the new TLS identity.</td>
+<td>Use the imported identity.</td>
 </tr>
 </table>
 </div>
@@ -719,6 +713,7 @@ thisConfig.setTlsIdentity(thisIdentity); <i class="conum" data-value="3"></i><b>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">thisConfig.setDisableTLS(false); <i class="conum" data-value="1"></i><b>(1)</b>
+
 
 // Use a self-signed certificate
 // Create a TLSIdentity for the server using convenience API.
@@ -905,19 +900,8 @@ The logic should take the form of function or block (such as, a closure expressi
 <div class="tab-pane" aria-labelledby="tabset2_root-ca">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Configure the client authenticator
-// to validate using ROOT CA <i class="conum" data-value="1"></i><b>(1)</b>
-// thisClientID.certs is a list containing a client cert to accept
-// and any other certs needed to complete a chain between the client cert
-// and a CA
-TLSIdentity thisServerID = getIdentity(“server”)
-TLSIdentity thisClientID = getIdentity(“authorizedClient”)
-
-thisConfig.setTlsIdentity = thisServerID;
-thisConfig.setAuthenticator(
-  new ListenerCertificateAuthenticator(thisClientID.getCerts()));
-
-URLEndpointListener thisListener = new URLEndpointListener(thisConfig)</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// cert is a pre-populated object of type:SecCertificate representing a certificate
+// Work in progress. Code snippet to be provided.</code></pre>
 </div>
 </div>
 </div>

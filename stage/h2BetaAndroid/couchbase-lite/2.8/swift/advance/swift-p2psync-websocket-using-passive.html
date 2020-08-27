@@ -98,7 +98,7 @@
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2PAndroid/82620</span></h4>
+<h4 class="title"><span class="">P2pBeta/82120-1</span></h4>
 <a class="navbar-item component" href="../../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -199,7 +199,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../../index.html">P2PAndroid/82620</a></li>
+<li class="crumb"><a href="../../index.html">P2pBeta/82120-1</a></li>
 <li class="crumb"><a href="swift-p2psync-websocket-using-passive.html">Set-up the Passive Peer</a></li>
 </ul>
 </nav>
@@ -302,13 +302,6 @@ fileprivate var thisDB:Database?
           }
       return false
   }
-
-  // Authenticate using Cert Authority
-  // cert is a pre-populated object of type:SecCertificate representing a certificate
-  let rootCertData = SecCertificateCopyData(cert) as Data
-  let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
-  // Listener:
-  listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])
 
   // Initialize the listener
   _websocketListener = URLEndpointListener(config: listenerConfig) <i class="conum" data-value="7"></i><b>(7)</b>
@@ -628,6 +621,9 @@ Subsequent starts of the Listener will then reuse the identity from secure stora
 </div>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset1_import-from-key-pair">
+<div class="paragraph">
+<p>Import a key pair into secure storage and create a TLSIdentity from the imported key-pair.</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">listenerConfig.disableTLS  = false <i class="conum" data-value="1"></i><b>(1)</b>
@@ -645,7 +641,7 @@ listenerConfig.tlsIdentity =
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Use the new TLS identity.</td>
+<td>Use the imported identity.</td>
 </tr>
 </table>
 </div>
@@ -823,7 +819,12 @@ The logic should take the form of function or block (such as, a closure expressi
 <div class="tab-pane" aria-labelledby="tabset2_root-ca">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift"></code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">// Authenticate using Cert Authority
+// cert is a pre-populated object of type:SecCertificate representing a certificate
+let rootCertData = SecCertificateCopyData(cert) as Data
+let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
+// Listener:
+listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert])</code></pre>
 </div>
 </div>
 </div>
