@@ -290,53 +290,43 @@ Subsequent sections provide additional details and examples for the main configu
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">let thisUser = "syncthisUser"
-let thisPassword = "sync9455"
-let cert:SecCertificate?
-let passivePeerEndpoint = "10.1.1.12:8920"
-let passivePeerPort = "8920"
-let passiveDbName = "userdb"
-var actDb:Database?
-var thisReplicator:Replicator?
-var replicatorListener:ListenerToken?
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">// Set listener DB endpoint
+NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
 
+CBLReplicatorConfiguration *thisConfig
+  = [[CBLReplicatorConfiguration alloc]
+      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="1"></i><b>(1)</b>
 
-let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
-let targetEndpoint = URLEndpoint(url: tgtUrl)
-var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="1"></i><b>(1)</b>
+thisConfig.replicatorType = kCBLReplicatorTypePush;
 
-config.replicatorType = .pushAndPull
-
-config.continuous = true
+thisConfig.continuous = YES;
 
 // Configure Server Security -- only accept self-signed certs
-config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="2"></i><b>(2)</b>
+thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="2"></i><b>(2)</b>
 
 // Configure Client Security <i class="conum" data-value="3"></i><b>(3)</b>
 //  Set Authentication Mode
-let thisAuthenticator = BasicAuthenticator(username: thisUser, password: thisPassword);
-config.authenticator = thisAuthenticator
+thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];
 
 /* Optionally set custom conflict resolver call back */
-config.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="4"></i><b>(4)</b>
+thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="4"></i><b>(4)</b>
 
 // Apply configuration settings to the replicator
-thisReplicator = Replicator.init( config: config) <i class="conum" data-value="5"></i><b>(5)</b>
+_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="5"></i><b>(5)</b>
 
 // Optionally add a change listener
-// add change listener and retain token for use in deletion
-let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="6"></i><b>(6)</b>
-  if change.status.activity == .stopped {
-      print("Replication stopped")
-  }
-  else {
-      print("Replicator is currently ", thisReplicator?.status.activity)
-  }
-})
-
-
+// retain token for use in deletion
+id&lt;CBLListenerToken&gt; thisListenerToken
+  = [thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
+      if (thisChange.status.activity == kCBLReplicatorStopped) {
+        NSLog(@"Replication stopped");
+        } else {
+        NSLog(@"Status: " + thisChange.status.activity);
+        };
+    }]; <i class="conum" data-value="6"></i><b>(6)</b>
 // Run the replicator using the config settings
-thisReplicator?.start()  <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
+[thisReplicator start]; <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -443,9 +433,13 @@ To use client certificate based authentication&#8201;&#8212;&#8201;see: <a href=
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
-let targetEndpoint = URLEndpoint(url: tgtUrl)
-var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">// Set listener DB endpoint
+NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
+
+CBLReplicatorConfiguration *thisConfig
+  = [[CBLReplicatorConfiguration alloc]
+      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -490,9 +484,9 @@ var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">config.replicatorType = .pushAndPull
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">thisConfig.replicatorType = kCBLReplicatorTypePush;
 
-config.continuous = true</code></pre>
+thisConfig.continuous = YES;</code></pre>
 </div>
 </div>
 </div>
@@ -531,7 +525,7 @@ config.continuous = true</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// Configure Server Security -- only accept CA Certs
-config.acceptOnlySelfSignedServerCertificate=false <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -549,11 +543,11 @@ Self signed certificates disallowed.</td>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">    // Configure Server Security -- only accept self-signed certs
-    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="1"></i><b>(1)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Use serverCertificateVerificationMode set to `.selfSignedCert` to disable cert validation
-config.disableTLS = false
-config.acceptOnlySelfSignedServerCertificate=true</code></pre>
+thisConfig.disableTLS = false
+thisConfig.acceptOnlySelfSignedServerCertificate=true</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -584,8 +578,8 @@ guard let pinnedCert = SecCertificateCreateWithData(nil, localCertificate)
   else { /* process error */ }
 
 // Add `pinnedCert` and `.cacert` to `ReplicatorConfiguration`
-config.acceptOnlySelfSignedServerCertificate=false
-config.pinnedServerCertificate = pinnedCert</code></pre>
+thisConfig.acceptOnlySelfSignedServerCertificate=false
+thisConfig.pinnedServerCertificate = pinnedCert</code></pre>
 </div>
 </div>
 </div>
@@ -616,8 +610,7 @@ config.pinnedServerCertificate = pinnedCert</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">//  Set Authentication Mode
-let thisAuthenticator = BasicAuthenticator(username: thisUser, password: thisPassword);
-config.authenticator = thisAuthenticator</code></pre>
+thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];</code></pre>
 </div>
 </div>
 </div>
@@ -676,7 +669,7 @@ do {
 } catch
   {return nil}
 thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity )
-config.thisAuthenticator</code></pre>
+thisConfig.thisAuthenticator</code></pre>
 </div>
 </div>
 </div>
@@ -698,12 +691,10 @@ You can, optionally, add a change listener (see <a href="#monitor-sync">Monitor 
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">// Apply configuration settings to the replicator
-thisReplicator = Replicator.init( config: config) <i class="conum" data-value="1"></i><b>(1)</b>
-
-// Optionally add a change listener
+_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Run the replicator using the config settings
-thisReplicator?.start()  <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+[thisReplicator start]; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 </div>
@@ -763,35 +754,38 @@ That is, whether it is actively transferring data or if it has stopped.</p>
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset2_addchangelistener"></a>addChangeListener()</p>
+<p><a id="tabset2_adding-a-change-listener"></a>Adding a Change Listener</p>
 </li>
 <li>
-<p><a id="tabset2_replicator-status"></a>replicator.status</p>
+<p><a id="tabset2_using-replicator-status"></a>Using replicator.status</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_addchangelistener">
+<div class="tab-pane" aria-labelledby="tabset2_adding-a-change-listener">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">// add change listener and retain token for use in deletion
-let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="1"></i><b>(1)</b>
-  if change.status.activity == .stopped {
-      print("Replication stopped")
-  }
-  else {
-      print("Replicator is currently ", thisReplicator?.status.activity)
-  }
-})</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// Optionally add a change listener
+// retain token for use in deletion
+id&lt;CBLListenerToken&gt; thisListenerToken
+  = [thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
+      if (thisChange.status.activity == kCBLReplicatorStopped) {
+        NSLog(@"Replication stopped");
+        } else {
+        NSLog(@"Status: " + thisChange.status.activity);
+        };
+    }]; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset2_replicator-status">
+<div class="tab-pane" aria-labelledby="tabset2_using-replicator-status">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">      print("Replicator is currently ", thisReplicator?.status.activity)
-  }
-})</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">if (thisChange.status.activity == kCBLReplicatorStopped) {
+  NSLog(@"Replication stopped");
+  } else {
+  NSLog(@"Status: " + thisChange.status.activity);
+  };</code></pre>
 </div>
 </div>
 </div>
@@ -819,10 +813,10 @@ let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (c
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code-snippets/p2psync-websocket.m">// Remove the change listener
+[thisReplicator removeChangeListenerWithToken: thisLstenerToken];
 
-thisReplicator?.removeChangeListener(withToken: pushPullReplListener)
 // Stop the replicator
-thisReplicator?.stop()</code></pre>
+[thisReplicator start];</code></pre>
 </div>
 </div>
 </div>
@@ -1001,67 +995,6 @@ CBLMutableDocument *mutableDocument = [document toMutable];
 </li>
 </ul>
 </div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="related-content-2"><a class="anchor" href="#related-content-2"></a>Related Content</h2>
-<div class="sectionbody">
-<div class="card-row three-column-row">
-<div class="sect5 column">
-<h6 id="-4"><a class="anchor" href="#-4"></a></h6>
-<div class="ulist">
-<div class="title">How to</div>
-<ul>
-<li>
-<p><a href="objc-p2psync-websocket-using-passive.html" class="page">Passive Peer</a></p>
-</li>
-<li>
-<p><a href="objc-p2psync-websocket-using-active.html" class="page">Active Peer</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
-<h6 id="-5"><a class="anchor" href="#-5"></a></h6>
-<div class="ulist">
-<div class="title">Concepts</div>
-<ul>
-<li>
-<p><a href="../learn/objc-p2psync.html" class="page">Peer-to-peer Synchronization</a></p>
-</li>
-<li>
-<p><a href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-objc">API References</a>
-.</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
-<h6 id="-6"><a class="anchor" href="#-6"></a></h6>
-<div class="ulist">
-<div class="title">Community Resources ...</div>
-<ul>
-<li>
-<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-<div class="title">Enterprise Edition only</div>
-This an <a href="https://www.couchbase.com/products/editions">Enterprise Edition</a> feature.
-Purchase the <em>Enterprise License</em>, which includes official <a href="https://www.couchbase.com/support-policy">Couchbase Support</a>, to use it in production (see the license and support <a href="https://www.couchbase.com/licensing-and-support-faq">Licensing</a>).
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
