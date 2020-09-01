@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Couchbase Lite Java (Android) framework | Couchbase Docs</title>
-<link rel="canonical" href="https://ibsoln.github.io/stage/h2-714/couchbase-lite/2.8/temp-holder-for-original-copy/java-android.html">
+<link rel="canonical" href="https://ibsoln.github.io/stage/stageBetaIOS/couchbase-lite/2.8/temp-holder-for-original-copy/java-android.html">
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
@@ -97,7 +97,7 @@
 <img src="../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title"><span class="">P2PUWP/82420-1</span></h4>
+<h4 class="title"><span class="">Couchbase Lite (h2BetaIOS-29JUN20)</span></h4>
 <a class="navbar-item component" href="../index.html"> <span class="version">2.8</span></a>
 </div>
 </div>
@@ -114,7 +114,19 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="#android:learn/p2psync.adoc">about p2p</a>
+<a class="nav-link" href="../swift/advance/swift-p2psync-websocket-using-passive.html">Deploy Passive Peer</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../swift/advance/swift-p2psync-websocket-using-active.html">Deploy Active Peer</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="https://ibsoln.github.io/stage/api/mobile/2.8.0/couchbase-lite-swift">API References</a>
 </span>
 </li>
 </ul>
@@ -186,7 +198,7 @@
 <button class="nav-control"></button>
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li class="crumb"><a href="../index.html">P2PUWP/82420-1</a></li>
+<li class="crumb"><a href="../index.html">Couchbase Lite (h2BetaIOS-29JUN20)</a></li>
 <li class="crumb"><a href="java-android.html">Couchbase Lite Java (Android) framework</a></li>
 </ul>
 </nav>
@@ -2228,7 +2240,7 @@ The following error codes are considered temporary by the Couchbase Lite replica
 <div class="sect3">
 <h4 id="document-access-removal-behavior"><a class="anchor" href="#document-access-removal-behavior"></a>Document Access Removal Behavior</h4>
 <div class="paragraph">
-<p>When <a href="../../../sync-gateway/2.8/learn/sync-function.html" class="page">access to a document is removed</a> on Sync Gateway, the document replication listener sends a notification with the <code>AccessRemoved</code> flag set to <code>true</code> and subsequently purges the document from the database.</p>
+<p>When <a href="../../../sync-gateway/2.8/learn/defining-sync-functions.html" class="page">access to a document is removed</a> on Sync Gateway, the document replication listener sends a notification with the <code>AccessRemoved</code> flag set to <code>true</code> and subsequently purges the document from the database.</p>
 </div>
 </div>
 </div>
@@ -2796,10 +2808,10 @@ In this case, the app can detect the error that is being thrown, and handle it b
 <div class="sect2">
 <h3 id="custom-conflict-resolution-2"><a class="anchor" href="#custom-conflict-resolution-2"></a>Custom Conflict Resolution</h3>
 <div class="paragraph">
-<p>Developers can hook a conflict handler when saving a document so they can easily handle the conflict in a single save method call.</p>
+<p>Starting in Couchbase Lite 2.6, we allow developers to hook a conflict handler when saving a document so that developers can easily handle the conflict in a single save method call.</p>
 </div>
 <div class="paragraph">
-<p>To implement custom conflict resolution when saving a document, apps must call the <code>save</code> method with a conflict handler block ( {url-api-method-database-save-conflict}).</p>
+<p>To implement custom conflict resolution when saving a document, apps must call the <code>save()</code> method with a conflict handler.</p>
 </div>
 <div class="paragraph">
 <p>The following code snippet shows an example of merging properties from the existing document (<code>current</code>) into the one being saved (<code>new</code>).
@@ -2813,10 +2825,26 @@ In the event of conflicting keys, it will pick the key value from <code>new</cod
 <pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/ROOT/pages/_partials/handling-conflicts.adoc - include::example$/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java[]</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/handling-conflicts.adoc - include::example$/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java[]</p>
 </div>
 </div>
+<div class="ulist">
+<div class="title">Points of Note:</div>
+<ul>
+<li>
+<p>Within the conflict handlefr, you can modify the <code>document</code> parameter which is the same instance of <code>Document</code> that is passed to the <code>save()</code> method.
+So in effect, you will be directly modifying the document that is being saved.</p>
+</li>
+<li>
+<p>When handling is done, the method must return <code>true</code>.</p>
+</li>
+<li>
+<p>If the handler could not resolve the conflict, it can return <code>false</code>.
+In this case, the save method will cancel the save operation and return <code>false</code> the same way as using the <code>save()</code> method with the <code>failOnConflict</code> concurrency control.</p>
+</li>
+<li>
+<p>If there is an exception thrown in the <code>handle()</code> method, the exception will be caught and rethrown in the <code>save()</code> method.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -3494,7 +3522,7 @@ We will cover each case below.</p>
 <p><a href="https://issues.couchbase.com/browse/CBL-172"><strong>CBL-172</strong></a> Live Query initial delay</p>
 </li>
 <li>
-<p><a href="https://issues.couchbase.com/browse/CBL-171"><strong>CBL-171</strong></a> Couchbase Lite replication never finishes for replication filtering when doc count is 1000</p>
+<p><a href="https://issues.couchbase.com/browse/CBL-171"><strong>CBL-171</strong></a> CBL replication never finishes for replication filtering when doc count is 1000</p>
 </li>
 <li>
 <p><a href="https://issues.couchbase.com/browse/CBL-144"><strong>CBL-144</strong></a> Incorrect log level passed to custom logger</p>
@@ -3766,7 +3794,7 @@ Crash on document save with 2.1.2</p>
 </li>
 <li>
 <p>TBA/1872[<strong>#1872</strong>]
-Logging messages Couchbase Lite code are not shown up in console</p>
+Logging messages CBL code are not shown up in console</p>
 </li>
 <li>
 <p>TBA/1899[<strong>#1899</strong>]
@@ -3845,7 +3873,7 @@ close</p>
 <p>TBA/1510[<strong>#1510</strong>] 2.0: Crash with DB21 - in c4doc_update()</p>
 </li>
 <li>
-<p>TBA/1665[<strong>#1665</strong>] Exception thrown openDatabase (Proguard strips methods that Couchbase Lite uses)</p>
+<p>TBA/1665[<strong>#1665</strong>] Exception thrown openDatabase (Proguard strips methods that CBL uses)</p>
 </li>
 <li>
 <p>TBA/1676[<strong>#1676</strong>] 2.0: Replicator Error misses the error message.</p>
@@ -3965,7 +3993,7 @@ close</p>
 <p>TBA/1685[<strong>#1685</strong>] Replicator in Android get stuck at busy state when it goes back to online from offline (Genymotion)</p>
 </li>
 <li>
-<p>TBA/1702[<strong>#1702</strong>] ValueIndexItem.expression(Expression) is implemented with Couchbase Lite Android 2.0.0 release.
+<p>TBA/1702[<strong>#1702</strong>] ValueIndexItem.expression(Expression) is implemented with CBL Android 2.0.0 release.
 This API will be available with 2.1.0 release</p>
 </li>
 <li>
