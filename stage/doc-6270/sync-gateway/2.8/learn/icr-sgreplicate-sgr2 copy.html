@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Inter-Cluster Replication (SGR-2) | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/doc-6270/sync-gateway/2.8/learn/icr-sgreplicate-sgr2%20copy.html">
+<link rel="stylesheet" href="../../../_/css/site.css">
+<script src="../../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Inter-sync-gateway replication (Sync Gateway to Sync Gateway) using Inter-sync-gateway Replication (v2) protocol">
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+<meta name="dcterms.subject" content="sync-gateway">
+<meta name="dcterms.identifier" content="2.8">
+<meta name="generator" content="Antora 2.3.3">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+
+              <a class="navbar-brand" href="../../..">
+                <img src="../../../_/img/couchbase-documentation-logo.svg" alt="Couchbase" />
+              </a>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/mobile.html">
+                      Mobile
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <form class="navbar-item search">
+                  <input type="text" placeholder="Search Docs" class="query" id="search-query" />
+                  <button type="button" class="search-btn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+                <div class="parent-site">
+                  <a href="https://www.couchbase.com">
+                    Couchbase.com
+                  </a>
+                </div>
+                <a class="btn btn-primary try-btn" href="https://www.couchbase.com/downloads">
+                  Try Free
+                </a>
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container">
+<nav class="nav">
+<div class="left-sidebar-menu">
+<div class="version-control-box">
+<div class="component-frame">
+<div class="frame-icon">
+<img src="../../../_/img/server-icon.png" alt="">
+</div>
+<div class="frame-body">
+<h4 class="title"><span class="">Sync Gateway H2-714 23July20-1512</span></h4>
+<a class="navbar-item component" href="../introduction.html"> <span class="version">2.8</span></a>
+</div>
+</div>
+</div>
+<div class="nav-menu">
+<ul class="nav-list">
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Start</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../introduction.html">About SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../sgw-whatsnew.html">What&#8217;s New</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../start/gs-sgw-prereqs.html">Before You Start</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../start/gs-sgw-svr-cfg.html">Configure Server for SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../start/gs-sgw-install.html">Install SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../start/gs-sgw-config.html">Configure SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../start/gs-sgw-api-access.html">Test the Installation</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Advance</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Cloud-to-Edge Operations</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="icr-running.html">Initialize Inter-sync-gateway Replication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="icr-conflict-resolution-build-custom.html">Build a Custom Conflict Resolver</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="icr-admin.html">Manage inter-sync-gateway replications</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="icr-monitoring.html">Monitoring Inter-sync-gateway replications</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="icr-sgreplicate.html">&#8230;&#8203; view the Concept</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../refer/config-properties.html">&#8230;&#8203; view Configuration reference</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Configure</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../advance/adv-sgw-cfg-sync-function.html">Use Sync functions?</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../advance/adv-sgw-cfg-import-filter.html">Use Import filters?</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../advance/adv-rest-api-client.html">Use the REST API?</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Manage</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Statistics and Logging</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../advance/logging.html">Use the Logging API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../stats-monitoring.html">View Statistics and Metrics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../sgcollect-info.html">Collect Node Statistics</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<a class="nav-link" href="../deployment.html">Deploy</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../command-line-options.html">Use Command Line Configuration</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../security.html">Security Best Practices</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../load-balancer.html">Use a Load Balancer</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../os-level-tuning.html">Tune Operating System Parameters</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../database-offline.html">Taking Databases Offline and Online</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../upgrade.html">Notes on Upgrading</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Kubernetes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../advance/kubernetes/deploy-cluster.html">Deploy SGW Clusters</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Learn</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../shared-bucket-access.html">Mobile-Server Replication Concept</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Access Control Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="users-and-roles.html">Users and Roles</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="authentication.html">Authentication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="sync-gateway-channels.html">Sync Gateway Channels</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="read-access.html">Read Access</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="write-access.html">Write Access</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="defining-sync-functions.html">Defining Sync Functions</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Cloud-to-Edge Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="icr-sgreplicate.html">Inter-sync-gateway replication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="icr-sgreplicate-sgr2.html">Inter-sync-gateway Replication vn:2</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../refer/config-properties.html">&#8230;&#8203; view Configuration reference</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="icr-running.html">&#8230;&#8203; view the How-to</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Replication Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="concept-fundamentals-data.html">Mobile data learn/concepts</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../resolving-conflicts.html">Conflict Resolution</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#sync-gateway::learn/concept-fundamentals-logging.adoc">Logging</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="concept-fundamentals-data-tombstones.html">Tombstones</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../managing-tombstones.html">Managing Tombstones</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../indexing.html">Indexing</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../server-integration.html">Webhooks and Changes Feed</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../integrating-external-stores.html">Integrating External Stores</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Refer</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../refer/config-properties.html">Configuration Details</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Sync Gateway API</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../refer/rest-api-public.html">Public REST API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../refer/rest-api-admin.html">Admin REST API</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<a class="nav-link" href="../refer/refer-sgw-glossary.html">Sync Gateway Glossary</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="icr-sgreplicate.html">&#8230;&#8203; view the Concept</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="icr-running.html">&#8230;&#8203; view the How-to</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Product Notes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../prodnotes/pn-change-log-config.html">Configuration Change Log</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Exit to . . .</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../../home/mobile.html">back to Mobile</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../../couchbase-lite/2.8/introduction.html">go to Couchbase Lite</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<a href="#" class="menu-expand-toggle"> <span>Navigation</span> <i class="fas fa-times-circle"></i> <i class="fas fa-chevron-circle-left"></i></a>
+</div></nav>
+<aside class="toc sidebar">
+  <div class="sidebar-box">
+      <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/learn/icr-sgreplicate-sgr2%20copy.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+</ul>
+</div>
+      <div class="toc-menu"></div>
+        <div class="is-this-helpful-box">
+          <h4> Is this page helpful?</h4>
+            <div class="btn-row">
+              <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                     <i class="far fa-thumbs-up"></i>
+                 Yes
+
+                 </a>
+              <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+            </div>
+            <div class="any-feedback">
+              <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+            </div>
+            <div class="dialog-box" id="dialogBox">
+              <form>
+                  <div class="form-group " id="additionalFeedbackBox">
+                    <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+                    <div class="action-btn-row ">
+                      <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                       <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                       <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+                    </div>
+
+
+                  </div>
+
+              </form>
+
+            </div>
+      </div>
+   </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<button class="nav-control"></button>
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="../introduction.html">Sync Gateway H2-714 23July20-1512</a></li>
+<li class="crumb"><a href="icr-sgreplicate-sgr2%20copy.html">Inter-Cluster Replication (SGR-2)</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">Inter-Cluster Replication (SGR-2)</h1>
+<div class="labels">
+<ul>
+<li class="edition"><a href="https://www.couchbase.com/products/editions">Under Development</a></li>
+<li class="status"><span>stage -- {release-comments-sgw}</span></li>
+</ul>
+</div>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Topic Group&#8201;&#8212;&#8201;<em>Inter-sync-gateway replication</em><br>
+Description&#8201;&#8212;&#8201;<em>Inter-sync-gateway replication (Sync Gateway to Sync Gateway) using Inter-sync-gateway Replication (v2) protocol</em><br>
+Abstract&#8201;&#8212;&#8201;<em>This content provides an overview of Inter-sync-gateway replication, which is replication between Sync Gateway clusters using Inter-sync-gateway Replication (v2).</em><br>
+Related Content&#8201;&#8212;&#8201;<a href="../refer/config-properties.html" class="page">Configuration Details</a> | <a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Sync Gateway supports <em><a href="../refer/refer-sgw-glossary.html#inter-sync-gateway-replication" class="page">inter-sync-gateway replication<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a></em>, <sup class="footnote" id="_footnote_icr">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> an increasingly important enterprise-level requirement that
+supports <em><a href="../refer/refer-sgw-glossary.html#cloud-to-edge" class="page">cloud-to-edge<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a> synchronization</em> use cases, where data changes must be synchronized between a centralized cloud cluster and a large number of edge clusters whilst still enforcing fine grained access control.</p>
+</div>
+<div class="paragraph">
+<p>In the architecture diagram (<a href="#icr-architecture">Example 1</a>), any database changes made on either Sync Gateway instance are replicated to the other Sync Gateway instance, in accordance with the replication&#8217;s configuration&#8201;&#8212;&#8201;see <a href="../refer/config-properties.html#databases-this_db-replications-this_rep" class="page">replications</a> for configuration detail.</p>
+</div>
+<div id="icr-architecture" class="exampleblock">
+<div class="title">Example 1. Inter-sync-gateway replication architecture</div>
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/icr-replication-overview.svg" alt="icr replication overview">
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This content covers inter-sync-gateway replication using the Inter-sync-gateway Replication (v2) protocol (<em>SGR-2</em>).
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="replication-characteristics"><a class="anchor" href="#replication-characteristics"></a>Replication Characteristics</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="protocol"><a class="anchor" href="#protocol"></a>Protocol</h3>
+<div class="paragraph">
+<p>Sync Gateway supports the ability to run replications between two Sync Gateway clusters using Inter-sync-gateway Replication (v2) (SGR-2).</p>
+</div>
+<div class="paragraph">
+<p>SGR-2 replications are websocket-based.
+The bi-directional, always on, nature of websocket connections is ideal for applications such as persistent Sync Gateway replication, which is constantly listening-for and synchronizing random change events.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="general-characteristics"><a class="anchor" href="#general-characteristics"></a>General Characteristics</h3>
+<div class="paragraph">
+<p>Replications always involve at least one local database. Sync Gateway does not enable replication between two <em>remote</em> nodes, because replications are defined at database level and so at least one database will be local. With the replicator <a href="../refer/refer-sgw-glossary.html#sync-function" class="page">synchronizing<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a> changes between <a href="../refer/refer-sgw-glossary.html#sync-gateway-database" class="page">Sync Gateway database<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="types-of-replication"><a class="anchor" href="#types-of-replication"></a>Types of Replication</h3>
+<div class="paragraph">
+<p>Replications are either: <a href="../refer/refer-sgw-glossary.html#adhoc-replication" class="page">adhoc replication<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a> (REST API only) or <a href="../refer/refer-sgw-glossary.html#persistent-replication" class="page">persistent replication<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a>.
+They can also be configured to run in one of two-modes:
+<a href="../refer/refer-sgw-glossary.html#rep-continuous" class="page">continuous<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a> or <a href="../refer/refer-sgw-glossary.html#rep-oneshot" class="page">one-shot<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a>.</p>
+</div>
+<div class="paragraph">
+<p>Related parameters:</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="granularity"><a class="anchor" href="#granularity"></a>Granularity</h3>
+<div class="paragraph">
+<p>Replications take place at the document level.</p>
+</div>
+<div class="paragraph">
+<p>You can also configured replications to synchronize at the data item level, transferring only the changed data items.</p>
+</div>
+<div class="paragraph">
+<p>Do this is by:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Setting <code>"enable_delta_sync": true</code> in the <em>replication definition</em></p>
+</li>
+<li>
+<p>Setting <code>"delta-sync": { "enabled": true}</code> on both databases in their respective <em>database definitions</em>.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="directionality"><a class="anchor" href="#directionality"></a>Directionality</h3>
+<div class="paragraph">
+<p>Replications are bi-directional. You can push, pull or pushandpull between the two database endpoints.</p>
+</div>
+<div class="paragraph">
+<p>Related parameters:</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="security"><a class="anchor" href="#security"></a>Security</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="authentication"><a class="anchor" href="#authentication"></a>Authentication</h3>
+<div class="paragraph">
+<p>SG-Replicate supports basic authentication using user name and password credentials.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="access-control"><a class="anchor" href="#access-control"></a>Access Control</h3>
+<div class="paragraph">
+<p>Sync Gateway ensures effective and consistent access control by passing all document changes through the databases' <em><a href="../refer/refer-sgw-glossary.html#sync-function" class="page">sync function<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a></em>&#8201;&#8212;&#8201;see: <a href="../advance/adv-sgw-cfg-sync-function.html" class="page">Use Sync functions?</a> for more on using <code>sync</code> functions).</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="availability-and-resilience"><a class="anchor" href="#availability-and-resilience"></a>Availability and Resilience</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="high-availability-replication"><a class="anchor" href="#high-availability-replication"></a>High-availability replication</h3>
+<div class="paragraph">
+<p>See: /parameter definition/  |  <a href="icr-high-availability.html#node-distribution" class="page">High-Availability</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="network-resilience"><a class="anchor" href="#network-resilience"></a>Network Resilience</h3>
+<div class="paragraph">
+<p>Network resiliency is built-in for <em>continuous</em> replications, which will restart automatically whenever the node does and will retry lost connections.</p>
+</div>
+<div class="paragraph">
+<p>When a node fails due to network issues, SGR-2 applies a persistent exponential backoff policy to attempt reconnection  (see max_backoff_time).
+Retries can be configured to stop after a defined period of time.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+SGR-2 will not attempt reconnection following network failures for ad hoc replications. The controlling user or application should apply the appropriate corrective action.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="conflict-resolution"><a class="anchor" href="#conflict-resolution"></a>Conflict Resolution</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>SGR-2 replications incorporate automatic conflict resolution.</p>
+</div>
+<div class="paragraph">
+<p>You can opt to resolve conflicts by applying:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SGR-2&#8217;s default automatic strategy</p>
+</li>
+<li>
+<p>One of the built-in resolution strategies</p>
+</li>
+<li>
+<p>A a customized strategy of the your own design.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>See: <a href="icr-conflict-resolution.html#automatic-conflict-resolution" class="page">Conflicts in Inter-sync-gateway replication</a></p>
+</div>
+<div class="paragraph">
+<p>/parameter definition/  |  /more information/</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="initialization"><a class="anchor" href="#initialization"></a>Initialization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>As covered in <a href="icr-sgreplicate.html#initialization" class="page">[Inter Sync Gateway Replication</a>], replications are defined by a <a href="../refer/refer-sgw-glossary.html#replication-definition" class="page">replication definition<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a> in either:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Sync Gateway&#8217;s configuration file<br>
+For persistent replications, whether continuous or one-shot.</p>
+</li>
+<li>
+<p>The Admin REST API for either:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Persistent replications, whether continuous or one-shot</p>
+</li>
+<li>
+<p><em>Ad hoc</em> replications (one-shot only).</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="replication-definitions"><a class="anchor" href="#replication-definitions"></a>Replication Definitions</h3>
+<div class="paragraph">
+<p>All replications are 'initialized' by a <a href="../refer/refer-sgw-glossary.html#replication-definition" class="page">replication definition<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="A link to a glossary item" width="14" height="28"></span></a> in the configuration file or Admin REST API.
+For SGR-2, <em>replication definitions</em> are at database level&#8201;&#8212;&#8201;see: <a href="#replication-definition-elements">[replication-definition-elements]</a>.</p>
+</div>
+<div id="replication-properties" class="exampleblock">
+<div class="title">Example 2. Replication Definition</div>
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_summary-of-parameters"></a>Summary of Parameters</p>
+</li>
+<li>
+<p><a id="tabset1_configured-example"></a>Configured Example</p>
+</li>
+<li>
+<p><a id="tabset1_rest-api-example"></a>REST API Example</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_summary-of-parameters">
+<div class="paragraph">
+<p>This table summarize all the available configurable items. It includes a link to a detailed description of each.</p>
+</div>
+<table id="replication-definiton-summary" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 30%;">
+<col style="width: 70%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name and Link</th>
+<th class="tableblock halign-left valign-top">Summary</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-adhoc" class="page">adhoc</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>REST API ONLY<br>
+Use the Admin REST API&#8217;s <code>adhoc</code> parameter to specify that a replication is ad hoc rather than persistent.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-batch_size" class="page">batch_size</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-cancel" class="page">cancel</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>REST API ONLY<br>
+Use the Admin REST API&#8217;s <code>cancel</code> parameter only when you want to want to cancel an existing active replication.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-conflict_resolution_type" class="page">conflict_resolution_type</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>conflict_resolution_type</code> to specify how Sync Gateway should resolve conflicts. By default the automatic conflict</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-continuous" class="page">continuous</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>continuous</code> to specify whether this replication will run continuously, or be one-shot.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-custom_conflict_resolver" class="page">custom_conflict_resolver</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>custom_conflict_resolver</code> to provide the Javascript function used to resolve conflicts if <code>"conflict_resolution_type": "custom"</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-direction" class="page">direction</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>direction</code> to specify the replication is <strong>push</strong>, <strong>pull</strong> or <strong>pushAndPull</strong> relative to this node.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-enable_delta_sync" class="page">enable_delta_sync</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>enable_delta_sync</code> to specify use of delta sync for a replication.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-filter" class="page">filter</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>filter</code> to specify the name of the function to be used to filter documents.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-max_backoff_time" class="page">max_backoff_time</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>max_backoff_time</code> to specify the number of minutes Sync Gateway will spend trying to reconnect lost or unreachable <code>remote</code> targets.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-purge_on_removal" class="page">purge_on_removal</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>purge_on_removal</code> to specify (per replication) whether removing a <code>channel</code> should trigger a purge.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-query_params" class="page">query_params</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>query_params</code> to specify the key/value pairs to be passed to the filter named in <code>filter</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-remote" class="page">remote</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>remote</code> to specify the database endpoint on the remote Sync Gateway custer.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-replication_id" class="page">replication_id</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>replication_id</code> to specify an identifying name for the replication.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="../refer/config-properties.html#databases-this_db-replications-this_rep-state" class="page">state</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Use <code>state</code> to specify the state in which to launch the replication.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_configured-example">
+<div class="paragraph">
+<p>This is an example of a replication definition. Its purpose is to illustrate all configurable items in use and so should not be considered a working example.</p>
+</div>
+<div class="paragraph">
+<p>It creates a replication with the replication_ID of <code>db1-rep-id1-pull-oneshot</code> on a local database <code>db1-local_</code>, pulling data from a remote database <code>db1-remote</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/configuration/sync-gateway-config.json#L932-L957">"databases": {
+ " db1": {                                                <i class="conum" data-value="1"></i><b>(1)</b>
+    "bucket":"db1",
+    "server": "couchbase://cb-server",
+    // ... other DB config ..
+    "sgreplicate_enabled": true,                          <i class="conum" data-value="2"></i><b>(2)</b>
+    "replications":
+      "db1-rep-id1-pull-oneshot":                         <i class="conum" data-value="3"></i><b>(3)</b>
+        "direction": "pull",                              <i class="conum" data-value="4"></i><b>(4)</b>
+        "remote": "https://example.com:4984/remote_db1",
+        "user": "user1",                                  <i class="conum" data-value="5"></i><b>(5)</b>
+        "password": "password",
+        "batch_size": 1000,                               <i class="conum" data-value="6"></i><b>(6)</b>
+        "conflict_resolution_type": "custom",             <i class="conum" data-value="7"></i><b>(7)</b>
+        "custom_conflict_resolver": "",                   <i class="conum" data-value="8"></i><b>(8)</b>
+        "continuous": false,                              <i class="conum" data-value="9"></i><b>(9)</b>
+        "enable_delta_sync": false,                       <i class="conum" data-value="10"></i><b>(10)</b>
+        "filter": "sync_gateway/bychannel",               <i class="conum" data-value="11"></i><b>(11)</b>
+        "query_params": ["channel.user1"]                 <i class="conum" data-value="12"></i><b>(12)</b>
+        "max_backoff_time": 5,                            <i class="conum" data-value="13"></i><b>(13)</b>
+        "purge_on_removal": false                         <i class="conum" data-value="14"></i><b>(14)</b>
+        "state": "running"                                <i class="conum" data-value="15"></i><b>(15)</b>
+    }
+  }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>All replications are defined at database level within the context of a local database (e.g. <code>DB1</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Opt in to replication</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Define the <code>replication_id</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Pull changes from the <code>remote</code> database at the specified url.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Authenticate with the provided credentials. This user must have read and write access to both the local and remote databases.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Batch together up to 1000 revisions at a time. This improve replication performance but consumes more memory resources.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Apply a custom conflict resolution policy.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Provide a working Javascript function to apply the required resolution policy.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>By setting continuous=false, we are creating a one-shot replication. We could also have omitted this parameter as it defaults to <code>false</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Don&#8217;t use delta-sync; the default behavior.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Filter documents by channel.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>Replicate only those documents tagged with the channel names "user1".<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td>Wait no more than 5 minutes between retries after network failure; default behavior.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td>Don&#8217;t purge following removal of a channel; the default behavior.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="15"></i><b>15</b></td>
+<td>Start the replicator immediately and on Sync Gateway node re(start);. We could also have omitted this parameter as this is the default behavior.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_rest-api-example">
+<div class="paragraph">
+<p>This is an example of a replication definition as you might submit it to the Admin REST API.using <code>curl</code>.
+Its purpose is to illustrate all configurable items in use and so should not be considered a working example.</p>
+</div>
+<div class="paragraph">
+<p>It creates a replication with the replication_ID of <code>db1-rep-id1-pull-oneshot</code> on a local database <code>db1-local_</code>, pulling data from a remote database <code>db1-remote</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl --location --request POST 'http://localhost:4985/db1-local/_replication/db1-rep-id1-pull-oneshot' \ <i class="conum" data-value="1"></i><b>(1)</b>
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--header 'Authorization: Basic ZGVtbzpwYXNzd29yZA==' \
+--dataraw '{
+"replication_id": "db1-rep-id1-pull-oneshot" <i class="conum" data-value="2"></i><b>(2)</b>
+        "direction": "pull",                              <i class="conum" data-value="3"></i><b>(3)</b>
+        "remote": "https://example.com:4984/remote_db1",
+        "user": "user1",                                  <i class="conum" data-value="4"></i><b>(4)</b>
+        "password": "password",
+        "batch_size": 1000,                               <i class="conum" data-value="5"></i><b>(5)</b>
+        "conflict_resolution_type": "custom",             <i class="conum" data-value="6"></i><b>(6)</b>
+        "custom_conflict_resolver": "",                   <i class="conum" data-value="7"></i><b>(7)</b>
+        "continuous": false,                              <i class="conum" data-value="8"></i><b>(8)</b>
+        "enable_delta_sync": false,                       <i class="conum" data-value="9"></i><b>(9)</b>
+        "filter": "sync_gateway/bychannel",               <i class="conum" data-value="10"></i><b>(10)</b>
+        "query_params": ["channel.user1"]                 <i class="conum" data-value="11"></i><b>(11)</b>
+        "max_backoff_time": 5,                            <i class="conum" data-value="12"></i><b>(12)</b>
+        "purge_on_removal": false                         <i class="conum" data-value="13"></i><b>(13)</b>
+        "state": "running"                                <i class="conum" data-value="14"></i><b>(14)</b>
+  "adhoc": false, <i class="conum" data-value="15"></i><b>(15)</b>
+  "cancel": false <i class="conum" data-value="16"></i><b>(16)</b>
+}'</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>All replications take place at database level and in the context of a local database. Here we are setting the replication in the context of <code>db1-local</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Define the <code>replication_id</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Pull changes from the <code>remote</code> database at the specified url.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Authenticate with the provided credentials. This user must have read and write access to both the local and remote databases.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Batch together up to 1000 revisions at a time. This improve replication performance but consumes more memory resources.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Apply a custom conflict resolution policy.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Provide a working Javascript function to apply the required resolution policy.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>By setting continuous=false, we are creating a one-shot replication. We could also have omitted this parameter as it defaults to <code>false</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Don&#8217;t use delta-sync; the default behavior.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Filter documents by channel.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Replicate only those documents tagged with the channel names "user1".<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>Wait no more than 5 minutes between retries after network failure; default behavior.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="13"></i><b>13</b></td>
+<td>Don&#8217;t purge following removal of a channel; the default behavior.<br></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="14"></i><b>14</b></td>
+<td>Start the replicator immediately and on Sync Gateway node re(start);. We could also have omitted this parameter as this is the default behavior.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="15"></i><b>15</b></td>
+<td>Setting <code>adhoc=false</code> marks this as a persistent replication. The definition will survive Sync Gateway node restarts. This the default behaviour if this parameter is omitted.+</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="16"></i><b>16</b></td>
+<td>Set <code>cancel=true</code> to cancel an initialized replication; otherwise you can omit this parameter.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="running-replications"><a class="anchor" href="#running-replications"></a>Running Replications</h3>
+<div class="paragraph">
+<p>Sync Gateway nodes can be configured to opt-out of replication.</p>
+</div>
+<div class="paragraph">
+<p>Running replications are distributed uniformly across all available nodes.</p>
+</div>
+<div class="paragraph">
+<p>See: {xref-sgw-pg-icr-running-getrepdtls}</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="replication-administration"><a class="anchor" href="#replication-administration"></a>Replication Administration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See: xref:sync-gateway::learn/icr-admin.adoc#getting-replication-details</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="monitoring-replications"><a class="anchor" href="#monitoring-replications"></a>Monitoring Replications</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See: <a href="icr-monitoring.html#retrieving-replication-status-data" class="page">Replication Monitoring - Status Information</a> | <a href="icr-monitoring.html#retrieving-sync-gateway-statistics" class="page">Replication Monitoring - Stats</a></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Unsupported</dt>
+<dd>
+<p><code>InsecureSkipVerify</code> can be used to configure Sync Gateway to skip validation of TLS certs used for SG-Replication.
+Not for use in production environments. Due to its unsupported nature, there is no guarantee on it ongoing availability.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a> SG-Replicate must support cert based authentication.
+Note : Support for cert-based authentication is not a P0 for Hydrogen but will be a future consideration</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">Learn more ...</div>
+<ul>
+<li>
+<p><a href="icr-sgreplicate.html" class="page">Inter-sync-gateway replication</a></p>
+</li>
+<li>
+<p><a href="icr-sgreplicate-sgr2.html" class="page">Inter-sync-gateway Replication vn:2</a></p>
+</li>
+<li>
+<p><a href="icr-sgreplicate-sgr1.html" class="page">Inter-sync-gateway replication vn:1</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"></div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/augment-your-sync-function-with-roles-in-couchbase-sync-gateway/">Using roles in sync functions</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/data-synchronization-offline-first-apps-couchbase/">Tutorial: Getting Started with Data Synchronization using Couchbase Mobile for Offline-First Apps</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/sync-function/">Sync Function (category)</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../start/gs-sgw-prereqs.html" class="page">Before You Start</a></p>
+</li>
+<li>
+<p><a href="../start/gs-sgw-install.html" class="page">Install SGW</a></p>
+</li>
+<li>
+<p><a href="../start/gs-sgw-config.html" class="page">Configure SGW</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="defining-sync-functions.html" class="page">Defining Sync Functions</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-sgw-cfg-sync-function.html" class="page">Use Sync functions?</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-sgw-cfg-import-filter.html" class="page">Use Import filters?</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../refer/config-properties.html" class="page">Configuration Details</a></p>
+</li>
+<li>
+<p><a href="../refer/rest-api-public.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../prodnotes/pn-release-notes.html" class="page">Release Notes</a></p>
+</li>
+<li>
+<p><a href="../prodnotes/pn-compatibility.html" class="page">Compatibility Matrix</a></p>
+</li>
+<li>
+<p><a href="../prodnotes/pn-supported-os.html" class="page">Supported OS</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.couchbase.com/tutorials/index.html">Tutorial</a></p>
+</div>
+<div class="paragraph">
+<p>Blog Entries
+* <a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a>
+* <a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a>
+* <a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="icr-sgreplicate.html" class="page">Inter-sync-gateway replication</a></p>
+</li>
+<li>
+<p><a href="icr-sgreplicate-sgr2.html" class="page">Inter-sync-gateway Replication vn:2</a></p>
+</li>
+<li>
+<p><a href="icr-sgreplicate-sgr1.html" class="page">Inter-sync-gateway replication vn:1</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="icr-sgreplicate.html" class="page">Inter-sync-gateway replication</a></p>
+</li>
+<li>
+<p><a href="../shared-bucket-access.html" class="page">Mobile-Server Replication Concept</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference material ...</div>
+<ul>
+<li>
+<p><a href="../refer/config-properties.html" class="page">Configuration Details</a></p>
+</li>
+<li>
+<p><a href="../refer/rest-api-public.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"></div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/augment-your-sync-function-with-roles-in-couchbase-sync-gateway/">Using roles in sync functions</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/data-synchronization-offline-first-apps-couchbase/">Tutorial: Getting Started with Data Synchronization using Couchbase Mobile for Offline-First Apps</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/sync-function/">Sync Function (category)</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../start/gs-sgw-prereqs.html" class="page">Before You Start</a></p>
+</li>
+<li>
+<p><a href="../start/gs-sgw-install.html" class="page">Install SGW</a></p>
+</li>
+<li>
+<p><a href="../start/gs-sgw-config.html" class="page">Configure SGW</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="defining-sync-functions.html" class="page">Defining Sync Functions</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-sgw-cfg-sync-function.html" class="page">Use Sync functions?</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-sgw-cfg-import-filter.html" class="page">Use Import filters?</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../refer/config-properties.html" class="page">Configuration Details</a></p>
+</li>
+<li>
+<p><a href="../refer/rest-api-public.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../prodnotes/pn-release-notes.html" class="page">Release Notes</a></p>
+</li>
+<li>
+<p><a href="../prodnotes/pn-compatibility.html" class="page">Compatibility Matrix</a></p>
+</li>
+<li>
+<p><a href="../prodnotes/pn-supported-os.html" class="page">Supported OS</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.couchbase.com/tutorials/index.html">Tutorial</a></p>
+</div>
+<div class="paragraph">
+<p>Blog Entries
+* <a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a>
+* <a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a>
+* <a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="icr-sgreplicate.html" class="page">Inter-sync-gateway replication</a></p>
+</li>
+<li>
+<p><a href="icr-sgreplicate-sgr2.html" class="page">Inter-sync-gateway Replication vn:2</a></p>
+</li>
+<li>
+<p><a href="icr-sgreplicate-sgr1.html" class="page">Inter-sync-gateway replication vn:1</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="icr-sgreplicate.html" class="page">Inter-sync-gateway replication</a></p>
+</li>
+<li>
+<p><a href="../shared-bucket-access.html" class="page">Mobile-Server Replication Concept</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community Resources ...</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Conflict Related Blogs</div>
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. As of Sync Gateway version 2.8
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../../_/img/couchbase_logo_black.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2020 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script async src="../../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
