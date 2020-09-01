@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Defining Sync Functions | Couchbase Docs</title>
-<link rel="canonical" href="https://ibsoln.github.io/stage/h2BetaUWP/sync-gateway/2.8/learn/defining-sync-functions.html">
+<link rel="canonical" href="https://ibsoln.github.io/stage/h2BetaNet/sync-gateway/2.8/learn/defining-sync-functions.html">
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
 <meta name="description" content="Defining sync functions for effective data access control">
@@ -1079,7 +1079,7 @@ The server-side sync function validation should be seen as a fail-safe and a gua
 </li>
 <li>
 <p><strong>as a numeric Couchbase Server expiry value:</strong> Couchbase Server expiries are specified as Unix time, and if the desired TTL is below 30 days then it can also represent an interval in seconds from the current time (for example, a value of 5 will remove the document 5 seconds after it is written to Couchbase Server).
-The document expiration time is returned in the response of GET <a href="../refer/rest-api-public.html#/document/get__db___doc_" class="page">/{db}/{doc}</a> when <code>show_exp=true</code> is included in the querystring.</p>
+The document expiration time is returned in the response of GET <a href="../refer/rest-api-public.html#/document/get__db___doc_" class="page">/{tkn-db}/{doc}</a> when <code>show_exp=true</code> is included in the querystring.</p>
 </li>
 </ul>
 </div>
@@ -1205,19 +1205,19 @@ To update the Sync Function, it is recommended to follow the steps outlined belo
 <p>Restart Sync Gateway.</p>
 </li>
 <li>
-<p>Take the database offline using the <a href="#admin-rest-api.adoc#/database/post__db___offline" class="page unresolved">/{db}/_offline</a> endpoint.</p>
+<p>Take the database offline using the <a href="#admin-rest-api.adoc#/database/post__db___offline" class="page unresolved">/{tkn-db}/_offline</a> endpoint.</p>
 </li>
 <li>
 <p>Call the re-sync endpoint on the Admin REST API. The message body of the response contains the number of changes that were made as a result of calling re-sync.</p>
 </li>
 <li>
-<p>Bring the database back online using the <a href="#admin-rest-api.adoc#/database/post__db___online" class="page unresolved">/{db}/_online</a> endpoint.</p>
+<p>Bring the database back online using the <a href="#admin-rest-api.adoc#/database/post__db___online" class="page unresolved">/{tkn-db}/_online</a> endpoint.</p>
 </li>
 </ol>
 </div>
 <div class="paragraph">
 <p>This is an expensive operation because it requires every document in the database to be processed by the new function.
-The database can&#8217;t accept any requests until this process is complete (because no user&#8217;s full access privileges are known until all documents have been scanned). Therefore the Sync Function update will result in application downtime between the call to the <code>/{db}/_offline</code> and <code>/{db}/_online</code> endpoints as mentioned above.</p>
+The database can&#8217;t accept any requests until this process is complete (because no user&#8217;s full access privileges are known until all documents have been scanned). Therefore the Sync Function update will result in application downtime between the call to the <code>/{tkn-db}/_offline</code> and <code>/{tkn-db}/_online</code> endpoints as mentioned above.</p>
 </div>
 <div class="sect2">
 <h3 id="when-should-you-run-a-re-sync"><a class="anchor" href="#when-should-you-run-a-re-sync"></a>When should you run a re-sync?</h3>
@@ -1243,7 +1243,7 @@ Running a re-sync operation does not revoke access to that document.</p>
 After the update is complete, switch to the main Gateway and bucket.</p>
 </div>
 <div class="paragraph">
-<p>In a clustered environment with multiple Sync Gateway instances sharing the load, all the instances need to share the same configuration, so they all need to be taken offline either by stopping the process or taking them offline using the <a href="#admin-rest-api.adoc#/database/post__db___offline" class="page unresolved">/{db}/_offline</a> endpoint.
+<p>In a clustered environment with multiple Sync Gateway instances sharing the load, all the instances need to share the same configuration, so they all need to be taken offline either by stopping the process or taking them offline using the <a href="#admin-rest-api.adoc#/database/post__db___offline" class="page unresolved">/{tkn-db}/_offline</a> endpoint.
 After the configuration is updated, <strong>one</strong> instance should be brought up so it can update the database&#8212;&#8203;if more than one is running at this time, they&#8217;ll conflict with each other.
 After the first instance finishes opening the database, the others can be started.</p>
 </div>
@@ -1276,6 +1276,141 @@ After the first instance finishes opening the database, the others can be starte
 </li>
 </ul>
 </div>
+<div class="ulist">
+<div class="title"></div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/augment-your-sync-function-with-roles-in-couchbase-sync-gateway/">Using roles in sync functions</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/data-synchronization-offline-first-apps-couchbase/">Tutorial: Getting Started with Data Synchronization using Couchbase Mobile for Offline-First Apps</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/sync-function/">Sync Function (category)</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../start/gs-sgw-prereqs.html" class="page">Before You Start</a></p>
+</li>
+<li>
+<p><a href="../start/gs-sgw-install.html" class="page">Install SGW</a></p>
+</li>
+<li>
+<p><a href="../start/gs-sgw-config.html" class="page">Configure SGW</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="defining-sync-functions.html" class="page">Defining Sync Functions</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-sgw-cfg-sync-function.html" class="page">Use Sync functions?</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-sgw-cfg-import-filter.html" class="page">Use Import filters?</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../refer/config-properties.html" class="page">Configuration Details</a></p>
+</li>
+<li>
+<p><a href="../refer/rest-api-public.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../prodnotes/pn-release-notes.html" class="page">Release Notes</a></p>
+</li>
+<li>
+<p><a href="../prodnotes/pn-compatibility.html" class="page">Compatibility Matrix</a></p>
+</li>
+<li>
+<p><a href="../prodnotes/pn-supported-os.html" class="page">Supported OS</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.couchbase.com/tutorials/index.html">Tutorial</a></p>
+</div>
+<div class="paragraph">
+<p>Blog Entries
+* <a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a>
+* <a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a>
+* <a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="icr-sgreplicate.html" class="page">Inter-sync-gateway replication</a></p>
+</li>
+<li>
+<p><a href="icr-sgreplicate-sgr2.html" class="page">Inter-sync-gateway Replication vn:2</a></p>
+</li>
+<li>
+<p><a href="icr-sgreplicate-sgr1.html" class="page">Inter-sync-gateway replication vn:1</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="icr-sgreplicate.html" class="page">Inter-sync-gateway replication</a></p>
+</li>
+<li>
+<p><a href="../shared-bucket-access.html" class="page">Mobile-Server Replication Concept</a></p>
+</li>
+</ul>
+</div>
 </div>
 <div class="sect5 column">
 <h6 id="-2"><a class="anchor" href="#-2"></a></h6>
@@ -1290,6 +1425,141 @@ After the first instance finishes opening the database, the others can be starte
 </li>
 <li>
 <p><a href="../advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"></div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/augment-your-sync-function-with-roles-in-couchbase-sync-gateway/">Using roles in sync functions</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/data-synchronization-offline-first-apps-couchbase/">Tutorial: Getting Started with Data Synchronization using Couchbase Mobile for Offline-First Apps</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/sync-function/">Sync Function (category)</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../start/gs-sgw-prereqs.html" class="page">Before You Start</a></p>
+</li>
+<li>
+<p><a href="../start/gs-sgw-install.html" class="page">Install SGW</a></p>
+</li>
+<li>
+<p><a href="../start/gs-sgw-config.html" class="page">Configure SGW</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="defining-sync-functions.html" class="page">Defining Sync Functions</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-sgw-cfg-sync-function.html" class="page">Use Sync functions?</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-sgw-cfg-import-filter.html" class="page">Use Import filters?</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../refer/config-properties.html" class="page">Configuration Details</a></p>
+</li>
+<li>
+<p><a href="../refer/rest-api-public.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="../refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="../advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../prodnotes/pn-release-notes.html" class="page">Release Notes</a></p>
+</li>
+<li>
+<p><a href="../prodnotes/pn-compatibility.html" class="page">Compatibility Matrix</a></p>
+</li>
+<li>
+<p><a href="../prodnotes/pn-supported-os.html" class="page">Supported OS</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.couchbase.com/tutorials/index.html">Tutorial</a></p>
+</div>
+<div class="paragraph">
+<p>Blog Entries
+* <a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Automatic Conflict Resolution</a>
+* <a href="https://blog.couchbase.com/conflict-resolution-couchbase-mobile/">Demystifying Conflict Resolution</a>
+* <a href="https://blog.couchbase.com/tag/conflict-resolution/">Conflict Resolution (category)</a></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="icr-sgreplicate.html" class="page">Inter-sync-gateway replication</a></p>
+</li>
+<li>
+<p><a href="icr-sgreplicate-sgr2.html" class="page">Inter-sync-gateway Replication vn:2</a></p>
+</li>
+<li>
+<p><a href="icr-sgreplicate-sgr1.html" class="page">Inter-sync-gateway replication vn:1</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="icr-sgreplicate.html" class="page">Inter-sync-gateway replication</a></p>
+</li>
+<li>
+<p><a href="../shared-bucket-access.html" class="page">Mobile-Server Replication Concept</a></p>
 </li>
 </ul>
 </div>
