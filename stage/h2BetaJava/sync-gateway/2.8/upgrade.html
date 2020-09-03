@@ -1,0 +1,1739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Upgrade | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/h2BetaJava/sync-gateway/2.8/upgrade.html">
+<link rel="stylesheet" href="../../_/css/site.css">
+<script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="This page documents various implementation details and functionalities to consider when performing an upgrade to Sync Gateway 2.8.">
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+<meta name="dcterms.subject" content="sync-gateway">
+<meta name="dcterms.identifier" content="2.8">
+<meta name="generator" content="Antora 2.3.3">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+
+              <a class="navbar-brand" href="../..">
+                <img src="../../_/img/couchbase-documentation-logo.svg" alt="Couchbase" />
+              </a>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/mobile.html">
+                      Mobile
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <form class="navbar-item search">
+                  <input type="text" placeholder="Search Docs" class="query" id="search-query" />
+                  <button type="button" class="search-btn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+                <div class="parent-site">
+                  <a href="https://www.couchbase.com">
+                    Couchbase.com
+                  </a>
+                </div>
+                <a class="btn btn-primary try-btn" href="https://www.couchbase.com/downloads">
+                  Try Free
+                </a>
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container panes">
+<nav class="nav">
+<div class="left-sidebar-menu">
+<div class="version-control-box">
+<div class="component-frame">
+<div class="frame-icon">
+<img src="../../_/img/server-icon.png" alt="">
+</div>
+<div class="frame-body">
+<h4 class="title"><span class="">h2Sgw-90220</span></h4>
+<a class="navbar-item component" href="introduction.html"> <span class="version">2.8</span></a>
+</div>
+</div>
+</div>
+<div class="nav-menu">
+<div class="main-nav-parent new " data-depth="0">
+<span class="back-to-menu"><i class="fas fa-chevron-left"></i> Main Menu </span>
+</div>
+<ul class="nav-list">
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<a class="nav-link" href="introduction.html">Introduction</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="sgw-whatsnew.html">What&#8217;s New</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="start/gs-sgw-prereqs.html">Before You Start</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="start/gs-sgw-svr-cfg.html">Configure Server for SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="start/gs-sgw-install.html">Install SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="start/gs-sgw-config.html">Configure SGW</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="start/gs-sgw-api-access.html">Test the Installation</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Advance</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Cloud-to-Edge Operations</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-running.html">Initialize Inter-sync-gateway Replication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-conflict-resolution-build-custom.html">Build a Custom Conflict Resolver</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-admin.html">Manage inter-sync-gateway replications</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-monitoring.html">Monitoring Inter-sync-gateway replications</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-sgreplicate.html">&#8230;&#8203; view the Concept</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="refer/config-properties.html">&#8230;&#8203; view Configuration reference</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Configure</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="advance/adv-sgw-cfg-sync-function.html">Use Sync functions?</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="advance/adv-sgw-cfg-import-filter.html">Use Import filters?</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="advance/adv-rest-api-client.html">Use the REST API?</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Manage</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Statistics and Logging</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="advance/logging.html">Use the Logging API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="stats-monitoring.html">View Statistics and Metrics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sgcollect-info.html">Collect Node Statistics</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<a class="nav-link" href="deployment.html">Deploy</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="command-line-options.html">Use Command Line Configuration</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="security.html">Security Best Practices</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="load-balancer.html">Use a Load Balancer</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="os-level-tuning.html">Tune Operating System Parameters</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="database-offline.html">Taking Databases Offline and Online</a>
+</span>
+</li>
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="upgrade.html">Notes on Upgrading</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Kubernetes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="advance/kubernetes/deploy-cluster.html">Deploy SGW Clusters</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Learn</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="shared-bucket-access.html">Mobile-Server Replication Concept</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Access Control Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/users-and-roles.html">Users and Roles</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/authentication.html">Authentication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/sync-gateway-channels.html">Sync Gateway Channels</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/read-access.html">Read Access</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/write-access.html">Write Access</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/defining-sync-functions.html">Defining Sync Functions</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Cloud-to-Edge Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-sgreplicate.html">Inter-sync-gateway replication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-sgreplicate-sgr2.html">Inter-sync-gateway Replication vn:2</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="refer/config-properties.html">&#8230;&#8203; view Configuration reference</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-running.html">&#8230;&#8203; view the How-to</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Replication Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/concept-fundamentals-data.html">Mobile data learn/concepts</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="resolving-conflicts.html">Conflict Resolution</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#sync-gateway::learn/concept-fundamentals-logging.adoc">Logging</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/concept-fundamentals-data-tombstones.html">Tombstones</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="managing-tombstones.html">Managing Tombstones</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="indexing.html">Indexing</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-integration.html">Webhooks and Changes Feed</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="integrating-external-stores.html">Integrating External Stores</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Refer</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="refer/config-properties.html">Configuration Details</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Sync Gateway API</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="refer/rest-api-public.html">Public REST API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="refer/rest-api-admin.html">Admin REST API</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<a class="nav-link" href="refer/refer-sgw-glossary.html">Sync Gateway Glossary</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-sgreplicate.html">&#8230;&#8203; view the Concept</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="learn/icr-running.html">&#8230;&#8203; view the How-to</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Product Notes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="prodnotes/pn-change-log-config.html">Configuration Change Log</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Exit to . . .</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../home/mobile.html">back to Mobile</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/2.8/introduction.html">go to Couchbase Lite</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<a href="#" class="menu-expand-toggle"> <span>Navigation</span> <i class="fas fa-times-circle"></i> <i class="fas fa-chevron-circle-left"></i></a>
+</div></nav>
+<aside class="toc sidebar">
+  <div class="sidebar-box">
+      <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/upgrade.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+</ul>
+</div>
+      <div class="toc-menu"></div>
+        <div class="is-this-helpful-box">
+          <h4> Is this page helpful?</h4>
+            <div class="btn-row">
+              <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                     <i class="far fa-thumbs-up"></i>
+                 Yes
+
+                 </a>
+              <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+            </div>
+            <div class="any-feedback">
+              <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+            </div>
+            <div class="dialog-box" id="dialogBox">
+              <form>
+                  <div class="form-group " id="additionalFeedbackBox">
+                    <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+                    <div class="action-btn-row ">
+                      <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                       <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                       <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+                    </div>
+
+
+                  </div>
+
+              </form>
+
+            </div>
+      </div>
+   </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<button class="nav-control"></button>
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="introduction.html">h2Sgw-90220</a></li>
+<li class="crumb">Advance</li>
+<li class="crumb"><a href="deployment.html">Deploy</a></li>
+<li class="crumb"><a href="upgrade.html">Notes on Upgrading</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">Upgrade</h1>
+<div class="labels">
+<ul>
+<li class="status"><span>stage -- {releaseComments}</span></li>
+</ul>
+</div>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Topic Group&#8201;&#8212;&#8201;<em>Application Deployment</em><br>
+Description&#8201;&#8212;&#8201;<em>This page documents various implementation details and functionalities to consider when performing an upgrade to Sync Gateway 2.8.</em><br>
+Abstract&#8201;&#8212;&#8201;<em></em><br>
+Related Content&#8201;&#8212;&#8201;<a href="start/gs-sgw-prereqs.html" class="page">Before You Start</a> | <a href="start/gs-sgw-install.html" class="page">Install SGW</a> | <a href="prodnotes/pn-release-notes.html" class="page">Release Notes</a></p>
+</div>
+</blockquote>
+</div>
+<div class="ulist">
+<div class="title">Points to cover incude:</div>
+<ul>
+<li>
+<p>See: <a href="https://docs.google.com/document/d/13E6JOq8u_AaUd_t8FZEPCAuq7jfkjryecjBQBHE3pG8/edit?ts=5e7cd22f#heading=h.4s8odjf16mf1" class="bare">https://docs.google.com/document/d/13E6JOq8u_AaUd_t8FZEPCAuq7jfkjryecjBQBHE3pG8/edit?ts=5e7cd22f#heading=h.4s8odjf16mf1</a></p>
+</li>
+<li>
+<p><a href="https://docs.google.com/document/d/13E6JOq8u_AaUd_t8FZEPCAuq7jfkjryecjBQBHE3pG8/edit?ts=5e873940#heading=h.r4o6xoe8671e" class="bare">https://docs.google.com/document/d/13E6JOq8u_AaUd_t8FZEPCAuq7jfkjryecjBQBHE3pG8/edit?ts=5e873940#heading=h.r4o6xoe8671e</a></p>
+</li>
+<li>
+<p></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Highlight breaking change in release notes:</p>
+</div>
+<div class="paragraph">
+<p>With Hydrogen, replication configuration is defined within database section. Pre-Hydrogen, the configuration is defined within global section. When upgrading a cluster with a replication defined to Hydrogen, the behavior is as follows
+See: <a href="https://docs.google.com/document/d/13E6JOq8u_AaUd_t8FZEPCAuq7jfkjryecjBQBHE3pG8/edit?ts=5e77c903#bookmark=id.99mstdrd57v" class="bare">https://docs.google.com/document/d/13E6JOq8u_AaUd_t8FZEPCAuq7jfkjryecjBQBHE3pG8/edit?ts=5e77c903#bookmark=id.99mstdrd57v</a>
+Specifically, comment: <a href="https://docs.google.com/document/d/13E6JOq8u_AaUd_t8FZEPCAuq7jfkjryecjBQBHE3pG8/edit?disco=AAAAGVLwKIY" class="bare">https://docs.google.com/document/d/13E6JOq8u_AaUd_t8FZEPCAuq7jfkjryecjBQBHE3pG8/edit?disco=AAAAGVLwKIY</a></p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="moving-to-inter-sync-gateway-replication-v2"><a class="anchor" href="#moving-to-inter-sync-gateway-replication-v2"></a>Moving to Inter-sync-gateway Replication (v2)</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Out of the box behavior</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Any <a href="refer/config-properties.html#databases-this_db-replications-this_rep" class="page">replications</a> (<a href="refer/config-properties.html#databases-this_db-replications-this_rep-continuous" class="page">continuous</a> or ad-hoc) pre-configured in the configuration file&#8217;s <a href="refer/config-properties.html#databases" class="page">databases</a> section will run using the Inter-sync-gateway Replication (v1) protocol.
+This is subject to any compatibility constraints defined in the <a href="prodnotes/pn-compatibility.html" class="page">Compatibility Matrix</a>.</p>
+</div>
+<div class="paragraph">
+<p>Existing replications implementing custom <a href="resolving-conflicts.html" class="page">Conflict Resolution</a> strategies (via the REST endpoint) will continue to function in the same manner as for Inter-sync-gateway Replication (v1) replications after upgrade</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Upgrading existing replications</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>To upgrade existing Inter-sync-gateway Replication (v1) replications to Inter-sync-gateway Replication (v2), reconfigure them using Inter-sync-gateway Replication (v2)'s <a href="refer/config-properties.html#databases-this_db-replications-this_rep" class="page">replications</a> property in the configuration file or the REST API&#8201;&#8212;&#8201;see <a href="#upgrade-strategies">Upgrade Strategies</a> for more.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Post-upgrade behavior</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Restarting Replications</p>
+<div class="paragraph">
+<p>The <code>replicationId</code> is used to ensure that any replications previously setup with Inter-sync-gateway Replication (v1), automatically restart using Inter-sync-gateway Replication (v2).
+The restart point will be the last checkpoint used, unless over-ridden.</p>
+</div>
+</li>
+<li>
+<p>Over-riding restart point</p>
+<div class="paragraph">
+<p>To restart a sync from zero: After the upgrade  reconfigure the Inter-sync-gateway Replication (v2) <a href="refer/config-properties.html#databases-this_db-replications-this_rep" class="page">replications</a> to use a different <a href="refer/config-properties.html#databases-this_db-replications-this_rep-replication_id" class="page">replication_id</a></p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="upgrade-strategies"><a class="anchor" href="#upgrade-strategies"></a>Upgrade Strategies</h3>
+<div class="paragraph">
+<p>This section describes recommended upgrade strategies for implementing Inter-sync-gateway Replication (v2)</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#sc1">Scenario 1</a>&#8201;&#8212;&#8201;Continue with SGR-Replicate 1.0 (no conflict resolution)</p>
+</li>
+<li>
+<p><a href="#sc2">Scenario 2</a>&#8201;&#8212;&#8201;Continue with SGR-Replicate 1.0 (custom conflict resolution)</p>
+</li>
+<li>
+<p><a href="#sc3">Scenario 3</a>&#8201;&#8212;&#8201;Change to SGR-Replicate 2.0 (default conflict resolution)</p>
+</li>
+<li>
+<p><a href="#sc4">Scenario 4</a>&#8201;&#8212;&#8201;Change to SGR-Replicate 2.0 (custom conflict resolution)</p>
+</li>
+</ul>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_a-href-sc1-scenario-1-a"></a><a href="#sc1">Scenario 1</a></p>
+</li>
+<li>
+<p><a id="tabset1_a-href-sc2-scenario-2-a"></a><a href="#sc2">Scenario 2</a></p>
+</li>
+<li>
+<p><a id="tabset1_a-href-sc3-scenario-3-a"></a><a href="#sc3">Scenario 3</a></p>
+</li>
+<li>
+<p><a id="tabset1_a-href-sc4-scenario-4-a"></a><a href="#sc4">Scenario 4</a></p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_a-href-sc1-scenario-1-a">
+<div id="sc1" class="exampleblock">
+<div class="title">Scenario 1. Continue with SGR-Replicate 1.0 (no conflict resolution)</div>
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">From</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Source Cluster&#8201;&#8212;&#8201;Active peer running Sync Gateway 2.x or 1.5 (Pre-Hydrogen)</p>
+</li>
+<li>
+<p>Target Cluster&#8201;&#8212;&#8201;Passive peer running Sync Gateway 2.x or 1.5 (Pre-Hydrogen)</p>
+</li>
+<li>
+<p>Replication&#8201;&#8212;&#8201;cSG-Replicate 1.0 onfigured in continuous or one-shot mode</p>
+</li>
+<li>
+<p>Conflict resolution&#8201;&#8212;&#8201;Not implemented</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">To</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Source Cluster&#8201;&#8212;&#8201;Active node running Sync Gateway 2.8+</p>
+</li>
+<li>
+<p>Target Cluster&#8201;&#8212;&#8201;Passive node running Sync Gateway 2.8+</p>
+</li>
+<li>
+<p>Replication&#8201;&#8212;&#8201;Inter-sync-gateway Replication (v1) configured in continuous or one-shot mode</p>
+</li>
+<li>
+<p>Conflict resolution&#8201;&#8212;&#8201;Not implemented</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Strategy</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Upgrade sequence&#8201;&#8212;&#8201;Either cluster can be upgraded first</p>
+</li>
+<li>
+<p>Restart point&#8201;&#8212;&#8201;When the active node restarts it will use Inter-sync-gateway Replication (v1) and will continue from where it last left off</p>
+</li>
+<li>
+<p>Upgrade Constraint&#8201;&#8212;&#8201;Replication will be down for the duration of the active node restart</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_a-href-sc2-scenario-2-a">
+<div id="sc2" class="exampleblock">
+<div class="title">Scenario 2. Continue with SGR-Replicate 1.0 (custom conflict resolution)</div>
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">From</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Source Cluster&#8201;&#8212;&#8201;Active peer running Sync Gateway 2.x or 1.5 (Pre-Hydrogen)</p>
+</li>
+<li>
+<p>Target Cluster&#8201;&#8212;&#8201;Passive peer running Sync Gateway 2.x or 1.5 (Pre-Hydrogen)</p>
+</li>
+<li>
+<p>Replication&#8201;&#8212;&#8201;Inter-sync-gateway Replication (v1) configured in continuous or one-shot mode</p>
+</li>
+<li>
+<p>Conflict resolution&#8201;&#8212;&#8201;Custom conflict resolution with <code>allow_conflicts=true</code></p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">To</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Source Cluster&#8201;&#8212;&#8201;Active node running Sync Gateway 2.8+</p>
+</li>
+<li>
+<p>Target Cluster&#8201;&#8212;&#8201;Passive node running Sync Gateway 2.8+</p>
+</li>
+<li>
+<p>Replication&#8201;&#8212;&#8201;Inter-sync-gateway Replication (v1) configured in continuous or one-shot mode</p>
+</li>
+<li>
+<p>Conflict resolution&#8201;&#8212;&#8201;Custom conflict resolution with <code>allow_conflicts=true</code></p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Strategy</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Upgrade sequence&#8201;&#8212;&#8201;Either cluster can be upgraded first</p>
+</li>
+<li>
+<p>Restart point&#8201;&#8212;&#8201;When the active node restarts it will use Inter-sync-gateway Replication (v1) and will continue from where it last left off</p>
+</li>
+<li>
+<p>Conflict Resolution&#8201;&#8212;&#8201;Will continue to be handled by the app</p>
+</li>
+<li>
+<p>Upgrade Constraints</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Replication will be down for the duration of the active node restart</p>
+</li>
+<li>
+<p>The <code>allow-conflicts</code> flag is ignored for any Inter-sync-gateway Replication (v2) replications configured.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_a-href-sc3-scenario-3-a">
+<div id="sc3" class="exampleblock">
+<div class="title">Scenario 3. Change to SGR-Replicate 2.0 (default conflict resolution)</div>
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">From</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Source Cluster&#8201;&#8212;&#8201;Active peer running Sync Gateway 2.x or 1.5 (Pre-Hydrogen)</p>
+</li>
+<li>
+<p>Target Cluster&#8201;&#8212;&#8201;Passive peer running Sync Gateway 2.x or 1.5 (Pre-Hydrogen)</p>
+</li>
+<li>
+<p>Replication&#8201;&#8212;&#8201;Inter-sync-gateway Replication (v1) configured in continuous or one-shot mode</p>
+</li>
+<li>
+<p>Conflict resolution&#8201;&#8212;&#8201;Not implemented</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">To</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Source Cluster&#8201;&#8212;&#8201;Active node running Sync Gateway 2.8+</p>
+</li>
+<li>
+<p>Target Cluster&#8201;&#8212;&#8201;Passive node running Sync Gateway 2.8+</p>
+</li>
+<li>
+<p>Replication&#8201;&#8212;&#8201;Inter-sync-gateway Replication (v2) configured in continuous or one-shot mode</p>
+</li>
+<li>
+<p>Conflict resolution&#8201;&#8212;&#8201;Not implemented</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Strategy</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Upgrade sequence</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Stop Inter-sync-gateway Replication (v1) replications</p>
+</li>
+<li>
+<p>Remove the Inter-sync-gateway Replication (v1) replication configuration and replace it with Inter-sync-gateway Replication (v2) equivalent.</p>
+</li>
+<li>
+<p>Upgrade each cluster to Hydrogen.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Restart Outcomes</p>
+<div class="ulist">
+<ul>
+<li>
+<p>When The active cluster is restarted it will automatically switch to Sg-Replicate 2.0</p>
+</li>
+<li>
+<p>Replication will continue from the last checkpoint, unless over-ridden.</p>
+</li>
+<li>
+<p><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a> The replication will distribute automatically</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Conflict resolution&#8201;&#8212;&#8201;Default</p>
+</li>
+<li>
+<p>Upgrade Constraint&#8201;&#8212;&#8201;The <code>allow-conflicts</code> flag is ignored for any Inter-sync-gateway Replication (v2) replications configured.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_a-href-sc4-scenario-4-a">
+<div id="sc4" class="exampleblock">
+<div class="title">Scenario 4. {sc4-title}</div>
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">From</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Source Cluster&#8201;&#8212;&#8201;Active peer running Sync Gateway 2.x or 1.5 (Pre-Hydrogen)</p>
+</li>
+<li>
+<p>Target Cluster&#8201;&#8212;&#8201;Passive peer running Sync Gateway 2.x or 1.5 (Pre-Hydrogen)</p>
+</li>
+<li>
+<p>Replication&#8201;&#8212;&#8201;Inter-sync-gateway Replication (v1) configured in continuous or one-shot mode</p>
+</li>
+<li>
+<p>Conflict resolution&#8201;&#8212;&#8201;Custom conflict resolution with <code>allow_conflicts=true</code></p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">To</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Source Cluster&#8201;&#8212;&#8201;Active node running Sync Gateway 2.8+</p>
+</li>
+<li>
+<p>Target Cluster&#8201;&#8212;&#8201;Passive node running Sync Gateway 2.8+</p>
+</li>
+<li>
+<p>Replication&#8201;&#8212;&#8201;Inter-sync-gateway Replication (v2) configured in continuous or one-shot mode</p>
+</li>
+<li>
+<p>Conflict resolution&#8201;&#8212;&#8201;Apply custom conflict resolution</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Strategy</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Upgrade sequence</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Stop Inter-sync-gateway Replication (v1) replications</p>
+</li>
+<li>
+<p>Remove the Inter-sync-gateway Replication (v1) replication configuration</p>
+</li>
+<li>
+<p>Add the Inter-sync-gateway Replication (v2) replication configuration, including Javascript function as <a href="refer/config-properties.html#databases-this_db-replications-this_rep-custom_conflict_resolver" class="page">custom_conflict_resolver</a></p>
+</li>
+<li>
+<p>Upgrade each cluster to Hydrogen</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Restart Outcomes</p>
+<div class="ulist">
+<ul>
+<li>
+<p>When The active cluster is restarted it will automatically switch to Sg-Replicate 2.0</p>
+</li>
+<li>
+<p>Replication will continue from the last checkpoint, unless over-ridden.</p>
+</li>
+<li>
+<p><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a> The replication will distribute automatically</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Conflict resolution&#8201;&#8212;&#8201;Conflicts will be handled by the function  specified as the as <a href="refer/config-properties.html#databases-this_db-replications-this_rep-custom_conflict_resolver" class="page">custom_conflict_resolver</a></p>
+</li>
+<li>
+<p>Upgrade Constraint&#8201;&#8212;&#8201;The <code>allow-conflicts</code> flag is ignored for any Inter-sync-gateway Replication (v2) replications configured.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="views-to-gsi"><a class="anchor" href="#views-to-gsi"></a>Views to GSI</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Prior to 2.1, Sync Gateway used system views for a variety of internal operations, including authentication and replication.
+Starting in 2.1, Sync Gateway will use GSI and N1QL to perform those tasks.</p>
+</div>
+<div class="paragraph">
+<p>The upgrade, from using views to using Global Secondary Indexes and N1QL, happens automatically when starting a Sync Gateway 2.1 or above node in a cluster that was previously using views.</p>
+</div>
+<div class="paragraph">
+<p>Use of GSI requires Couchbase Server 5.5, with at least one node running the Query and Index Services.
+Users wanting to run Sync Gateway 2.1 or above with an older version of Couchbase Server will need to continue to use views, by setting the <code>use_views</code> property.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration-changes"><a class="anchor" href="#configuration-changes"></a>Configuration Changes</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Before</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">After</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sync Gateway 1.5 or above</strong>
+<code>shared_bucket_access: false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sync Gateway 1.5 or above</strong>
+<code>shared_bucket_access: true</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="2"><div class="content"><div class="paragraph">
+<p>After restarting Sync Gateway with the updated configuration file, the mobile metadata for existing documents is automatically migrated.
+To enable shared bucket on incoming documents, one Sync Gateway node in the cluster must also have the <code>import_docs: continuous</code> property in the configuration file.</p>
+</div>
+<div class="paragraph">
+<p>Enabling shared bucket access on your existing deployment is <strong>not</strong> reversible.
+It is recommended to test the upgrade on a staging environment before upgrading the production environment.</p>
+</div>
+<div class="paragraph">
+<p>Known issue: enabling shared bucket access on your existing deployment if it&#8217;s already running with GSI indexing will require downtime (<a href="prodnotes/pn-release-notes.html#2-5-0" class="page">known issues CBG-394</a>).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sync Gateway 2.1 or above</strong>
+<code>num_index_replicas: 1</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sync Gateway 2.1 or above</strong>
+<code>num_index_replicas: 2</code> (or n)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">After restarting Sync Gateway with the updated configuration file, the number of Index Replicas in the Couchbase Server cluster is automatically updated.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="upgrade"><a class="anchor" href="#upgrade"></a>Upgrade</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A rolling upgrade is the recommended method to upgrade a Sync Gateway cluster.
+At a high level, a rolling upgrade consists of the following steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The load balancer configuration is updated to stop any HTTP traffic going to the node that will be upgraded.</p>
+</li>
+<li>
+<p>The upgrade is performed on the given node</p>
+</li>
+<li>
+<p>The load balancer configuration is updated to re-balance the HTTP traffic across all nodes.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Those steps are then repeated for each node in the Sync Gateway cluster.</p>
+</div>
+<div class="paragraph">
+<p>The tables below provide more detail for distinct upgrade scenarios.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">From</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">To</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sync Gateway 1.x, 2.0</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sync Gateway 2.1+ (<code>use_views: false</code>)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">No downtime in a rolling upgrade.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="2"><div class="content"><div class="paragraph">
+<p>The upgrade, from using views to using Global Secondary Indexes and N1QL, happens automatically when starting a Sync Gateway 2.1 or above node in a cluster that was previously using views.
+By default, Sync Gateway requires the Couchbase Server cluster to be running Couchbase Server 5.5, with at least two nodes running the Index and Query Services.
+If this is not the case, users must configure the <code>use_views</code> and/or <code>num_index_replicas</code> properties in their Sync Gateway configuration during upgrade.</p>
+</div>
+<div class="paragraph">
+<p>Installation follows the same general approach used in 2.0.
+On startup, Sync Gateway will check for the existence of the required indexes, and only attempt to create them if they do not already exist.</p>
+</div>
+<div class="paragraph">
+<p>Then, Sync Gateway will wait until indexes are available before starting to serve requests.</p>
+</div>
+<div class="paragraph">
+<p>Sync Gateway 2.1 or above will <strong>not</strong> automatically remove the previously used design documents.
+Removal of the obsolete design documents is done via a call to the <a href="#admin-rest-api.adoc#/server/post__post_upgrade" class="page unresolved">/_post_upgrade</a> endpoint in Sync Gateway&#8217;s Admin REST API.
+This endpoint can be run in preview mode (<code>?preview=true</code>) to see which design documents would be removed.
+To summarize, the steps to perform an upgrade to Sync Gateway 2.1 or above are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Upgrade one node in the cluster, and wait for it to be reachable via the REST API (for example at http://localhost:4985/).</p>
+</li>
+<li>
+<p>Upgrade the rest of the nodes in the cluster.</p>
+</li>
+<li>
+<p>Clean up obsolete views:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Optional</strong> Issue a call to <code>/_post_upgrade?preview=true</code> on any node to preview which design documents will be removed.</p>
+</li>
+<li>
+<p>Issue a call to <code>/post_upgrade</code> to remove the obsolete design documents.
+The response should indicate that "sync_gateway" and "sync_housekeeping" were removed.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">From</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">To</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sync Gateway 1.x</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sync Gateway 2.0, 2.1+ (<code>use_views: true</code>)</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">No downtime in a rolling upgrade.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="2"><div class="content"><div class="paragraph">
+<p>In 2.0, Sync Gateway&#8217;s design documents include the version number in the design document name.
+In this release for example, the design documents are named <code>_design/sync_gateway_2.0</code> and <code>_design/sync_housekeeping_2.0</code>.</p>
+</div>
+<div class="paragraph">
+<p>On startup, Sync Gateway will check for the existence of these design documents, and only attempt to create them if they do not already exist.
+Then, Sync Gateway will wait until views are available and indexed before starting to serve requests.
+To evaluate this, Sync Gateway will issue a <code>stale=false&amp;limit=1</code> query against the Sync Gateway views (channels, access and role_access).</p>
+</div>
+<div class="paragraph">
+<p>If the view request exceeds the default timeout of 75s (which would be expected when indexing large buckets), Sync Gateway will log additional messages and retry.
+The logging output will look like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">14:26:41.039-08:00 Design docs for current SG view version (2.0) found.
+14:26:41.039-08:00 Verifying view availability for bucket default...
+14:26:42.045-08:00 Timeout waiting for view "access" to be ready for bucket "default" - retrying...
+14:26:42.045-08:00 Timeout waiting for view "channels" to be ready for bucket "default" - retrying...
+14:26:42.045-08:00 Timeout waiting for view "role_access" to be ready for bucket "default" - retrying...
+14:26:44.065-08:00 Timeout waiting for view "access" to be ready for bucket "default" - retrying...
+14:26:44.065-08:00 Timeout waiting for view "role_access" to be ready for bucket "default" - retrying...
+14:26:44.065-08:00 Timeout waiting for view "channels" to be ready for bucket "default" - retrying...
+14:26:44.072-08:00 Views ready for bucket default.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Sync Gateway 2.0 will <strong>not</strong> automatically remove the previous design documents.
+Removal of the obsolete design documents is done via a call to the new <a href="#admin-rest-api.adoc#/server/post\__post_upgrade" class="page unresolved"><code>_post_upgrade</code></a> endpoint in Sync Gateway&#8217;s Admin REST API.
+This endpoint can be run in preview mode (<code>?preview=true</code>) to see which design documents would be removed.
+To summarize, the steps to perform an upgrade to Sync Gateway 2.0 are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Upgrade one node in the cluster to 2.0, and wait for it to be reachable via the REST API (for example at http://localhost:4985/).</p>
+</li>
+<li>
+<p>Upgrade the rest of the nodes in the cluster.</p>
+</li>
+<li>
+<p>Clean up obsolete views:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Optional</strong> Issue a call to <code>_post_upgrade?preview=true</code> on any node to preview which design documents will be removed.
+To upgrade to 2.0, expect to see "sync_gateway" and "sync_housekeeping" listed.</p>
+</li>
+<li>
+<p>Issue a call to <code>_post_upgrade</code> to remove the obsolete design documents.
+The response should indicate that "sync_gateway" and "sync_housekeeping" were removed.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">From</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">To</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sync Gateway 1.1, 1.2, 1.3, 1.4</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Sync Gateway 1.5</strong></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">Possible downtime in a rolling upgrade. Follow the steps below to avoid any downtime.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" colspan="2"><div class="content"><div class="paragraph">
+<p>In this upgrade path, the upgrade process will trigger views in Couchbase Server to be re-indexed.
+During the re-indexing, operations that are dependent on those views will not be available.
+The main operations relying on views to be indexed are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A user requests data that doesn&#8217;t reside in the <a href="#config-properties.adoc#databases-foo_db-cache-channel_cache_max_length" class="page unresolved">channel cache</a>.</p>
+</li>
+<li>
+<p>A new channel or role is granted to a user in the <a href="learn/defining-sync-functions.html" class="page">Sync Function</a>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The unavailability of those operations may result in some requests not being processed.
+The duration of the downtime will depend on the data set and frequency of replications with mobile clients.
+To avoid this downtime, it is possible to pre-build the view index before directing traffic to the upgraded node.</p>
+</div>
+<div class="paragraph">
+<p>Sync Gateway uses Couchbase Server views to index and query documents.
+When Sync Gateway starts, it will publish a Design Document which contains the View definitions (map/reduce functions).
+For example, the Design Document for Sync Gateway is the following:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+   "views":{
+      "access":{
+         "map":"function (doc, meta) { ... }"
+      },
+      "channels":{
+         "map":"function (doc, meta) { ... }"
+      },
+      ...
+   },
+   "index_xattr_on_deleted_docs":true
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Following the Design Document creation, it must run against all the documents in the Couchbase Server bucket to build the index which may result in downtime.
+During a Sync Gateway upgrade, the index may also have to be re-built if the Design Document definition has changed.
+To avoid this downtime, you can publish the Design Document and build the index before starting Sync Gateway by using the Couchbase Server REST API.
+The following curl commands refer to a Sync Gateway 1.3 &#8594; Sync Gateway 1.4 upgrade but they apply to any upgrade of Sync Gateway or Accelerator.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Start Sync Gateway 1.4 with Couchbase Server instance that <strong>isn&#8217;t</strong> your production environment.
+Then, copy the Design Document to a file with the following.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl localhost:8092/&lt;BUCKET_NAME&gt;/_design/sync_gateway/ &gt; ddoc.json</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a Development Design Document on the cluster where Sync Gateway is going to be upgraded from 1.3:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -X PUT http://localhost:8092/&lt;BUCKET_NAME&gt;/_design/dev_sync_gateway/ -d @ddoc.json -H "Content-Type: application/json"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This should return:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">{"ok":true,"id":"_design/dev_sync_gateway"}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Run a View Query against the Development Design Document.
+By default, a Development Design Document will index one vBucket per node, however we can force it to index the whole bucket using the <code>full_set</code> parameter:</p>
+<div class="openblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl "http://localhost:8092/sync_gateway/_design/dev_sync_gateway/_view/role_access_vbseq?full_set=true&amp;stale=false&amp;limit=1"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This may take some time to return, and you can track the index&#8217;s progress in the Couchbase Server UI.
+Note that this will consume disk space to build an almost duplicate index until the switch is made.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Upgrade Sync Gateway. When Sync Gateway 1.4 starts, it will publish the new Design Document to Couchbase Server.
+This will match the Development Design Document we just indexed, so will be available immediately.</p>
+</li>
+</ol>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="couchbase-server"><a class="anchor" href="#couchbase-server"></a>Couchbase Server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All of the different upgrade paths mentioned above assume that Couchbase Server is running a <a href="#compatibility-matrix.adoc" class="page unresolved">compatible version</a> for Sync Gateway.
+There are 3 commonly used upgrade paths for Couchbase Server.
+Depending on the one you choose, there may be additional consideration to keep in mind when using Sync Gateway:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 11.1111%;">
+<col style="width: 66.6667%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Upgrade Strategy</th>
+<th class="tableblock halign-left valign-top">Downtime</th>
+<th class="tableblock halign-left valign-top">Additional Machine Requirements</th>
+<th class="tableblock halign-left valign-top">Impact when using Sync Gateway</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rolling Online Upgrade</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Low</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><strong>Potential transient connection errors:</strong> The Couchbase Server re-balance operations can result in transient connection errors between Couchbase Server and Sync Gateway, which could result in Sync Gateway performance degradation.</p>
+</div>
+<div class="paragraph">
+<p><strong>Potential for unexpected server errors during re-balance:</strong> There is an increased potential to lose in-flight ops during a fail-over.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Upgrade Using Inter-sync-gateway Replication</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Small amount during switchover</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High - duplicate entire cluster</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Using an XDCR (Cross Data Center Replication) approach will have incur some Sync Gateway downtime, but less downtime than other approaches where Sync Gateway is shutdown during the entire Couchbase Server upgrade.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s important to note that the XDCR replication must be a <strong>one way</strong> replication from the existing (source) Couchbase Server cluster to the new (target) Couchbase Server cluster, and that no other writes can happen on the new (target) Couchbase Server cluster other than the writes from the XDCR replication, and no Sync Gateway instances should be configured to use the new (target) Couchbase Server cluster until the last step in the process.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Start XDCR to do a one way replication from the existing (source) Couchbase Server cluster to the new (target) Couchbase Server cluster running the newer version.</p>
+</li>
+<li>
+<p>Wait until the target Couchbase Server has caught up to all the writes in the source Couchbase Server cluster.</p>
+</li>
+<li>
+<p>Shutdown Sync Gateway to prevent any new writes from coming in.</p>
+</li>
+<li>
+<p>Wait until the target Couchbase Server has caught up to all the writes in the source Couchbase Server cluster&#8201;&#8212;&#8201;this should happen very quickly, since it will only be the residual writes in transit before the Sync Gateway shutdown.</p>
+</li>
+<li>
+<p>Reconfigure Sync Gateway to point to the target cluster.</p>
+</li>
+<li>
+<p>Restart Sync Gateway.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Caveats:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Small amount of downtime during switchover:</strong> Since there may be writes still in transit after Sync Gateway has been shutdown, there will need to be some downtime until the target Couchbase Server cluster is completely caught up.</p>
+</li>
+<li>
+<p><strong>XDCR should be monitored:</strong> Make sure to monitor the XDCR relationship as per <a href="#server:xdcr:xdcr-intro.adoc" class="page unresolved">XDCR docs</a>.</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Offline Upgrade</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">During entire upgrade</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>Take Sync Gateway offline</p>
+</li>
+<li>
+<p>Upgrade Couchbase Server using any of the options mentioned in the <a href="#server:install:upgrade.adoc" class="page unresolved">Upgrading Couchbase Server</a> documentation.</p>
+</li>
+<li>
+<p>Bring Sync Gateway online</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">Getting Started</div>
+<ul>
+<li>
+<p><a href="start/gs-sgw-prereqs.html" class="page">Before You Start</a></p>
+</li>
+<li>
+<p><a href="start/gs-sgw-install.html" class="page">Install SGW</a></p>
+</li>
+<li>
+<p><a href="start/gs-sgw-config.html" class="page">Configure SGW</a></p>
+</li>
+<li>
+<p></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Product Information</div>
+<ul>
+<li>
+<p><a href="prodnotes/pn-release-notes.html" class="page">Release Notes</a></p>
+</li>
+<li>
+<p><a href="prodnotes/pn-compatibility.html" class="page">Compatibility Matrix</a></p>
+</li>
+<li>
+<p><a href="prodnotes/pn-supported-os.html" class="page">Supported OS</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community Resources ...</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../_/img/couchbase_logo_black.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2020 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script async src="../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
