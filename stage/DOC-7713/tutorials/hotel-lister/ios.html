@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Build an Ionic Plugin with Couchbase Lite on iOS | Couchbase Docs Preview Site</title>
+<link rel="canonical" href="https://ibsoln.github.io/tutorials/hotel-lister/ios.html">
+<link rel="stylesheet" href="../../_/css/site.css">
+<script src="../../_/js/vendor/jquery.js"></script>
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+<meta name="dcterms.subject" content="tutorials">
+<meta name="dcterms.identifier" content="master">
+<meta name="generator" content="Antora 2.3.3">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+
+              <a class="navbar-brand" href="https://www.couchbase.com">
+                <img src="../../_/img/couchbase-documentation-logo.svg" alt="Couchbase" />
+              </a>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a href="https://ibsoln.github.io/home/index.html" class="nav-link">
+                      <i class="fas fa-home"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/mobile.html">
+                      Mobile
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../index.html">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <form class="navbar-item search">
+                  <input type="text" placeholder="Search Docs" class="query" id="search-query" />
+                  <button type="button" class="search-btn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+                <a class="btn btn-primary try-btn" href="https://www.couchbase.com/downloads">
+                  Downloads
+                </a>
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container">
+<nav class="nav">
+<div class="left-sidebar-menu">
+<div class="nav-menu">
+<ul class="nav-list">
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Developer Bootstrap Exercises</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../quick-start/quickstart-docker-image-manual-cb65.html">Couchbase Server Example Configuration</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../quick-start/quickstart-nosdk-webUI-firstquery-cb65.html">SQL JSON Upsert and Lookup via Web UI</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../quick-start/quickstart-java3-native-intellij-firstquery-cb65.html">Java with Couchbase SDK 3 and IntelliJ</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../quick-start/quickstart-java27-native-intellij-firstquery-cb65.html">Java with Couchbase SDK 2.7 and IntelliJ</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../quick-start/quickstart-java27-springdata32-intellij-firstquery-cb65.html">Java with Spring Data Couchbase and IntelliJ</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../quick-start/quickstart-dotnet27-aspnetcore31-visualstudio-firstquery-cb65.html">ASP.NET Core First Query</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../quick-start/quickstart-dotnet27-linq-vscode-firstquery-cb65.html">.NET Core with Linq2Couchbase First Query</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../quick-start/quickstart-nodejs26-ottoman-vscode-firstquery-cb65.html">Upsert and Lookup via Ottoman 2.6 &amp; NodeJS SDK 2.6</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../quick-start/quickstart-python3-native-firstquery-cb65.html">Native Python SDK First Query</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Couchbase Server</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">Session Storage
+Unresolved include directive in modules/ROOT/nav.adoc - include::session-storage:partial$nav.adoc[]</span>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">User Profile Storage
+Unresolved include directive in modules/ROOT/nav.adoc - include::profile-store:partial$nav.adoc[]</span>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Couchbase Mobile</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Travel Sample</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../mobile-travel-sample/introduction.html">Introduction</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Swift</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="in-toggle" data-depth="3"></span>
+<a class="nav-link" href="../mobile-travel-sample/swift/installation/index.html">Backend Installation</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/swift/installation/manual.html">Manual</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/swift/installation/docker.html">Docker (Local)</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/swift/installation/cloud.html">Cloud (RightScale)</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/swift/installation/travel-mobile-app.html">Installation</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/swift/design/data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/swift/develop/mvp-architecture.html">MVP Architecture</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/swift/develop/the-basics.html">The Basics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/swift/develop/security.html">Security</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/swift/develop/sync.html">Sync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/swift/develop/pre-built-database.html">Pre-built database</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/swift/develop/query.html">Query</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/swift/develop/full-text-search.html">Full Text Search</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Android-Java</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="in-toggle" data-depth="3"></span>
+<a class="nav-link" href="../mobile-travel-sample/android/installation/index.html">Backend Installation</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/android/installation/manual.html">Manual</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/android/installation/docker.html">Docker (Local)</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/android/installation/cloud.html">Cloud (RightScale)</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/android/installation/travel-mobile-app.html">Installation</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/android/design/data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/android/develop/mvp-architecture.html">MVP Architecture</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/android/develop/the-basics.html">The Basics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/android/develop/security.html">Security</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/android/develop/sync.html">Sync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/android/develop/pre-built-database.html">Pre-built database</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/android/develop/query.html">Query</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/android/develop/full-text-search.html">Full Text Search</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Java</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="in-toggle" data-depth="3"></span>
+<a class="nav-link" href="../mobile-travel-sample/java/installation/index.html">Backend Installation</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/java/installation/manual.html">Manual</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/java/installation/docker.html">Docker (Local)</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/java/installation/cloud.html">Cloud (RightScale)</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/java/installation/travel-mobile-app.html">Installation</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/java/design/data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/java/develop/mvp-architecture.html">MVP Architecture</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/java/develop/the-basics.html">The Basics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/java/develop/security.html">Security</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/java/develop/sync.html">Sync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/java/develop/pre-built-database.html">Pre-built database</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/java/develop/query.html">Query</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/java/develop/full-text-search.html">Full Text Search</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">C#</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="in-toggle" data-depth="3"></span>
+<a class="nav-link" href="../mobile-travel-sample/csharp/installation/index.html">Backend Installation</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/csharp/installation/manual.html">Manual</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/csharp/installation/docker.html">Docker (Local)</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../mobile-travel-sample/csharp/installation/cloud.html">Cloud (RightScale)</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/csharp/installation/travel-mobile-app.html">Installation</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/csharp/design/data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/csharp/develop/mvvm-architecture.html">MVVM Architecture</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/csharp/develop/the-basics.html">The Basics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/csharp/develop/security.html">Security</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/csharp/develop/sync.html">Sync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/csharp/develop/pre-built-database.html">Pre-built database</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/csharp/develop/query.html">Query</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../mobile-travel-sample/csharp/develop/full-text-search.html">Full Text Search</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../userprofile-couchbase-mobile/standalone/userprofile/userprofile_basic.html">Getting Started on iOS</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="#standalone@userprofile-couchbase-mobile:userprofile:xamarin/userprofile_basic.adoc">Getting Started on Xamarin</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="#standalone@userprofile-couchbase-mobile:userprofile:android/userprofile_basic.adoc">Getting Started on Android</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Getting Started with Peer-to-Peer Sync</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../cbl-p2p-sync-websockets/swift/cbl-p2p-sync-websockets.html">iOS/Swift</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../cbl-p2p-sync-websockets/dotnet/cbl-p2p-sync-websockets.html">Xamarin/C#</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Xcode Playground</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../swift-playground/overview.html">Overview</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">Recycler Views with Live Queries$nav.adoc[]</span>
+</span>
+</li>
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Build a Cordova Plugin</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="introduction.html">Introduction</a>
+</span>
+</li>
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="ios.html">iOS</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="android.html">Android</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Build a React Native Module</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../hotel-finder/introduction.html">Introduction</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../hotel-finder/ios.html">iOS</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../hotel-finder/android.html">Android</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">OpenID Connect Tutorial</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../openid-connect-implicit-flow/index.html">OpenID Connect Auth for Sync Gateway</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Build Your Own</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">Tutorial Template
+Unresolved include directive in modules/ROOT/nav.adoc - include::tutorial-template:partial$nav.adoc[]</span>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<a href="#" class="menu-expand-toggle"> <span>Navigation</span> <i class="fas fa-times-circle"></i> <i class="fas fa-chevron-circle-left"></i></a>
+</div></nav>
+<aside class="toc sidebar">
+  <div class="sidebar-box">
+    <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="https://github.com/couchbaselabs/hotel-lister-cordova/edit/master/modules/hotel-lister/pages/ios.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+</ul>
+</div>
+    <div class="toc-menu"></div>
+    <div class="is-this-helpful-box">
+      <h4> Is this page helpful?</h4>
+      <div class="btn-row">
+        <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                <i class="far fa-thumbs-up"></i>
+            Yes
+
+            </a>
+        <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+      </div>
+      <div class="any-feedback">
+        <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+      </div>
+      <div class="dialog-box" id="dialogBox">
+        <form>
+            <div class="form-group " id="additionalFeedbackBox">
+              <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+              <div class="action-btn-row ">
+                <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                  <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                  <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+              </div>
+
+
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="../index.html">Tutorials</a></li>
+<li class="crumb">Couchbase Mobile</li>
+<li class="crumb">Build a Cordova Plugin</li>
+<li class="crumb"><a href="ios.html">iOS</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">Build an Ionic Plugin with Couchbase Lite on iOS</h1>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this tutorial, you will learn how to use Couchbase Lite in a Cordova application.</p>
+</div>
+<div class="paragraph">
+<p>The sample project is a Cordova web application that allows users to query for and display a list of hotels stored in a Couchbase Lite database.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/ionic-listing-hotels-ios.png" alt="ionic listing hotels ios" width="250">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="pre-requisites"><a class="anchor" href="#pre-requisites"></a>Pre-requisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This tutorial requires the following components and versions to run successfully.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Xcode 10 or above</p>
+</li>
+<li>
+<p>Swift 4.2</p>
+</li>
+<li>
+<p>Couchbase Lite 2.1.1</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The tutorial also assumes that the reader has a basic understanding of developing apps with Cordova and Swift.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="getting-started"><a class="anchor" href="#getting-started"></a>Getting Started</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>The User Interface has already been implemented in the starter project.
+You will add the code to persist and query data.</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install the Ionic and Cordova CLIs which are tools that are required for building and managing Ionic and Cordova based apps.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">npm install -g ionic cordova</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Download the <a href="_attachments/starter-project.zip">starter project</a>.</p>
+</li>
+<li>
+<p>Unzip <strong>starter-project.zip</strong>.</p>
+</li>
+<li>
+<p>Open the <strong>starter-project/</strong> directory in the JavaScript editor of your choice (for example, <a href="https://code.visualstudio.com/">Visual Studio Code</a> or <a href="https://www.jetbrains.com/webstorm/">WebStorm</a>).</p>
+</li>
+<li>
+<p>The User Interface code is located in <strong>HotelLister/src/pages/home/</strong>.</p>
+</li>
+<li>
+<p>Run the following commands in your Terminal.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd HotelLister
+npm install</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>npm install</code> command installs dependencies.</p>
+</div>
+</li>
+<li>
+<p>To deploy the app to an iOS simulator, run the following.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ionic cordova platform add ios
+ionic cordova emulate --list</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, use the <code>--target</code> option to specify the simulator to deploy the app to.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ionic cordova emulate ios --target "iPhone-XR, 12.0" -- --buildFlag="-UseModernBuildSystem=0"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>You should see an empty list view as shown below.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/ionic-empty-list-ios.png" alt="ionic empty list ios" width="250">
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In the next section, you will setup the Cordova plugin which is the first step for establishing communication between native code and JavaScript.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="cordova-plugin-setup"><a class="anchor" href="#cordova-plugin-setup"></a>Cordova Plugin Setup</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With <a href="https://cordova.apache.org/docs/en/latest/guide/hybrid/plugins/index.html">Cordova Plugins</a>, you can write native code and have access to it from JavaScript.
+Plugins provide access to device and platform functionality that is ordinarily unavailable to web-based apps.</p>
+</div>
+<div class="paragraph">
+<p>In this section you will create a new plugin called <strong>cordova-plugin-hotel-lister</strong> to implement data persistence using Couchbase Lite&#8217;s Swift API.</p>
+</div>
+<div class="paragraph">
+<p>The plugin code will be added to the <strong>cordova-plugin-hotel-lister</strong> folder which resides alongside the <strong>HotelLister</strong> folder.</p>
+</div>
+<div class="paragraph">
+<p>The starter project contains a file at <strong>cordova-plugin-hotel-lister/src/android/Utils.java</strong> that will be used in a later section to unzip the pre-built database.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new file at <strong>cordova-plugin-hotel-lister/plugin.xml</strong> with the following.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="cordova-plugin-hotel-lister" version="0.0.1"&gt;
+  &lt;name&gt;cordova-plugin-hotel-lister&lt;/name&gt;
+  &lt;description&gt;An Cordova plugin for the Hotel Lister application to implement data persistence using Couchbase Lite.&lt;/description&gt;
+  &lt;license&gt;Couchbase CE / https://www.couchbase.com/binaries/content/assets/website/legal/ce-license-agreement.pdf&lt;/license&gt;
+
+  &lt;engines&gt;
+    &lt;engine name="cordova" version="&gt;=3.0.0"/&gt;
+  &lt;/engines&gt;
+
+  &lt;js-module src="www/hotel-lister.js" name="HotelLister"&gt;
+    &lt;clobbers target="window.plugins.HotelLister" /&gt;
+  &lt;/js-module&gt;
+
+  &lt;platform name="ios"&gt;
+    &lt;config-file target="config.xml" parent="/*"&gt;
+      &lt;feature name="HotelLister"&gt;
+        &lt;param name="ios-package" value="HotelLister"/&gt;
+      &lt;/feature&gt;
+    &lt;/config-file&gt;
+
+    &lt;source-file
+      src="src/ios/HotelLister.swift"/&gt;
+  &lt;/platform&gt;
+&lt;/plugin&gt;</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>id="cordova-plugin-hotel-lister"</code> attribute is the plugin name which will be used later to import it in the Ionic project.</p>
+</li>
+<li>
+<p>The <code>&lt;js-module&gt;&lt;/js-module&gt;</code> XML tag declares the location of the file that will declare the JavaScript interface.</p>
+</li>
+<li>
+<p>The <code>&lt;platform name="ios"&gt;&lt;/platform&gt;</code> XML tag declares the location of the Swift files to hold the native code.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Create a new file at <strong>cordova-plugin-hotel-lister/package.json</strong> with the following.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript" data-source-url="https://github.com/couchbaselabs/hotel-lister-cordova/blob/d9d50e7f65db087173a2a842a6fb1c9ff7e5f64b/modules/hotel-lister/examples/cordova-plugin-hotel-lister/package.json">{
+  "name": "cordova-plugin-hotel-lister",
+  "version": "0.0.1",
+  "description": "A Cordova plugin for the Hotel Lister app.",
+  "cordova": {
+    "id": "cordova-plugin-hotel-lister",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "engines": [
+    {
+      "name": "cordova",
+      "version": "&gt;=3.0.0"
+    }
+  ],
+  "author": "Couchbase &lt;mobile@couchbase.com&gt;",
+  "license": "Couchbase CE / https://www.couchbase.com/binaries/content/assets/website/legal/ce-license-agreement.pdf"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This file describes the plugin.</p>
+</div>
+</li>
+<li>
+<p>Create a new file at <strong>cordova-plugin-hotel-lister/www/hotel-lister.js</strong>.
+This file defines the JS API with which a Cordova/Ionic web app may interact with this plugin.
+Generally, this means that the plugin binds to the window element and by doing so, grants access to its parent project through simple JavaScript references.
+Add the following to your <strong>hotel-lister.js</strong> file:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">var exec = require('cordova/exec');
+
+var hotelLister = {
+  /* code will be added here later */
+};
+
+module.exports = hotelLister;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a new file at <strong>cordova-plugin-hotel-lister/src/ios/HotelLister.swift</strong> with the following. This file provides the native Swift implementation corresponding to the APIs defined in <strong>hotel-lister.js</strong>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">@objc(HotelLister) class HotelLister : CDVPlugin {
+
+    override func pluginInitialize() {
+
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Cordova Plugin is instantiated when it is first called in the JavaScipt WebView app.
+The <code>pluginInitialized()</code> method includes the startup code.
+Refer to the <a href="https://cordova.apache.org/docs/en/latest/guide/platforms/ios/plugin.html#plugin-initialization-and-lifetime">Plugin Lifecycle documentation</a> for more details.</p>
+</div>
+</li>
+<li>
+<p>To verify that your plugin is ready to work as expected, you have to install it in your <strong>HotelLister</strong> project.
+To do so, run the following commands from the root of the <strong>starter-project</strong> folder.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd HotelLister
+cordova platform rm ios
+cordova plugin add ../cordova-plugin-hotel-lister/
+cordova platform add ios</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If successful, you should see the following in the output.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Adding cordova-plugin-hotel-lister to package.json
+Saved plugin info for "cordova-plugin-hotel-lister" to config.xml</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="couchbase-lite-setup"><a class="anchor" href="#couchbase-lite-setup"></a>Couchbase Lite Setup</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Next, you will import Couchbase Lite as a dependency in the Xcode project.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Download Couchbase Lite from <a href="https://www.couchbase.com/downloads">here</a>.</p>
+</li>
+<li>
+<p>Unzip the file.</p>
+</li>
+<li>
+<p>Open the Xcode project located at <strong>HotelLister/platforms/ios/HotelLister.xcodeproj</strong>.</p>
+</li>
+<li>
+<p>Drag <strong>CouchbaseLiteSwift.framework</strong> from the downloaded folder to the Xcode project navigator. Be sure to select the <strong>Copy items if needed</strong> checkbox.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/drag-framework.png" alt="drag framework">
+</div>
+</div>
+</li>
+<li>
+<p>Navigate to <strong>Project &gt; General &gt; Embedded Binary</strong> and drag <strong>CouchbaseLiteSwift.framework</strong> over the list.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/drag-embedded.png" alt="drag embedded">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="database-setup"><a class="anchor" href="#database-setup"></a>Database Setup</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In our example, we will start with a pre-built Couchbase Lite database that contains a bunch of hotel documents.
+We will make our queries against the documents in this database.
+Note that in a real world application, the data could be synced down from other Couchbase Lite clients or from Sync Gateway in the cloud.</p>
+</div>
+<div class="paragraph">
+<p>The pre-built database needs to be added to the Xcode project.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Download <a href="_attachments/travel-sample.cblite2.zip">travel-sample.cblite2.zip</a>.</p>
+</li>
+<li>
+<p>Unzip it.</p>
+</li>
+<li>
+<p>Drag it over the Xcode project navigator.
+Be sure to select the <strong>Copy items if needed</strong> checkbox.</p>
+</li>
+<li>
+<p>We will use the singleton pattern to setup the database instance.
+Create a new file at <strong>cordova-plugin-hotel-lister/src/ios/DatabaseManager.swift</strong> and insert the following.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/couchbaselabs/hotel-lister-cordova/blob/d9d50e7f65db087173a2a842a6fb1c9ff7e5f64b/modules/hotel-lister/examples/cordova-plugin-hotel-lister/src/ios/DatabaseManager.swift#L2-L36">import CouchbaseLiteSwift
+
+class DatabaseManager {
+
+    private static var privateSharedInstance: DatabaseManager?
+
+    var database: Database
+
+    let DB_NAME = "travel-sample"
+
+    class func sharedInstance() -&gt; DatabaseManager   {
+        guard let privateInstance = DatabaseManager.privateSharedInstance else {
+            DatabaseManager.privateSharedInstance = DatabaseManager()
+            return DatabaseManager.privateSharedInstance!
+        }
+        return privateInstance
+    }
+
+    private init() {
+        let path = Bundle.main.path(forResource: self.DB_NAME, ofType: "cblite2")!
+        if !Database.exists(withName: self.DB_NAME) {
+            do {
+                try Database.copy(fromPath: path, toDatabase: self.DB_NAME, withConfig: nil)
+            } catch {
+                fatalError("Could not copy database")
+            }
+        }
+        do {
+            self.database = try Database(name: "travel-sample")
+        } catch {
+            fatalError("Could not copy database")
+        }
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You first check if a database named "travel-sample" exists.
+If it doesn&#8217;t exist, <strong>the travel-sample.cblite2</strong> database file that was bundled with the app is copied to the default Couchbase Lite directory.
+The database is then opened and the database instance is set.</p>
+</div>
+</li>
+<li>
+<p>When adding a new Swift file, it must be referenced in the plugin&#8217;s configuration file.
+Insert the following as a child to the <code>&lt;platform name="ios"&gt;&lt;/platform&gt;</code> element in <strong>cordova-plugin-hotel-lister/plugin.xml</strong>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;source-file
+	src="src/ios/DatabaseManager.swift"/&gt;</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Next, add the following import statement to the top of <strong>HotelLister.swift</strong>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>import CouchbaseLiteSwift</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Add the following instance variable to the <code>HotelLister</code> class in <strong>HotelLister.swift</strong>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code>var database: Database?</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Import the Couchbase Lite framework in <strong>HotelLister.swift</strong>.</p>
+</div>
+</li>
+<li>
+<p>Then, update the <code>pluginInitialize()</code> method in <strong>HotelLister.swift</strong> with the following to set the <code>database</code> instance property.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/couchbaselabs/hotel-lister-cordova/blob/d9d50e7f65db087173a2a842a6fb1c9ff7e5f64b/modules/hotel-lister/examples/cordova-plugin-hotel-lister/src/ios/HotelLister.swift#L8-L10">override func pluginInitialize() {
+    self.database = DatabaseManager.sharedInstance().database
+}</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>To test your changes, you must re-install the Cordova plugin from <strong>cordova-plugin-hotel-lister</strong> to <strong>HotelLister</strong>.
+Run the following commands from the root of the <strong>starter-project</strong> folder.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd HotelLister
+cordova plugin rm cordova-plugin-hotel-lister
+cordova plugin add ../cordova-plugin-hotel-lister/</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Build the project.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ionic cordova emulate ios --target "iPhone-XR, 12.0" -- --buildFlag="-UseModernBuildSystem=0"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The application should run successfully. You will still see an empty screen because at this stage, the Couchbase Lite database is initialized but you haven&#8217;t run any queries to fetch data from the database.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>In the next section, you will use this Database variable to query hotels from the pre-built database.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="listing-hotels"><a class="anchor" href="#listing-hotels"></a>Listing Hotels</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section, you will add the functionality to list hotels from the database.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add the implementation of the <code>queryHotels</code> method to <strong>cordova-plugin-hotel-lister/src/ios/HotelLister.swift</strong>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/couchbaselabs/hotel-lister-cordova/blob/d9d50e7f65db087173a2a842a6fb1c9ff7e5f64b/modules/hotel-lister/examples/cordova-plugin-hotel-lister/src/ios/HotelLister.swift#L14-L43">@objc(queryHotels:)
+func queryHotels(command: CDVInvokedUrlCommand) {
+    let DOC_TYPE = "hotel";
+
+    let query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("address"),
+            SelectResult.property("phone"),
+            SelectResult.property("name")
+        )
+        .from(DataSource.database(database!))
+        .where(
+            Expression.property("type")
+                .equalTo(Expression.string(DOC_TYPE))
+    )
+
+    do {
+        let resultSet = try query.execute()
+        let resultSetArray = resultSet.allResults()
+        var array = [Any]()
+        for item in resultSetArray {
+            array.append(item.toDictionary())
+        }
+        let pluginResult = CDVPluginResult(status: CDVCommandStatus_OK, messageAs: array)
+        self.commandDelegate.send(pluginResult, callbackId: command.callbackId)
+    } catch {
+        fatalError(error.localizedDescription);
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This method queries for the <code>address</code>, <code>phone</code> and <code>name</code> properties of documents where the <code>type</code> property is <code>hotel</code>.</p>
+</div>
+</li>
+<li>
+<p>Next, you will update the plugin&#8217;s JavaScript interface. In <strong>cordova-plugin-hotel-lister/www/hotel-lister.js</strong>, replace <code>/* code will be added here later */</code> with the following code snippet.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript" data-source-url="https://github.com/couchbaselabs/hotel-lister-cordova/blob/d9d50e7f65db087173a2a842a6fb1c9ff7e5f64b/modules/hotel-lister/examples/cordova-plugin-hotel-lister/www/hotel-lister.js#L5-L7">queryHotels: function(successCallback, errorCallback) {
+  exec(successCallback, errorCallback, 'HotelLister', 'queryHotels');
+},</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>You can now call the <code>queryHotels</code> method in the Ionic project.
+Add the following to the <code>constructor</code> method in <strong>HotelLister/src/pages/home/home.ts</strong>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript" data-source-url="https://github.com/couchbaselabs/hotel-lister-cordova/blob/d9d50e7f65db087173a2a842a6fb1c9ff7e5f64b/modules/hotel-lister/examples/HotelLister/src/pages/home/home.ts#L14-L19">this.platform.ready().then(() =&gt; {
+  window.plugins.HotelLister.queryHotels((hotels) =&gt; {
+    console.log(hotels);
+    this.hotels = hotels;
+  });
+});</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>To test your changes, you must re-install the Cordova plugin from <strong>cordova-plugin-hotel-lister</strong> to <strong>HotelLister</strong>.
+Run the following commands from the root of the <strong>start-project</strong> folder</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd HotelLister
+cordova plugin rm cordova-plugin-hotel-lister
+cordova plugin add ../cordova-plugin-hotel-lister/</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Build and run.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ionic cordova emulate ios --target "iPhone-XR, 12.0" -- --buildFlag="-UseModernBuildSystem=0"</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>You should now see the list of hotels.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/ionic-listing-hotels-ios.png" alt="ionic listing hotels ios" width="250">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="conclusion"><a class="anchor" href="#conclusion"></a>Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Well done!</strong> You have learned how to create a Cordova plugin to use Couchbase Lite&#8217;s native APIs and import the plugin in an Ionic project!</p>
+</div>
+<div class="paragraph">
+<p>You can find a working copy of the <strong>completed project</strong> in the <a href="_attachments/final-project.zip">final project</a> zip file.
+To build and run the final project:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Follow the instructions outlined in the <a href="#getting-started">Getting Started</a> section,</p>
+</li>
+<li>
+<p>and the instructions in the <a href="#couchbase-lite-setup">Couchbase Lite Setup</a> section to integrate Couchbase Lite into the final project.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../_/img/couchbase_logo_black.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2020 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script async src="../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
