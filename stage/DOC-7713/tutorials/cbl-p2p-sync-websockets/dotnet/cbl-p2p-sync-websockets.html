@@ -1016,7 +1016,7 @@ If you are running Android apps on emulators, please see <a href="#connecting-to
 <div class="sectionbody">
 <div class="paragraph">
 <p>Couchbase Lite is a JSON Document Store. A Document is a logical collection of named fields and values. The values are any valid JSON types. In addition to the standard JSON types, Couchbase Lite supports some special types like <code>Date</code> and <code>Blob</code>.
-While it is not required or enforced, it is a recommended practice to include a <em>"type"</em> property that can serve as a namespace for related.</p>
+While it is not required or enforced, it is a recommended practice to include a <em>"type"</em> property that can serve as a namespace for related documents.</p>
 </div>
 <div class="sect2">
 <h3 id="the-list-document"><a class="anchor" href="#the-list-document"></a>The "List" Document</h3>
@@ -1138,11 +1138,11 @@ DB = new Database(DbName, new DatabaseConfiguration() { Directory = DBPath });</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/couchbase-lite-peer-to-peer-sync-websocket-samples/blob/undefined/content/modules/cbl-p2p-sync-websockets/examples/code-samples.cs">var listenerConfig = new URLEndpointListenerConfiguration(_db);
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/couchbase-lite-peer-to-peer-sync-websocket-samples/blob/undefined/content/modules/cbl-p2p-sync-websockets/examples/code-samples.cs">var listenerConfig = new URLEndpointListenerConfiguration(_db); <i class="conum" data-value="1"></i><b>(1)</b>
 listenerConfig.NetworkInterface = GetLocalIPv4(NetworkInterfaceType.Wireless80211) ?? GetLocalIPv4(NetworkInterfaceType.Ethernet);
 listenerConfig.Port = 0; // Dynamic port
 
-switch (CoreApp.ListenerTLSMode) {
+switch (CoreApp.ListenerTLSMode) { <i class="conum" data-value="2"></i><b>(2)</b>
     case LISTENER_TLS_MODE.DISABLED:
         listenerConfig.DisableTLS = true;
         listenerConfig.TlsIdentity = null;
@@ -1161,9 +1161,9 @@ switch (CoreApp.ListenerTLSMode) {
         break;
 }
 
-listenerConfig.EnableDeltaSync = true;
+listenerConfig.EnableDeltaSync = true; <i class="conum" data-value="3"></i><b>(3)</b>
 
-if (CoreApp.RequiresUserAuth) {
+if (CoreApp.RequiresUserAuth) { <i class="conum" data-value="4"></i><b>(4)</b>
     listenerConfig.Authenticator = new ListenerPasswordAuthenticator((sender, username, password) =&gt;
     {
         // ** This is only a sample app to use an existing users credential shared cross platforms.
@@ -1428,7 +1428,7 @@ public void CreateReplicator(string PeerEndpointString)
 
     Uri host = new Uri(PeerEndpointString);
     var dbUrl = new Uri(host, _db.Name);
-    var replicatorConfig = new ReplicatorConfiguration(_db, new URLEndpoint(dbUrl));
+    var replicatorConfig = new ReplicatorConfiguration(_db, new URLEndpoint(dbUrl)); <i class="conum" data-value="1"></i><b>(1)</b>
     replicatorConfig.ReplicatorType = ReplicatorType.PushAndPull;
     replicatorConfig.Continuous = true;
 
@@ -1436,7 +1436,7 @@ public void CreateReplicator(string PeerEndpointString)
 
         // Explicitly allows self signed certificates. By default, only
         // CA signed cert is allowed
-        switch (CoreApp.ListenerCertValidationMode) {
+        switch (CoreApp.ListenerCertValidationMode) { <i class="conum" data-value="2"></i><b>(2)</b>
             case LISTENER_CERT_VALIDATION_MODE.SKIP_VALIDATION:
                 // Use acceptOnlySelfSignedServerCertificate set to true to only accept self signed certs.
                 // There is no cert validation
@@ -1470,17 +1470,17 @@ public void CreateReplicator(string PeerEndpointString)
 
     if (CoreApp.RequiresUserAuth) {
         var user = CoreApp.CurrentUser;
-        replicatorConfig.Authenticator = new BasicAuthenticator(user.Username, user.Password);
+        replicatorConfig.Authenticator = new BasicAuthenticator(user.Username, user.Password); <i class="conum" data-value="3"></i><b>(3)</b>
     }
 
-    _repl = new Replicator(replicatorConfig);
+    _repl = new Replicator(replicatorConfig); <i class="conum" data-value="4"></i><b>(4)</b>
     _listenerToken = _repl.AddChangeListener(ReplicationStatusUpdate);
 }
 
 public void ExecuteStartReplicatorCommand()
 {
     if (!IsStarted) {
-        _repl.Start();</code></pre>
+        _repl.Start(); <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
