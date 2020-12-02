@@ -1,0 +1,1109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Deploying Sync Gateway cluster | Couchbase Docs Preview Site</title>
+<link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.5/kubernetes/deploy-cluster.html">
+<link rel="stylesheet" href="../../../_/css/site.css">
+<script src="../../../_/js/vendor/jquery.js"></script>
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+<meta name="dcterms.subject" content="sync-gateway">
+<meta name="dcterms.identifier" content="2.5">
+<meta name="generator" content="Antora 2.3.3">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+
+              <a class="navbar-brand" href="https://www.couchbase.com">
+                <img src="../../../_/img/couchbase-documentation-logo.svg" alt="Couchbase" />
+              </a>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a href="https://ibsoln.github.io/home/index.html" class="nav-link">
+                      <i class="fas fa-home"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/mobile.html">
+                      Mobile
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../tutorials/index.html">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <form class="navbar-item search">
+                  <input type="text" placeholder="Search Docs" class="query" id="search-query" />
+                  <button type="button" class="search-btn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+                <a class="btn btn-primary try-btn" href="https://www.couchbase.com/downloads">
+                  Downloads
+                </a>
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container">
+<nav class="nav">
+<div class="left-sidebar-menu">
+<div class="version-control-box">
+<div class="component-frame">
+<div class="frame-icon">
+<img src="../../../_/img/server-icon.png" alt="">
+</div>
+<div class="frame-body">
+<h4 class="title"><span class="">Sync Gateway</span></h4>
+<a class="frame-link component" href="../index.html"> <span class="version">2.5</span></a>
+</div>
+</div>
+</div>
+<div class="nav-menu">
+<ul class="nav-list">
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Introduction</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../introduction.html">Introduction</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../index.html">What&#8217;s New</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../getting-started.html">Getting Started</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../data-modeling.html">Data Modeling</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Access Control</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../authentication.html">Authentication</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../authorizing-users.html">Authorizing Users</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../data-routing.html">Data Routing</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../sync-function-api.html">Sync Function API</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Learn</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../config-properties.html">Configuration File</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../command-line-options.html">CLI</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../shared-bucket-access.html">Mobile-Web Data Sync</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../managing-tombstones.html">Tombstones</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../indexing.html">Indexing</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../server-integration.html">Webhooks and Changes Feed</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../resolving-conflicts.html">Resolving Conflicts</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../integrating-external-stores.html">Integrating External Stores</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../running-replications.html">Inter-cluster Replication</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../rest-api-client.html">REST API Client</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Manage</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../logging.html">Logging</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../stats-monitoring.html">Stats Monitoring</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../sgcollect-info.html">SGCollect Info</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<a class="nav-link" href="../deployment.html">Deployment</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Sync Gateway on Kubernetes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="deploy-cluster.html">Deploy a Cluster</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="manage-cluster.html">Manage a Cluster</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../upgrade.html">Upgrade</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../security.html">Security</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../load-balancer.html">Load Balancer</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../database-offline.html">Taking Databases Offline and Online</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../os-level-tuning.html">OS Level Tuning</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">API References</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../rest-api.html">Public REST API</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../admin-rest-api.html">Admin REST API</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Release Notes &amp; Compatibility</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../release-notes.html">Release Notes</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../supported-os.html">Supported OS</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../compatibility-matrix.html">Compatibility Matrix</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<a href="#" class="menu-expand-toggle"> <span>Navigation</span> <i class="fas fa-times-circle"></i> <i class="fas fa-chevron-circle-left"></i></a>
+</div></nav>
+<aside class="toc sidebar">
+  <div class="sidebar-box">
+    <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/kubernetes/deploy-cluster.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+</ul>
+</div>
+    <div class="toc-menu"></div>
+    <div class="is-this-helpful-box">
+      <h4> Is this page helpful?</h4>
+      <div class="btn-row">
+        <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                <i class="far fa-thumbs-up"></i>
+            Yes
+
+            </a>
+        <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+      </div>
+      <div class="any-feedback">
+        <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+      </div>
+      <div class="dialog-box" id="dialogBox">
+        <form>
+            <div class="form-group " id="additionalFeedbackBox">
+              <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+              <div class="action-btn-row ">
+                <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                  <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                  <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+              </div>
+
+
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="../index.html">Sync Gateway</a></li>
+<li class="crumb"><a href="../deployment.html">Deployment</a></li>
+<li class="crumb">Sync Gateway on Kubernetes</li>
+<li class="crumb"><a href="deploy-cluster.html">Deploy a Cluster</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">Deploying Sync Gateway cluster</h1>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>This guide demonstrates how to deploy a Sync Gateway cluster on Kubernetes.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="prerequisites"><a class="anchor" href="#prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before you begin, you must have the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A Couchbase Server cluster already running on Kubernetes.
+If you don&#8217;t already have one, you can refer to <a href="#operator::install-kubernetes.adoc" class="page unresolved">this guide</a> for instructions.</p>
+</li>
+<li>
+<p>A Couchbase Server RBAC user with application access privileges.
+Sync Gateway will connect to the Couchbase Server as this RBAC user.
+Refer to <a href="../getting-started.html#creating-an-rbac-user" class="page">this section</a> for instructions.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploying-a-sync-gateway-cluster"><a class="anchor" href="#deploying-a-sync-gateway-cluster"></a>Deploying a Sync Gateway Cluster</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Sync Gateway nodes in a cluster have a homogeneous configuration with the exception of import node.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Import node</dt>
+<dd>
+<p>Under <a href="../shared-bucket-access.html" class="page">convergence/shared bucket access</a>, it is recommended that one Sync Gateway node in a cluster be configured for handling document import processing.
+For high availability, you can configure more than one Sync Gateway node in your cluster to be the import node, although it is strongly discouraged for multiple Sync Gateway nodes in the cluster to be configured for import processing.
+The configuration of the Sync Gateway import node is slightly different than the "regular" or "non-import" Sync Gateway nodes (see <a href="../config-properties.html#databases-foo_db-import_docs" class="page">databases.$db.import_docs</a>).</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>The following sections cover the steps to deploy regular or import Sync Gateway nodes.</p>
+</div>
+<div class="paragraph">
+<p>You will have to repeat the steps in this section once for the "regular" or non-import nodes and once for the "import" node. The difference is the  Sync Gateway configuration file and the Kubernetes Deployment Controller config file.</p>
+</div>
+<div class="sect2">
+<h3 id="sync-gateway-configuration-file"><a class="anchor" href="#sync-gateway-configuration-file"></a>Sync Gateway Configuration File</h3>
+<div class="paragraph">
+<p>In this section, you will create a <a href="https://kubernetes.io/docs/concepts/configuration/secret/">Kubernetes secret</a> from a new or existing Sync Gateway configuration.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open the Sync Gateway configuration file corresponding to your deployment.
+If you don&#8217;t have a configuration file you may also use our sample configuration shown below as a starting point.</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Regular Node</th>
+<th class="tableblock halign-left valign-top">Import Node</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../_attachments/kubernetes/sgw-config.json">sgw-config.json</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../_attachments/kubernetes/sgw-config-import.json">sgw-config-import.json</a></p></td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Replace the <code>server</code> key with the addressable Couchbase Server hostname.
+The following example shows the configuration file for a regular node.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "logging": {
+    "log_file_path": "/var/tmp/sglogs",
+    "console": {
+      "enabled": true,
+      "log_level": "info",
+      "log_keys": ["*"]
+    }
+  },
+  "databases": {
+    "db": {
+      "server": "cb-example-0000.cb-example.default.svc:8091", <i class="conum" data-value="1"></i><b>(1)</b>
+      "bucket": "default",
+      "username": "admin", <i class="conum" data-value="2"></i><b>(2)</b>
+      "password": "password",
+      "users": { "GUEST": { "disabled": false, "admin_channels": ["*"] } },
+      "allow_conflicts": false,
+      "revs_limit": 20,
+      "enable_shared_bucket_access": true
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The server key should point to any pod in the  Couchbase Server cluster.
+This would typically be of the form <code>CB_SERVER_POD.CB_SERVER_SERVICE_NAME.NAMESPACE.svc:8091</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The username/password keys should match what was setup in the <a href="#pre-requisites">pre-requisites</a> section when you configured the Sync Gateway RBAC user.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>You will use a <a href="https://kubernetes.io/docs/concepts/configuration/secret/">Kubernetes Secret</a> to pass the configuration file to Sync Gateway on launch.
+Alternatively, you could use a <a href="https://kubernetes.io/docs/tasks/configure-pod-container/configure-pod-configmap/">Kubernetes configMap</a> if you are not concerned about security.
+However, since the Sync Gateway contains sensitive information, it is recommended that you create a secret from the config file and pass that to the Sync Gateway.
+Run the following command to create a secret called "sgw-config" or "sgw-config-import" corresponding  to regular and import versions of Sync Gateway configuration file respectively</p>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_regular-node"></a>Regular node</p>
+</li>
+<li>
+<p><a id="tabset1_import-node"></a>Import node</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_regular-node">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console"> kubectl create secret generic sgw-config --from-file sgw-config.json</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_import-node">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">kubectl create secret generic sgw-config-import --from-file sgw-config-import.json</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If successful, you will see the following.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_regular-node"></a>Regular node</p>
+</li>
+<li>
+<p><a id="tabset2_import-node"></a>Import node</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_regular-node">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">secret "sgw-config" created</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_import-node">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">secret "sgw-config-import" created</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deployment-controller"><a class="anchor" href="#deployment-controller"></a>Deployment controller</h3>
+<div class="paragraph">
+<p>In this section you will deploy the Sync Gateway cluster with the configuration file that you created above.</p>
+</div>
+<div class="paragraph">
+<p>You will be using a <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/">Kubernetes deployment controller</a>.
+A deployment controller allows you to define the number of Sync Gateway replicas and other parameters.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open the controller file corresponding to your deployment.</p>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Regular Node</th>
+<th class="tableblock halign-left valign-top">Import Node</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../_attachments/kubernetes/sgw-deployment.yaml">sgw-deployment.yaml</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="../_attachments/kubernetes/sgw-deployment-import.yaml">sgw-deployment-import.yaml</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The following example shows the controller file for a regular node.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: sync-gateway <i class="conum" data-value="1"></i><b>(1)</b>
+spec:
+  replicas: 2 <i class="conum" data-value="2"></i><b>(2)</b>
+  template:
+    metadata:
+      labels:
+        app: sync-gateway
+    spec:
+      containers:
+        - name: sync-gateway
+          image: couchbase/sync-gateway:2.5.0-enterprise <i class="conum" data-value="3"></i><b>(3)</b>
+          args: ["/sync-gateway-config/sgw-config.json"] <i class="conum" data-value="4"></i><b>(4)</b>
+          volumeMounts: <i class="conum" data-value="5"></i><b>(5)</b>
+            - name: sgw-config-volume
+              mountPath: /sync-gateway-config
+              readOnly: true
+          env:
+            - name: GOMAXPROCS <i class="conum" data-value="6"></i><b>(6)</b>
+              value: "2"
+          resources:
+            requests:
+              cpu: "2"
+            limits:
+              cpu: "2" <i class="conum" data-value="7"></i><b>(7)</b>
+      volumes: <i class="conum" data-value="8"></i><b>(8)</b>
+        - name: sgw-config-volume
+          secret:
+            secretName: sgw-config</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>metadata.name</code>: The name of the deployment is "sync-gateway".</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>spec.replicas</code>: 2 Sync Gateway replicas that are deployed at most.
+<div class="ulist">
+<ul>
+<li>
+<p>For import node deployment, this <strong>is recommended</strong> to be 1.
+If high availability is important, you may want at least 2 Sync Gateway import nodes.
+However, given the overhead of redundant import docs processing by multiple nodes, this is not typically recommended.</p>
+</li>
+</ul>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>containers[].image</code>: Points to the docker image for Sync Gateway.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>containers[].args</code>: Points to the Sync Gateway configuration file named "sgw-config-working.json" which is mounted at the path specified via the <code>volumeMounts</code> config.
+If you are using the sample config files, this would be "sgw-config-import.json" for the import node.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td><code>volumeMounts</code>: Specifies where to mount the volume into the container.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td><code>GOMAXPROCS</code>: This GO runtime environment variable is used to limit the number of system threads that are allocated to Sync Gateway.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td><code>containers[].resources.limits.cpu</code>: This is used to specify the CPU limit for the Sync Gateway pod.
+If you do not specify one, the Sync Gateway could spawn as many processes as CPU cores and potentially use up all CPU resources.
+You can learn more about CPU resource assignment <a href="https://kubernetes.io/docs/tasks/configure-pod-container/assign-cpu-resource/#if-you-do-not-specify-a-cpu-limit">here</a>.
+We recommend a value of 2 but you should use what is suited for your environment.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td><code>volumes</code>: Specifies what to mount.
+In our case, the "secret" with name "sgw-config" corresponding to the Sync Gateway configuration that was created in the previous step is mounted.
+Learn more about Kubernetes volumes <a href="https://kubernetes.io/docs/concepts/storage/volumes/">here</a>.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Deploy the Sync Gateway cluster from the specified deployment controller file.</p>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_regular-node"></a>Regular node</p>
+</li>
+<li>
+<p><a id="tabset3_import-node"></a>Import node</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_regular-node">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">kubectl create -f sgw-deployment.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_import-node">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">kubectl create -f sgw-deployment-import.yaml</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>If successful, you will see the following.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset4_import-node"></a>Import node</p>
+</li>
+<li>
+<p><a id="tabset4_regular-node"></a>Regular node</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset4_import-node">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">deployment.extensions "sync-gateway" created</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset4_regular-node">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">deployment.extensions "sync-gateway" created</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>You can check the status of the deployment with the following command until all the pods corresponding to the Sync Gateway are in the "Ready" state and the status is "Running".</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">kubectl get pods --watch</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>--watch</code> option is optional but you use it to be asynchronously notified of  updates to status of the pods instead of having to repeatedly run the command.</p>
+</div>
+<div class="paragraph">
+<p>If successful, you will see a listing of the Sync Gateway pods that were deployed.
+In the sample output below, we have Couchbase Server and Sync Gateway pods running in the same <a href="https://kubernetes.io/docs/tasks/administer-cluster/namespaces-walkthrough/">namespace</a>.
+In a production deployment, you may have Couchbase Server deployed on a separate namespace.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">NAME                                 READY     STATUS    RESTARTS   AGE
+cb-example-0000                      1/1       Running   0          3d
+cb-example-0001                      1/1       Running   0          3d
+cb-example-0002                      1/1       Running   0          3d
+couchbase-operator-fd8db588b-9fzsw   1/1       Running   1          3d
+sync-gateway-7474f5df4b-c29xw        1/1       Running   2          18m
+sync-gateway-7474f5df4b-p98sq        1/1       Running   0          18m</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Make sure that you have sufficient CPU resources on the node on which the pods are being deployed.
+Failure to do so will result in an "insufficient resource" exception when attempting to deploy the pods.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploying-a-load-balancer"><a class="anchor" href="#deploying-a-load-balancer"></a>Deploying a Load Balancer</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In a production deployment, you will likely have one or more Sync Gateway nodes fronted by a <a href="../load-balancer.html" class="page">load balancer</a>.</p>
+</div>
+<div class="paragraph">
+<p>You will deploy the load balancer using the <a href="https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/">Kubernetes Load Balancer service</a>.
+The load balancer service provides an externally accessible IP address and routes traffic to the right ports in the cluster.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Load balancers only work on  Cloud Environments (e.g. AWS, GCP etc).
+So if you are deploying on premise or using something like <a href="https://github.com/kubernetes/minikube">minikube</a> for your test deployment, this option will not work.
+Please use a <a href="https://kubernetes.io/docs/concepts/services-networking/service/">service</a> such  as NodePort or Ingress instead.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Follow these steps to deploy a load balancer in front of the Sync Gateway cluster.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a new file called <strong>sgw-load-balancer.yaml</strong> with the following.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">kind: Service
+apiVersion: v1
+metadata:
+  name: sgw-load-balancer <i class="conum" data-value="1"></i><b>(1)</b>
+spec:
+  selector:
+    app: sync-gateway <i class="conum" data-value="2"></i><b>(2)</b>
+  ports:
+  - protocol: TCP
+    port: 4984 <i class="conum" data-value="3"></i><b>(3)</b>
+    targetPort: 4984
+  type: LoadBalancer</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>metadata.name</code>: The name of the load balancer is "sgw-load-balancer".</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>spec.selector.app</code>: This value corresponds to the pods targeted by the load balancer.
+In this case, it targets any pods with the <code>app=sync-gateway</code> label which are the Sync Gateway nodes - this corresponds to what was specified in the deployment yaml file.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>spec.ports[].targetPort</code>: The load balancer service targets port 4984 on the Sync Gateway cluster.
+This is the Sync Gateway port corresponding to the <a href="../rest-api.html" class="page">REST API</a>.
+For security purposes, it is recommended that you do not expose the admin port (4985) over the Internet.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Deploy the load balancer.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">kubectl create -f sgw-load-balancer.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If successful, you will see the following.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">service "sgw-load-balancer" created</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Verify the status of the service creation with the following.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">kubectl get services</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If successful, you will see a new service corresponding to the load balancer.
+In the sample output below, we have the <code>sgw-load-balancer</code> service.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">NAME                TYPE           CLUSTER-IP     EXTERNAL-IP
+cb-example          ClusterIP      None           &lt;none&gt;
+cb-example-srv      ClusterIP      None           &lt;none&gt;
+cb-example-ui       NodePort       10.3.246.239   &lt;none&gt;
+kubernetes          ClusterIP      10.3.240.1     &lt;none&gt;
+sgw-load-balancer   LoadBalancer   10.3.253.17    35.184.19.17</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <strong>sgw-load-balancer</strong>'s <code>EXTERNAL-IP</code> is the load balancer&#8217;s publicly accessible hostname.</p>
+</div>
+</li>
+<li>
+<p>Verify the pods that the load balancer is targeting.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">kubectl describe service sgw-load-balancer</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see the equivalent of the following.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">Name:                     sgw-load-balancer
+Namespace:                default
+Labels:                   &lt;none&gt;
+Annotations:              &lt;none&gt;
+Selector:                 app=sync-gateway
+Type:                     LoadBalancer
+IP:                       10.3.253.17
+LoadBalancer Ingress:     35.184.19.17
+Port:                     &lt;unset&gt;  4984/TCP
+TargetPort:               4984/TCP
+NodePort:                 &lt;unset&gt;  32397/TCP
+Endpoints:                10.0.0.34:4984,10.0.0.35:4984
+Session Affinity:         None
+External Traffic Policy:  Cluster
+Events:</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice the "endpoints" field and confirm that it corresponds to the Sync Gateway nodes.
+In this example, we have 2 Sync Gateway nodes.</p>
+</div>
+</li>
+<li>
+<p>Verify the Sync Gateway cluster is accessible with the following command; where <code>EXTERNAL-IP</code> is the IP that was copied in step 3.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl  http://EXTERNAL-IP:4984</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It should return the following.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">{"couchdb":"Welcome","vendor":{"name":"Couchbase Sync Gateway","version":"2.1"},"version":"Couchbase Sync Gateway/2.1.1(17;fea9947)"}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You have successfully deployed a Sync Gateway cluster on Kubernetes.
+The <a href="manage-cluster.html" class="page">Manage a Cluster</a> page contains additional details related to the management of the cluster.</p>
+</div>
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../../_/img/couchbase_logo_black.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2020 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script async src="../../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
