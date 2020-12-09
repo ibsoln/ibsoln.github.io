@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/stage/DOC-7817/sync-gateway/2.8/advance/logging.html">
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Couchbase Sync Gateway logging feature">
+<meta name="description" content="Introducing Couchbase Sync Gateway&#x27;s logging functionality and how-to exploit its different options.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -221,12 +221,6 @@
 <a class="nav-link" href="../learn/icr-monitoring.html">Monitor</a>
 </span>
 </li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../learn/icr-conflict-resolution.html">Enhanced Conflict Resolution</a>
-</span>
-</li>
 </ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -348,12 +342,6 @@
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="logging.html">Logging</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../learn/concept-fundamentals-logging.html">Logging</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -502,37 +490,37 @@
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
-<a class="nav-link" href="../../../couchbase-lite/2.1/introduction.html">Couchbase Lite</a>
+<a class="nav-link" href="../../../couchbase-lite/2.8/introduction.html">Couchbase Lite</a>
 </span>
 <ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="#couchbase-lite:android:quickstart.adoc">Android (Java)</a>
+<a class="nav-link" href="../../../couchbase-lite/2.8/android/quickstart.html">Android (Java)</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="#couchbase-lite:csharp:quickstart.adoc">C#</a>
+<a class="nav-link" href="../../../couchbase-lite/2.8/csharp/quickstart.html">C#</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="#couchbase-lite:java:quickstart.adoc">Java</a>
+<a class="nav-link" href="../../../couchbase-lite/2.8/java/quickstart.html">Java</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="#couchbase-lite:objc:quickstart.adoc">Objective-C</a>
+<a class="nav-link" href="../../../couchbase-lite/2.8/objc/quickstart.html">Objective-C</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="#couchbase-lite:swift:quickstart.adoc">Swift</a>
+<a class="nav-link" href="../../../couchbase-lite/2.8/swift/quickstart.html">Swift</a>
 </span>
 </li>
 </ul>
@@ -622,8 +610,8 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Description&#8201;&#8212;&#8201;<em>Couchbase Sync Gateway logging feature</em><br>
-<em>Abstract&#8201;&#8212;&#8201;This page describes the Sync Gateway logging API and how to enable different log settings.</em><br></p>
+<p>Description&#8201;&#8212;&#8201;<em>Introducing Couchbase Sync Gateway&#8217;s logging functionality and how-to exploit its different options.</em><br>
+<em>Abstract&#8201;&#8212;&#8201;Sync Gateway&#8217;s _Continuous Logging_ feature delivers flexible log generation and retention, without compromising the availability of diagnostic information necessary to provide effective support and maintenance.</em><br></p>
 </div>
 </blockquote>
 </div>
@@ -633,32 +621,129 @@
 <h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Continuous logging<sup class="footnote" id="_footnote_fn-clog">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> flexibility in how logs are generated and retained, whilst maintaining the level of logging required by Couchbase Support for investigation of issues.</p>
+<p>Sync Gateway logs are written to <a href="#log-file-outputs">separate files</a> by log level, with each log level supporting individual retention policies.
+You can control what is logged using configuration file settings and-or the REST API.</p>
 </div>
-<div class="paragraph">
-<p>Sync Gateway logging is now written to <a href="#log-file-outputs">separate files</a> by log level, with each log level supporting individual retention policies.</p>
-</div>
-<div class="paragraph">
-<p>Console logging can also be configured independently, providing additional flexibility for system administrators depending on their needs.
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Continuous logging</dt>
+<dd>
+<p><sup class="footnote" id="_footnote_fn-clog">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> provides flexibility in how logs are generated and retained, whilst maintaining the level of logging required by Couchbase Support for investigation of issues.</p>
+</dd>
+<dt class="hdlist1">Console logging</dt>
+<dd>
+<p>can be configured independently, providing additional flexibility for system administrators depending on their needs.<br>
 This allows system administrators running Sync Gateway to tweak the log level, and log keys for the console output to suit their needs, whilst maintaining the level of logging required by Couchbase Support for investigation of issues.</p>
-</div>
-<div class="paragraph">
-<p>The previous logging configuration (<code>logging.default</code>) is being deprecated, and Sync Gateway 2.1 will display warnings on startup of what is required to update your configuration.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="console-log-output"><a class="anchor" href="#console-log-output"></a>Console Log Output</h2>
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>You configure your logging requirements in the <code>sync-gateway-config.json</code> file, using the <code>logging</code> properties&#8201;&#8212;&#8201;see: <a href="../refer/config-properties.html" class="page">Configuration Details</a> and <a href="#sample-log-cfg">Example 1</a>.</p>
+</div>
+<div id="sample-log-cfg" class="exampleblock">
+<div class="title">Example 1. Sample Logging Configuration</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "logging": {
+    "log_file_path": "/var/tmp/sglogs",
+    "console": {
+      "log_level": "debug",
+      "log_keys": ["*"]
+      },
+    "error": {
+      "enabled": true,
+      "rotation": {
+        "max_size": 20,
+        "max_age": 180
+        }
+      },
+    "warn": {
+      "enabled": true,
+      "rotation": {
+        "max_size": 20,
+        "max_age": 90
+        }
+      },
+    "info": {
+      "enabled": false
+    },
+    "debug": {
+      "enabled": false
+      }
+    },
+  "databases": {
+    "db": {
+      "server": "couchbase://localhost",
+      "username": "username",
+      "password": "password",
+      "bucket": "default",
+      "users": {"GUEST": {"disabled": false,"admin_channels": ["*"]}},
+      "allow_conflicts": false,
+      "revs_limit": 20
+      }
+    }
+  }</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="console-logging"><a class="anchor" href="#console-logging"></a>Console Logging</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can configure <em>console logging</em> independently, providing additional flexibility, without impacting the continuous logging output.
+For example, System administrators running Sync Gateway at the console may:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>tweak <a href="#log-levels">Log Levels</a> and <a href="#log-keys">Log Keys</a> to suit their needs</p>
+</li>
+<li>
+<p>filter console output by log levels and log keys</p>
+</li>
+<li>
+<p>set a <a href="#log-color">color</a> for log output based on log level</p>
+</li>
+</ul>
+</div>
 <div class="paragraph">
 <p>The console output of Sync Gateway can be filtered down via <a href="#log-levels">Log Levels</a> and <a href="#log-keys">Log Keys</a>, and you can tweak this as much as you like without impacting Support&#8217;s ability to analyze the log files.</p>
 </div>
 <div class="sect2">
 <h3 id="log-levels"><a class="anchor" href="#log-levels"></a>Log Levels</h3>
 <div class="paragraph">
-<p>The console log output can be configured with the following log levels, ordered from least verbose, to most.
-Note that log levels are additive, so if you enable <code>info</code> level, <code>warn</code> and <code>error</code> logs are also enabled.
-By default, the log level is set to <code>info</code>.</p>
+<p>Sync Gateway logs at one (or more) of six defined <em>log levels</em>: none; error; warn; info; debug and trace.</p>
+</div>
+<div class="paragraph">
+<p>You can set individual retention policies for each <a href="#log-levels">log level</a>, with logs for each level being written to <a href="#log-file-outputs">separate files</a>.</p>
+</div>
+<div class="paragraph">
+<p>Set log levels in your configuration file&#8201;&#8212;&#8201;see the <a href="../refer/config-properties.html#logging-$level" class="page"><code>logging.$level</code></a> reference.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Log levels are additive, so if you enable <code>info</code> level, then <code>warn</code> and <code>error</code> logs are also enabled.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The default log level is <code>info</code>.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -706,39 +791,48 @@ By default, the log level is set to <code>info</code>.</p>
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p>Log levels can be set in the configuration file (see the <a href="../refer/config-properties.html#logging-$level" class="page"><code>logging.$level</code></a> reference).</p>
-</div>
 </div>
 <div class="sect2">
 <h3 id="log-keys"><a class="anchor" href="#log-keys"></a>Log Keys</h3>
 <div class="paragraph">
-<p>Log keys are used to provide finer-grained control over what is logged.
-By default, only <code>HTTP</code> is enabled.</p>
+<p>Log keys provide fine-grained control over the information to be logged.
+By default, only <code>HTTP</code> is enabled, other available keys include: Auth; Bucket; CRUD; DCP and Import.</p>
 </div>
 <div class="paragraph">
-<p>All log keys and descriptions are described in the <a href="../refer/config-properties.html#logging-console-log_keys" class="page"><code>logging.console.log_level</code></a> property reference.</p>
+<p>See the <a href="../refer/config-properties.html#logging-console-log_keys" class="page"><code>logging.console.log_level</code></a> property reference for a comprehensive list of available keys.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="console-output-color"><a class="anchor" href="#console-output-color"></a>Console Output Color</h3>
+<h3 id="log-color"><a class="anchor" href="#log-color"></a>Set Log Color</h3>
 <div class="paragraph">
-<p>There is an option to color log output based on log level if <a href="../refer/config-properties.html#logging-console-color_enabled" class="page"><code>logging.console.color_enabled</code></a> is set to <code>true</code>.
-Note: this setting is always disabled on Windows for compatibility reasons.</p>
+<p>You may set a color for log output based on log level by using <a href="../refer/config-properties.html#logging-console-color_enabled" class="page"><code>logging.console.color_enabled</code></a> is set to <code>true</code></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This setting is always disabled on Windows for compatibility reasons.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="console-output-redirection"><a class="anchor" href="#console-output-redirection"></a>Console Output Redirection</h3>
+<h3 id="console-log-redirect"><a class="anchor" href="#console-log-redirect"></a>Redirect Console Log</h3>
 <div class="paragraph">
-<p>The log files described below are intended for Couchbase Support, and users are urged not to rely on these.</p>
+<p>You can easily redirect the console log output to a file.
+This can be useful when you have specialized logging requirements, such as centralized logging.
+Just redirect the output and then apply your own log collection mechanism to feed that data elsewhere&#8201;&#8212;&#8201;see <a href="#console-log-redirect-eg">Example 2</a>.</p>
 </div>
-<div class="paragraph">
-<p>If you have special requirements for logs, such as centralized logging, you can redirect the console output to a file, and apply your own log collection mechanism to feed that data elsewhere.
-For example:</p>
-</div>
+<div id="console-log-redirect-eg" class="exampleblock">
+<div class="title">Example 2. Console Log Redirection</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code># Start Sync Gateway and redirect console output to a file
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console"># Start Sync Gateway and redirect console output to a file
 ./sync-gateway &gt; my_sg_logs.txt 2&gt;&amp;1
 
 # Start log collection to send to a centralized log aggregator.
@@ -748,16 +842,31 @@ logcollector my_sg_logs.txt</code></pre>
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="log-file-outputs"><a class="anchor" href="#log-file-outputs"></a>Log File Outputs</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>These are 4 log files split by log level, with a guaranteed retention period for each.
-The log files can be collected with <a href="../sgcollect-info.html" class="page">SGCollect Info</a>, and can be analyzed by Couchbase Support for diagnosing issues in Sync Gateway.
-As described above, it is recommended to use
-<a href="index.html#console-output-redirection">Console Output redirection</a> if you require special handling of log files from Sync Gateway, as these files are intended for Couchbase Support.</p>
+<p>Sync Gateway produces four separate log files, split by log level. Each log file has its own guaranteed retention period.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
+<div class="paragraph">
+<p>The log files can be collected with <a href="../sgcollect-info.html" class="page">SGCollect Info</a> for analysis by Couchbase Support when diagnosing Sync Gateway issues.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Log files are intended solely for the use of <em>Couchbase Support</em>. If you require special log handling then use <a href="#console-log-redirect">Redirect Console Log</a>.
+</td>
+</tr>
+</table>
+</div>
+<table id="log-files" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Available Log Files</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -799,8 +908,17 @@ As described above, it is recommended to use
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p>Each log level and its parameters are described in the <a href="../refer/config-properties.html#logging-$level" class="page">logging.$level</a> property reference.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Each log level and its parameters are described in the <a href="../refer/config-properties.html#logging-$level" class="page">logging.$level</a> property reference.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -808,9 +926,12 @@ As described above, it is recommended to use
 <h2 id="log-file-rotation"><a class="anchor" href="#log-file-rotation"></a>Log File Rotation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>These four log files will be rotated once each exceeds a threshold size, defined by <code>max_size</code> in megabytes.
-Once rotated, the log files will be compressed with gzip, to reduce the disk space taken up by older logs.
-These old logs will then be cleaned up once the age exceeds <code>max_age</code> in days.</p>
+<p>Log files are <em>rotated</em> once each exceeds a threshold <code>max_size</code> in megabytes.
+Once rotated, the log files are compressed (gzip) to reduce the disk usage.
+Aged logs are cleaned up once their age exceeds <code>max_age</code> days.</p>
+</div>
+<div class="paragraph">
+<p>Configure log rotation using the <a href="../refer/config-properties.html#logging-level-$rotation" class="page">logging.level.$rotation</a> property.</p>
 </div>
 <div class="paragraph">
 <p>For pre-2.1 log rotation&#8201;&#8212;&#8201;see: <a href="../learn/logging-legacy-pre2-1.html" class="page">Log Rotation pre-2.1</a></p>
@@ -821,8 +942,10 @@ These old logs will then be cleaned up once the age exceeds <code>max_age</code>
 <h2 id="log-redaction"><a class="anchor" href="#log-redaction"></a>Log Redaction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>All log outputs can be redacted, this means that user-data, considered to be private, is removed.
-This feature is optional and can be enabled in the configuration with the <a href="../refer/config-properties.html#logging-redaction_level" class="page"><code>logging.redaction_level</code></a> property.</p>
+<p>All log outputs can, optionally, be redacted, removing any user-data considered private.</p>
+</div>
+<div class="paragraph">
+<p>Enable this feature by setting the <a href="../refer/config-properties.html#logging-redaction_level" class="page"><code>logging.redaction_level</code></a> property.</p>
 </div>
 </div>
 </div>
