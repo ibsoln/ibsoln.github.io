@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Working with Queries | Couchbase Docs</title>
+<title>Querying your Data | Couchbase Docs</title>
 <link rel="canonical" href="https://ibsoln.github.io/stage/DOC-7817/couchbase-lite/2.8/android/learn/java-android-query.html">
 <link rel="stylesheet" href="../../../../_/css/site.css">
 <script src="../../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Couchbase Lite database data model concepts - queries">
+<meta name="description" content="Using Queries with Couchbase Lite on Android/Java">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="couchbase-lite">
 <meta name="dcterms.identifier" content="2.8">
@@ -143,7 +143,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../start/java-android-gs-build.html">Test Build</a>
+<a class="nav-link" href="../start/java-android-gs-build.html">Build and Run</a>
 </span>
 </li>
 </ul>
@@ -356,13 +356,19 @@
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
-<a class="nav-link" href="../../csharp/start/csharp-gs-install.html">Start Here!</a>
+<span class="nav-text ">Start Here!</span>
 </span>
 <ul class="nav-list">
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../../csharp/start/csharp-gs-build.html">Test Build</a>
+<a class="nav-link" href="../../csharp/start/csharp-gs-install.html">Install</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../../csharp/start/csharp-gs-build.html">Build and Run</a>
 </span>
 </li>
 </ul>
@@ -587,7 +593,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../../java/start/java-gs-build.html">Test Build</a>
+<a class="nav-link" href="../../java/start/java-gs-build.html">Build and Run</a>
 </span>
 </li>
 </ul>
@@ -812,7 +818,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../../objc/start/objc-gs-build.html">Test Build</a>
+<a class="nav-link" href="../../objc/start/objc-gs-build.html">Build and Run</a>
 </span>
 </li>
 </ul>
@@ -1043,7 +1049,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../../swift/start/swift-gs-build.html">Test Build</a>
+<a class="nav-link" href="../../swift/start/swift-gs-build.html">Build and Run</a>
 </span>
 </li>
 </ul>
@@ -1361,7 +1367,7 @@
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Working with Queries</h1>
+<h1 class="page">Querying your Data</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -1372,7 +1378,7 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Description&#8201;&#8212;&#8201;<em>Couchbase Lite database data model concepts - queries</em><br>
+<p>Description&#8201;&#8212;&#8201;<em>Using Queries with Couchbase Lite on Android/Java</em><br>
 Related Content&#8201;&#8212;&#8201;<a href="java-android-query-predictive.html" class="page">Predictive Query</a> | <a href="java-android-query-live.html" class="page">Live Query</a> | <a href="java-android-indexing.html" class="page">Indexing</a></p>
 </div>
 </blockquote>
@@ -1383,8 +1389,15 @@ Related Content&#8201;&#8212;&#8201;<a href="java-android-query-predictive.html"
 <h2 id="query-format"><a class="anchor" href="#query-format"></a>Query Format</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Database queries have changed significantly.
-Instead of the map/reduce views used in 1.x, they&#8217;re now based on expressions, of the form "return ____ from documents where ____, ordered by ____", with semantics based on Couchbase&#8217;s N1QL query language.</p>
+<p>Couchbase Lite for Android (Java)'s database queries are based on expressions, of the form:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">SELECT ____ FROM database WHERE ____, ORDERed by ____</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Semantics are based on Couchbase&#8217;s N1QL query language.</p>
 </div>
 <div class="paragraph">
 <p>There are several parts to specifying a query:</p>
@@ -1416,6 +1429,52 @@ Instead of the map/reduce views used in 1.x, they&#8217;re now based on expressi
 <p>Specifies the query criteria to sort the rows in the result.</p>
 </dd>
 </dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="indexing"><a class="anchor" href="#indexing"></a>Indexing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before we begin querying documents, let&#8217;s briefly mention the importance of having a query index.
+A query can only be fast if there&#8217;s a pre-existing database index it can search to narrow down the set of documents to examine&#8201;&#8212;&#8201;see also: <a href="java-android-query-troubleshooting.html" class="page">Query Troubleshooting</a> .</p>
+</div>
+<div class="paragraph">
+<p>The following example creates a new index for the <code>type</code> and <code>name</code> properties.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L428-L432">database.createIndex(
+    "TypeNameIndex",
+    IndexBuilder.valueIndex(
+        ValueIndexItem.property("type"),
+        ValueIndexItem.property("name")));</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+Thus, good performance depends on designing and creating the <em>right</em> indexes to go along with your queries.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1555,7 +1614,7 @@ for (Result result : rs) {
 <div class="sect3">
 <h4 id="contains-operator"><a class="anchor" href="#contains-operator"></a>CONTAINS Operator</h4>
 <div class="paragraph">
-<p>The following example uses the <code>Function.arrayContains</code> to find documents whose <code>public_likes</code> array property contain a value equal to "Armani Langworth".</p>
+<p>The following example uses the <code><a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/index.html?com/couchbase/lite/Query.htmlArrayFunction.html">ArrayFunction</a></code> to find documents where the <code>public_likes</code> array property contains a value equal to "Armani Langworth".</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1697,6 +1756,18 @@ for (Result result : rs) { Log.i("Sample", String.format("name -&gt; %s", result
 <div class="paragraph">
 <p>The <code>regex</code> operator is case sensitive.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+For more on the regex spec used by Couchbase Lite see <a href="http://www.cplusplus.com/reference/regex/ECMAScript/">cplusplus regex reference page</a>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>In the example below, we are looking for documents of <code>type</code> "landmark" where the name property matches any string (on word boundaries) that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The following query will return "landmark" type documents with name matching "Engine", "engine" and so on.
@@ -1720,8 +1791,11 @@ for (Result result : rs) { Log.i("Sample", String.format("name -&gt; %s", result
 <div class="sect2">
 <h3 id="deleted-document"><a class="anchor" href="#deleted-document"></a>Deleted Document</h3>
 <div class="paragraph">
-<p>Starting in Couchbase Lite 2.5, you can query documents that have been deleted (tombstones).
-The following example shows how to query deleted documents in the database.</p>
+<p>You can query documents that have been deleted (tombstones)
+<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.</p>
+</div>
+<div class="paragraph">
+<p>The following example shows how to query deleted documents in the database.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1906,7 +1980,7 @@ The end result will be an expression (with string content representing the date 
 <p><a href="../start/java-android-gs-install.html" class="page">Install</a></p>
 </li>
 <li>
-<p><a href="../start/java-android-gs-build.html" class="page">Test Build</a></p>
+<p><a href="../start/java-android-gs-build.html" class="page">Build and Run</a></p>
 </li>
 </ul>
 </div>
@@ -1946,6 +2020,12 @@ The end result will be an expression (with string content representing the date 
 </div>
 </div>
 </div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. Starting in Couchbase Lite 2.5
 </div>
 </div>
 </article>

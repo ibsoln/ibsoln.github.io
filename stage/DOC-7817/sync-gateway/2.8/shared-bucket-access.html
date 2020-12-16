@@ -690,7 +690,7 @@ Related Content&#8201;&#8212;&#8201;<a href="sync-from-client.html" class="page"
 </div>
 </div>
 <div class="paragraph">
-<p>With bucket-sharing enables, Sync Gateway creates the metadata it needs by abstracting it from the SDK or N1QL applications reading and writing data directly to Couchbase Server buckets. It uses Couchbase Server XATTRs <sup class="footnote" id="_footnote_fn-svr">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> to store that metadata into an external document fragment&#8201;&#8212;&#8201;see <a href="#server:learn:data/extended-attributes-fundamentals.adoc" class="page unresolved">Extended Attributes (XATTR)</a>.</p>
+<p>With bucket-sharing enabled, Sync Gateway <sup class="footnote" id="_footnote_sgw1x5">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> creates the metadata it needs by abstracting it from the SDK or N1QL applications reading and writing data directly to Couchbase Server buckets. It uses Couchbase Server XATTRs <sup class="footnote" id="_footnote_cbs5x0">[<a id="_footnoteref_3" class="footnote" href="#_footnotedef_3" title="View footnote.">3</a>]</sup> to store that metadata into an external document fragment&#8201;&#8212;&#8201;see <a href="#server:learn:data/extended-attributes-fundamentals.adoc" class="page unresolved">Extended Attributes (XATTR)</a>.</p>
 </div>
 <div class="sect2">
 <h3 id="enable-shared-bucket-access"><a class="anchor" href="#enable-shared-bucket-access"></a>Enable Shared Bucket Access</h3>
@@ -726,14 +726,11 @@ It must be <code><em>true</em></code> on all nodes participating in such a confi
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>import_docs</code> property is used to specify that a Sync Gateway node participates (exclusively) in <a href="import-process.html" class="page">Import Processing</a>. The mechanism by which Sync Gateway incorporates changes to data buckets it shares with Couchbase Server.</td>
+<td>The <code>import_docs</code> property is used to specify that a Sync Gateway node participates (exclusively) in <a href="import-process.html" class="page">Import Processing</a>. The mechanism by which Sync Gateway incorporates changes to data buckets it shares with Couchbase Server&#8201;&#8212;&#8201;see: <a href="#import-process">Import Processing</a>.</td>
 </tr>
 </table>
 </div>
 </div>
-</div>
-<div class="paragraph">
-<p>With bucket-sharing enabled, Couchbase Server documents can be inserted directly (using <em>N1QL</em> or <em>SDKs</em>) or by using Sync Gateway&#8217;s <a href="refer/rest-api-public.html" class="page">Public REST API</a>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -746,6 +743,20 @@ Mobile metadata is not kept in the document, but in a system extended attribute 
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>With bucket-sharing enabled, Couchbase Server documents can be inserted directly (using <em>N1QL</em> or <em>SDKs</em>) or by using Sync Gateway&#8217;s <a href="refer/rest-api-public.html" class="page">Public REST API</a>.
+The REST API will also include the following behavioral changes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Purging&#8201;&#8212;&#8201;<a href="refer/rest-api-admin.html#/document/post__db___purge" class="page">/{db}/_purge</a> removes the document and its associated extended attributes</p>
+</li>
+<li>
+<p>Updating&#8201;&#8212;&#8201;<a href="refer/rest-api-admin.html#/document/post__db___purge" class="page">/{db}/{docid</a> will tombstone the active revision</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
@@ -760,7 +771,7 @@ Mobile metadata is not kept in the document, but in a system extended attribute 
 <div class="sect2">
 <h3 id="accessing-sync-metadata"><a class="anchor" href="#accessing-sync-metadata"></a>Accessing Sync Metadata</h3>
 <div class="paragraph">
-<p>The N1QL query language <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> supports the ability to select extended attributes (XATTRS) where the document&#8217;s sync metadata is stored.
+<p>The N1QL query language <sup class="footnoteref red" title="Unresolved footnote reference.">[fn-svr]</sup> supports the ability to select extended attributes (XATTRS) where the document&#8217;s sync metadata is stored.
 The following query shows an example of that feature.</p>
 </div>
 <div class="listingblock">
@@ -1059,7 +1070,10 @@ Workload isolation may be preferable in deployments with high write throughput.<
 <a href="#_footnoteref_1">1</a>. Prior to Release 2.5, Server 5.0 all writes had to go through Sync Gateway, or had to use bucket shadowing to ensure that the security and replication metadata needed by mobile applications was preserved.
 </div>
 <div class="footnote" id="_footnotedef_2">
-<a href="#_footnoteref_2">2</a>. Must be Server 5.0 or above
+<a href="#_footnoteref_2">2</a>. As of Sync Gateway 1.5
+</div>
+<div class="footnote" id="_footnotedef_3">
+<a href="#_footnoteref_3">3</a>. As of Couchbase Server 5.0
 </div>
 </div>
 </article>
