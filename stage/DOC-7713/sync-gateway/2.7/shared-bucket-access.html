@@ -3,10 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Mobile-Server Data Sync | Couchbase Docs Preview Site</title>
+<title>Sync with Couchbase Server | Couchbase Docs Preview Site</title>
 <link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.7/shared-bucket-access.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Use Sync Gateway to sync Couchbase Server changes securely from cloud to edge">
+<meta name="keywords" content="sync gateway, replication, sync, synchronization, edge, cloud">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.7">
@@ -565,13 +567,23 @@
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Mobile-Server Data Sync</h1>
+<h1 class="page">Sync with Couchbase Server</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div class="sect1">
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/shared-bucket-access.adoc - include::partial$_std-hdr-sgw.adoc[]</p>
+</div>
+<div class="paragraph">
+<p>Unresolved include directive in modules/ROOT/pages/shared-bucket-access.adoc - include::partial$block-abstract.adoc[]</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="shared-bucket-access"><a class="anchor" href="#shared-bucket-access"></a>Shared Bucket Access</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -587,8 +599,8 @@ The following diagram shows different client types (mobile, web, desktop) writin
 <p>In previous releases, you either had to ensure all writes happened through Sync Gateway, or had to set up bucket shadowing to ensure that the security and replication metadata needed by mobile applications was preserved.</p>
 </div>
 <div class="paragraph">
-<p>As of Sync Gateway 1.5, the metadata created by the Sync Gateway is abstracted from applications reading and writing data directly to Couchbase Server.
-Sync Gateway 1.5 utilizes a new feature of Couchbase Server 5.0 called XATTRs (e<strong>X</strong>tended <strong>ATTR</strong>ibutes) to store that metadata into an external document fragment.</p>
+<p>The metadata created by the Sync Gateway is abstracted from applications reading and writing data directly to Couchbase Server.
+Sync Gateway uses the Couchbase Server XATTRs (e<strong>X</strong>tended <strong>ATTR</strong>ibutes) to store that metadata into an external document fragment <sup class="footnote" id="_footnote_sgw1x5">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> <sup class="footnote" id="_footnote_cbs5x0">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup>.</p>
 </div>
 </div>
 </div>
@@ -636,22 +648,71 @@ Sync Gateway 1.5 utilizes a new feature of Couchbase Server 5.0 called XATTRs (e
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>import_docs</code> property is used to specify that a Sync Gateway node should (only) import document changes using the <a href="#import-process">Import process</a>.</td>
+<td>The <code>import_docs</code> property is used to specify that a Sync Gateway node should (only) import document changes using the <a href="#import-process">[import-process]</a>.</td>
 </tr>
 </table>
 </div>
 </li>
 </ol>
 </div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>When this feature is enabled, the REST API will include the following changes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Purging&#8201;&#8212;&#8201;{xref-sgw-pfx-admin-api-document-post-purge} removes the document and its associated extended attributes</p>
+</li>
+<li>
+<p>Updating&#8201;&#8212;&#8201;{xref-sgw-pfx-admin-api-document-put-docid} will tombstone the active revision</p>
+</li>
+</ul>
+</div>
+<div id="import-process" class="paragraph">
+<p>== Import Process</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Mobile metadata is not kept in the document, but in a system extended attribute (XATTR) in Couchbase Server.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>=== Syncing Tombstone Revisions</p>
+</div>
+<div class="paragraph">
+<p>Note that, with bucket-sharing enabled, {glos-term-tombstone-revision}s are <strong>not</strong> retained indefinitely; they are purged based on the server&#8217;s <em>metadata purge interval</em>.</p>
+</div>
+<div class="paragraph">
+<p>To ensure tombstones are synced with clients, you should set the server&#8217;s metadata purge interval based on your expected replication frequency&#8201;&#8212;&#8201;see the {enable-sba-config-item} reference.</p>
+</div>
+<div class="paragraph">
+<p>=== Accessing Sync Metadata</p>
+</div>
+<div class="paragraph">
+<p>The N1QL query language {fn-svr-ref} supports the ability to select extended attributes (XATTRS) where the document&#8217;s sync metadata is stored.
+The following query shows an example of that feature.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT meta().xattrs._sync FROM `travel-sample` WHERE meta().id = "mydocId"</code></pre>
+</div>
+</div>
 <div class="paragraph">
 <p>Once enabled, documents can be inserted on the Server directly (using <em>N1QL</em> or <em>SDKs</em>) or through the <a href="rest-api.html" class="page">Sync Gateway REST API</a>.
 The mobile metadata is no longer kept in the document, but in a system extended attribute in Couchbase Server.</p>
 </div>
+<div class="paragraph">
+<p>== Import process</p>
 </div>
-</div>
-<div class="sect1">
-<h2 id="import-process"><a class="anchor" href="#import-process"></a>Import process</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>The import process is a key part of mobile convergence.</p>
 </div>
@@ -688,11 +749,9 @@ Use the <a href="config-properties.html#log" class="page">Import+</a> log key to
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>== Configuration</p>
 </div>
-</div>
-<div class="sect1">
-<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>Note that <code>import_docs</code> only takes effect if the <code>enabled_shared_bucket_access</code> is set to <code>true</code>.</p>
 </div>
@@ -759,11 +818,9 @@ This <code>import_docs</code> flag must be explicitly set to <code>true</code> i
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>== High Availability of Import processing</p>
 </div>
-</div>
-<div class="sect1">
-<h2 id="high-availability-of-import-processing"><a class="anchor" href="#high-availability-of-import-processing"></a>High Availability of Import processing</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>In <em>Enterprise Edition</em>, import processing work is sharded across all Sync Gateway nodes with import enabled.
 This implies that if one of the nodes fail, the failed shard is automatically picked up by the remaining nodes in the cluster.
@@ -772,11 +829,9 @@ This way, you get High Availability of import processing.</p>
 <div class="paragraph">
 <p>In <em>Community Edition</em>, there is no sharding of import across the nodes participating in the import processing. Each import node processes all server mutations.</p>
 </div>
+<div class="paragraph">
+<p>== Workload Isolation</p>
 </div>
-</div>
-<div class="sect1">
-<h2 id="workload-isolation"><a class="anchor" href="#workload-isolation"></a>Workload Isolation</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>As described in the table above, if <code>import_docs</code> is set to <code>false</code>, the node will not be participating in the import process.
 This configuration is specifically recommended for workload isolation: to isolate import nodes from the client-facing nodes.
@@ -788,21 +843,17 @@ Workload isolation may be preferable in deployments with high write throughput.<
 <div class="paragraph">
 <p><span class="image"><img src="_images/workload-isolation.png" alt="workload isolation"></span></p>
 </div>
+<div class="paragraph">
+<p>== Metadata Purge Interval</p>
 </div>
-</div>
-<div class="sect1">
-<h2 id="metadata-purge-interval"><a class="anchor" href="#metadata-purge-interval"></a>Metadata Purge Interval</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>When <a href="config-properties.html#databases-foo_db-enable_shared_bucket_access">$dbname.enable_shared_bucket_access</a> is enabled, <a href="refer-sgw-glossary.html" class="page">mobile tombstones</a> are <strong>not</strong> retained indefinitely.
 They are purged based on the server&#8217;s <em>metadata purge interval</em>.
 To ensure tombstones are replicated to clients, you should set the server&#8217;s metadata purge interval based on your expected replication frequency (see the <a href="config-properties.html#databases-foo_db-enable_shared_bucket_access">$dbname.enable_shared_bucket_access</a> reference).</p>
 </div>
+<div class="paragraph">
+<p>== Reference</p>
 </div>
-</div>
-<div class="sect1">
-<h2 id="reference"><a class="anchor" href="#reference"></a>Reference</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>The reference to the configuration properties can be found below.</p>
 </div>
@@ -819,13 +870,12 @@ To ensure tombstones are replicated to clients, you should set the server&#8217;
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>== FAQ</p>
 </div>
+<div class="paragraph">
+<p>=== How do I query the document&#8217;s sync metadata?</p>
 </div>
-<div class="sect1">
-<h2 id="faq"><a class="anchor" href="#faq"></a>FAQ</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="how-do-i-query-the-documents-sync-metadata"><a class="anchor" href="#how-do-i-query-the-documents-sync-metadata"></a>How do I query the document&#8217;s sync metadata?</h3>
 <div class="paragraph">
 <p>Starting in Couchbase Server 5.5, the N1QL query language supports the ability to select extended attributes (xattrs) where the document&#8217;s sync metadata is stored.
 The following query shows an example of that feature.</p>
@@ -851,36 +901,21 @@ It should not be used to drive business logic of applications. The direct use of
 </tr>
 </table>
 </div>
+<div class="paragraph">
+<p>=== How do I access a blob stored in Couchbase Lite?</p>
 </div>
-<div class="sect2">
-<h3 id="how-do-i-access-a-blob-stored-in-couchbase-lite"><a class="anchor" href="#how-do-i-access-a-blob-stored-in-couchbase-lite"></a>How do I access a blob stored in Couchbase Lite?</h3>
 <div class="paragraph">
 <p>See the Couchbase Lite documentation on Blobs.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="paragraph">
-<div class="title">Related Couchbase Lite content</div>
-<p><a href="#2.7@couchbase-lite:ROOT:java-platform.adoc#blobs" class="page unresolved">Java</a> |
-<a href="#2.7@couchbase-lite:ROOT:java-android.adoc#blobs" class="page unresolved">Java (Android)</a> |
-<a href="#2.7@couchbase-lite:ROOT:csharp.adoc#blobs" class="page unresolved">C#</a> |
-<a href="#2.7@couchbase-lite:ROOT:objc.adoc#blobs" class="page unresolved">Objective-C</a> |
-<a href="#2.7@couchbase-lite:ROOT:swift.adoc#blobs" class="page unresolved">Swift</a></p>
+<p>=== How do I access an attachment from a WebApp?</p>
 </div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="how-do-i-access-an-attachment-from-a-webapp"><a class="anchor" href="#how-do-i-access-an-attachment-from-a-webapp"></a>How do I access an attachment from a WebApp?</h3>
 <div class="paragraph">
 <p>Attachments can be accessed through Sync Gateway&#8217;s REST API using the <a href="rest-api.html#/attachment/get__db___doc___attachment_" class="page">/{db}/{doc}/{attachment}</a> endpoint.</p>
 </div>
+<div class="paragraph">
+<p>== Migrating from Bucket Shadowing</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="migrating-from-bucket-shadowing"><a class="anchor" href="#migrating-from-bucket-shadowing"></a>Migrating from Bucket Shadowing</h2>
-<div class="sectionbody">
 <div class="paragraph">
 <p>As of Sync Gateway 1.5, the Bucket Shadowing feature is deprecated and no longer supported.
 The following steps outline a recommended method for migrating from Bucket Shadowing to the latest version with interoperability between Couchbase Server SDKs and Couchbase Mobile.</p>
@@ -913,6 +948,17 @@ The following steps outline a recommended method for migrating from Bucket Shado
 <div class="paragraph">
 <p><span class="image"><img src="_images/bucket-shadowing-migration.png" alt="bucket shadowing migration"></span></p>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. As of Sync Gateway 1.5
+</div>
+<div class="footnote" id="_footnotedef_2">
+<a href="#_footnoteref_2">2</a>. As of Couchbase Server 5.0
 </div>
 </div>
 </article>
