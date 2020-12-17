@@ -649,6 +649,9 @@
 <p>You can authorize users and control their access to your database by creating user accounts and assigning roles to users.
 This article focuses on how to authorize users to be able to access the Sync Gateway and their remote databases.</p>
 </div>
+<div class="paragraph">
+<p>The user must be created on Sync Gateway before it can be used for authentication&#8201;&#8212;&#8201;see also: <a href="authentication.html" class="page">User Authentication</a>.</p>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -656,25 +659,19 @@ This article focuses on how to authorize users to be able to access the Sync Gat
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Sync Gateway users and roles have no relationship to <a href="../../../server/6.5/learn/security/authorization-overview.html" class="page">RBAC in Couchbase Server</a>.
+Sync Gateway users and roles have no relationship to Couchbase Server&#8217;s <a href="../../../server/6.5/learn/security/authorization-overview.html" class="page">RBAC (Role-base Access Control) users</a>.
 </td>
 </tr>
 </table>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="users"><a class="anchor" href="#users"></a>Users</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>The user must be created on Sync Gateway before it can be used for authentication.
-Users can be created through the Sync Gateway Admin REST API or configuration file.</p>
+<p>You create Users through either the <a href="../refer/rest-api-admin.html" class="page">Admin REST API</a> or <a href="../refer/config-properties.html" class="page">Configuration File</a>.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Admin REST API</dt>
 <dd>
-<p>You can create a new user by sending a PUT request to <a href="../refer/rest-api-admin.html#/user/put__db___user<em>name_" class="page">/&#123;db&#125;/_user/{name}</a> or by sending a POST request to <a href="../refer/rest-api-admin.html#/user/post\</em>db___user_" class="page">/&#123;db&#125;/_user</a>, where <code>db</code> is the configured name of the database and <code>name</code> is the user name.</p>
+<p>Create a new user by sending a PUT request to <a href="../refer/rest-api-admin.html#/user/put__db___user<em>name_" class="page">/&#123;db&#125;/_user/{name}</a> or by sending a POST request to <a href="../refer/rest-api-admin.html#/user/post\</em>db___user_" class="page">/&#123;db&#125;/_user</a>, where <code>db</code> is the configured name of the database and <code>name</code> is the user name.</p>
 <div class="paragraph">
 <p>The user credentials (<strong>username</strong>/<strong>password</strong>) are passed in the request body.</p>
 </div>
@@ -697,7 +694,7 @@ In this case, Sync Gateway can automatically create users for successfully authe
 </dd>
 <dt class="hdlist1">Configuration file</dt>
 <dd>
-<p>User credentials can also be hardcoded in the configuration file.
+<p>Create users by hardcoding their credentials in the <a href="../refer/config-properties.html" class="page">Configuration File</a>.
 This method is convenient for testing and to get started, otherwise it is generally recommended to use the <strong>Admin REST API</strong> for a programmatic behavior.</p>
 <div class="listingblock">
 <div class="content">
@@ -718,67 +715,6 @@ This method is convenient for testing and to get started, otherwise it is genera
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td><a href="../refer/config-properties.html#databases-this_db-users" class="page">databases.$db.users</a></td>
-</tr>
-</table>
-</div>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="roles"><a class="anchor" href="#roles"></a>Roles</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Roles are named collections of channels.
-A user account can be assigned to zero or more roles.
-A user inherits the channel access of all roles it belongs to.
-This is very much like Unix groups, except that roles do not form a hierarchy.</p>
-</div>
-<div class="paragraph">
-<p>You access roles through the Admin REST API much like users are accessed, through URLs of the form <a href="../refer/rest-api-admin.html#/role" class="page">/&#123;db&#125;/_role/{name}</a>.
-Role resources have a subset of the properties that users do: <code>name</code>, <code>admin_channels</code>, <code>all_channels</code>.</p>
-</div>
-<div class="paragraph">
-<p>Roles have a separate namespace from users, so it&#8217;s legal to have a user and a role with the same name.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Admin REST API</dt>
-<dd>
-<p>You can assign a role to a user by sending a PUT request to <a href="../refer/rest-api-admin.html#/user/put__db___user__name_" class="page">/&#123;db&#125;/_user/{name}</a> where <code>db</code> is the configured name of the database and <code>name</code> is the user name.</p>
-<div class="paragraph">
-<p>The roles to assign to the user are specified in the <code>admin_roles</code> array.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -vX POST "http://localhost:4985/mydatabase/_user/" -H "accept: application/json" -H "Content-Type: application/json" -d '{"name": "john", "password": "pass", "admin_roles": ["foo"]}'</code></pre>
-</div>
-</div>
-</dd>
-<dt class="hdlist1">Configuration file</dt>
-<dd>
-<p>A user can also be assigned to a role in the configuration file.
-This method is convenient for testing and to get started, otherwise it is generally recommended to use the <strong>Admin REST API</strong> for a programmatic behavior.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "databases": {
-    "mydatabase": {
-      "users": { <i class="conum" data-value="1"></i><b>(1)</b>
-        "GUEST": {"disabled": true},
-        "john": {"password": "pass", "admin_roles": ["foo"]}
-      }
-    }
-  }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="../refer/config-properties.html#databases-this_db-users-this_user-admin_roles" class="page">databases.$db.users.$user.admin_roles</a></td>
 </tr>
 </table>
 </div>
