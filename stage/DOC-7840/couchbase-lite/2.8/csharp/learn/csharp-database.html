@@ -1550,33 +1550,6 @@ Database.SetLogLevel(LogDomain.Query, LogLevel.Verbose);</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="loading-a-pre-built-database"><a class="anchor" href="#loading-a-pre-built-database"></a>Loading a pre-built database</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>If your app needs to sync a lot of data initially, but that data is fairly static and won&#8217;t change much, it can be a lot more efficient to bundle a database in your application and install it on the first launch.
-Even if some of the content changes on the server after you create the app, the app&#8217;s first pull replication will bring the database up to date.</p>
-</div>
-<div class="paragraph">
-<p>To use a prebuilt database, you need to set up the database, build the database into your app bundle as a resource, and install the database during the initial launch.
-After your app launches, it needs to check whether the database exists.
-If the database does not exist, the app should copy it from the app bundle using the <a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Copy_System_String_System_String_Couchbase_Lite_DatabaseConfiguration_"><code>Database.Copy(string, DatabaseConfiguration)</code></a> method as shown below.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs#L414-L422">// Note: Getting the path to a database is platform-specific.  For .NET Core / .NET Framework this
-// can be a simple filesystem path.  For UWP, you will need to get the path from your assets.  For
-// iOS you need to get the path from the main bundle.  For Android you need to extract it from your
-// assets to a temporary directory and then pass that path.
-var path = Path.Combine(Environment.CurrentDirectory, "travel-sample.cblite2" + Path.DirectorySeparatorChar);
-if (!Database.Exists("travel-sample", null)) {
-    _NeedsExtraDocs = true;
-    Database.Copy(path, "travel-sample", null);
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
 <div class="sectionbody">
 <div class="card-row three-column-row">

@@ -1392,20 +1392,21 @@ Even if the data is not static, you can still benefit from preloading it and onl
 <div class="title"><strong>To use a prebuilt database:</strong></div>
 <ul>
 <li>
-<p>Create a new Couchbase Lite database with pre-bundled data and incorporate it into your app bundle as an asset/resource&#8201;&#8212;&#8201;see <a href="#inc-db">Bundle Database with Application</a></p>
+<p>Create a new Couchbase Lite database with the required data set&#8201;&#8212;&#8201;see <a href="#crt-db">Creating Pre-built database</a></p>
 </li>
 <li>
-<p>Adjust the start-up logic of your app to deploy the packaged database if it doesn&#8217;t exist and to then initiate a sync to update it&#8201;&#8212;&#8201;see <a href="#deploy-db">Deploy Database on Initial Launch</a></p>
+<p>Incorporate the pre-built database with your app bundle as an asset/resource&#8201;&#8212;&#8201;see <a href="#bundle-db">Bundle Database with Application</a></p>
+</li>
+<li>
+<p>Adjust the start-up logic of your app to check for the presence of the required database.
+If it doesn&#8217;t already exist, it should create one using the bundled pre-built database, before initiating a sync to update the data&#8201;&#8212;&#8201;see <a href="#deploy-db">Using Pre-built Database on App Launch</a></p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p><strong>Alternatively</strong> &#8230;&#8203; rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="inc-db"><a class="anchor" href="#inc-db"></a>Bundle Database with Application</h2>
+<h2 id="crt-db"><a class="anchor" href="#crt-db"></a>Creating Pre-built database</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>These steps would typically be part of your build and release process:</p>
@@ -1442,13 +1443,13 @@ Even if the data is not static, you can still benefit from preloading it and onl
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Ensure the replication that is used for creating the pre-built database <strong>uses the exact same remote URL and replication config parameters (channels and filters)</strong> as those your app will use when it is running.</p>
+<p>Ensure the replication used to populate Couchbase Lite database <strong>uses the exact same remote URL and replication config parameters (channels and filters)</strong> as those your app will use when it is running.</p>
 </div>
 <div class="paragraph">
-<p><strong>Otherwise:</strong> &#8230;&#8203; the checkpoints will mismatch and the app will attempt to pull the data down again</p>
+<p><strong>Otherwise:</strong> &#8230;&#8203; there will be a checkpoint mismatch and the app will attempt to pull the data down again</p>
 </div>
 <div class="paragraph">
-<p>So don&#8217;t, for instance, create a pre-built database against a staging Sync Gateway server and try to use that within your production app that syncs against a production Sync Gateway.</p>
+<p>So don&#8217;t, for instance, create a pre-built database against a staging Sync Gateway server and try to use that within a production app that syncs against a production Sync Gateway.</p>
 </div>
 </td>
 </tr>
@@ -1457,26 +1458,57 @@ Even if the data is not static, you can still benefit from preloading it and onl
 <div class="paragraph">
 <p>You can use the cblite tool (<code>cblite cp</code>) for this&#8201;&#8212;&#8201;see: <a href="https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/Documentation.md#cp-aka-export-import-push-pull" target="_blank" rel="noopener">cblite cp (export, import, push, pull)</a>  |  <a href="https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md" target="_blank" rel="noopener">cblite on GitHub</a></p>
 </div>
-<div class="paragraph">
-<p><strong>Alternatively</strong> &#8230;&#8203; you can write a simple CBL app to just initiate the required pull sync&#8201;&#8212;&#8201;see: <a href="learn/java-replication.html#starting-a-replication" class="page">starting a Sync Gateway Replication</a></p>
+<div class="ulist">
+<div class="title"><strong>Alternatively</strong> ...</div>
+<ul>
+<li>
+<p>You can write a simple CBL app to just initiate the required pull sync&#8201;&#8212;&#8201;see: <a href="learn/java-replication.html#starting-a-replication" class="page">starting a Sync Gateway Replication</a></p>
+</li>
+<li>
+<p>A third party community Java app is available.
+It provides a UI to create a local Couchbase Lite database and pull data from a Sync Gateway database&#8201;&#8212;&#8201;see: <a href="https://github.com/Infosys/CouchbaseLiteTester">CouchbaseLite Tester</a></p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Couchbase accepts no responsibility for the ongoing availability, maintenance or support of this third party community contribution, nor for the provision of support for issues arising from its use.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
 </div>
 </li>
 <li>
-<p>When the replication is complete, create the same indexes the app will use</p>
-</li>
-<li>
-<p>Copy the database into your app package</p>
-<div class="paragraph">
-<p>Put it in an appropriate place (for example, an assets or resource folder).
-Where possible you can zip the database.</p>
-</div>
+<p>Create the <strong>same</strong> indexes the app will use (wait for the replication to finish before doing this).</p>
 </li>
 </ol>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="deploy-db"><a class="anchor" href="#deploy-db"></a>Deploy Database on Initial Launch</h2>
+<h2 id="bundle-db"><a class="anchor" href="#bundle-db"></a>Bundle Database with Application</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Copy the database into your app package.</p>
+</div>
+<div class="paragraph">
+<p>Put it in an appropriate place (for example, an assets or resource folder).</p>
+</div>
+<div class="paragraph">
+<p>Where the platform permits you can zip the database.</p>
+</div>
+<div class="paragraph">
+<p><strong>Alternatively</strong> &#8230;&#8203; rather than bundling the database within the app, the app could pull the database down from a CDN server on launch.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="deploy-db"><a class="anchor" href="#deploy-db"></a>Using Pre-built Database on App Launch</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>During the application start-up logic, check if database exists in the required location, and <strong>if not</strong>:</p>
@@ -1484,12 +1516,12 @@ Where possible you can zip the database.</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Locate the pre-packaged database (for example, in the assets or other resource  folder)</p>
+<p>Locate the pre-packaged database (for example, in the assets or other resource folder)</p>
 </li>
 <li>
-<p>Copy the pre-packaged database to the required database location</p>
+<p>Copy the pre-packaged database to the required location</p>
 <div class="paragraph">
-<p>Use <a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Database.html#copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-">Database.copy()</a> to do this, as it is import to ensure that a UUID is generated for each copy&#8201;&#8212;&#8201;see: <a href="#copy-db">Code Example 1</a></p>
+<p>Use <a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/com/couchbase/lite/Database.html#copy-java.io.File-java.lang.String-com.couchbase.lite.DatabaseConfiguration-">Database.copy()</a>. This ensure that a UUID is generated for each copy&#8201;&#8212;&#8201;see: <a href="#copy-db">Code Example 1</a></p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -1527,20 +1559,44 @@ if (!Database.exists("travel-sample", APP_DB_DIR)) {
 </div>
 </li>
 <li>
-<p>Open the database</p>
+<p>Open the database; you can now start querying the data and using it</p>
 </li>
 <li>
 <p>Start a pull replication, to sync any changes</p>
 <div class="paragraph">
 <p>The replicator uses the pre-built database&#8217;s checkpoint as the timestamp to sync from; only documents changed since then are synced</p>
 </div>
-</li>
-<li>
-<p>Do not wait for replication to complete if you can avoid it</p>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Must Do"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>Start your normal application logic immediately, unless it is essential to have the absolute up-to-date data set to begin.
+<p>If you used cblite to pull the data <strong>without including a port number with the URL</strong> and are replicating in a Java or iOS (swift/ObjC) app&#8201;&#8212;&#8201;<strong>you must include the port number in the URL provided to the replication</strong> (port 443 for <code>wss://</code> or 80 for <code>ws://</code>).</p>
+</div>
+<div class="paragraph">
+<p><strong>Otherwise:</strong> You will get a checkpoint mismatch.<br>
+This is caused by a URL discrepancy, which arises because <code>cblite</code> automatically adds the default port number when none is specified, <strong>but</strong> the Java and iOS (swift/ObjC) replicators DO NOT.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Start your normal application logic immediately, unless it is essential to have the absolute up-to-date data set to begin.
 That way the user is not kept hanging around watching a progress indicator.
-They can begin interacting with your app whilst any out-of-data data is being updated.</p>
+They can begin interacting with your app whilst any out-of-data data is being updated.
+</td>
+</tr>
+</table>
 </div>
 </li>
 </ol>
