@@ -1398,7 +1398,8 @@ Even if the data is not static, you can still benefit from preloading it and onl
 <p>Incorporate the pre-built database with your app bundle as an asset/resource&#8201;&#8212;&#8201;see <a href="#bundle-db">Bundle Database with Application</a></p>
 </li>
 <li>
-<p>Adjust the start-up logic of your app to deploy the packaged database if it doesn&#8217;t exist and to then initiate a sync to update it&#8201;&#8212;&#8201;see <a href="#deploy-db">Using Pre-built Database on App Launch</a></p>
+<p>Adjust the start-up logic of your app to check for the presence of the required database.
+If it doesn&#8217;t already exist, it should create one using the bundled pre-built database, before initiating a sync to update the data&#8201;&#8212;&#8201;see <a href="#deploy-db">Using Pre-built Database on App Launch</a></p>
 </li>
 </ul>
 </div>
@@ -1445,7 +1446,7 @@ Even if the data is not static, you can still benefit from preloading it and onl
 <p>Ensure the replication used to populate Couchbase Lite database <strong>uses the exact same remote URL and replication config parameters (channels and filters)</strong> as those your app will use when it is running.</p>
 </div>
 <div class="paragraph">
-<p><strong>Otherwise:</strong> &#8230;&#8203; the checkpoints will mismatch and the app will attempt to pull the data down again</p>
+<p><strong>Otherwise:</strong> &#8230;&#8203; there will be a checkpoint mismatch and the app will attempt to pull the data down again</p>
 </div>
 <div class="paragraph">
 <p>So don&#8217;t, for instance, create a pre-built database against a staging Sync Gateway server and try to use that within a production app that syncs against a production Sync Gateway.</p>
@@ -1464,7 +1465,8 @@ Even if the data is not static, you can still benefit from preloading it and onl
 <p>You can write a simple CBL app to just initiate the required pull sync&#8201;&#8212;&#8201;see: <a href="learn/objc-replication.html#starting-a-replication" class="page">starting a Sync Gateway Replication</a></p>
 </li>
 <li>
-<p>There is a third party community Java app available, which provides a UI to create a local Couchbase Lite database and pull data from a Sync Gateway database&#8201;&#8212;&#8201;see: <a href="https://github.com/Infosys/CouchbaseLiteTester">CouchbaseLite Tester</a></p>
+<p>A third party community Java app is available.
+It provides a UI to create a local Couchbase Lite database and pull data from a Sync Gateway database&#8201;&#8212;&#8201;see: <a href="https://github.com/Infosys/CouchbaseLiteTester">CouchbaseLite Tester</a></p>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1472,7 +1474,7 @@ Even if the data is not static, you can still benefit from preloading it and onl
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Couchbase accepts no responsibility to maintain or support this third party community contribution, nor provide support for issues arising from its use.
+Couchbase accepts no responsibility for the ongoing availability, maintenance or support of this third party community contribution, nor for the provision of support for issues arising from its use.
 </td>
 </tr>
 </table>
@@ -1482,7 +1484,7 @@ Couchbase accepts no responsibility to maintain or support this third party comm
 </div>
 </li>
 <li>
-<p>Create the same indexes the app will use, when the replication is completed</p>
+<p>Create the <strong>same</strong> indexes the app will use (wait for the replication to finish before doing this).</p>
 </li>
 </ol>
 </div>
@@ -1555,7 +1557,7 @@ if (![CBLDatabase databaseExists:@"travel-sample" inDirectory:nil]) {
 </div>
 </li>
 <li>
-<p>Open the database; you can start querying the data and using it</p>
+<p>Open the database; you can now start querying the data and using it</p>
 </li>
 <li>
 <p>Start a pull replication, to sync any changes</p>
@@ -1574,7 +1576,7 @@ if (![CBLDatabase databaseExists:@"travel-sample" inDirectory:nil]) {
 </div>
 <div class="paragraph">
 <p><strong>Otherwise:</strong> You will get a checkpoint mismatch.<br>
-This is caused by a URL discrepancy that arises because, <code>cblite</code> automatically adds the default port number when none is specified, but the Java and iOS (swift/ObjC) replicators DO NOT.</p>
+This is caused by a URL discrepancy, which arises because <code>cblite</code> automatically adds the default port number when none is specified, <strong>but</strong> the Java and iOS (swift/ObjC) replicators DO NOT.</p>
 </div>
 </td>
 </tr>
