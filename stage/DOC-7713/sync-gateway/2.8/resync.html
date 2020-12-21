@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Re-sync | Couchbase Docs Preview Site</title>
+<title>Resync | Couchbase Docs Preview Site</title>
 <link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.8/resync.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
@@ -338,7 +338,7 @@
 <li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="resync.html">Re-sync</a>
+<a class="nav-link" href="resync.html">Resync</a>
 </span>
 </li>
 </ul>
@@ -632,13 +632,13 @@
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
 <li class="crumb">Sync</li>
-<li class="crumb"><a href="resync.html">Re-sync</a></li>
+<li class="crumb"><a href="resync.html">Resync</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Re-sync</h1>
+<h1 class="page">Resync</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -650,7 +650,7 @@
 <blockquote>
 <div class="paragraph">
 <p>Description&#8201;&#8212;&#8201;<em>Recalculating routing and data access following Sync Function changes</em><br>
-<em>Abstract&#8201;&#8212;&#8201;This content explains the re-sync feature</em><br>
+<em>Abstract&#8201;&#8212;&#8201;This content explains the resync feature</em><br>
 Related Content&#8201;&#8212;&#8201;<a href="refer/config-properties.html" class="page">Configuration File</a>  |  <a href="refer/rest-api-admin.html" class="page">Admin REST API</a> |    <a href="refer/config-properties.html#databases" class="page">databases</a>  |  <a href="refer/config-properties.html#databases-this_db-sync" class="page">sync</a></p>
 </div>
 </blockquote>
@@ -667,7 +667,7 @@ Related Content&#8201;&#8212;&#8201;<a href="refer/config-properties.html" class
 <p>If the Sync Function is changed, Sync Gateway needs to reprocess all existing documents in the bucket to recalculate the routing and access assignments.</p>
 </div>
 <div class="paragraph">
-<p>To this end, the Admin REST API provides a re-sync endpoint that enables you initiate the reprocessing of every document in the database again.</p>
+<p>To this end, the Admin REST API provides a resync endpoint that enables you initiate the reprocessing of every document in the database again.</p>
 </div>
 </div>
 </div>
@@ -675,7 +675,7 @@ Related Content&#8201;&#8212;&#8201;<a href="refer/config-properties.html" class
 <h2 id="updating-the-sync-function"><a class="anchor" href="#updating-the-sync-function"></a>Updating the Sync Function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To update the Sync Function and fully re-sync, you are recommended to follow the steps in <a href="#steps-to-resync">Steps to Update and Re-sync</a>.</p>
+<p>To update the Sync Function and fully resync, you are recommended to follow the steps in <a href="#steps-to-resync">Steps to Update and Resync</a>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -691,10 +691,10 @@ This is an expensive operation because it requires every document in the databas
 </div>
 <div class="paragraph">
 <p>The database can accept no requests until this process is complete because no user&#8217;s full access privileges are known until all documents have been scanned.
-Therefore, the Sync Function update will result in application downtime whilst teh database is offline (that is, between the call to the <code>/{tkn-db}/_offline</code> and <code>/{tkn-db}/_online</code> endpoints in <a href="#steps-to-resync">Steps to Update and Re-sync</a>.</p>
+Therefore, the Sync Function update will result in application downtime whilst teh database is offline (that is, between the call to the <code>/{tkn-db}/_offline</code> and <code>/{tkn-db}/_online</code> endpoints in <a href="#steps-to-resync">Steps to Update and Resync</a>.</p>
 </div>
 <div id="steps-to-resync" class="openblock">
-<div class="title">Steps to Update and Re-sync</div>
+<div class="title">Steps to Update and Resync</div>
 <div class="content">
 <div class="olist arabic">
 <ol class="arabic">
@@ -710,11 +710,11 @@ Use this Admin REST API endpoint:<br>
 <a href="refer/rest-api-admin.html#/database/post__db___offline" class="page">/{tkn-db}/_offline</a></p>
 </li>
 <li>
-<p>Re-sync the database<br>
+<p>Resync the database<br>
 Use this Admin REST API endpoint:<br>
 <a href="refer/rest-api-admin.html#/database/post\/post<em>db</em>_resync" class="page">/{tkn-db}/resync</a></p>
 <div class="paragraph">
-<p>The message body of the response contains the number of changes that were made as a result of calling re-sync</p>
+<p>The message body of the response contains the number of changes that were made as a result of calling resync</p>
 </div>
 </li>
 <li>
@@ -729,24 +729,24 @@ Use this Admin REST API endpoint:<br>
 </div>
 </div>
 <div class="sect1">
-<h2 id="when-to-run-re-sync"><a class="anchor" href="#when-to-run-re-sync"></a>When To Run Re-sync?</h2>
+<h2 id="when-to-run-resync"><a class="anchor" href="#when-to-run-resync"></a>When To Run Resync?</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When running a re-sync operation, the context in the Sync Function is the admin user.
+<p>When running a resync operation, the context in the Sync Function is the admin user.
 For that reason, calling the <code>requireUser</code>, <code>requireAccess</code> and <code>requireRole</code> methods will always succeed.
 It is very likely that you are using those functions in production to govern write operations.
-But in a re-sync operation, all the documents are already written to the database.
-For that reason, it is recommended to use re-sync for changing the assignment to channels only (i.e. reads).</p>
+But in a resync operation, all the documents are already written to the database.
+For that reason, it is recommended to use resync for changing the assignment to channels only (i.e. reads).</p>
 </div>
 <div class="paragraph">
-<p>If the modifications to the Sync Function only impact write security (and not routing/access), you won&#8217;t need to run the re-sync operation.</p>
+<p>If the modifications to the Sync Function only impact write security (and not routing/access), you won&#8217;t need to run the resync operation.</p>
 </div>
 <div class="paragraph">
-<p>If you wish to change the channel/access rules, but only want those rules to apply to documents written after the change was made, then you don&#8217;t need to run the re-sync operation.</p>
+<p>If you wish to change the channel/access rules, but only want those rules to apply to documents written after the change was made, then you don&#8217;t need to run the resync operation.</p>
 </div>
 <div class="paragraph">
 <p>If you change the sync function to revoke a user&#8217;s access to a document, the access will only take affect once a new revision to that document is saved on Sync Gateway.
-Running a re-sync operation does not revoke access to that document.</p>
+Running a resync operation does not revoke access to that document.</p>
 </div>
 <div class="paragraph">
 <p>If you need to ensure access to the database during the update, you can create a read-only backup of the Sync Gateway&#8217;s bucket beforehand, then run a secondary Sync Gateway on the backup bucket, in read-only mode.

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Revision Tree | Couchbase Docs Preview Site</title>
+<title>Revisions, Trees and Caches | Couchbase Docs Preview Site</title>
 <link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.8/concept-revision-tree.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
@@ -186,6 +186,63 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">potential concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="concept-events.html">Events and Event Handling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="concept-import-filter.html">Import Filters</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="concept-open-id.html">Oauth/OpenID</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="concept-revisions.html">Revisions</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="concept-session-cookies.html">Sessions and Session Cookies</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="concept-sgw-server.html">Server</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="concept-webhooks.html">Webhooks</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="concept-xattr.html">Extnded Attributes (Xattrs)</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
 <a class="nav-link" href="refer/config-properties.html">Configuration File</a>
 </span>
 </li>
@@ -337,7 +394,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="resync.html">Re-sync</a>
+<a class="nav-link" href="resync.html">Resync</a>
 </span>
 </li>
 </ul>
@@ -630,19 +687,26 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb"><a href="concept-revision-tree.html">Revision Tree</a></li>
+<li class="crumb"><a href="concept-revision-tree.html">Revisions, Trees and Caches</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Revision Tree</h1>
+<h1 class="page">Revisions, Trees and Caches</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div class="paragraph">
+</div><div class="sect1">
+<h2 id="revision-trees"><a class="anchor" href="#revision-trees"></a>Revision Trees</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<div class="title">revs_limit:</div>
+<p>This property defines the maximum depth to which a document&#8217;s revision tree can grow; its value governs the point at which to prune a document&#8217;s revision tree.</p>
+</div>
+<div class="paragraph">
 <p>The default and minimum values of <code>revs_limit</code> are dependent on whether [allow_conflicts](config-properties.html#databases-this_db-allow_conflicts) is set True or False&#8201;&#8212;&#8201;see the <strong>Default and Minimum Values</strong> table below.</p>
 </div>
 <div class="paragraph">
@@ -690,6 +754,106 @@
 <p>See also:
 - Sync Gateway purge endpoint [/{db}/<em>purge](admin-rest-api.html#/document/post<em>db</em>_purge).
 - Sync Gateway [document TTLs](admin-rest-api.html#/document/put<em>db</em>_doc</em>).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="revision-caching"><a class="anchor" href="#revision-caching"></a>Revision Caching</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="max_number"><a class="anchor" href="#max_number"></a>max_number:</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Tuning this property is an [Enterprise Edition](<a href="https://www.couchbase.com/products/editions" class="bare">https://www.couchbase.com/products/editions</a>) feature.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>+
+The Community Edition is configured with the default value, and will ignore any value in the configuration file.</p>
+</div>
+<div class="paragraph">
+<p>Maximum number of channel caches which will exist at any one point. This property is used to determine the cache size (and the associated eviction watermarks <code>compact_low_watermark_pct</code>/<code>compact_high_watermark_pct</code>).</p>
+</div>
+<div class="paragraph">
+<p>The default value for this property is 50000. Along with the default channel <code>min_length</code> and <code>max_length</code> values, this would result in a memory usage under 1GB.</p>
+</div>
+<div class="paragraph">
+<p>The <code>max_number</code> value can be tuned to optimize for cache hits (requests that are handled using the cache), as opposed to cache misses (requests that require a round-trip to Couchbase Server to fetch data). The cache hit/miss ratio can be obtained with the following:</p>
+</div>
+<div class="paragraph">
+<p>cache hit/miss ratio = <code>cache.chan_cache_hits</code> / <code>cache.chan_cache_misses</code></p>
+</div>
+<div class="paragraph">
+<p>Increasing the <code>max_number</code> value can increase the cache hit/miss ratio, resulting in better cache utilization.</p>
+</div>
+<div class="paragraph">
+<p>If the cache size grows to reach the high watermark (<code>compact_high_watermark_pct</code>), channels with no connected replications will be evicted before channels which are associated with an active pull replication (i.e a blip-based pull replication in Couchbase Lite 2.x, or an active <code>/{db}/_changes</code> request in Couchbase Lite 1.x).</p>
+</div>
+<div class="paragraph">
+<p>The minimum allowed value is 100.</p>
+</div>
+<div class="paragraph">
+<p>It isn&#8217;t possible to remove the limit altogether, users who wish to remove the limit would need to set <code>max_number</code> to an arbitrarily high value.
+Default: 50000</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="size"><a class="anchor" href="#size"></a>size:</h3>
+<div class="paragraph">
+<p>Size of the revision cache, specified as the total number of document revisions to cache in memory for all recently accessed documents. When the revision cache is full, Sync Gateway removes less recent document revisions to make room for new document revisions. Adjust this property to tune memory consumption by Sync Gateway, for example on servers with less memory and in cases when Sync Gateway creates many new documents and/or updates many documents relative to the number of read operations.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="disabling-the-revision-cache"><a class="anchor" href="#disabling-the-revision-cache"></a>Disabling the revision cache</h3>
+<div class="paragraph">
+<p>Disabling the revision cache is an [Enterprise Edition](<a href="https://www.couchbase.com/products/editions" class="bare">https://www.couchbase.com/products/editions</a>) feature.</p>
+</div>
+<div class="paragraph">
+<p>To disable the revision entirely, set this property to 0. Setting this property to 0 on the Community Edition is ignored.</p>
+</div>
+<div class="paragraph">
+<p>Disabling the revision cache would be useful when there are very large documents or if you expect a very low cache hit rate. Otherwise it could negatively impact the latency of replications. It is generally not recommended to disable the revision cache, unless advised by Couchbase [Enterprise Support](<a href="https://www.couchbase.com/support-policy" class="bare">https://www.couchbase.com/support-policy</a>).
+Default: 5000</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="shard_count"><a class="anchor" href="#shard_count"></a>Shard_count:</h3>
+<div class="paragraph">
+<p>Tuning this property is an [Enterprise Edition](<a href="https://www.couchbase.com/products/editions" class="bare">https://www.couchbase.com/products/editions</a>) feature.
+The Community Edition is configured with the default value, and will ignore any value in the configuration file.</p>
+</div>
+<div class="paragraph">
+<p>Number of shards the rev cache should be split into. More shards allows for lower cache contention when accessing distinct revisions, at the cost of some memory overhead per-shard. This generally should not greatly exceed the number of CPU threads available to Sync Gateway.</p>
+</div>
+<div class="paragraph">
+<p>It is generally not recommended to set this property, unless advised by Couchbase [Enterprise Support](<a href="https://www.couchbase.com/support-policy" class="bare">https://www.couchbase.com/support-policy</a>).
+                    default: 8
+=== rev_max_age_seconds:
+On a write operation, the revision body is backed up in the bucket and retained for <code>rev_max_age_seconds</code> to calculate future revision deltas.
+As a result, new deltas can only be generated for read requests that come in within the <code>rev_max_age_seconds</code> time window.
+The storage of backed up revision bodies for delta sync incurs additional bucket storage requirements.</p>
+</div>
+<div class="paragraph">
+<p>The additional storage can be calculated with the following formula: <code>(doc_size * updates_per_day * 86400) / rev_max_age_seconds</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example, with <code>rev_max_age_seconds&#8217;s default value, an average document size of 4 KB and 100 writes/day, enabling delta sync would take up an additional 400 KB of storage on Couchbase Server (</code>(4 * 100 * 86400)/86400`).</p>
+</div>
+<div class="paragraph">
+<p>Setting this value to 0 will generate deltas opportunistically on pull replications, with no additional storage requirements.</p>
+</div>
+<div class="paragraph">
+<p>Default: 86400</p>
+</div>
+</div>
+</div>
 </div>
 </article>
 </main>
