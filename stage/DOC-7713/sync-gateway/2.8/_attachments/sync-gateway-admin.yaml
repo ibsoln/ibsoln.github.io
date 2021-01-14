@@ -832,15 +832,22 @@ parameters:
     schema:
       type: object
       properties:
+        All:
+          type: boolean
+          description: |
+            Use the wildcard character `*` to set all log keys
+            For example ```{"*":true}```
+        none:
+          type: boolean
+          description: |
+            Use "none" or "" as the key to disable all log keys.
+            For example ```{"none":true}```
         Admin:
           type: boolean
           description: Admin processes in Sync Gateway.
         Access:
           type: boolean
           description: Anytime an access() call is made in the sync function.
-        Attach:
-          type: boolean
-          description: Attachment processing.
         Auth:
           type: boolean
           description: Authentication.
@@ -864,7 +871,7 @@ parameters:
           description: Event processing (webhooks).
         gocb:
           type: boolean
-          description:
+          description: All logging emitted by the GoCB SDK
         HTTP:
           type: boolean
           description: All requests made to the Sync Gateway REST APIs.
@@ -874,18 +881,22 @@ parameters:
         Import:
           type: boolean
           description: Introduced in Sync Gateway 1.5 to help troubleshoot the import process of a document (this is the Sync Gateway process to make a document that was added through N1QL or the Server SDKs mobile-aware). This log key can be useful to troubleshoot why a given document was not successfully imported.
+        Javascript:
+          type: boolean
+          description: All logging from Javascript. This includes -- sync function, import filters, webhook filter function, and the custom ISGR conflict resolvers
         Migrate:
           type: boolean
-          description:
+          description: Logs messages thhat show when old inline document metdata is upgraded to xattrs
         Query:
           type: boolean
-          description:
+          description: Query is used for Sync Gateway code related to N1QL queries
         Replicate:
           type: boolean
-          description: Log messages related to replications between Sync Gateways (using sg-replicate). This tag cannot be used for replications initiated by Couchbase Lite.
-        Shadow:
+          description: |
+            Log messages related to replications between Sync Gateways (using sg-replicate). This tag cannot be used for replications initiated by Couchbase Lite.
+        SGCluster:
           type: boolean
-          description:
+          description: Log messages related to the sharded import and HA sg-replicate
         Sync:
           type: boolean
           description: Activity which relates to synchronization between Couchbase Lite and Sync Gateway
@@ -898,9 +909,6 @@ parameters:
         WSFrame:
           type: boolean
           description: Can be used for additional WS logging output
-        wildcard:
-          type: boolean
-          description: Use the wildcard character `*` to set all log keys true/false
   level:
     in: query
     name: level
@@ -2252,7 +2260,10 @@ paths:
       tags:
       - database
       summary: Update database configuration
-      description: This request updates the configuration for the database specified in the URL.
+      description: |
+        This request updates the configuration for the database specified in the URL. 
+        NOTE -- Changes made via REST API are not persisted and won’t survive sync gateway restart.
+        Make the change in the configuration file if the change is required to persist beyond Sync Gateway restarts.
       parameters:
       - in: body
         name: body

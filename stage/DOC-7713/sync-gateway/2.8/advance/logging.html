@@ -59,7 +59,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="../../../home/sdk.html">
                       SDKs
                     </a>
                   </li>
@@ -785,7 +785,7 @@ All without interfering with the logging required by Couchbase Support for the i
 <h2 id="lbl-console-logs"><a class="anchor" href="#lbl-console-logs"></a>Console Logging</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>In this section</strong>: <a href="#lbl-log-levels">Log Levels</a>  | <a href="#lbl-log-api">Admin REST APi</a> |  <a href="#lbl-log-keys">Log Keys</a>  | <a href="#lbl-log-color">Set Log Color</a>  | <a href="#lbl-log-redirect">Redirect Console Log</a></p>
+<p><strong>In this section</strong>: <a href="#lbl-log-levels">Log Levels</a>  | <a href="#lbl-log-api">Admin REST API</a> |  <a href="#lbl-log-keys">Log Keys</a>  | <a href="#lbl-log-color">Set Log Color</a>  | <a href="#lbl-log-redirect">Redirect Console Log</a></p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -820,7 +820,7 @@ You can easily fine-tune their diagnostic content to meet the needs of a particu
 </ul>
 </div>
 <div class="sect2">
-<h3 id="lbl-log-api"><a class="anchor" href="#lbl-log-api"></a>Admin REST APi</h3>
+<h3 id="lbl-log-api"><a class="anchor" href="#lbl-log-api"></a>Admin REST API</h3>
 <div class="paragraph">
 <p>You can define console log settings in the configuration file, or more conveniently, you can use the Admin REST API to adjust them&#8201;&#8212;&#8201;see: <a href="#eg-setloggingwithapi">Example 2</a>.</p>
 </div>
@@ -966,16 +966,38 @@ By default, only <strong><code>HTTP</code></strong> related information is enabl
 <th class="tableblock halign-left valign-top"><p class="tableblock">Description</p></th>
 </tr>
 <tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>This wildcard log key, enables all log keys</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl --location --request PUT 'http://localhost:4985/_logging?logLevel=trace' \
+--header 'Content-Type: application/json' \
+--data-raw '{"*": true}'</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">none</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Disable all log keys; no logging output</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl --location --request PUT 'http://localhost:4985/_logging?logLevel=trace' \
+--header 'Content-Type: application/json' \
+--data-raw '{"none": true}'</code></pre>
+</div>
+</div></div></td>
+</tr>
+<tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Admin</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Admin processes in Sync Gateway.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Access</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Anytime an access() call is made in the sync function.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock">Attach</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Attachment processing.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Auth</p></td>
@@ -1007,7 +1029,7 @@ By default, only <strong><code>HTTP</code></strong> related information is enabl
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">gocb</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All logging emitted by the GoCB SDK</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">HTTP</p></td>
@@ -1022,20 +1044,24 @@ By default, only <strong><code>HTTP</code></strong> related information is enabl
 <td class="tableblock halign-left valign-top"><p class="tableblock">Introduced in Sync Gateway 1.5 to help troubleshoot the import process of a document (this is the Sync Gateway process to make a document that was added through N1QL or the Server SDKs mobile-aware). This log key can be useful to troubleshoot why a given document was not successfully imported.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Javascript</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All logging from Javascript. This includes: sync function, import filters, webhook filter function, and the custom ISGR conflict resolvers</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Migrate</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Logs messages that show when old inline document metadata is upgraded to xattrs</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Query</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Query is used for Sync Gateway code related to N1QL queries</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Replicate</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Log messages related to replications between Sync Gateways (using sg-replicate). This tag cannot be used for replications initiated by Couchbase Lite.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock">Shadow</p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">SGCluster</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Log messages related to the sharded import and HA sg-replicate</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Sync</p></td>
@@ -1052,10 +1078,6 @@ By default, only <strong><code>HTTP</code></strong> related information is enabl
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">WSFrame</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Can be used for additional WS logging output</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock">*</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Wildcard log key. Enables all log keys if set</p></td>
 </tr>
 </tbody>
 </table>
