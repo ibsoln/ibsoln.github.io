@@ -7,6 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.8/server-integration.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Integrating Sync Gateway with other servers">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -651,10 +652,24 @@
 <span  id="otherContributor"> + </span>
 </div><div id="preamble">
 <div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
 <div class="paragraph">
-<p>This guide describes two approaches for integrating Sync Gateway with other servers.
-These approaches can be used to build services that react to changes in documents.
-Examples of use cases include:</p>
+<p>Description&#8201;&#8212;&#8201;<em>Integrating Sync Gateway with other servers</em><br>
+<em>Abstract&#8201;&#8212;&#8201;This content provides approaches for integrating Sync Gateway with other servers to build services that react to document changes.</em><br></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By adopting the approaches documented here you can build responsive services that react to changes in documents, adding value to the end to end process.</p>
+</div>
+<div class="paragraph">
+<p>The use cases for these approaches to Sync Gateway integration with other servers comprise:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -667,7 +682,7 @@ Examples of use cases include:</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>The integration approaches are:</p>
+<p>These approaches include using the following change indicators, a comparison of which can be seen in <a href="#tbl-scenarios">Table 1</a>:</p>
 </div>
 <div class="dlist">
 <dl>
@@ -681,10 +696,8 @@ Examples of use cases include:</p>
 </dd>
 </dl>
 </div>
-<div class="paragraph">
-<p>Here&#8217;s a table that compares each API in different scenarios:</p>
-</div>
-<table class="tableblock frame-all grid-all" style="width: 80%;">
+<table id="tbl-scenarios" class="tableblock frame-all grid-all" style="width: 80%;">
+<caption class="title">Table 1. Scenarios by API</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -693,30 +706,30 @@ Examples of use cases include:</p>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Scenario</th>
-<th class="tableblock halign-left valign-top">Changes feed (pull)</th>
-<th class="tableblock halign-left valign-top">Webhooks (push)</th>
+<th class="tableblock halign-center valign-top">Changes feed (pull)</th>
+<th class="tableblock halign-center valign-top">Webhooks (push)</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Sequence/Ordered</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">User Access Control</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Fine Grain</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Limited</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Fine Grain</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Limited</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Scalable</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Data Stream replay on Failure</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
 </tr>
 </tbody>
 </table>
@@ -725,45 +738,70 @@ Examples of use cases include:</p>
 <div class="sect1">
 <h2 id="changes-feed"><a class="anchor" href="#changes-feed"></a>Changes Feed</h2>
 <div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">In this section</dt>
+<dd>
+<p><a href="#lbl-endpoint">Endpoint</a>  |  <a href="#lbl-methods">Methods</a>  | <a href="#lbl-websockets">WebSockets</a></p>
+</dd>
+</dl>
+</div>
 <div class="paragraph">
 <p>This article describes how to use the changes feed API to integrate Sync Gateway with other backend processes.
 For instance if you have a channel called "needs-email" you could have a bot that sends an email and then saves the document back with a flag to keep it out of the "needs-email" channel.</p>
 </div>
+<div class="sect2">
+<h3 id="lbl-endpoint"><a class="anchor" href="#lbl-endpoint"></a>Endpoint</h3>
 <div class="paragraph">
 <p>The changes feed API is a REST API endpoint (<a href="refer/rest-api-public.html#/database/get__db___changes" class="page"><code>/{tkn-db}/_changes</code></a>) that returns a sorted list of changes made to documents in the database.
-It permits applications to implement business logic that reacts to changes in documents.
-There are several methods of connecting to the changes feed (also know as the feed type).
+It permits applications to implement business logic that reacts to changes in documents.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-methods"><a class="anchor" href="#lbl-methods"></a>Methods</h3>
+<div class="paragraph">
+<p>There are several methods of connecting to the changes feed (also know as the feed type).
 The first 3 methods (<code>polling</code>, <code>longpoll</code> and <code>continuous</code>) are based on the CouchDB API.
 The last method (<code>websocket</code>) is specific to Sync Gateway.</p>
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1"><a href="http://guide.couchdb.org/draft/notifications.html#polling">polling</a> (default)</dt>
+<dt class="hdlist1"><a href="http://guide.couchdb.org/draft/notifications.html#polling" target="_blank" rel="noopener">polling</a> (default)</dt>
 <dd>
 <p>Returns the list of changes immediately.
 A new request must be sent to get the next set of changes.</p>
 </dd>
-<dt class="hdlist1"><a href="http://guide.couchdb.org/draft/notifications.html#long">longpolling</a></dt>
+<dt class="hdlist1"><a href="http://guide.couchdb.org/draft/notifications.html#long" target="_blank" rel="noopener">longpolling</a></dt>
 <dd>
 <p>In addition to regular polling, if the request is sent with a special <code>last_seq</code> parameter, it will stay open until a new change occurs and is posted.</p>
 </dd>
-<dt class="hdlist1"><a href="http://guide.couchdb.org/draft/notifications.html#continuous">continuous</a></dt>
+<dt class="hdlist1"><a href="http://guide.couchdb.org/draft/notifications.html#continuous" target="_blank" rel="noopener">continuous</a></dt>
 <dd>
 <p>The continuous changes API allows you to receive change notifications as they come, in a single HTTP connection.
 You make a request to the continuous changes API and both you and Sync Gateway will hold the connection open “forever.”</p>
 </dd>
-<dt class="hdlist1"><a href="#websockets">WebSockets</a></dt>
+<dt class="hdlist1"><a href="#websockets">[websockets]</a></dt>
 <dd>
 <p>The WebSocket mode is conceptually the same as continuous mode but it should avoid issues with proxy servers and gateways that cause continuous mode to fail in many real-world mobile use cases.</p>
 </dd>
 </dl>
 </div>
+</div>
 <div class="sect2">
-<h3 id="websockets"><a class="anchor" href="#websockets"></a>WebSockets</h3>
+<h3 id="lbl-websockets"><a class="anchor" href="#lbl-websockets"></a>WebSockets</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">In this section</dt>
+<dd>
+<p><a href="#lbl-options">Specifying Options</a>  |  <a href="#lbl-messages">Messages</a>  |  <a href="#lbl-compressed">Compressed Feed</a></p>
+</dd>
+</dl>
+</div>
 <div class="paragraph">
-<p>The primary problem with the continuous mode is buggy HTTP chunked-mode body parsing that buffers up the entire response before sending any of it on;
-since the continuous feed response never ends, nothing gets through to the client.
-This can often be a problem with proxy servers but can be avoided by using the WebSocket method.</p>
+<p>Continuous streaming HTTP responses may not be suitable for all deployments.
+Some proxy servers perform chunked-mode response parsing, which waits for the entire response to be buffered before sending it on.
+So, since the continuous feed response never ends, nothing is ever sent through to the client.
+This problem can be avoided using the WebSocket method.</p>
 </div>
 <div class="paragraph">
 <p>The client requests WebSockets by setting the <code>_changes</code> URL&#8217;s feed query parameter to <code>websocket</code>, and opening a WebSocket connection to that URL:</p>
@@ -777,7 +815,7 @@ Upgrade: websocket
 </div>
 </div>
 <div class="sect3">
-<h4 id="specifying-options"><a class="anchor" href="#specifying-options"></a>Specifying Options</h4>
+<h4 id="lbl-options"><a class="anchor" href="#lbl-options"></a>Specifying Options</h4>
 <div class="paragraph">
 <p>After the connection opens, the client MUST send a single textual message to the server, specifying the feed options.
 This message is identical to the body of a regular HTTP POST to <code>_changes</code>, i.e. it&#8217;s a JSON object whose keys are the parameters (for example, <code>{"since": 112233, "include_docs": true}</code>).
@@ -785,7 +823,7 @@ Depending on which client you use, make sure that options are sent as binary.</p
 </div>
 </div>
 <div class="sect3">
-<h4 id="messages"><a class="anchor" href="#messages"></a>Messages</h4>
+<h4 id="lbl-messages"><a class="anchor" href="#lbl-messages"></a>Messages</h4>
 <div class="paragraph">
 <p>Once the server receives the options, it will begin to send text-format messages. The messages are JSON;
 each contains one or more change notifications (in the same format as the regular feed) wrapped in an array:</p>
@@ -810,7 +848,7 @@ It thus indicates that the client has "caught up" with the current state of the 
 </div>
 </div>
 <div class="sect3">
-<h4 id="compressed-feed"><a class="anchor" href="#compressed-feed"></a>Compressed Feed</h4>
+<h4 id="lbl-compressed"><a class="anchor" href="#lbl-compressed"></a>Compressed Feed</h4>
 <div class="paragraph">
 <p>For efficiency, the feed can be sent in compressed form; this greatly reduces the bandwidth and is highly recommended.</p>
 </div>
@@ -928,6 +966,80 @@ The <code>filter</code> function in the second handler recognizes documents with
   }</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">Learn more ...</div>
+<ul>
+<li>
+<p><a href="learn/defining-sync-functions.html" class="page">Sync Function</a></p>
+</li>
+<li>
+<p><a href="advance/adv-sgw-cfg-sync-function.html" class="page">Use Sync functions?</a></p>
+</li>
+<li>
+<p><a href="advance/adv-sgw-cfg-import-filter.html" class="page">Import filter</a></p>
+</li>
+<li>
+<p><a href="learn/icr-sgreplicate.html" class="page">Inter-Sync Gateway Replication</a></p>
+</li>
+<li>
+<p><a href="shared-bucket-access.html" class="page">Sync with Couchbase Server</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference material ...</div>
+<ul>
+<li>
+<p><a href="refer/rest-api-public.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="refer/rest-api-metrics.html" class="page">Metrics REST API</a></p>
+</li>
+<li>
+<p><a href="advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Sync Function Blogs</div>
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/augment-your-sync-function-with-roles-in-couchbase-sync-gateway/">Using roles in sync functions</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/data-synchronization-offline-first-apps-couchbase/">Tutorial: Getting Started with Data Synchronization using Couchbase Mobile for Offline-First Apps</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/sync-function/">Sync Function (category)</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>

@@ -428,6 +428,12 @@
 <a class="nav-link" href="../indexing.html">Indexing versus Views</a>
 </span>
 </li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../stats-prometheus.html">Prometheus Integration</a>
+</span>
+</li>
 </ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -650,10 +656,23 @@
 <blockquote>
 <div class="paragraph">
 <p>Description&#8201;&#8212;&#8201;<em>Configure and verify your Sync Gateway installation and securely sync enterprise data from cloud to edge</em><br>
-<em>Abstract&#8201;&#8212;&#8201;Provides an example configuration suitable for verifying that your install has worked</em><br>
+<em>Abstract&#8201;&#8212;&#8201;Here we will check that you can connect to your Sync Gateway</em><br>
 Related Content&#8201;&#8212;&#8201;<a href="gs-sgw-prereqs.html" class="page">Prepare</a>  |  <a href="gs-sgw-install.html" class="page">Install</a></p>
 </div>
 </blockquote>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Preparatory Steps</div>
+Before following the steps in this topic you must have read, and acted-upon, the information and steps in <a href="gs-sgw-prereqs.html" class="page">Prepare</a> and <a href="gs-sgw-install.html" class="page">Install</a>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -668,10 +687,9 @@ Related Content&#8201;&#8212;&#8201;<a href="gs-sgw-prereqs.html" class="page">P
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/configuration/sync-gateway-config.json#L2-L22">//
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/configuration/sync-gateway-config.json#L2-L26">//
 {
   //  ... additional configuration data as required ...
-  "log": ["*"],
   "databases": {
     "getting-started-db": {
       "server": "http://localhost:8091",
@@ -683,6 +701,11 @@ Related Content&#8201;&#8212;&#8201;<a href="gs-sgw-prereqs.html" class="page">P
       "num_index_replicas": 0, <i class="conum" data-value="4"></i><b>(4)</b>
       "users": {
         "GUEST": { "disabled": false, "admin_channels": ["*"] }
+      }
+    }
+    "logging": {
+      "console":  {
+        "log-keys": ["*"] <i class="conum" data-value="5"></i><b>(5)</b>
       }
     }
     //  ... additional configuration data as required ...
@@ -699,36 +722,30 @@ Related Content&#8201;&#8212;&#8201;<a href="gs-sgw-prereqs.html" class="page">P
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The user&#8217;s username that you created on the Couchbase Server Admin Console.</td>
+<td>The username of the RBAC user that you created on the Couchbase Server Admin Console&#8201;&#8212;&#8201;see <a href="gs-sgw-prereqs.html#configure-server" class="page">Configure Server for Sync Gateway</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The user&#8217;s password that you created on the Couchbase Server Admin Console.</td>
+<td>The password of the user that you created on the Couchbase Server Admin Console.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The <a href="../shared-bucket-access.html" class="page">Sync with Couchbase Server</a> feature allows Couchbase Server SDKs to also perform operations on this bucket.</td>
+<td>The <a href="../shared-bucket-access.html" class="page">enable_shared_bucket_access</a> feature allows Couchbase Server SDKs to also perform operations on this bucket.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>num_index_replicas</code> is the number of index replicas stored in Couchbase Server&#8201;&#8212;&#8201;see <a href="../indexing.html" class="page">Indexing versus Views</a>.<br></td>
+<td><code>num_index_replicas</code> is the number of index replicas stored in Couchbase Server&#8201;&#8212;&#8201;see <a href="../indexing.html" class="page">Indexing versus Views</a>.<br>
+<strong>NOTE:</strong> If you&#8217;re running a single Couchbase Server node for development purposes the <code>num_index_replicas</code> must be set to <code>0</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Define your logging requirements.<br>
+Here we set general diagnostic console logs on.</td>
 </tr>
 </table>
 </div>
 </dd>
 </dl>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-If you&#8217;re running a single Couchbase Server node for development purposes the <code>num_index_replicas</code> must be set to <code>0</code>.
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -761,7 +778,63 @@ If you&#8217;re running a single Couchbase Server node for development purposes 
 </div>
 </div>
 <div class="sect1">
-<h2 id="step-3-verify-that-document-changes-sync"><a class="anchor" href="#step-3-verify-that-document-changes-sync"></a>Step 3: Verify that Document Changes Sync</h2>
+<h2 id="step-3-connect-to-sync-gateway"><a class="anchor" href="#step-3-connect-to-sync-gateway"></a>Step 3: Connect to Sync Gateway</h2>
+<div class="sectionbody">
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You can use <a href="../advance/logging.html#lbl-console-logs" class="page">Console Logs</a> to aid diagnosis of connection issues
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>With Sync Gateway started (see: <a href="#start-sgw">Example 2</a>), point your browser to the Sync Gateway url, typically on port 4984, but this can be changed&#8201;&#8212;&#8201;see: <a href="gs-sgw-api-access.html" class="page">REST API Access</a>.</p>
+<div class="paragraph">
+<p>So, for example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">http://localhost:4984</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Check that you receive a response similar to this:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">{"couchdb":"Welcome","vendor":{"name":"Couchbase Sync Gateway","version":"2.8"},"version":"Couchbase Sync Gateway/2.8.0(376;e2e7d42) EE"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If there are issues then check the <a href="../advance/logging.html#lbl-console-logs" class="page">Console Logs</a> for more information.
+Where necessary you can redirect console output to a file&#8201;&#8212;&#8201;see: <a href="../advance/logging.html#lbl-log-redirect" class="page">Redirect Console Logs</a>.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If Sync Gateway is behind a load balancer then check the websockets configuration&#8201;&#8212;&#8201;see <a href="../load-balancer.html" class="page">Load Balancer</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="step-4-sync-changes"><a class="anchor" href="#step-4-sync-changes"></a>Step 4: Sync Changes</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>To verify that documents have been replicated, you can:</p>
@@ -769,11 +842,11 @@ If you&#8217;re running a single Couchbase Server node for development purposes 
 <div class="ulist">
 <ul>
 <li>
-<p>Monitor the Sync Gateway sequence number returned by the database endpoint (<a href="../refer/rest-api-public.html#/database/get__db__" class="page"><code>GET /{tkn-db}/</code></a>).
+<p>Monitor the Sync Gateway sequence number returned by the database endpoint (<a href="../refer/rest-api-public.html#/database/get__db__" class="page">GET /&#123;db&#125;/</a>).
 The sequence number increments for every change that happens on the Sync Gateway database.</p>
 </li>
 <li>
-<p>Query a document by ID on the Sync Gateway REST API (<a href="../refer/rest-api-public.html#/document/get__db___doc_" class="page"><code>GET /{tkn-db}/{id}</code></a>)&#8201;&#8212;&#8201;see: <a href="gs-sgw-api-access.html" class="page">REST API Access</a></p>
+<p>Query a document by ID on the Sync Gateway REST API (<a href="../refer/rest-api-public.html#/document/get__db___doc_" class="page">GET /&#123;db&#125;/{id}</a>)&#8201;&#8212;&#8201;see: <a href="gs-sgw-api-access.html" class="page">REST API Access</a></p>
 </li>
 <li>
 <p>Query a document from the Query Workbench on the Couchbase Server Console.</p>

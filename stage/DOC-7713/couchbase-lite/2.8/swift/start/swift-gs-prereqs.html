@@ -1348,7 +1348,7 @@ In addition, the bitcode that is included with the framework contributes to the 
 Your executable contains unsupported architecture '[x86_64, i386]'."</p>
 </div>
 <div class="paragraph">
-<p>The steps to remove the simulator architecture (x86_64) from <strong>CouchbaseLite.framework</strong> are outlined below.
+<p>The steps to remove the simulator architecture (x86_64) from <strong>CouchbaseLite.framework</strong> are outlined below in <a href="#ex-rmvsimarc">[ex-rmvsimarc]</a>.
 They depend on the method you chose to install Couchbase Lite:</p>
 </div>
 <div class="tabset is-loading">
@@ -1395,6 +1395,64 @@ The following steps describe how to set up a build phase in Xcode to do this aut
 <div class="tab-pane" aria-labelledby="tabset1_carthage">
 <div class="paragraph">
 <p>The <a href="https://github.com/Carthage/Carthage/blob/5fd867c4895b4f59d70181dec169a1644f4430e3/README.md#adding-frameworks-to-an-application">following link</a> describes how to set up a build phase in Xcode and run a Carthage script in order to remove the simulator architecture (x86_64).</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-tgtinterr"><a class="anchor" href="#lbl-tgtinterr"></a>Target Integrity Error</h3>
+<div class="paragraph">
+<p>You may encounter a <code>Target Integrity Error</code> when building for iOS Simulator(or iOS).
+This is because the embedded framework <code>CouchbaseLiteSwift.framework</code> was built for iOS + iOS Simulator.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Using XCFrameworks will ensure that the binaries used have the right architectures for the different platforms you target.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>As a workaround, you are recommended to strip the unnecessary architecture from the fat binary as described in <a href="#ex-wkaround">Example 1</a></p>
+</div>
+<div id="ex-wkaround" class="exampleblock">
+<div class="title">Example 1. Thinning the Framework</div>
+<div class="content">
+<div class="paragraph">
+<p>Within the folder containing the framework, use the <code>lipo</code> command to convert the universal binary to a single architecture file.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_simulator"></a>Simulator</p>
+</li>
+<li>
+<p><a id="tabset2_device"></a>Device</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_simulator">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">lipo CouchbaseLiteSwift.framework/CouchbaseLiteSwift -thin x86_64 -output  CouchbaseLiteSwift.framework/CouchbaseLiteSwift</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_device">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">lipo CouchbaseLiteSwift.framework/CouchbaseLiteSwift -thin arm64 -output  CouchbaseLiteSwift.framework/CouchbaseLiteSwift</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

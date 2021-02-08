@@ -89,7 +89,7 @@
     </div>
    </div>
 </header>
-<div class="body container -toc">
+<div class="body container">
 <nav class="nav">
 <div class="left-sidebar-menu">
 <div class="version-control-box">
@@ -428,6 +428,12 @@
 <a class="nav-link" href="../indexing.html">Indexing versus Views</a>
 </span>
 </li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../stats-prometheus.html">Prometheus Integration</a>
+</span>
+</li>
 </ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -639,11 +645,6 @@
 <article class="doc">
 <div class="page-heading-title">
 <h1 class="page">Metrics REST API</h1>
-<div class="labels">
-<ul>
-<li class="edition"><a href="https://www.couchbase.com/products/editions">Developer Preview</a></li>
-</ul>
-</div>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -656,63 +657,72 @@
 <div class="paragraph">
 <p>Description&#8201;&#8212;&#8201;<em>Description of the Sync Gateway Metrics Rest API</em><br>
 <em>Abstract&#8201;&#8212;&#8201;Use the API explorer to find out more about Sync Gateway&#8217;s endpoints by functionality.</em><br>
-Related Content&#8201;&#8212;&#8201;<a href="rest-api-public.html" class="page">Public REST API</a>  |  <a href="rest-api-admin.html" class="page">Admin REST API</a>  |  <a href="../advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+Related Content&#8201;&#8212;&#8201;<a href="rest-api-public.html" class="page">Public REST API</a>  |  <a href="rest-api-admin.html" class="page">Admin REST API</a>  |  <a href="../advance/adv-rest-api-client.html" class="page">Use the REST API?</a>  |  <a href="../stats-monitoring.html" class="page">Monitor</a>  |  <a href="../stats-prometheus.html" class="page">Prometheus Integration</a></p>
 </div>
 </blockquote>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
-<div class="sectionbody">
-<div class="admonitionblock caution">
+<div class="admonitionblock note">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
+<i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="title">Developer Preview</div>
-<div class="paragraph">
-<p>This is a Developer Preview feature, intended for development purposes only; the API is uncommitted.
-Do not use this feature in production.
-No Enterprise Support is provided for Developer Preview features.</p>
-</div>
-<div class="paragraph">
-<p>Refer to <a href="#server:developer-preview:preview-mode.adoc" class="page unresolved">Developer Preview Mode</a> for more information.</p>
-</div>
+<div class="title">Constraints</div>
+This API is OFF by default&#8201;&#8212;&#8201;see <a href="#ex-activate">Example 1</a> for details on how to activate it
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p><strong>This API is OFF by default</strong>.
-To activate the API you will need to configure it using the <code>metricsInterface</code> setting in the configuration file</p>
 </div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>When activated, this API exposes two endpoints:</p>
+<p>Once <a href="#lbl-act">activated</a> Sync Gateway makes collecting performance data easy and secure by providing a Metrics REST API.
+This API&#8201;&#8212;&#8201;separate from both the Public and Admin REST APIs&#8201;&#8212;&#8201;exposes Sync Gateway&#8217;s stats on two endpoints, which deliver the same data in one of two formats:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>_metrics&#8201;&#8212;&#8201;which returns Sync Gateway statistics in Prometheus format<br>
-<code>GET host:/4986/_metrics</code></p>
+<p>The <code>_metrics</code> endpoint returns Sync Gateway statistics in <a href="refer-sgw-glossary.html#prometheus" class="page">Prometheus<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="glossary icon" width="14"></span></a> format.<br>
+<code>GET host:4986/_metrics</code><br></p>
+<div class="paragraph">
+<p>For information on integration with Prometheus&#8201;&#8212;&#8201;see <a href="../stats-prometheus.html" class="page">Prometheus Integration</a> and our blog entry <a href="https://blog.couchbase.com/monitoring-and-visualization-of-couchbase-sync-gateway-with-prometheus-and-grafana/">Monitoring and Visualization of Couchbase Sync Gateway with Prometheus and Grafana</a>.</p>
+</div>
 </li>
 <li>
-<p>_expvars&#8201;&#8212;&#8201;which returns the same Sync Gateway statistics in JSON format<br></p>
+<p>The <code>_expvars</code> endpoint returns Sync Gateway statistics in JSON format.</p>
 </li>
 </ul>
 </div>
-<div class="paragraph">
-<p>For information on integration with Prometheus&#8201;&#8212;&#8201;see our blog entry <a href="https://blog.couchbase.com/monitoring-sync-gateway-prometheus-grafana/">Monitoring Couchbase Sync Gateway with Prometheus and Grafana</a>.</p>
 </div>
-<div class="exampleblock">
+</div>
+<div class="sect1">
+<h2 id="lbl-act"><a class="anchor" href="#lbl-act"></a>Activation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To activate the Metrics REST API you need to edit your <code>sync-gateway-config.json</code> configuration file.</p>
+</div>
+<div class="paragraph">
+<p>Include the <code>metricsInterface</code> setting and define the Sync Gateway URL and the port you want the API served on (for example: 4986)&#8201;&#8212;&#8201;see: <a href="#ex-activate">Example 1</a>.</p>
+</div>
+<div id="ex-activate" class="exampleblock">
 <div class="title">Example 1. Switch on metrics interface</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"metricsInterface": "127.0.0.1:4986"</code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"metricsInterface": "127.0.0.1:4986" <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we define the Sync Gateway URL and the port (4986 in this instance) that we require the Metrics REST API to be served on.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -722,8 +732,10 @@ To activate the API you will need to configure it using the <code>metricsInterfa
 <h2 id="api-explorer"><a class="anchor" href="#api-explorer"></a>API Explorer</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The API explorer below groups all the endpoints by functionality.
-You can click on a label to expand the list of endpoints and also generate a curl request for each endpoint.</p>
+<p>You can browse the API using the explorer below.
+The explorer groups all the endpoints by functionality.
+Just click a label to expand the endpoints.
+You can also generate curl requests if required, for each endpoint.</p>
 </div>
 <div id="swagger-ui"></div>
 </div>
