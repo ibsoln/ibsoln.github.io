@@ -1632,7 +1632,20 @@ You may need to do this when, for example, when the Sync Gateway is behind a loa
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">id target =
+  [[CBLURLEndpoint alloc] initWithURL: [NSURL URLWithString: @"ws://foo.cbl.com/db"]];
+
+CBLReplicatorConfiguration* config =
+    [[CBLReplicatorConfiguration alloc] initWithDatabase: db target: target];
+config.type = kCBLReplicatorTypePush;
+config.continuous: YES;
+//  other config as required . . .
+config.heartbeat = 60; <i class="conum" data-value="1"></i><b>(1)</b>
+//  other config as required . . .
+repl = [[CBLReplicator alloc] initWithConfig: config];
+
+// Cleanup:
+repl = nil;</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2497,7 +2510,7 @@ After completing this step, Sync Gateway is reachable over <code>https</code>/<c
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m#L959-L971">// tag=p2p-act-rep-config-cacert-pinned[]
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m#L980-L992">// tag=p2p-act-rep-config-cacert-pinned[]
 NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
 NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
 SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
