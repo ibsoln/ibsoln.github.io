@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Data Modelling | Couchbase Docs Preview Site</title>
-<link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.8/data-modeling.html">
+<title>Events and Event Handlers | Couchbase Docs Preview Site</title>
+<link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.8/events.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Couchbase Sync Gateway - data model for synchronization">
+<meta name="description" content="About Revisions, Trees and Caches">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -145,13 +145,13 @@
 </li>
 </ul>
 </li>
-<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="1">
+<li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <a class="nav-link" href="data-modeling.html">Data Modelling</a>
 </span>
 </li>
-<li class="nav-item  is-inactive " data-depth="1">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
@@ -182,7 +182,7 @@
 <a class="nav-link" href="learn/concept-fundamentals-data-tombstones.html">Tombstones</a>
 </span>
 </li>
-<li class="nav-item " data-depth="2">
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="events.html">Event Handling</a>
@@ -578,7 +578,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/data-modeling.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/events.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -637,13 +637,14 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb"><a href="data-modeling.html">Data Modelling</a></li>
+<li class="crumb">Concepts</li>
+<li class="crumb"><a href="events.html">Event Handling</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Data Modelling</h1>
+<h1 class="page">Events and Event Handlers</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -654,94 +655,145 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Description&#8201;&#8212;&#8201;<em>Couchbase Sync Gateway - data model for synchronization</em><br>
-Related Content&#8201;&#8212;&#8201;<a href="learn/concept-fundamentals-data.html" class="page">Documents</a> | <a href="learn/concept-fundamentals-data-tombstones.html" class="page">Tombstones</a></p>
+<p>Description&#8201;&#8212;&#8201;<em>About Revisions, Trees and Caches</em><br></p>
 </div>
 </blockquote>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<h2 id="purpose"><a class="anchor" href="#purpose"></a>Purpose</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The guidance and constraints documented here relate to the design of data buckets and documents that you require, or may potentially require, to replicate using sync gateway functionality.
-They do not necessarily align with constraints on the local storage and use of such documents.</p>
+<p>Sync Gateway uses event handlers called <strong><em>webhooks</em></strong> to perform document filtering and HTTP POST asynchronously.
+This minimizes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The performance impact on its regular processing</p>
+</li>
+<li>
+<p>The amount of Sync Gateway node CPU resources consumed by slow response times from the HTTP POST operations.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="property-naming"><a class="anchor" href="#property-naming"></a>Property Naming</h2>
+<h2 id="behavior"><a class="anchor" href="#behavior"></a>Behavior</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If a <em>webhook</em> event handler is defined:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Whenever Sync Gateway updates a document, it creates a <code>document_changed</code> event and adds it to an asynchronous event-processing queue; the <em>event queue</em>.</p>
+</li>
+<li>
+<p>Whenever the <em>event queue</em> contains a <em>webhook</em> event, Sync Gateway spawns a process to execute the <em>webhook&#8217;s</em> <code>filter</code> on the associated document and to perform any HTTP POST operation.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="definition"><a class="anchor" href="#definition"></a>Definition</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Webhooks</em> are defined, per database, in Sync Gateway&#8217;s <a href="refer/config-properties.html" class="page">Configuration File</a>.Specifically, in the {xref-sgw-pfx-config-eventhandlers-doc_changed}[this_db.event_handlers.document_changed] section.</p>
+</div>
+<div class="paragraph">
+<p>Each webhook definition comprises:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">filter</dt>
+<dd>
+<p>The filter is a JavaScript function used to determine which documents to post.
+It accepts the document body as input and returns a boolean value.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If the filter function returns true, then Sync Gateway posts the document.</p>
+</li>
+<li>
+<p>If the filter function returns false, then Sync Gateway does not post the document.</p>
+</li>
+<li>
+<p>If no filter function is defined, then Sync Gateway posts all changed documents. Filtering only determines which documents to post. It does not extract specific content from documents and post only that.</p>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Configuration: {xref-sgw-pfx-config-eventhandlers-doc_changed}-filter[this_db.event_handlers.document_changed.filter]</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">handler</dt>
+<dd>
+<p>Type of the event handler; currently, this must be <code>webhook</code>.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Configuration: {xref-sgw-pfx-config-eventhandlers-doc_changed}-handler[this_db.event_handlers.document_changed.handler]</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">timeout</dt>
+<dd>
+<p>Time in seconds to wait for a response to the POST operation.
+Using a timeout ensures that slow-running POST operations don&#8217;t cause the webhook event queue to back up.
+Slow-running POST operations are discarded (if they time out), so that new events can be processed.
+When the timeout is reached, Sync Gateway stops listening for a response; a value of 0 (zero) means no timeout.
+The default value should work well in the majority of cases. You should not need to adjust it to tune performance.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Configuration: {xref-sgw-pfx-config-eventhandlers-doc_changed}-timeout[this_db.event_handlers.document_changed.timeout]</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">url</dt>
+<dd>
+<p>Configuration: {xref-sgw-pfx-config-eventhandlers-doc_changed}-url[this_db.event_handlers.document_changed.url]</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="event-handler-constraints"><a class="anchor" href="#event-handler-constraints"></a>Event Handler Constraints</h2>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
-<dt class="hdlist1">What to avoid</dt>
+<dt class="hdlist1">max_processes</dt>
 <dd>
-<p>You should avoid designing user property names prefixed with an underscore character (<code>_</code>, ASCII <code>&amp;#095</code>).</p>
-</dd>
-<dt class="hdlist1">Why it&#8217;s an issue</dt>
-<dd>
-<p>The underscore character (<code>_</code>) is a <strong>reserved prefix</strong> for <em>Document</em> system properties, for example: the document&#8217;s identifier (<code>_id</code>) and revision property (<code>_rev</code>).</p>
+<p>Maximum number of events that can be processed concurrently, that is, no more than <code>max_processes</code> concurrent processes will be spawned for event handling.
+The default value should work well in the majority of cases.
+You should not need to adjust it to tune performance.
+However, if you wish to ensure that most webhook posts are sent, you can set it to sufficiently high value.
+Default: 5001</p>
 <div class="paragraph">
-<p>Any document which does contain user properties with a leading underscore will be rejected by Sync Gateway&#8201;&#8212;&#8201;see <a href="#error-code">Example 1</a> for the error details.</p>
-</div>
-<div id="error-code" class="exampleblock">
-<div class="title">Example 1. Property prefix error message</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">"{"error":"Bad Request","reason":"user defined top level properties beginning with '_' are not allowed in document body"}"</code></pre>
-</div>
-</div>
-</div>
+<p>Configuration: <a href="refer/config-properties.html#databases-this_db-event_handlers-max-processes" class="page">this_db.event_handlers.max_processes</a></p>
 </div>
 </dd>
-<dt class="hdlist1">Where it applies</dt>
+<dt class="hdlist1">wait_for_process</dt>
 <dd>
-<p>This rule applies to writes performed through:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Couchbase Lite SDKs</p>
-</li>
-<li>
-<p>Sync Gateway REST APIs</p>
-</li>
-<li>
-<p>Couchbase Server SDKs when <a href="shared-bucket-access.html" class="page">shared bucket access</a> is enabled.</p>
-</li>
-</ul>
-</div>
-</dd>
-<dt class="hdlist1">When you might encounter the error</dt>
-<dd>
-<p>You are especially likely to encounter the error in the following deployment situations:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>In Mobile-to-Web Data Sync with Field-level Encryption enabled, because the rule conflicts with the default <a href="#java-sdk:concept-docs:encryption.adoc#format" class="page unresolved">field encryption format</a></p>
-</li>
-<li>
-<p>In Mobile-to-Web Data Sync with <a href="#nodejs-sdk:hello-world:start-using-sdk.adoc" class="page unresolved">Node.js Server SDK</a> and <a href="http://ottomanjs.com/">Ottoman.js</a> (the Node.js ODM for Couchbase), where the rule conflicts with the <code>_type</code> property that is automatically added by <em>Ottoman.js</em>.</p>
+<p>Maximum wait time in milliseconds before canceling event processing for an event that is detected when the event queue is full.
+If you set the value to 0 (zero), then incoming events are discarded immediately if the event queue is full.
+If you wish to avoid any blocking of standard Sync Gateway processing this may be a desirable value to use.
+The default value should work well in the majority of cases.
+You should not need to adjust it to tune performance.
+Default: 100</p>
 <div class="paragraph">
-<p>A suggested workaround in this scenario is to fork the <em>Ottoman.js</em> library, perform a search-replace for the <code>_type</code> property and replace it without a leading underscore.</p>
-</div>
-</li>
-</ul>
-</div>
-</dd>
-<dt class="hdlist1">How to avoid the error</dt>
-<dd>
-<p>You should change any top-level user properties that have a key with a leading underscore , by either:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Renaming them to remove the underscore, or,</p>
-</li>
-<li>
-<p>Wrapping them inside another object with a key that doesn&#8217;t have a leading underscore.</p>
-</li>
-</ul>
+<p>Configuration: <a href="refer/config-properties.html#databases-this_db-event_handlers-wait-for-process" class="page">this_db.event_handlers.wait_for_process</a></p>
 </div>
 </dd>
 </dl>
@@ -749,101 +801,12 @@ They do not necessarily align with constraints on the local storage and use of s
 </div>
 </div>
 <div class="sect1">
-<h2 id="document-structure"><a class="anchor" href="#document-structure"></a>Document Structure</h2>
+<h2 id="events-and-console-logging"><a class="anchor" href="#events-and-console-logging"></a>Events and Console Logging</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Couchbase&#8217;s unit of data is a document, this is the NOSQL equivalent of a row or record.</p>
-</div>
-<div class="paragraph">
-<p>Documents are stored as a key-value pair, which comprises a unique and immutable key, the <em>Id</em>, and a value representing the users' data (a JSON-object or binary blob).</p>
-</div>
-<div class="sect2">
-<h3 id="key"><a class="anchor" href="#key"></a>Key</h3>
-<div class="paragraph">
-<p>The document key, the <em>Id</em>, is:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A UTF-8 string with no spaces, although it may contain special characters, such as (, %, /, ", and _</p>
-</li>
-<li>
-<p>No longer than 250 bytes</p>
-</li>
-<li>
-<p>Unique within the bucket</p>
-</li>
-<li>
-<p>Automatically generated (as a UUID) or be set by the user or application when saved</p>
-</li>
-<li>
-<p>Immutable; that is, once saved the <em>Id</em> cannot be changed.</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="value"><a class="anchor" href="#value"></a>Value</h3>
-<div class="paragraph">
-<p>The document value is either:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A JSON value, termed a <em>Document</em>.</p>
-<div class="paragraph">
-<p>This JSON object is itself collection of key/value pairs, where the values may be numbers, strings, arrays or even nested objects themselves.
-As a result documents can represent highly-complex data structures in a readily parsable and self-organizing manner.</p>
-</div>
-</li>
-<li>
-<p>a binary object (also known as a <em>blob</em> or <em>attachment</em>)</p>
-<div class="paragraph">
-<p>These attachments provide a means to store large media files or any other non-textual data.
-Couchbase Lite supports attachments of unlimited size, although the Sync Gateway currently imposes a 20MB limit for attachments synced to it.</p>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="document-attributes"><a class="anchor" href="#document-attributes"></a>Document Attributes</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Each <em>Document</em> has the following attributes:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A document ID</p>
-</li>
-<li>
-<p>A current revision ID (which changes every time the document is updated)</p>
-</li>
-<li>
-<p>A history of past revision IDs (usually linear, but will form a branching tree if the document has or has had conflicts)</p>
-</li>
-<li>
-<p>A body in the form of a JSON object, i.e. a set of key/value pairs</p>
-</li>
-<li>
-<p>Zero or more named binary attachments</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="document-change-history"><a class="anchor" href="#document-change-history"></a>Document Change History</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Couchbase Lite tracks the change history of every document as a series of revisions, like version control systems such as Git or Subversion.
-Its main purpose being to enable the replicator to determine the data to sync and any conflicts arising.</p>
-</div>
-<div class="paragraph">
-<p>Each document change is assigned a unique revision ID. The IDs of past revisions are available. The content of past revisions may be available if the revision was created locally and the database has not yet been compacted.</p>
+<p>Sync Gateway creates a log entry when an event is discarded and not added to the event queue.
+Set console logging of events on using either the configuration file or ADMIN Rest API&#8201;&#8212;&#8201;see <a href="advance/logging.html" class="page">Use the Logging API</a>.
+The log_key to include is <code>Event</code>; or <code>Events+</code> for more verbose output.</p>
 </div>
 </div>
 </div>
@@ -854,24 +817,7 @@ Its main purpose being to enable the replicator to determine the data to sync an
 <div class="sect5 column">
 <h6 id=""><a class="anchor" href="#"></a></h6>
 <div class="ulist">
-<div class="title">Learn more ...</div>
-<ul>
-<li>
-<p><a href="learn/defining-sync-functions.html" class="page">Sync Function</a></p>
-</li>
-<li>
-<p><a href="advance/adv-sgw-cfg-sync-function.html" class="page">Use Sync functions?</a></p>
-</li>
-<li>
-<p><a href="advance/adv-sgw-cfg-import-filter.html" class="page">Import filter</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
-<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
-<div class="ulist">
-<div class="title">Reference material ...</div>
+<div class="title">API Topics</div>
 <ul>
 <li>
 <p><a href="refer/rest-api-public.html" class="page">Public REST API</a></p>
@@ -884,6 +830,17 @@ Its main purpose being to enable the replicator to determine the data to sync an
 </li>
 <li>
 <p><a href="advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference</div>
+<ul>
+<li>
+<p><a href="refer/config-properties.html" class="page">Configuration File</a></p>
 </li>
 </ul>
 </div>

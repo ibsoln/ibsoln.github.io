@@ -7,6 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.8/concept-events.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="About Revisions, Trees and Caches">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -104,7 +105,7 @@
 </div>
 <div class="nav-menu">
 <ul class="nav-list">
-<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
+<li class="nav-item " data-depth="0">
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
@@ -181,61 +182,10 @@
 <a class="nav-link" href="learn/concept-fundamentals-data-tombstones.html">Tombstones</a>
 </span>
 </li>
-</ul>
-</li>
-<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
-
-<span class="nav-line "  data-depth="1">
-<span class="in-toggle" data-depth="1"></span>
-<span class="nav-text ">potential concepts</span>
-</span>
-<ul class="nav-list">
-<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="concept-events.html">Events and Event Handling</a>
-</span>
-</li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="concept-import-filter.html">Import Filters</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="concept-open-id.html">Oauth/OpenID</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="concept-revisions.html">Revisions</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="concept-session-cookies.html">Sessions and Session Cookies</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="concept-sgw-server.html">Server</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="concept-webhooks.html">Webhooks</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="concept-xattr.html">Extnded Attributes (Xattrs)</a>
+<a class="nav-link" href="#sync-gateway::events.adoc">Event Handling</a>
 </span>
 </li>
 </ul>
@@ -687,8 +637,7 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb">potential concepts</li>
-<li class="crumb"><a href="concept-events.html">Events and Event Handling</a></li>
+<li class="crumb"><a href="concept-events.html">Events and Event Handlers</a></li>
 </ul>
 </nav>
 </div>
@@ -700,12 +649,33 @@
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div class="sect1">
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Description&#8201;&#8212;&#8201;<em>About Revisions, Trees and Caches</em><br></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="purpose"><a class="anchor" href="#purpose"></a>Purpose</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Sync Gateway uses event handlers called <strong><em>webhooks</em></strong> to minimize performance impacts on its regular processing by performing document filtering and HTTP POST asynchronously.
-This minimizes the amount of CPU resources (on Sync Gateway nodes) consumed by slow response times from the HTTP POST operations.</p>
+<p>Sync Gateway uses event handlers called <strong><em>webhooks</em></strong> to perform document filtering and HTTP POST asynchronously.
+This minimizes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The performance impact on its regular processing</p>
+</li>
+<li>
+<p>The amount of Sync Gateway node CPU resources consumed by slow response times from the HTTP POST operations.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -731,7 +701,7 @@ This minimizes the amount of CPU resources (on Sync Gateway nodes) consumed by s
 <h2 id="definition"><a class="anchor" href="#definition"></a>Definition</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Webhooks</em> are defined, per database, in the <a href="refer/config-properties.html" class="page">Configuration File</a>'s <a href="refer/config-properties.html#databases-this_db-event_handlers-document_changed" class="page">databases-this_db-event_handlers-document_changed</a> section of a database definition.</p>
+<p><em>Webhooks</em> are defined, per database, in Sync Gateway&#8217;s <a href="refer/config-properties.html" class="page">Configuration File</a>.Specifically, in the {xref-sgw-pfx-config-eventhandlers-document_changed}[this_db.event_handlers.document_changed] section.</p>
 </div>
 <div class="paragraph">
 <p>Each webhook definition comprises:</p>
@@ -756,10 +726,24 @@ It accepts the document body as input and returns a boolean value.</p>
 </ul>
 </div>
 </dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Configuration: {xref-sgw-pfx-config-eventhandlers-document_changed}-filter[this_db.event_handlers.document_changed.filter]</p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">handler</dt>
 <dd>
 <p>Type of the event handler; currently, this must be <code>webhook</code>.</p>
 </dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Configuration: {xref-sgw-pfx-config-eventhandlers-document_changed}-handler[this_db.event_handlers.document_changed.handler]</p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">timeout</dt>
 <dd>
 <p>Time in seconds to wait for a response to the POST operation.
@@ -768,9 +752,16 @@ Slow-running POST operations are discarded (if they time out), so that new event
 When the timeout is reached, Sync Gateway stops listening for a response; a value of 0 (zero) means no timeout.
 The default value should work well in the majority of cases. You should not need to adjust it to tune performance.</p>
 </dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Configuration: {xref-sgw-pfx-config-eventhandlers-document_changed}-timeout[this_db.event_handlers.document_changed.timeout]</p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">url</dt>
 <dd>
-<p>jh</p>
+<p>Configuration: {xref-sgw-pfx-config-eventhandlers-document_changed}-url[this_db.event_handlers.document_changed.url]</p>
 </dd>
 </dl>
 </div>
@@ -789,6 +780,13 @@ You should not need to adjust it to tune performance.
 However, if you wish to ensure that most webhook posts are sent, you can set it to sufficiently high value.
 Default: 5001</p>
 </dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Configuration: <a href="refer/config-properties.html#databases-this_db-event_handlers-max-processes}" class="page">this_db.event_handlers.max_processes</a></p>
+</div>
+<div class="dlist">
+<dl>
 <dt class="hdlist1">wait_for_process</dt>
 <dd>
 <p>Maximum wait time in milliseconds before canceling event processing for an event that is detected when the event queue is full.
@@ -799,6 +797,9 @@ You should not need to adjust it to tune performance.
 Default: 100</p>
 </dd>
 </dl>
+</div>
+<div class="paragraph">
+<p>Configuration: <a href="refer/config-properties.html#databases-this_db-event_handlers-wait-for-process}" class="page">this_db.event_handlers.wait_for_process</a></p>
 </div>
 </div>
 </div>
