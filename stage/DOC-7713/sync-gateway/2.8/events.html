@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Events and Event Handlers | Couchbase Docs Preview Site</title>
+<title>Webhooks | Couchbase Docs Preview Site</title>
 <link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.8/events.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Introducing Sync Gateway events and event handling">
+<meta name="description" content="Introducing Sync Gateway events and event handling with Webhooks">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -395,7 +395,7 @@
 <li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="events.html">Event Handling</a>
+<a class="nav-link" href="events.html">Webhooks</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -653,13 +653,13 @@
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
 <li class="crumb">Integrate</li>
-<li class="crumb"><a href="events.html">Event Handling</a></li>
+<li class="crumb"><a href="events.html">Webhooks</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Events and Event Handlers</h1>
+<h1 class="page">Webhooks</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -670,8 +670,8 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Description&#8201;&#8212;&#8201;<em>Introducing Sync Gateway events and event handling</em><br>
-<em>Abstract&#8201;&#8212;&#8201;You can configure webhooks to detect document changes and to post changed documents to specified URLs.</em><br>
+<p>Description&#8201;&#8212;&#8201;<em>Introducing Sync Gateway events and event handling with Webhooks</em><br>
+<em>Abstract&#8201;&#8212;&#8201;You can configure webhooks to detect document_changed events and post the changed documents to specified URLs.</em><br>
 Related Content&#8201;&#8212;&#8201;<a href="server-integration.html" class="page">Changes Feed</a>  |  <a href="integrating-external-stores.html" class="page">External Stores</a>  |  <a href="stats-prometheus.html" class="page">Prometheus Integration</a></p>
 </div>
 </blockquote>
@@ -685,7 +685,8 @@ Related Content&#8201;&#8212;&#8201;<a href="server-integration.html" class="pag
 <td class="content">
 <div class="title">Caveats</div>
 <div class="paragraph">
-<p>Webhooks post your application’s data, which might include user data, to URLs. Consider the security implications.</p>
+<p>Webhooks post your application’s data, which might include user data, to URLs.
+Consider the security implications.</p>
 </div>
 </td>
 </tr>
@@ -706,7 +707,7 @@ Related Content&#8201;&#8212;&#8201;<a href="server-integration.html" class="pag
 <p>This can be done using either the <a href="server-integration.html" class="page">changes feed</a> or <code>document_changed</code> events&#8201;&#8212;&#8201;see  <a href="#tbl-scenarios">Table 1</a> for a comparison of these scenarios.</p>
 </div>
 <div class="paragraph">
-<p>Sync Gateway&#8217;s event handlers, or <strong><em>webhooks</em></strong>, perform document filtering, and HTTP POST operations, asynchronously.</p>
+<p>Sync Gateway&#8217;s <strong><em>webhook</em></strong> event handlers perform both document filtering, and HTTP POST operations, asynchronously.</p>
 </div>
 <div class="paragraph">
 <p>In addition to providing the opportunity to integrate with external systems, this minimizes:</p>
@@ -739,19 +740,20 @@ Related Content&#8201;&#8212;&#8201;<a href="server-integration.html" class="pag
 These changes <sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> can arise from Sync Gateway’s Public REST API and-or Couchbase Lite push replications.</p>
 </li>
 <li>
-<p>Whenever the <em>event queue</em> contains a <em>webhook</em> event, Sync Gateway spawns a process to:</p>
+<p>Whenever the <em>event queue</em> contains a <em>data_changed</em> event, Sync Gateway spawns a process to:</p>
 <div class="ulist">
 <ul>
 <li>
 <p>FILTER&#8201;&#8212;&#8201;decide which changed documents to post.<br>
-The event process executes the <em>webhook&#8217;s</em> <code>filter</code> on the associated document. This filter will determine which documents need to be POSTed.</p>
+The event process executes the <em>webhook&#8217;s</em> event handler (the <code>filter</code>) on the associated document.
+The filter determines which documents need to be POSTed.</p>
 <div class="paragraph">
 <p>If there is no filter all document changes are passed to POST.</p>
 </div>
 </li>
 <li>
 <p>POST&#8201;&#8212;&#8201;send selected changed documents to the URL endpoint.<br>
-HTTP/HTPS is used to POST the document changes selected by the filter to the defined <em>url</em>.</p>
+HTTP/HTTPS is used to POST the document changes selected by the filter to the defined <em>url</em>.</p>
 </li>
 </ul>
 </div>
