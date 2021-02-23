@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Quick Start | Couchbase Docs</title>
-<link rel="canonical" href="https://ibsoln.github.io/stage/release284/sync-gateway/2.8/quickstart.html">
+<title>Webhooks | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/release284/sync-gateway/2.8/webhooks.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Introducing Sync Gateway events and event handling with Webhooks">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -104,7 +105,7 @@
 </div>
 <div class="nav-menu">
 <ul class="nav-list">
-<li class="nav-item " data-depth="0">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
@@ -384,7 +385,7 @@
 </li>
 </ul>
 </li>
-<li class="nav-item  is-inactive " data-depth="1">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
@@ -409,7 +410,7 @@
 <a class="nav-link" href="os-level-tuning.html">OS-level Tuning</a>
 </span>
 </li>
-<li class="nav-item " data-depth="2">
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="webhooks.html">Webhooks</a>
@@ -583,7 +584,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/quickstart.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/webhooks.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -642,18 +643,430 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb"><a href="quickstart.html">Quick Start</a></li>
+<li class="crumb"><a href="deployment.html">Deploy</a></li>
+<li class="crumb"><a href="webhooks.html">Webhooks</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Quick Start</h1>
+<h1 class="page">Webhooks</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Description&#8201;&#8212;&#8201;<em>Introducing Sync Gateway events and event handling with Webhooks</em><br>
+<em>Abstract&#8201;&#8212;&#8201;You can configure webhooks to detect document_changed events and post the changed documents to specified URLs.</em><br>
+Related Content&#8201;&#8212;&#8201;<a href="server-integration.html" class="page">Changes Feed</a>  |  <a href="integrating-external-stores.html" class="page">External Stores</a>  |  <a href="stats-prometheus.html" class="page">Prometheus Integration</a></p>
+</div>
+</blockquote>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="title">Caveats</div>
+<div class="paragraph">
+<p>Webhooks post your application’s data, which might include user data, to URLs.
+Consider the security implications.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sync Gateway provides the ability to extend the replication process and build responsive services that react to changes in documents, adding value to the end to end process.</p>
+</div>
+<div class="paragraph">
+<p>For example, by initiating the sending of notifications, or specialist audit processes, when certain document changes are detected.</p>
+</div>
+<div class="paragraph">
+<p>This can be done using either the <a href="server-integration.html" class="page">changes feed</a> or <code>document_changed</code> events&#8201;&#8212;&#8201;see  <a href="#tbl-scenarios">Table 1</a> for a comparison of these scenarios.</p>
+</div>
+<div class="paragraph">
+<p>Sync Gateway&#8217;s <strong><em>webhook</em></strong> event handlers perform both document filtering, and HTTP POST operations, asynchronously.</p>
+</div>
+<div class="paragraph">
+<p>In addition to providing the opportunity to integrate with external systems, this minimizes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The performance impact on Sync Gateway&#8217;s regular processing</p>
+</li>
+<li>
+<p>The amount of Sync Gateway node CPU resources consumed by slow response times from the HTTP POST operations.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="behavior"><a class="anchor" href="#behavior"></a>Behavior</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Webhooks work on the push-cycle of a replication.</p>
+</div>
+<div class="paragraph">
+<p>If a <em>webhook</em> event handler is defined:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Sync Gateway adds a <code>document_changed</code> event to the <em>event queue</em> <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> whenever it updates a document in a Couchbase Server bucket.
+These changes <sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> can arise from Sync Gateway’s Public REST API and-or Couchbase Lite push replications.</p>
+</li>
+<li>
+<p>Whenever the <em>event queue</em> contains a <em>data_changed</em> event, Sync Gateway spawns a process to:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>FILTER&#8201;&#8212;&#8201;decide which changed documents to post.<br>
+The event process executes the <em>webhook&#8217;s</em> event handler (the <code>filter</code>) on the associated document.
+The filter determines which documents need to be POSTed.</p>
+<div class="paragraph">
+<p>If there is no filter all document changes are passed to POST.</p>
+</div>
+</li>
+<li>
+<p>POST&#8201;&#8212;&#8201;send selected changed documents to the URL endpoint.<br>
+HTTP/HTTPS is used to POST the document changes selected by the filter to the defined <em>url</em>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<table id="tbl-scenarios" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Changes Feed vs Webhooks</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Scenario</th>
+<th class="tableblock halign-center valign-top">Changes feed (pull)</th>
+<th class="tableblock halign-center valign-top">Webhooks (push)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequence/Ordered</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User Access Control</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Fine Grain</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Limited</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scalable</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Data Stream replay on Failure</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="definition"><a class="anchor" href="#definition"></a>Definition</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Define <em>Webhooks</em> in Sync Gateway&#8217;s <a href="refer/config-properties.html" class="page">Configuration File</a> using the database level <a href="refer/config-properties.html#databases-this_db-event_handlers" class="page">this_db.event_handlers</a> properties.</p>
+</div>
+<div class="paragraph">
+<p>You can define multiple webhook event handlers.
+For example, you could define webhooks with different filtering criteria, which post changed documents to different URLs&#8201;&#8212;&#8201;see: <a href="#ex-definitions">Example 1</a>.</p>
+</div>
+<div class="paragraph">
+<p>Each event handler definition comprises the following properties:</p>
+</div>
+<div class="sect2">
+<h3 id="document-change-properties"><a class="anchor" href="#document-change-properties"></a>Document Change Properties</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">A Filter</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Property name: <a href="refer/config-properties.html#databases-this_db-event_handlers-document_changed-filter" class="page">this_db.event_handlers.document_changed.filter</a></p>
+</div>
+<div class="paragraph">
+<p>The filter is a JavaScript function used to determine which documents to post.
+It accepts the document body as input and returns a boolean value.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the filter function returns true, then Sync Gateway posts the document.</p>
+</li>
+<li>
+<p>If the filter function returns false, then Sync Gateway does not post the document.</p>
+</li>
+<li>
+<p>If no filter function is defined, then Sync Gateway posts all changed documents.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Filtering only determines which documents to post. It does not extract specific content from documents and post only that.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">An event handler type</dt>
+<dd>
+<p>Property name: <a href="refer/config-properties.html#databases-this_db-event_handlers-document_changed-handler" class="page">this_db.event_handlers.document_changed.handler</a></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Sets the event handler&#8217;s type; currently, this must be <code>webhook</code>.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">A timeout value</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Property name: <a href="refer/config-properties.html#databases-this_db-event_handlers-document_changed-timeout" class="page">this_db.event_handlers.document_changed.timeout</a></p>
+</div>
+<div class="paragraph">
+<p>Sets the time (in seconds) to wait for a response to the POST operation.
+It ensures that slow-running POST operations don&#8217;t cause the webhook event queue to back up.
+When the timeout limit is reached, Sync Gateway stops listening for a response and discards the operation.</p>
+</div>
+<div class="paragraph">
+<p>You should not need to adjust the default setting to tune performance.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Property name: <a href="refer/config-properties.html#databases-this_db-event_handlers-document_changed-url" class="page">this_db.event_handlers.document_changed.url</a></p>
+</div>
+<div class="paragraph">
+<p>Sets the address to which documents are posted.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<div id="ex-definitions" class="exampleblock">
+<div class="title">Example 1. Sample Webhook Definitions</div>
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_simple-webhook"></a>Simple Webhook</p>
+</li>
+<li>
+<p><a id="tabset1_multiple-webhooks"></a>Multiple Webhooks</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_simple-webhook">
+<div class="paragraph">
+<p>In this simple example of a <code>webhook</code> event handler we define a single instance with no filter.
+It simply listens for the <code>document_changed</code> event and immediately sends the changed document to the URL <code>http://someurl.com</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">"event_handlers": {
+    "document_changed": [
+        {
+            "handler": "webhook",
+            "url": "http://someurl.com"
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_multiple-webhooks">
+<div class="paragraph">
+<p>In this example we define two <code>webhook</code> event handlers, both of which use filters to decide how to process the changed document.</p>
+</div>
+<div class="paragraph">
+<p>The <code>filter</code> function in the first handler recognizes documents with <code>doc.type</code> equal to <code>A</code> and posts the documents to the URL <code>http://someurl.com/type_A</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>filter</code> function in the second handler recognizes documents with <code>doc.type</code> equal to B and posts the documents to the URL <code>http://someurl.com/type_B</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">"event_handlers": {
+      "document_changed": [
+        {"handler": "webhook",
+         "url": "http://someurl.com/type_A",
+         "filter": `function(doc) {
+              if (doc.type == "A") {
+                return true;
+              }
+              return false;
+            }`
+         },
+        {"handler": "webhook",
+         "url": "http://someurl.com/type_B",
+         "filter": `function(doc) {
+              if (doc.type == "B") {
+                return true;
+              }
+              return false;
+            }`
+        }
+     ]
+  }</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="event-processing-properties"><a class="anchor" href="#event-processing-properties"></a>Event Processing Properties</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Limited Concurrent Processes</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Property name: <a href="refer/config-properties.html#databases-this_db-event_handlers-max_processes" class="page">this_db.event_handlers.max_processes</a></p>
+</div>
+<div class="paragraph">
+<p>Sets the maximum number of events that can be processed concurrently.
+The default value should work well in the majority of cases.
+You should not need to adjust it to tune performance.
+However, if you wish to ensure that most webhook posts are sent, you can set it to sufficiently high value.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Limited Full-Queue Wait Time</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Property name: <a href="refer/config-properties.html#databases-this_db-event_handlers-wait_for_process" class="page">this_db.event_handlers.wait_for_process</a></p>
+</div>
+<div class="paragraph">
+<p>Sets the maximum time (milliseconds) that event processing will wait for a free process, if an event is received whilst the event queue is full.
+You should not need to adjust it to tune performance.</p>
+</div>
+<div class="paragraph">
+<p>To avoid blocking standard Sync Gateway processing, set a zero value.
+Any events arriving whilst the queue is full are then immediately discarded&#8201;&#8212;&#8201;see also <a href="#lbl-evlog">Logging</a>.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-evlog"><a class="anchor" href="#lbl-evlog"></a>Logging</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sync Gateway creates a log whenever an event is discarded, and not added to the event queue.</p>
+</div>
+<div class="paragraph">
+<p>You can configure the console logging of events using the configuration file and-or the ADMIN Rest API&#8201;&#8212;&#8201;see <a href="advance/logging.html" class="page">Use the Logging API</a>.
+The <code>log_key</code> you need to include is <code>Event</code>; or <code>Events+</code> for more verbose output.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">API Topics</div>
+<ul>
+<li>
+<p><a href="refer/rest-api-public.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="refer/rest-api-metrics.html" class="page">Metrics REST API</a></p>
+</li>
+<li>
+<p><a href="advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference</div>
+<ul>
+<li>
+<p><a href="refer/config-properties.html" class="page">Configuration File</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. An asynchronous event-processing queue
+</div>
+<div class="footnote" id="_footnotedef_2">
+<a href="#_footnoteref_2">2</a>. Creations, updates, and deletions
+</div>
 </div>
 </article>
 </main>

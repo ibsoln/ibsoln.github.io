@@ -7,6 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/stage/release284/sync-gateway/2.8/integrating-external-stores.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Introducing Sync Gateway integration with external data stores">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -409,6 +410,18 @@
 <a class="nav-link" href="os-level-tuning.html">OS-level Tuning</a>
 </span>
 </li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="webhooks.html">Webhooks</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-integration.html">Changes Feed</a>
+</span>
+</li>
 <li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
@@ -418,19 +431,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="server-integration.html">Webhooks and Changes Feed</a>
+<a class="nav-link" href="stats-prometheus.html">Prometheus Feed</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="indexing.html">Indexing versus Views</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="stats-prometheus.html">Prometheus Integration</a>
 </span>
 </li>
 </ul>
@@ -651,12 +658,21 @@
 <span  id="otherContributor"> + </span>
 </div><div id="preamble">
 <div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
 <div class="paragraph">
-<p>The Sync Gateway REST API is divided in two categories: the Public REST API available on port 4984 and the Admin REST API accessible on port 4985.
-Those are the default ports and they can be changed in the configuration file of Sync Gateway.</p>
+<p>Description&#8201;&#8212;&#8201;<em>Introducing Sync Gateway integration with external data stores</em><br>
+Related Content&#8201;&#8212;&#8201;<a href="server-integration.html" class="page">Changes Feed</a>  |  <a href="webhooks.html" class="page">Event Handling</a>  |  <a href="stats-prometheus.html" class="page">Prometheus Integration</a></p>
 </div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>In this guide, you will learn how to run the following operations on the Admin REST API:</p>
+<p>In this guide, you will learn how to run the following operations using the Admin REST API:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -729,16 +745,31 @@ So please consider the spec as a starting point and make any relevant changes as
 </table>
 </div>
 <div class="paragraph">
-<p>In this case, you will use the <a href="refer/rest-api-admin.html" class="page">Admin REST API</a>.
-In the same directory, install the following dependencies.</p>
+<p>In this case, you will use the <a href="refer/rest-api-admin.html" class="page">Admin REST API</a>.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Get Dependencies</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>In the same directory, install the following dependencies.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">npm install swagger-client &amp;&amp; request-promise</code></pre>
 </div>
 </div>
+</div>
+</div>
+</li>
+<li>
+<p>Get Sync Gateway</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p><a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Download Sync Gateway</a> and start it from the command line with a database called <code>movies_lister</code>.</p>
+<p><a href="https://www.couchbase.com/downloads#couchbase-mobile">Download Sync Gateway</a> and start it from the command line with a database called <code>movies_lister</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -746,9 +777,21 @@ In the same directory, install the following dependencies.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The Sync Gateway database is now available at <code>http://localhost:4985/movies_lister/</code>.
-Create a new file called <code>import.js</code> with the following to retrieve the movies and insert them in the Sync Gateway database.</p>
+<p>The Sync Gateway database is now available at <code>http://localhost:4985/movies_lister/</code>.</p>
 </div>
+</div>
+</div>
+</li>
+<li>
+<p>Create import function</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Create a new file called <code>import.js</code> with the following to retrieve the movies and insert them in the Sync Gateway database.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 1. Importing to Sync Gateway</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">var request = require('request-promise')
@@ -762,18 +805,15 @@ var client = new Swagger({
   usePromise: true
 }).then(function (client) {
   var data = [];
-  // 1
-  request({uri: api, json: true})
-    // 2
+  request({uri: api, json: true}) <i class="conum" data-value="1"></i><b>(1)</b>
     .then(function (movies) {
       data = movies;
-      return client.database.post_db_bulk_docs({db: db, BulkDocsBody: {docs: movies}});
+      return client.database.post_db_bulk_docs({db: db, BulkDocsBody: {docs: movies}}); <i class="conum" data-value="2"></i><b>(2)</b>
     })
     .then(function (res) {
       return res.obj;
     })
-    // 3
-    .each(function (row) {
+    .each(function (row) { <i class="conum" data-value="3"></i><b>(3)</b>
       var movie = data.filter(function (movie) {
         return movie._id == row.id ? true : false
       })[0];
@@ -798,20 +838,25 @@ var client = new Swagger({
 <div class="paragraph">
 <p>Here&#8217;s what the code above is doing:</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Use the <a href="https://github.com/request/request-promise">request-promise</a> library to retrieve the movies from the external store.</p>
-</li>
-<li>
-<p>Save the movies to Sync Gateway.
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the <a href="https://github.com/request/request-promise">request-promise</a> library to retrieve the movies from the external store.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Save the movies to Sync Gateway.
 The <code>post_db_bulk_docs</code> method takes a db name (<code>movies_lister</code>) and the documents to save in the request body.
-Notice that the response from the external store is an array and must be wrapped in a JSON object of the form <code>{docs: movies}</code>.</p>
-</li>
-<li>
-<p>The response of the <code>/{tkn-db}/_bulk_docs</code> request contains the generated revision numbers which are written back to the external store.</p>
-</li>
-</ol>
+Notice that the response from the external store is an array and must be wrapped in a JSON object of the form <code>{docs: movies}</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The response of the <code>/{tkn-db}/_bulk_docs</code> request contains the generated revision numbers which are written back to the external store.</td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -827,6 +872,9 @@ This method is very helpful during development as it offers the documentation on
 </tr>
 </table>
 </div>
+<div class="exampleblock">
+<div class="title">Example 2. Getting Help Information</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">client.help(); // prints all the tags to the console
@@ -834,14 +882,30 @@ client.database.help(); // prints all the database methods to the console
 client.database.post_db_bulk_docs.help(); // prints all the parameters (querystring and request body)</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Start the program</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Start the program from the command line:</p>
+<p>From the command line, use:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">node import.js</code></pre>
 </div>
 </div>
+</div>
+</div>
+</li>
+<li>
+<p>Verify the import</p>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
 <p>To verify that the movie documents have been imported, you can:</p>
 </div>
@@ -862,10 +926,16 @@ The sequence number increments for every change that happens on the Sync Gateway
 <div class="paragraph">
 <p>Notice that the <code>_rev</code> property is also stored on each record on the external store, <code>movies.json</code>.</p>
 </div>
-<div class="paragraph">
-<p>Run the program again, the same number of documents are visible in Sync Gateway.
+</div>
+</div>
+</li>
+<li>
+<p>Run the program again<br>
+You will see the same number of documents are visible in Sync Gateway.
 This time with a 2nd generation revision number.
 This update operation was successful because the parent revision number was sent as part of the request body.</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
@@ -886,6 +956,9 @@ This update operation was successful because the parent revision number was sent
 <div class="paragraph">
 <p>Create a new file called <code>export.js</code> with the following:</p>
 </div>
+<div class="exampleblock">
+<div class="title">Example 3. Exporting from Sync Gateway</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">var request = require('request')
@@ -898,14 +971,12 @@ var client = new Swagger({
   url: 'https://docs.couchbase.com/sync-gateway/current/_attachments/sync-gateway-admin.yaml',
   success: function () {
 
-    // 1
-    client.database.get_db({db: db}, function (res) {
-      // 2
-      getChanges(res.obj.update_seq);
+    client.database.get_db({db: db}, function (res) { <i class="conum" data-value="1"></i><b>(1)</b>
+
+      getChanges(res.obj.update_seq); <i class="conum" data-value="2"></i><b>(2)</b>
     });
 
-    function getChanges(seq) {
-      // 3
+    function getChanges(seq) {<i class="conum" data-value="3"></i><b>(3)</b>
       var options = {db: db, feed: 'longpoll', since: seq, include_docs: true};
       client.database.get_db_changes(options, function (res) {
 
@@ -913,8 +984,8 @@ var client = new Swagger({
         for (var i = 0; i &lt; results.length; i++) {
           var row = results[i];
           console.log("Document with ID " + row.id);
-          // 4
-          var options = {
+
+          var options = { <i class="conum" data-value="4"></i><b>(4)</b>
             url: api,
             method: 'POST',
             body: JSON.stringify(row.doc),
@@ -942,16 +1013,19 @@ var client = new Swagger({
 <div class="paragraph">
 <p>Here&#8217;s what the code above is doing:</p>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Gets the last sequence number of the database.</p>
-</li>
-<li>
-<p>Calls the <code>getChanges</code> method with the last sequence number.</p>
-</li>
-<li>
-<p>Sends changes request to Sync Gateway with the following parameters:</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Gets the last sequence number of the database.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Calls the <code>getChanges</code> method with the last sequence number.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Sends changes request to Sync Gateway with the following parameters:
 <div class="ulist">
 <ul>
 <li>
@@ -964,12 +1038,15 @@ var client = new Swagger({
 <p><code>since=X</code> (where X is the sequence number)</p>
 </li>
 </ul>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Write the document to the external store.</td>
+</tr>
+</table>
 </div>
-</li>
-<li>
-<p>Write the document to the external store.</p>
-</li>
-</ol>
+</div>
 </div>
 <div class="paragraph">
 <p>Run the program from the command line:</p>
@@ -1008,6 +1085,9 @@ Before sending the <code>_bulk_docs</code> request, you will fetch the thumbnail
 <div class="paragraph">
 <p>Create a new file called <code>attachments.js</code> with the following to retrieve the movies, their thumbnails and insert them in the Sync Gateway database.</p>
 </div>
+<div class="exampleblock">
+<div class="title">Example 4. Importing Attachments</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">var request = require('request-promise')
@@ -1059,6 +1139,8 @@ var client = new Swagger({
 });</code></pre>
 </div>
 </div>
+</div>
+</div>
 <div class="paragraph">
 <p>Restart Sync Gateway to have an empty database and run the program.
 The documents are saved with the attachment metadata.</p>
@@ -1074,6 +1156,54 @@ The documents are saved with the attachment metadata.</p>
 <div class="imageblock">
 <div class="content">
 <img src="_images/sg-attachment.png" alt="sg attachment">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">API Topics</div>
+<ul>
+<li>
+<p><a href="refer/rest-api-public.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="refer/rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="refer/rest-api-metrics.html" class="page">Metrics REST API</a></p>
+</li>
+<li>
+<p><a href="advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference</div>
+<ul>
+<li>
+<p><a href="refer/config-properties.html" class="page">Configuration File</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
 </div>
 </div>
 </div>
