@@ -1467,7 +1467,7 @@ thisReplicator.Start(); <i class="conum" data-value="7"></i><b>(7)</b></code></p
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
-By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates&#8201;&#8212;&#8201;see: <a href="#authenticating-the-listener">Authenticating the Listener</a>.</td>
+By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates&#8201;&#8212;&#8201;see: <a href="#authenticating-the-listener">[authenticating-the-listener]</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -1518,8 +1518,13 @@ Here we say to provide <em>Basic Authentication</em> credentials. Other options 
 <div class="sect1">
 <h2 id="configure-replicator"><a class="anchor" href="#configure-replicator"></a>Configure Replicator</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>In this section: <a href="#configure-target">[configure-target]</a>  |  <a href="#sync-mode">[sync-mode]</a>  |  <a href="#lbl-cfg-htbt">Heartbeat</a>  |  <a href="#authenticating-the-listener">Authenticating the Listener</a>  | <a href="#client-authentication">[client-authentication]</a></p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">In this section</dt>
+<dd>
+<p><a href="#lbl-cfg-tgt">Configure Target</a>  |  <a href="#lbl-cfg-sync">Sync Mode</a>  |  <a href="#lbl-cfg-htbt">Heartbeat</a>  |  <a href="#lbl-auth-lstnr">Authenticating the Listener</a>  | <a href="#lbl-authclnt">Client Authentication</a></p>
+</dd>
+</dl>
 </div>
 <div class="sect2">
 <h3 id="lbl-cfg-tgt"><a class="anchor" href="#lbl-cfg-tgt"></a>Configure Target</h3>
@@ -1663,7 +1668,7 @@ Couchbase Lite minimizes the chance of dropped connections by having the replica
 </div>
 </div>
 <div class="sect2">
-<h3 id="authenticating-the-listener"><a class="anchor" href="#authenticating-the-listener"></a>Authenticating the Listener</h3>
+<h3 id="lbl-auth-lstnr"><a class="anchor" href="#lbl-auth-lstnr"></a>Authenticating the Listener</h3>
 <div class="paragraph">
 <p>Define the credentials the your app (the client) is expecting to receive from the server (listener) in order to ensure that the server is one it is prepared to interact with.</p>
 </div>
@@ -1927,6 +1932,14 @@ thisReplicator.Start(); <i class="conum" data-value="2"></i><b>(2)</b></code></p
 <div class="sect1">
 <h2 id="lbl-repl-mon"><a class="anchor" href="#lbl-repl-mon"></a>Monitor Sync</h2>
 <div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">In this section</dt>
+<dd>
+<p><a href="#lbl-repl-chng">Change Listeners</a>  |  <a href="#lbl-repl-status">Replicator Status</a>  |  <a href="#lbl-repl-pend">Documents Pending Push</a></p>
+</dd>
+</dl>
+</div>
 <div class="sect2">
 <h3 id="lbl-repl-chng"><a class="anchor" href="#lbl-repl-chng"></a>Change Listeners</h3>
 <div class="admonitionblock tip">
@@ -1961,7 +1974,7 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <div class="ulist">
 <ul>
 <li>
-<p><a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Activity">Activity</a>&#8201;&#8212;&#8201;stopped, offline, connecting, idle or busy</p>
+<p><a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Activity">Activity</a>&#8201;&#8212;&#8201;stopped, offline, connecting, idle or busy&#8201;&#8212;&#8201;see states described in: <a href="#tbl-states">Table 1</a></p>
 </li>
 <li>
 <p><a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Progress">Progress</a></p>
@@ -1980,9 +1993,6 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <p><a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorStatus.html#Couchbase_Lite_Sync_ReplicatorStatus_Error">Error</a>&#8201;&#8212;&#8201;the current error, if any</p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>For more on replication status, see: <a href="../learn/csharp-replication.html#lbl-repl-states" class="page">Replication Status</a></p>
 </div>
 <div id="ex-repl-mon" class="exampleblock">
 <div class="title">Example 9. Monitor replication</div>
@@ -2029,6 +2039,151 @@ _thisDatabase.Close();</code></pre>
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="lbl-repl-states"><a class="anchor" href="#lbl-repl-states"></a>Replication States</h4>
+<div class="paragraph">
+<p><a href="#tbl-states">Table 1</a> shows the different states, or activity levels, reported in the API; and the meaning of each.</p>
+</div>
+<table id="tbl-states" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Replicator activity levels</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock">State</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Meaning</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>STOPPED</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The replication is finished or hit a fatal error.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>OFFLINE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The replicator is offline as the remote host is unreachable.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>CONNECTING</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The replicator is connecting to the remote host.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>IDLE</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The replication caught up with all the changes available from the server.
+The <code>IDLE</code> state is only used in continuous replications.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>BUSY</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The replication is actively transferring data.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The replication change object also has properties to track the progress (<code>change.status.completed</code> and <code>change.status.total</code>).
+But since the replication occurs in batches and the total count can vary through the course of a replication, those progress indicators are not very useful from the standpoint of an app user.
+Hence, these should not be used for tracking the actual progress of the replication.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="replication-status-and-app-life-cycle"><a class="anchor" href="#replication-status-and-app-life-cycle"></a>Replication Status and App Life Cycle</h4>
+<div class="paragraph">
+<p>Couchbase Lite doesn&#8217;t react to OS backgrounding or foregrounding events and replication(s) will continue running as long as the remote system does not terminate the connection and the app does not terminate.
+It is generally recommended to stop replications before going into the background otherwise socket connections may be closed by the OS and this may interfere with the replication process.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-repl-pend"><a class="anchor" href="#lbl-repl-pend"></a>Documents Pending Push</h3>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_IsDocumentPending_System_String_">Replicator.IsDocumentPending()</a> is quicker and more efficient.
+Use it in preference to returning a list of pending document IDs, where possible.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can check whether documents are waiting to be pushed in any forthcoming sync by using either of the following API methods:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use the <a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_GetPendingDocumentIDs">Replicator.GetPendingDocumentIDs()</a> method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.</p>
+<div class="paragraph">
+<p>This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.</p>
+</div>
+</li>
+<li>
+<p>Use the <a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_IsDocumentPending_System_String_">Replicator.IsDocumentPending()</a> method to quickly check whether an individual document is pending a push.</p>
+</li>
+</ul>
+</div>
+<div id="ex-pending" class="exampleblock">
+<div class="title">Example 10. Use Pending Document ID API</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">var url = new Uri("ws://localhost:4984/mydatabase");
+var target = new URLEndpoint(url);
+var database = new Database("myDB");
+var config = new ReplicatorConfiguration(database, target);
+config.ReplicatorType  = ReplicatorType.Push;
+
+var replicator = new Replicator(config);
+
+var mydocids =
+  new HashSet &lt;string&gt; (replicator.GetPendingDocumentIDs()); <i class="conum" data-value="1"></i><b>(1)</b>
+
+
+if (mydocids.Count &gt; 0)
+{
+    Console.WriteLine($"There are {mydocids.Count} documents pending");
+    replicator.AddChangeListener((sender, change) =&gt;
+    {
+        Console.WriteLine($"Replicator activity level is " +
+                          change.Status.Activity.ToString());
+        // iterate and report-on previously
+        // retrieved pending docids 'list'
+        foreach (var thisId in mydocids)
+            if (!replicator.IsDocumentPending(thisId)) <i class="conum" data-value="2"></i><b>(2)</b>
+            {
+                Console.WriteLine($"Doc ID {thisId} now pushed");
+            };
+    });
+
+    replicator.Start();
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_GetPendingDocumentIDs">Replicator.GetPendingDocumentIDs()</a> returns a list of the document IDs for all documents waiting to be pushed.
+This is a snapshot and may have changed by the time the response is received and processed.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.Replicator.html#Couchbase_Lite_Sync_Replicator_IsDocumentPending_System_String_">Replicator.IsDocumentPending()</a> returns <code>true</code> if the document is waiting to be pushed, and <code>false</code> otherwise.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -2048,7 +2203,7 @@ If you added an optional change listener (see <a href="#lbl-repl-chng">Change Li
 </table>
 </div>
 <div class="exampleblock">
-<div class="title">Example 10. Stop replicator</div>
+<div class="title">Example 11. Stop replicator</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2078,13 +2233,13 @@ thisReplicator.Stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pr
 <p>Unless you specify otherwise, Couchbase Lite&#8217;s default conflict resolution policy is applied&#8201;&#8212;&#8201;see <a href="../learn/csharp-conflict.html#automatic-conflict-resolution" class="page">Automatic Conflict Resolution</a>.</p>
 </div>
 <div class="paragraph">
-<p>To use a different policy, specify a <em>conflict resolver</em> using <a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_ConflictResolver">ConflictResolver</a> as shown in <a href="#using-conflict-resolvers">Example 11</a>.</p>
+<p>To use a different policy, specify a <em>conflict resolver</em> using <a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Sync.ReplicatorConfiguration.html#Couchbase_Lite_Sync_ReplicatorConfiguration_ConflictResolver">ConflictResolver</a> as shown in <a href="#using-conflict-resolvers">Example 12</a>.</p>
 </div>
 <div class="paragraph">
 <p>For more complex solutions you can provide a custom conflict resolver - see: <a href="../learn/csharp-conflict.html#custom-conflict-resolution" class="page">Custom Conflict Resolution</a>.</p>
 </div>
 <div id="using-conflict-resolvers" class="exampleblock">
-<div class="title">Example 11. Using conflict resolvers</div>
+<div class="title">Example 12. Using conflict resolvers</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -2157,7 +2312,7 @@ thisReplicator.Stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pr
 In the event of conflicting keys, it will pick the key value from <code>new</code>.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 12. Merging document properties</div>
+<div class="title">Example 13. Merging document properties</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
