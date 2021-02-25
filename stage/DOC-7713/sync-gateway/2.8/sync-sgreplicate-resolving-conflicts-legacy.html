@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Load Balancer | Couchbase Docs</title>
-<link rel="canonical" href="https://ibsoln.github.io/stage/test-aliases/sync-gateway/2.8/load-balancer.html">
+<title>Conflict Resolution with 1.x client | Couchbase Docs Preview Site</title>
+<link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.8/sync-sgreplicate-resolving-conflicts-legacy.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Couchbase Sync Gateway -- resolving conflicts">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -19,7 +20,7 @@
       <div class="container">
           <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
 
-              <a class="navbar-brand" href="../..">
+              <a class="navbar-brand" href="https://www.couchbase.com">
                 <img src="../../_/img/couchbase-documentation-logo.svg" alt="Couchbase" />
               </a>
               <button class="navbar-burger" data-target="topbar-menu">
@@ -37,6 +38,11 @@
 
               <div class="navbar-collapse collapse" id="navbar2">
                 <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a href="https://ibsoln.github.io/home/index.html" class="nav-link">
+                      <i class="fas fa-home"></i>
+                    </a>
+                  </li>
                   <li class="nav-item">
                     <a class="nav-link" href="../../home/server.html">
                       Server
@@ -58,7 +64,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="#">
+                    <a class="nav-link" href="../../tutorials/index.html">
                       Tutorials
                       <span class="arrow">
                         <i class="fas fa-arrow-right"></i>
@@ -74,13 +80,8 @@
                     <i class="fas fa-search"></i>
                   </button>
                 </form>
-                <div class="parent-site">
-                  <a href="https://www.couchbase.com">
-                    Couchbase.com
-                  </a>
-                </div>
                 <a class="btn btn-primary try-btn" href="https://www.couchbase.com/downloads">
-                  Try Free
+                  Downloads
                 </a>
               </div>
 
@@ -402,7 +403,7 @@
 </li>
 </ul>
 </li>
-<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
+<li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
@@ -415,7 +416,7 @@
 <a class="nav-link" href="command-line-options.html">Using Command Line</a>
 </span>
 </li>
-<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
+<li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="load-balancer.html">Load Balancer</a>
@@ -519,14 +520,14 @@
 </li>
 </ul>
 </li>
-<li class="nav-item  is-inactive " data-depth="1">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
 <span class="nav-text ">Legacy Features</span>
 </span>
 <ul class="nav-list">
-<li class="nav-item " data-depth="2">
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="sync-sgreplicate-resolving-conflicts-legacy.html">Conflict Resolution 1.x Clients</a>
@@ -601,7 +602,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/load-balancer.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/sync-sgreplicate-resolving-conflicts-legacy.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -660,14 +661,19 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb"><a href="deployment.html">Deploy</a></li>
-<li class="crumb"><a href="load-balancer.html">Load Balancer</a></li>
+<li class="crumb">Legacy Features</li>
+<li class="crumb"><a href="sync-sgreplicate-resolving-conflicts-legacy.html">Conflict Resolution 1.x Clients</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Load Balancer</h1>
+<h1 class="page">Conflict Resolution with 1.x client</h1>
+<div class="labels">
+<ul>
+<li class="status"><span>Deprecated</span></li>
+</ul>
+</div>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -675,376 +681,308 @@
 <span  id="otherContributor"> + </span>
 </div><div id="preamble">
 <div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
 <div class="paragraph">
-<p>This guide covers various aspects to consider when using a Load Balancer in a Couchbase Mobile deployment.
-In particular, when using NGINX or AWS Elastic Load Balancer (ELB).</p>
+<p>Description&#8201;&#8212;&#8201;<em>Couchbase Sync Gateway&#8201;&#8212;&#8201;resolving conflicts</em><br>
+<em>Abstract&#8201;&#8212;&#8201;This guide relates to handling data conflicts while syncing with Couchbase Lite 1.x clients or syncing with pre 2.8 version of Sync Gateway nodes using SG-Replicate</em><br></p>
+</div>
+</blockquote>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="when-to-use-a-reverse-proxy"><a class="anchor" href="#when-to-use-a-reverse-proxy"></a>When to Use a Reverse Proxy</h2>
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>This guide covers  handling data conflicts while syncing with Couchbase Lite 1.x clients or syncing with pre 2.8 version of Sync Gateway nodes using SG-Replicate</p>
+</div>
+<div class="paragraph">
+<p>In these cases, the conflict resolution happens on the server-side using the Sync Gateway Admin REST API. This information does not apply to applications using Couchbase Mobile 2.x <em>only</em>&#8201;&#8212;&#8201;see <a href="advance/conflict-resolution.html" class="page">Conflict Resolution</a> or inter-Sync Gateway replication with versions of Sync Gateway 2.8 and above &#8201;&#8212;&#8201;see <a href="advance/conflict-resolution.html" class="page">Conflict Resolution</a></p>
+</div>
+<div class="paragraph">
+<p>In Couchbase Lite 1.x, a conflict usually occurs when two writers are offline and save a different revision of the same document.
+Couchbase Mobile provides features to resolve these conflicts, the resolution rules are written in the application to keep full control over which edit (also called a revision) should be picked.</p>
+</div>
+<div class="paragraph">
+<p>The
+<a href="https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/revision/index.html">revision guide</a> and
+<a href="https://developer.couchbase.com/documentation/mobile/1.5/guides/couchbase-lite/native-api/document/index.html#document-conflict-faq">documents conflicts FAQ</a>
+are good resources to learn how to resolve conflicts on the devices with Couchbase Lite.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-a-conflict"><a class="anchor" href="#creating-a-conflict"></a>Creating a conflict</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>During development, the <strong>new_edits</strong> flag can be used to allow conflicts to be created on demand.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">// Persist three revisions of user foo with different statuses
+// and updated_at dates
+curl -X POST http://localhost:4985/sync_gateway/_bulk_docs \
+  -H "Content-Type: application/json" \
+  -d '{"new_edits": false, "docs": [{"_id": "foo", "type": "user", "updated_at": "2016-06-24T17:37:49.715Z", "status": "online", "_rev": "1-123"}, {"_id": "foo", "type": "user", "updated_at": "2016-06-26T17:37:49.715Z", "status": "offline", "_rev": "1-456"}, {"_id": "foo", "type": "user", "updated_at": "2016-06-25T17:37:49.715Z", "status": "offline", "_rev": "1-789"}]}'
+
+// Persist three revisions of task bar with different names
+curl -X POST http://localhost:4985/sync_gateway/_bulk_docs \
+  -H "Content-Type: application/json" \
+  -d '{"new_edits": false, "docs": [{"_id": "bar", "type": "task", "name": "aaa", "_rev": "1-123"}, {"_id": "bar", "type": "task", "name": "ccc", "_rev": "1-456"}, {"_id": "bar", "type": "task", "name": "bbb", "_rev": "1-789"}]}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It can be set in the request body of the POST <code>/{tkn-db}/_bulk_docs</code> endpoint.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="detecting-a-conflict"><a class="anchor" href="#detecting-a-conflict"></a>Detecting a conflict</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Conflicts are detected on the changes feed with the following query string options.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X GET 'http://localhost:4985/sync_gateway/_changes?active_only=true&amp;style=all_docs'
+
+{
+  "results": [
+    {"seq":1,"id":"_user/","changes":[{"rev":""}]},
+    {"seq":4,"id":"foo","changes":[{"rev":"1-789"},{"rev":"1-123"},{"rev":"1-456"}]},
+    {"seq":7,"id":"bar","changes":[{"rev":"1-789"},{"rev":"1-123"},{"rev":"1-456"}]}
+  ],
+  "last_seq":"7"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>With <code>active_only=true</code> and <code>style=all_docs</code> set, the changes feed excludes the deletions (also known as tombstones) and channel access removals which are not needed for resolving conflicts.</p>
+</div>
+<div class="paragraph">
+<p>In this guide, we will write a program in node.js to connect to the changes feed and use the <a href="https://github.com/request/request">request</a> library to perform operations on the Sync Gateway Admin REST API.
+The concepts covered below should also apply to other server-side languages, the implementation will differ but the sequence of operations is the same.
+In a new directory, install the library with npm.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">npm install request</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a new file called index.js with the following.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">var request = require('request');
+var sync_gateway_url = 'http://localhost:4985/sync_gateway/';
+var seq = process.argv[2];
+
+getChanges(seq);
+
+function getChanges(seq) {
+  var querystring = 'style=all_docs&amp;active_only=true&amp;include_docs=true&amp;feed=longpoll&amp;since=' + seq;
+  var options = {
+    url: sync_gateway_url + '_changes?' + querystring
+  };
+  // 1. GET request to _changes?feed=longpoll&amp;...
+  request(options, function (error, response, body) {
+    if (!error &amp;&amp; response.statusCode == 200) {
+      var json = JSON.parse(body);
+      for (var i = 0; i &lt; json.results.length; i++) {
+        var row = json.results[i];
+        var changes = row.changes;
+        console.log("Document with ID " + row.id + " has " + changes.length + " revisions.");
+        // 2. Detect a conflict.
+        if (changes.length &gt; 1) {
+          console.log("Conflicts exist. Resolving...");
+          resolveConflicts(row.doc, function() {
+            getChanges(row.seq);
+          });
+          return;
+        }
+      }
+      // 3. There were no conflicts in this response, get the next change(s).
+      getChanges(json.last_seq);
+    }
+  });
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s go through this step by step:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>GET request to the <code>_changes</code> endpoint.
+With the following options:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>A reverse proxy can hide the existence of a Sync Gateway server or servers.
-This can help to secure the Sync gateway instances when your service is exposed to the internet.</p>
+<p><code>feed=longpoll&amp;since=&lt;seq&gt;</code>: The response will contain all the changes since the specified <code>seq</code>.
+If <code>seq</code> is the last sequence number (the most recent one) then the connection will remain open until a new document is processed by Sync Gateway and the change event is sent.
+The <code>getChanges</code> method is called recursively to always have the latest changes.</p>
 </li>
 <li>
-<p>A reverse proxy can provide application firewall features that protect against common web-based attacks.</p>
+<p><code>include_docs:</code> The response will contain the document body (i.e. the current revision for that document).</p>
 </li>
 <li>
-<p>A reverse proxy can offload ssl termination from the Sync Gateway instances, this can be a significant overhead when supporting large numbers of mobile devices.</p>
-</li>
-<li>
-<p>A reverse proxy can distribute the load from incoming requests to several Sync Gateway instances.</p>
-</li>
-<li>
-<p>A reverse proxy may rewrite the URL of each incoming request in order to match the relevant internal location of the requested resource.
-For Sync Gateway the reverse proxy may map the Internet facing port 80 to the standard Sync Gateway public REST API port 4984.</p>
+<p><code>all_docs&amp;active_only=true:</code> The response will exclude changes that are deletions and channel access removals.</p>
 </li>
 </ul>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="websocket-connection"><a class="anchor" href="#websocket-connection"></a>WebSocket Connection</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To keep a WebSocket connection open, the replicator sends a WebSocket PING message (also known as heartbeat) every 300 seconds (5 minutes).
-The keep alive timeout value of the load balancer must be configured to a higher value than the heartbeat interval.
-For example, 360 seconds.
-The following section demonstrates how to do that with NGINX.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="nginx"><a class="anchor" href="#nginx"></a>NGINX</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Connect to the server running Sync Gateway and install the nginx server:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo apt-get install nginx</code></pre>
-</div>
+</li>
+<li>
+<p><strong>Detect and resolve conflicts.</strong>
+If there are more than one revision then it&#8217;s a conflict.
+Resolve the conflict and return (stop processing this response).
+Once the conflict is resolve, get the next change(s).</p>
+</li>
+<li>
+<p><strong>There were no conflicts in this response, get the next change(s).</strong></p>
+</li>
+</ol>
 </div>
 <div class="paragraph">
-<p>Make sure that the NGINX version installed is 1.3 or higher.
-Earlier versions do not support WebSockets, and will cause connection problems with pull replications from Couchbase Lite.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">nginx -v</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Once the installation is completed, you can access the NGINX welcome page from your browser.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">http://127.0.0.1/</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note: Replace 127.0.0.1 with the IP address of your server.</p>
+<p>The program won&#8217;t run yet because the <code>resolveConflicts</code> method isn&#8217;t defined, read the next section to learn how to resolve conflicts once they are detected.</p>
 </div>
 <div class="sect2">
-<h3 id="basic-nginx-configuration"><a class="anchor" href="#basic-nginx-configuration"></a>Basic NGINX Configuration</h3>
+<h3 id="resolving-conflicts"><a class="anchor" href="#resolving-conflicts"></a>Resolving conflicts</h3>
 <div class="paragraph">
-<p>If you installed nginx using the instructions above, then you will create your sync_gateway configuration file in <strong>/etc/nginx/sites-available</strong>.
-Create a file in that directory called sync_gateway with the following content:</p>
+<p>To resolve conflicts, the <code>open_revs=all</code> option on the document endpoint returns all the revisions of a given document.
+The <strong>Accept: application/json</strong> header is used to have a single JSON object in the response (otherwise the response is in multipart format).</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>upstream sync_gateway {
-    server 127.0.0.1:4984;
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X GET -H 'Accept: application/json' 'http://localhost:4984/sync_gateway/foo?open_revs=all'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>From there, the App Server decides how to merge the data and/or elect the winning update operation.
+Add the following in <code>index.js</code> below the <strong>getChanges</strong> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function chooseLatest(revisions) {
+  var winning_rev = null;
+  var latest_time = 0;
+  for (var i = 0; i  revisions.length; i++) {
+    var time = new Date(revisions[i].updated_at);
+    if (time  latest_time) {
+      latest_time = time;
+      winning_rev = Object.assign({}, revisions[i]); //copy as a new object
+    }
+  }
+  return {revisions: revisions, winning_rev: winning_rev};
 }
-# HTTP server
-#
-server {
-    listen 80;
-    server_name  myservice.example.org;
-    client_max_body_size 20m;
-    location / {
-        proxy_pass              http://sync_gateway;
-        proxy_pass_header       Accept;
-        proxy_pass_header       Server;
-        proxy_http_version      1.1;
-        keepalive_requests      1000;
-        keepalive_timeout       360s;
-        proxy_read_timeout      360s;
+
+function resolveConflicts(current_rev, callback) {
+  var options = {
+    url: sync_gateway_url + current_rev._id + '?open_revs=all',
+    headers: {
+      'Accept': 'application/json'
     }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This <code>upstream</code> block specifies the server and port nginx will forward traffic to, in this example it would be sync_gateway running on the same server as nginx, listening on the default public REST API port of 4984.
-Change these values if your sync_gateway is configured differently.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code># HTTP server
-#
-server {
-    listen 80;
-    server_name  myservice.example.org;
-    client_max_body_size 21m;</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The first section of the 'server' block defines common directives.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The <code>listen</code> directive instructs nginx to listen on port 80 for incoming traffic.</p>
-</li>
-<li>
-<p>The <code>server_name</code> directive instructs nginx to check that the HTTP <code>Host:</code> header value matches <code>myservice.example.org</code> (change this value to your domain).</p>
-</li>
-<li>
-<p>The <code>client_max_body_size</code> directive instructs nginx to accept request bodies up to 21MBytes, this is necessary to support attachments being sync&#8217;d to Sync Gateway.</p>
-</li>
-</ul>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code>location / {
-    proxy_pass              http://sync_gateway;
-    proxy_pass_header       Accept;
-    proxy_pass_header       Server;
-    proxy_http_version      1.1;
-    keepalive_requests      1000;
-    keepalive_timeout       360s;
-    proxy_read_timeout      360s;
-    proxy_set_header        Upgrade $http_upgrade;
-    proxy_set_header        Connection "Upgrade";
-}</code></pre>
-</div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The <code>location</code> block specifies directives for all URL paths below the root path <code>/</code>.</p>
-</li>
-<li>
-<p>The <code>proxy_pass</code> directive instructs nginx to forward all incoming traffic to servers defined in the sync_gateway <code>upstream</code> block.</p>
-</li>
-<li>
-<p>The two <code>proxy_pass_header</code> directives instruct nginx to pass <code>Accept:</code> and <code>Server:</code> headers on inbound and outbound traffic, these headers allow CouchbaseLite and sync_gateway to optimize data transfer, e.g. by using gzip compression and multipart/mixed if it is supported.</p>
-</li>
-<li>
-<p>The <code>keepalive_requests</code> directive instructs nginx to allow up to one thousand requests on the same connection, this is useful when getting a <code>_changes</code> feed using longpoll.</p>
-</li>
-<li>
-<p>The <code>keepalive_timeout</code> directive instructs nginx to keep connection open for 360 seconds from the last request, this value is longer than the default (300 seconds) value for the heartbeat on the <code>_changes</code> feed using longpoll.</p>
-</li>
-<li>
-<p>The <code>proxy_read_timeout</code> directive instructs nginx to keep connection open for 360 seconds from the last server response, this value is longer than the default (300 seconds) value for the heartbeat on the <code>_changes</code> feed using longpoll.</p>
-</li>
-<li>
-<p>The two <code>proxy_set_header</code> directives enable support for WebSocket connections, which are used by Couchbase Lite for a pull replication&#8217;s <code>_changes</code> feed.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>We now need to enable the <code>sync_gateway</code> site, in the sites-enabled directory you need to make a symbolic link to the <code>sync_gateway</code> file you just created:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ln -s /etc/nginx/sites-available/sync_gateway /etc/nginx/sites-enabled/sync_gateway</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>and then restart nginx:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo service nginx restart</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Take a look at the site in your web browser (or use a command line option like curl or wget), specifying the virtual host name you created above, and you should see that your request is proxied through to the Sync Gateway, but your traffic is going over port 80:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl http://myservice.example.org/
-{“couchdb”:”Welcome”,”vendor”:{“name”:”Couchbase Sync Gateway”,”version”:1},”version”:”Couchbase Sync Gateway/1.0.3(81;fa9a6e7)”}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you access your server using its IP address, e.g. <code>http://127.0.0.1/</code> (so that no <code>Host:</code> header is sent), you should see the standard <code>Welcome to nginx!</code> page.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">http://127.0.0.1/</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note: Replace 127.0.0.1 with the IP address of your server.</p>
-</div>
-<div class="paragraph">
-<p>You should see the standard Welcome to nginx! page.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="load-balancing-multiple-sync-gateway-instances"><a class="anchor" href="#load-balancing-multiple-sync-gateway-instances"></a>Load-balancing Multiple Sync Gateway Instances</h3>
-<div class="paragraph">
-<p>Sync Gateway instances have a "shared nothing" architecture: this means that you can scale out by simply deploying additional Sync Gateway instances.
-But incoming traffic needs to be distributed across all the instances.
-Nginx can easily accommodate this and balance the incoming traffic load across all your Sync Gateway instances.
-Simply add the additional instances' IP addresses to the <code>upstream</code> block; for example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">upstream sync_gateway {
-    server 192.168.1.10:4984;
-    server 192.168.1.11:4984;
-    server 192.168.1.12:4984;
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="transport-layer-security-https-ssl"><a class="anchor" href="#transport-layer-security-https-ssl"></a>Transport Layer Security (HTTPS, SSL)</h3>
-<div class="paragraph">
-<p>To secure the connection between clients and Sync Gateway in production, you will want to use Transport Layer Security (TLS, also known as HTTPS or SSL.)
-This not only encrypts data from eavesdroppers (including passwords and login tokens), it also protects against Man-In-The-Middle attacks by verifying to the client that it&#8217;s connecting to the real server, not an impostor.</p>
-</div>
-<div class="paragraph">
-<p>To enable TLS you will need an X.509 certificate.
-For production, you should get a certificate from a reputable Certificate Authority, which will be signed by that authority.
-This allows the client to verify that your certificate is trustworthy.
-You will end up with two files: a private key, and a public certificate.
-Both must be stored on a filesystem accessible to the nginx process.</p>
-</div>
-<div class="paragraph">
-<p>Treat the private key file as highly confidential data, since anyone with the key can impersonate your site in a Man-In-The-Middle attack.
-Read access should be limited to the nginx process(es) and no others.</p>
-</div>
-<div class="paragraph">
-<p>For testing, you can easily create your own self-signed certificate using the <code>openssl</code> command-line tool:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo mkdir -p /etc/nginx/ssl
-sudo openssl req -x509 -nodes -days 1095 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Whichever way you generated the certificate, you should now have two files, a certificate and a private key.
-We will assume they are at <strong>/etc/nginx/ssl/nginx.crt</strong> and <strong>/etc/nginx/ssl/nginx.key</strong>.</p>
-</div>
-<div class="paragraph">
-<p>Now add a new server section to the nginx configuration file to support SSL termination:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code>server {
-    listen 443 ssl;
-    server_name  myservice.example.org;
-    client_max_body_size 21m;
+  };
+  // 1. Use open_revs=all to get the properties in each revision.
+  request(options, function (error, response, body) {
+    if (!error  response.statusCode == 200) {
+      var json = JSON.parse(body);
+      var revisions = json.map(function(row) {return row.ok;});
+      var resolved;
+      // 2. Resolve the conflict.
+      switch (current_rev.type) {
+        case user:
+          // Choose the revision with the latest updated_at value
+          // as the winner.
+          resolved = chooseLatest(revisions);
+          break;
+        case list:
+          // Write your own resolution logic for other doc types
+          // following the function definition of chooseLatest.
+        default:
+          // Keep the current revision as the winner. Non-current
+          // revisions must be removed even in this scenario.
+          resolved = {revisions: revisions, winning_rev: current_rev};
+      }
 
-    ssl on;
-    ssl_certificate /etc/nginx/ssl/nginx.crt;
-    ssl_certificate_key /etc/nginx/ssl/nginx.key;
+      // 3. Prepare the changes for the _bulk_docs request.
+      var bulk_docs = revisions.map(function (revision) {
+        if (revision._rev == current_rev._rev) {
+          delete resolved.winning_rev._rev;
+          revision = Object.assign({_rev: current_rev._rev}, resolved.winning_rev);
+        } else {
+          revision._deleted = true;
+        }
+        return revision
+      });
 
-    ssl_session_cache   shared:SSL:10m;
-    ssl_session_timeout 10m;
-    ssl_protocols TLSv1;
-
-    location / {
-        proxy_pass              http://sync_gateway;
-        proxy_pass_header       Accept;
-        proxy_pass_header       Server;
-        proxy_http_version      1.1;
-        keepalive_requests      1000;
-        keepalive_timeout       360s;
-        proxy_read_timeout      360s;
+      // 4. Write each change (deletion or update) to the database.
+      var options = {url: sync_gateway_url + '_bulk_docs', body: JSON.stringify({docs: bulk_docs})};
+      request.post(options, function (error, response, body) {
+        if (!error  response.statusCode == 201) {
+          console.log('Conflict resolved for doc ID ' + current_rev._id);
+          callback();
+        }
+      });
     }
+  })
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Restart nginx to enable the new server:</p>
+<p>So what is this code doing?</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Use <code>open_revs=all</code> to get the properties in each revision.</strong></p>
+</li>
+<li>
+<p><strong>Resolve the conflict.</strong>
+For user documents, the revision with the latest <code>updated_at</code> value wins.
+For other document types, the current revision (the one that got picked deterministically by the system) remains the winner.
+Note that non-current revisions must still be removed otherwise they may be promoted as the current revision at a later time.
+The resolution logic may be different for each document type.</p>
+</li>
+<li>
+<p><strong>Prepare the changes for the <code>_bulk_docs</code> request.</strong>
+All non-current revision are marked for deletion with the <code>_deleted: true</code> property.
+The current revision properties are replaced with the properties of the winning revision.</p>
+</li>
+<li>
+<p><strong>Write each change (deletion or update) to the database.</strong></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Start the program from sequence 0, the first sequence number in any Couchbase Mobile database.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo service nginx restart</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">node index.js 0</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Test using curl:</p>
+<p>The conflicts that were added at the beginning of the guide are detected and resolved.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -k https://myservice.example.org/
-{“couchdb”:”Welcome”,”vendor”:{“name”:”Couchbase Sync Gateway”,”version”:1},”version”:”Couchbase Sync Gateway/1.0.3(81;fa9a6e7)”}</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Document with ID _user/ has 1 revisions.
+Document with ID foo has 3 revisions.
+Conflicts exist. Resolving...
+Conflict resolved for doc ID foo
+Document with ID bar has 3 revisions.
+Conflicts exist. Resolving...
+Conflict resolved for doc ID bar
+Document with ID foo has 1 revisions.
+Document with ID bar has 1 revisions.</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If you are using a self-signed cert, add a <code>-k</code> flag before the URL.
-This tells curl to accept an untrusted certificate; without this, the command will fail because your cert is not signed by a trusted Certificate Authority.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="aws-elastic-load-balancer-elb"><a class="anchor" href="#aws-elastic-load-balancer-elb"></a>AWS Elastic Load Balancer (ELB)</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Since Sync Gateway and Couchbase Lite can have long running connections for changes feeds, you should set the <strong>Idle Timeout</strong> setting of the ELB to the maximum value of 3600 seconds (1 hour).</p>
-</div>
-<div class="paragraph">
-<p>See the <a href="https://docs.aws.amazon.com/elasticloadbalancing/latest/classic/config-idle-timeout.html">ELB instructions</a> for more information on how to change this setting.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
-<div class="sectionbody">
-<div class="card-row three-column-row">
-<div class="sect5 column">
-<h6 id=""><a class="anchor" href="#"></a></h6>
-<div class="ulist">
-<div class="title">API Topics</div>
-<ul>
-<li>
-<p><a href="refer/rest-api-public.html" class="page">Public REST API</a></p>
-</li>
-<li>
-<p><a href="refer/rest-api-admin.html" class="page">Admin REST API</a></p>
-</li>
-<li>
-<p><a href="refer/rest-api-metrics.html" class="page">Metrics REST API</a></p>
-</li>
-<li>
-<p><a href="advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
-<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
-<div class="ulist">
-<div class="title">Reference</div>
-<ul>
-<li>
-<p><a href="refer/config-properties.html" class="page">Configuration File</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
-<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
-<div class="ulist">
-<div class="title">Community</div>
-<ul>
-<li>
-<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
-</li>
-</ul>
+<p>Add more conflicting revisions from the command-line with a different document ID (baz for example).
+The conflict is resolved and the program continues to listen for the next change(s).</p>
 </div>
 </div>
 </div>

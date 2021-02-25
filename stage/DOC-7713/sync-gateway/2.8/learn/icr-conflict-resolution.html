@@ -530,7 +530,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../resolving-conflicts.html">Conflict Resolution 1.x Clients</a>
+<a class="nav-link" href="../sync-sgreplicate-resolving-conflicts-legacy.html">Conflict Resolution 1.x Clients</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -716,8 +716,13 @@ It delivers this by applying one of its built-in <a href="../refer/refer-sgw-glo
 <p>The default <em>conflict resolver policy</em> is to always returns a winner determined by the <a href="../refer/refer-sgw-glossary.html#auto-conflict-resolution-policy" class="page">automatic conflict resolution policy<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="glossary icon" width="14"></span></a>.</p>
 </div>
 <div class="paragraph">
-<p>For <a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a>, a <a href="#custom-conflict-resolution-ee">Custom Conflict Resolver</a> policy is available, providing additional flexibility by allowing users to provide their own conflict resolution logic.</p>
+<p>For <a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a>, a custom conflict resolver policy is available, providing additional flexibility by allowing users to provide their own conflict resolution logic&#8201;&#8212;&#8201;see: (xref-sgw-pg-icr-conflict-resolution-custom).</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-resolution-works"><a class="anchor" href="#how-resolution-works"></a>How Resolution Works</h2>
+<div class="sectionbody">
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Conflict Response on Active Replicator</dt>
@@ -730,15 +735,6 @@ This policy assesses the conflicting revisions and either determines the winning
 <p>When a passive Sync Gateway database detects a conflict it responds to the active with a <code>409</code> response and rejects the revision.
 It is expected that the active Sync Gateway will pull the conflicting revision from the passive, resolve it on the active, and then subsequently push the resolved conflict back up.</p>
 </dd>
-</dl>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="how-resolution-works"><a class="anchor" href="#how-resolution-works"></a>How Resolution Works</h2>
-<div class="sectionbody">
-<div class="dlist">
-<dl>
 <dt class="hdlist1">Pull Replications</dt>
 <dd>
 <div class="openblock">
@@ -898,37 +894,14 @@ The specified policy is applied whenever a conflict is detected.</p>
 <h2 id="custom-conflict-resolution-ee"><a class="anchor" href="#custom-conflict-resolution-ee"></a>Build a Conflict Resolution Policy [EE]</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>In this section</em>: <a href="#conflict-resolution-approaches">Conflict Resolution Approaches</a>  |  <a href="#approaches-to-error-handling">Approaches to Error Handling</a>  |  <a href="#conflict-resolver-structure">Conflict Resolver Structure</a>  |  <a href="#sample-conflict-resolvers">Example Conflict Resolvers</a></p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-This content relates only to <a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a>
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
-<div class="sectionbody">
-<div class="paragraph">
 <p>Custom conflict resolution is handled by the <em>active</em> Sync Gateway using a user-provided <a href="../refer/refer-sgw-glossary.html#custom-conflict-resolver" class="page">custom conflict resolver<span class="image"><img src="../_images/icons/glossaryIconImage2.png" alt="glossary icon" width="14"></span></a>. This Javascript function is embedded in the replication configuration.</p>
 </div>
 <div class="paragraph">
 <p>The predefined conflict resolver policies are also available as Javascript functions that you can call from within that <em>custom_conflict_resolver</em> function
 This is useful when you want to apply greater selectivity to the automatic conflict resolution process. For example, you want to apply a 'remote wins' policy only for a specific type of document - see the 'Use Policies' tab in <a href="#simple-conflict-resolvers">Example 4</a>.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="conflict-resolution-approaches"><a class="anchor" href="#conflict-resolution-approaches"></a>Conflict Resolution Approaches</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="conflict-resolution-approaches"><a class="anchor" href="#conflict-resolution-approaches"></a>Conflict Resolution Approaches</h3>
 <div class="paragraph">
 <p>There are two ways to handle conflicts in your custom_conflict_resolver, you can either:</p>
 </div>
@@ -960,10 +933,8 @@ Use <code>delete mergedDoc._rev</code> to invalidate the property.
 </ul>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="approaches-to-error-handling"><a class="anchor" href="#approaches-to-error-handling"></a>Approaches to Error Handling</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="approaches-to-error-handling"><a class="anchor" href="#approaches-to-error-handling"></a>Approaches to Error Handling</h3>
 <div class="paragraph">
 <p>Your custom conflict resolver function should not terminate the replication when it encounters exceptions or errors.
 Instead, you should log sufficient information to aid troubleshooting and recovery.</p>
@@ -1027,10 +998,8 @@ This triggers a pull replication and subsequent conflict resolution.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="conflict-resolver-structure"><a class="anchor" href="#conflict-resolver-structure"></a>Conflict Resolver Structure</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="conflict-resolver-structure"><a class="anchor" href="#conflict-resolver-structure"></a>Conflict Resolver Structure</h3>
 <div class="paragraph">
 <p>This example shows the basic structure of the conflict resolver function as it would be defined in the configuration file.</p>
 </div>
@@ -1111,10 +1080,8 @@ This triggers a pull replication and subsequent conflict resolution.</p>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="sample-conflict-resolvers"><a class="anchor" href="#sample-conflict-resolvers"></a>Sample Conflict Resolvers</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="sample-conflict-resolvers"><a class="anchor" href="#sample-conflict-resolvers"></a>Sample Conflict Resolvers</h3>
 <div id="simple-conflict-resolvers" class="exampleblock">
 <div class="title">Example 4. Simple conflict resolvers</div>
 <div class="content">
@@ -1280,6 +1247,7 @@ The <code>IF</code> block is temporary. It circumvents the known_issue <a href="
 </div></td>
 </tr>
 </table>
+</div>
 </div>
 </div>
 </div>
