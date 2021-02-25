@@ -1332,12 +1332,20 @@ Related Content&#8201;&#8212;&#8201;<a href="java-android-troubleshooting-querie
 </td>
 <td class="content">
 <div class="title">Constraints</div>
-<div class="paragraph">
-<p>The retrieval of logs from the device is out of scope of this feature.</p>
-</div>
-<div class="paragraph">
+<div class="ulist">
+<ul>
+<li>
 <p>The value returned by <code>LogLevel.getValue()</code> is not the Android log level.
 Do not use this API call.</p>
+</li>
+<li>
+<p>The retrieval of logs from the device is out of scope of this feature.</p>
+</li>
+<li>
+<p>This content applies to the post 2.5 versions.
+If you are using a Couchbase Lite release prior to 2.5 see <a href="#pre-2x5-logging">Deprecated functionality</a></p>
+</li>
+</ul>
 </div>
 </td>
 </tr>
@@ -1430,7 +1438,7 @@ Note, a warning is displayed when you set continuous (file) logging <strong>off<
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L256-L257">Database.log.getConsole().setDomain(LogDomain.ALL_DOMAINS);  <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L261-L262">Database.log.getConsole().setDomain(LogDomain.ALL_DOMAINS);  <i class="conum" data-value="1"></i><b>(1)</b>
 Database.log.getConsole().setLevel(LogLevel.VERBOSE); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
@@ -1593,7 +1601,7 @@ Further, you can no longer set a log level for a specific domain.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1478-L1493">class LogTestLogger implements Logger {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1465-L1480">class LogTestLogger implements Logger {
     @NonNull
     private final LogLevel level;
 
@@ -1621,7 +1629,7 @@ Further, you can no longer set a log level for a specific domain.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L247-L249">// this custom logger will never be asked to log an event
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/java-android/app/src/main/java/com/couchbase/code_snippets/Examples.java#L252-L254">// this custom logger will never be asked to log an event
 // with a log level &lt; WARNING
 Database.log.setCustom(new LogTestLogger(LogLevel.WARNING)); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
@@ -1723,6 +1731,39 @@ Database.log.setCustom(new LogTestLogger(LogLevel.WARNING)); <i class="conum" da
 <pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">$ .\cbl-log.exe logcat LOGFILE &lt;OUTPUT_PATH&gt;</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="pre-2x5-logging"><a class="anchor" href="#pre-2x5-logging"></a>Logging functionality prior to Release 2.5</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Deprecation</div>
+The pre-Couchbase Lite 2.5 logging functionality is deprecated.
+It was superseded by an enhanced Logging API in that release.
+This information is included for completeness only.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The log messages are split into different domains (<code>LogDomains</code>) which can be tuned to different log levels.
+The following example enables <code>verbose</code> logging for the <code>replicator</code> and <code>query</code> domains.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 6. Enable verbose logging on a domain</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Database.setLogLevel(LogDomain.DATABASE, LogLevel.VERBOSE);
+Database.setLogLevel(LogDomain.QUERY, LogLevel.VERBOSE);</code></pre>
 </div>
 </div>
 </div>

@@ -1326,15 +1326,26 @@ Couchbase mobile database live query concepts
 <div class="sect1">
 <h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
 <div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="activating-a-live-query"><a class="anchor" href="#activating-a-live-query"></a>Activating a Live Query</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>A live query stays active and monitors the database for changes.
-A live query is a great way to build reactive user interfaces, especially table/list views, that keep themselves up to date.
-For example, as the replicator runs and pulls new data from the server, a live query-driven UI will automatically update to show the data without the user having to manually refresh.
+<p>A live query is a query that, once activated, remains active and monitors the database for changes; refreshing the result set whenever a change occurs.
+As such, it is a great way to build reactive user interfaces&#8201;&#8212;&#8201;especially table/list views&#8201;&#8212;&#8201;that keep themselves up to date.</p>
+</div>
+<div class="paragraph">
+<p><strong>So, a simple use case may be:</strong> A replicator running and pulling new data from a server, whilst a live-query-driven UI automatically updates to show the data without the user having to manually refresh.
 This helps your app feel quick and responsive.</p>
 </div>
+<div id="ex-qry-start" class="exampleblock">
+<div class="title">Example 1. Starting a LIve Query</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L279-L293">let query = QueryBuilder
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">let query = QueryBuilder
     .select(SelectResult.all())
     .from(DataSource.database(database))
 
@@ -1355,18 +1366,40 @@ query.execute(); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To start a live query, you must call <code>query.execute()</code>.
-This will immediately execute the query and post the result to the change listener.
-When there&#8217;s a change it re-runs itself automatically, and posts the new query result to any observers (change listeners).</td>
+<td>Build the query statements using the QuerybUilder</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Activate the <em>live</em> query by attaching a listener.<br>
+Save the token in order to detach the listener and stop the query later&#8201;&#8212;&#8201;se <a href="#ex-qry-stop">Example 2</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Start the query<br>
+This will immediately execute the live query and post the result to the change listener.
+When a change is detected the query automatically runs, and posts the new query result to any observers (change listeners).</td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>The following example stops the live query with the token from the previous example.</p>
 </div>
+</div>
+<div id="ex-qry-stop" class="exampleblock">
+<div class="title">Example 2. Stop a LIve Query</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L297">query.removeChangeListener(withToken: token)</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">query.removeChangeListener(withToken: token)</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we use the change lister token from <a href="#ex-qry-start">Example 1</a> to remove the listeners.
+Doing so stops the live query.</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -1427,7 +1460,7 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L1128-L1148">// `myMLModel` is a fake implementation
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L1113-L1133">// `myMLModel` is a fake implementation
 // this would be the implementation of the ml model you have chosen
 class myMLModel {
     static func predictImage(data: Data) -&gt; [String : AnyObject] {}
@@ -1468,7 +1501,7 @@ Therefore, the supported data type will be constrained by the data type that the
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L967-L968">let model = ImageClassifierModel()
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L952-L953">let model = ImageClassifierModel()
 Database.prediction.registerModel(model, withName: "ImageClassifier")</code></pre>
 </div>
 </div>
@@ -1500,7 +1533,7 @@ When documents are added or updated, the index will call the prediction function
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L972-L976">let input = Expression.dictionary(["photo": Expression.property("photo")])
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L957-L961">let input = Expression.dictionary(["photo": Expression.property("photo")])
 let prediction = PredictiveModel.predict(model: "ImageClassifier", input: input)
 
 let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(prediction.property("label")))
@@ -1519,7 +1552,7 @@ The Predictive Index is different from the value index in that the Predictive In
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L993-L996">let input = Expression.dictionary(["photo": Expression.property("photo")])
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L978-L981">let input = Expression.dictionary(["photo": Expression.property("photo")])
 
 let index = IndexBuilder.predictiveIndex(model: "ImageClassifier", input: input)
 try database.createIndex(index, withName: "predictive-index-image-classifier")</code></pre>
@@ -1534,7 +1567,7 @@ try database.createIndex(index, withName: "predictive-index-image-classifier")</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L1009-L1029">let input = Expression.dictionary(["photo": Expression.property("photo")])
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L994-L1014">let input = Expression.dictionary(["photo": Expression.property("photo")])
 let prediction = PredictiveModel.predict(model: "ImageClassifier", input: input) <i class="conum" data-value="1"></i><b>(1)</b>
 
 let query = QueryBuilder
@@ -1585,7 +1618,7 @@ The null value returned by the prediction method will be interpreted as MISSING 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L980">Database.prediction.unregisterModel(withName: "ImageClassifier")</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L965">Database.prediction.unregisterModel(withName: "ImageClassifier")</code></pre>
 </div>
 </div>
 </div>
@@ -1600,7 +1633,7 @@ All other steps (register, indexing, query, unregister) are the same as with a m
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L1035-L1042">// Load MLModel from `ImageClassifier.mlmodel`
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift#L1020-L1027">// Load MLModel from `ImageClassifier.mlmodel`
 let modelURL = Bundle.main.url(forResource: "ImageClassifier", withExtension: "mlmodel")!
 let compiledModelURL = try MLModel.compileModel(at: modelURL)
 let model = try MLModel(contentsOf: compiledModelURL)
