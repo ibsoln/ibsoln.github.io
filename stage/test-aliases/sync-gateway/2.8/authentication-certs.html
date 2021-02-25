@@ -3,24 +3,24 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Sync Gateway Quickstart | Couchbase Docs Preview Site</title>
-<link rel="canonical" href="https://ibsoln.github.io/sync-gateway/2.8/index.html">
+<title>TLS Certificate Authentication | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/test-aliases/sync-gateway/2.8/authentication-certs.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Start your Couchbase for Mobile and Edge adventure, get up and running with Sync Gateway">
+<meta name="description" content="Securing Couchbase Sync Gateway with TLS Authentication">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
 <meta name="generator" content="Antora 2.3.3">
 <link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
 </head>
-<body class="landing-page">
+<body class="article">
 <header class="header fixed-top">
   <div class="header-top-row">
       <div class="container">
           <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
 
-              <a class="navbar-brand" href="https://www.couchbase.com">
+              <a class="navbar-brand" href="../..">
                 <img src="../../_/img/couchbase-documentation-logo.svg" alt="Couchbase" />
               </a>
               <button class="navbar-burger" data-target="topbar-menu">
@@ -38,11 +38,6 @@
 
               <div class="navbar-collapse collapse" id="navbar2">
                 <ul class="navbar-nav w-100 justify-content-start">
-                  <li class="nav-item">
-                    <a href="https://ibsoln.github.io/home/index.html" class="nav-link">
-                      <i class="fas fa-home"></i>
-                    </a>
-                  </li>
                   <li class="nav-item">
                     <a class="nav-link" href="../../home/server.html">
                       Server
@@ -64,7 +59,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a class="nav-link" href="../../tutorials/index.html">
+                    <a class="nav-link" href="#">
                       Tutorials
                       <span class="arrow">
                         <i class="fas fa-arrow-right"></i>
@@ -80,8 +75,13 @@
                     <i class="fas fa-search"></i>
                   </button>
                 </form>
+                <div class="parent-site">
+                  <a href="https://www.couchbase.com">
+                    Couchbase.com
+                  </a>
+                </div>
                 <a class="btn btn-primary try-btn" href="https://www.couchbase.com/downloads">
-                  Downloads
+                  Try Free
                 </a>
               </div>
 
@@ -105,7 +105,7 @@
 </div>
 <div class="nav-menu">
 <ul class="nav-list">
-<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="0">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
@@ -229,7 +229,7 @@
 </li>
 </ul>
 </li>
-<li class="nav-item  is-inactive " data-depth="1">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
@@ -239,13 +239,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="#sync-gateway::learn/authentication.adoc">User Authentication</a>
+<a class="nav-link" href="authentication-users.html">User Authentication</a>
 </span>
 </li>
-<li class="nav-item " data-depth="2">
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="security.html">TLS Certificate Authentication</a>
+<a class="nav-link" href="authentication-certs.html">TLS Certificate Authentication</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -602,7 +602,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/index.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/authentication-certs.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -657,108 +657,294 @@
 </div>
 
 <main class="article" data-ceiling="topbar">
-<article class="doc landing-page-doc">
-<h1 class="sect0">Sync Gateway Quickstart</h1>
-<div class="card-row">
-<div class="sect5 column">
-<h6></h6>
-<div class="paragraph content">
-<p>Sync Gateway is the synchronization server in a Couchbase for Mobile and Edge deployment.
-It is designed to provide data synchronization for large-scale interactive web, mobile, and IoT applications</p>
-</div>
-</div>
-<div class="sect5 column">
-<h6></h6>
-<div class="imageblock media-left">
-<div class="content">
-<img src="_images/cbm-architecture.png" alt="cbm architecture" width="300">
-</div>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4></h4>
-<div class="card-row three-column-row">
-<div class="sect5 column">
-<h6></h6>
-<div class="ulist content">
-<div class="title">Deploy</div>
+<div class="article-header">
+<nav class="crumbs" aria-label="breadcrumbs">
 <ul>
-<li>
-<p><a href="start/gs-sgw-prereqs.html" class="page">Prerequisites</a></p>
-</li>
-<li>
-<p><a href="start/gs-sgw-install.html" class="page">Install</a></p>
-</li>
-<li>
-<p><a href="start/gs-sgw-config.html" class="page">Configure</a></p>
-</li>
+<li class="crumb"><a href="index.html">Sync Gateway</a></li>
+<li class="crumb">Security</li>
+<li class="crumb"><a href="authentication-certs.html">TLS Certificate Authentication</a></li>
 </ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">TLS Certificate Authentication</h1>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Description&#8201;&#8212;&#8201;<em>Securing Couchbase Sync Gateway with TLS Authentication</em><br>
+<em>Abstract&#8201;&#8212;&#8201;This content explains how to implement TLS Certificate Authentication for Sync Gateway</em><br>
+Related Content&#8201;&#8212;&#8201;<a href="authentication-users.html" class="page">User Authentication</a>  |  <a href="learn/defining-sync-functions.html" class="page">Sync Function</a>  |  xref-sgw-pg-adv-sgw-cfg-import-filter}  |  <a href="learn/read-access.html" class="page">Read Access</a>  |  <a href="learn/write-access.html" class="page">Write Access</a></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="data-access"><a class="anchor" href="#data-access"></a>Data Access</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Authentication</strong></p>
+</div>
+<div class="paragraph">
+<p>In a Couchbase Mobile production deployment, administrators typically perform operations on the Admin REST API.
+If Sync Gateway is deployed on an internal network, you can bind the <a href="refer/config-properties.html#server" class="page">adminInterface</a> of Sync Gateway to the internal network.
+In this case, the firewall should also be configured to allow external connections to the public <a href="refer/config-properties.html#server" class="page">interface</a> port.</p>
+</div>
+<div class="paragraph">
+<p>To access the Admin REST API from an entirely different network or from a remote desktop we recommend to use <a href="https://whatbox.ca/wiki/SSH_Tunneling">SSH tunneling</a>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Authorization</strong></p>
+</div>
+<div class="paragraph">
+<p>In addition to the Admin REST API, a user can be assigned to a role with additional privileges.
+The role and the user assigned to it can be created in the configuration file.
+Then, the Sync Function&#8217;s <a href="learn/defining-sync-functions.html#requirerole-rolename" class="page">requireRole()</a> method can be used to allow certain operations only if the user has that role.</p>
+</div>
+<div class="paragraph">
+<p><strong>Data Model Validation</strong></p>
+</div>
+<div class="paragraph">
+<p>In a NoSQL database, it is the application&#8217;s responsibility to ensure that the documents are created in accordance with the data model adopted throughout the system.
+As an additional check, the Sync Function&#8217;s <a href="learn/defining-sync-functions.html#throw" class="page">throw()</a> method can be used to reject documents that do not follow the pre-defined data model.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connection-to-sync-gateway"><a class="anchor" href="#connection-to-sync-gateway"></a>Connection to Sync Gateway</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can run Sync Gateway behind a reverse proxy, such as NGINX, which supports HTTPS connections and route internal traffic to Sync Gateway over HTTP.
+The advantage of this approach is that NGINX can proxy both HTTP and HTTPS connections to a single Sync Gateway instance.</p>
+</div>
+<div class="paragraph">
+<p>Sync Gateway also supports serving connections over SSL.
+To enable SSL, you need to add two properties to the config file:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>"SSLCert"</code></dt>
+<dd>
+<p>A path to a PEM-format file containing an X.509 certificate or a certificate chain.</p>
+</dd>
+<dt class="hdlist1"><code>"SSLKey"</code></dt>
+<dd>
+<p>A path to a PEM-format file containing the certificate&#8217;s matching private key.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>If both properties are present, the server will respond to SSL (and only SSL) over both the public and admin ports.
+If you want to support both HTTP and HTTPS connections you will need to run two separate instances of Sync Gateway.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="how-to-create-an-ssl-certificate"><a class="anchor" href="#how-to-create-an-ssl-certificate"></a>How to Create an SSL Certificate</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Certificates are a complex topic.
+There are basically two routes you can go: request a certificate from a Certificate Authority (CA), or create your own "self-signed" certificate.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="requesting-a-certificate-from-a-ca"><a class="anchor" href="#requesting-a-certificate-from-a-ca"></a>Requesting a Certificate from a CA</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can obtain a certificate from a trusted <a href="https://en.wikipedia.org/wiki/Certificate_authority">Certificate Authority</a> (CA). Examples of trusted CAs include <a href="https://letsencrypt.org/">Let&#8217;s Encrypt</a>, Thawte or GoDaddy.
+What this means is that their own root certificates are known and trusted by operating systems, so any certificate that they sign will also be trusted.</p>
+</div>
+<div class="paragraph">
+<p>Hence, the benefit of a certificate obtained from a trusted CA is that it will be trusted by any SSL client.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="creating-a-self-signed-certificate"><a class="anchor" href="#creating-a-self-signed-certificate"></a>Creating a Self-Signed Certificate</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Unlike a CA-signed cert, a self-signed cert isn&#8217;t intrinsically trustworthy: a client can&#8217;t tell who you are by examining the cert, because no recognized authority has vouched for it.
+But a self-signed cert is still unique (only you, as the holder of the private key, can operate a server using that cert), and it still allows the connection to be encrypted.</p>
+</div>
+<div class="paragraph">
+<p>It&#8217;s easy to create a self-signed certificate using the openssl command-line tool and these directions.
+In a nutshell, you just need to run these commands:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ openssl genrsa -out privkey.pem 2048
+$ openssl req -new -x509 -sha256 -key privkey.pem -out cert.pem -days 1095</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The second command is interactive and will ask you for information like country and city name that goes into the X.509 certificate.
+You can put whatever you want there; the only important part is the field <code>Common Name (e.g. server FQDN or YOUR name)</code> which needs to be the exact <em>hostname</em> that clients will reach your server at.
+The client will verify that this name matches the hostname in the URL it&#8217;s trying to access, and will reject the connection if it doesn&#8217;t.</p>
+</div>
+<div class="paragraph">
+<p>The tool will then create two files: <code>privkey.pem</code> (the private key) and <code>cert.pem</code> (the public certificate.)</p>
+</div>
+<div class="paragraph">
+<p>To create a copy of the cert in binary DER format (often stored in a ".cer" file), do this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ openssl x509 -inform PEM -in cert.pem -outform DER -out cert.cer</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="installing-the-certificate"><a class="anchor" href="#installing-the-certificate"></a>Installing the Certificate</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Whichever way you obtained the certificate, you will now have a private key and an X.509 certificate.
+Ensure that they&#8217;re in separate files and in PEM format, and put them in a directory that&#8217;s readable by the Sync Gateway process.
+The private key is very sensitive (it&#8217;s not encrypted) so make sure the file isn&#8217;t readable by unauthorized processes.</p>
+</div>
+<div class="paragraph">
+<p>Then just add the <code>"SSLCert"</code> and <code>"SSLKey"</code> properties to your Sync Gateway configuration file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">{
+  "SSLCert": "cert.pem",
+  "SSLKey": "privkey.pem",
+  "databases": {
+    "todo": {
+      "server": "http://localhost:8091",
+      "users": {"GUEST": {"disabled": false, "admin_channels": ["*"]}}
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Start Sync Gateway and access the public port over <code>https</code> on https://localhost:4984.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="connection-to-couchbase-server"><a class="anchor" href="#connection-to-couchbase-server"></a>Connection to Couchbase Server</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are two methods to securely connect a Sync Gateway instance to a Couchbase Server cluster.
+Each method is discussed below in more detail.</p>
+</div>
+<div class="sect2">
+<h3 id="username-and-password"><a class="anchor" href="#username-and-password"></a>Username and Password</h3>
+<div class="paragraph">
+<p>The username and password of the RBAC user are specified in the Sync Gateway configuration file.
+This method is used in the getting started <a href="start/gs-sgw-install.html#start-sync-gateway" class="page">section</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="x-509-certificates"><a class="anchor" href="#x-509-certificates"></a>X.509 Certificates</h3>
+<div class="paragraph">
+<p>Sync Gateway 2.1 adds the ability to use X.509 certificates to authenticate against Couchbase Server 5.5 or higher.
+This functionality can be used instead or in addition to the existing authentication method which is to specify a username and password in the configuration file.</p>
+</div>
+<div class="paragraph">
+<p>To use X.509 certificate based authentication with Sync Gateway, you must first run through the following procedures.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#server:manage:manage-security/configure-server-certificates.adoc#root-and-node-certificates" class="page unresolved">Create a Root and Node Certificates</a>.</p>
+</li>
+<li>
+<p><a href="#server:manage:manage-security/configure-server-certificates.adoc#client-certificate-enablement" class="page unresolved">Enable Client Certificate Authentication</a>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Once the Couchbase Server cluster has been protected by the deployment of root and node certificates described above, a <em>client</em> certificate can be signed by the root certificate, to allow Sync Gateway to access the cluster.</p>
+</div>
+<div class="paragraph">
+<p>To generate the <em>client</em> certificate, make sure that the Couchbase Server cluster has the expected <a href="#server:manage:manage-security/configure-client-certificates.adoc#assumptions" class="page unresolved">bucket and RBAC user</a>.
+Also refer to the <a href="start/gs-sgw-install.html#configure-couchbase-server" class="page">Getting Started: Configure Couchbase Server</a> to configure the RBAC user with appropriate privileges for access by a Sync Gateway instance.</p>
+</div>
+<div class="paragraph">
+<p>Next, follow the instructions in <a href="#server:manage:manage-security/configure-client-certificates.adoc#client-certificate-authorized-by-a-root-certificate" class="page unresolved">Client Access: Root-Certificate Authorization</a> to create a client certificate that is authorized by the cluster’s root certificate.</p>
+</div>
+<div class="paragraph">
+<p>After completing the procedure, you will have multiple files generated in the current directory.
+You will use the following files to configure Sync Gateway:</p>
 </div>
 <div class="ulist">
-<div class="title">Concepts</div>
 <ul>
 <li>
-<p><a href="learn/concept-fundamentals-data.html" class="page">Documents</a></p>
+<p><code>servercertfiles/ca.pem</code></p>
 </li>
 <li>
-<p><a href="learn/concept-fundamentals-data-tombstones.html" class="page">Tombstones</a></p>
+<p><code>servercertfiles/clientcertfiles/travel-sample.pem</code></p>
 </li>
 <li>
-<p><a href="learn/users-and-roles.html" class="page">Users</a></p>
-</li>
-<li>
-<p><a href="#2.8@sync-gateway::learn/authentication.adoc" class="page unresolved">Authentication</a></p>
-</li>
-<li>
-<p><a href="learn/sync-gateway-channels.html" class="page">Channels</a></p>
+<p><code>servercertfiles/clientcertfiles/travel-sample.key</code></p>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>X.509 certificate based authentication is enabled on Sync Gateway by specifying the absolute or relative path to each of those files in the configuration file.</p>
 </div>
-<div class="sect5 column">
-<h6></h6>
-<div class="ulist content">
-<div class="title">Features</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">Unresolved include directive in modules/ROOT/pages/authentication-certs.adoc - include::example$/x509-config.json[]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If the connection is successful, you should see the following in the logs.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">[INF] Starting admin server on 127.0.0.1:4985
+[INF] Starting server on :4984 ...
+[INF] Establishing TLS connection for DCP to destination 127.0.0.1:11207</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If Sync Gateway cannot connect, you may refer to the <a href="#server:manage:manage-security/handle-certificate-errors.adoc#cluster-certificate-errors" class="page unresolved">Cluster Certificate Errors</a> table.</p>
+</div>
+<div class="paragraph">
+<p>More detail on the configuration properties for x.509 authentication can be found below.</p>
+</div>
+<div class="ulist">
 <ul>
 <li>
-<p><a href="sync-with-couchbase-server.html" class="page">Sync with Couchbase Server</a></p>
+<p><a href="refer/config-properties.html#databases-this_db-certpath" class="page">databases.$db.certpath</a></p>
 </li>
 <li>
-<p><a href="sync-using-app.html" class="page">Sync with Couchbase Lite</a></p>
+<p><a href="refer/config-properties.html#databases-this_db-keypath" class="page">databases.$db.keypath</a></p>
 </li>
 <li>
-<p><a href="sync-inter-syncgateway-overview.html" class="page">Inter-Sync Gateway Replication</a></p>
-</li>
-<li>
-<p><a href="learn/defining-sync-functions.html" class="page">Sync Functions</a></p>
-</li>
-<li>
-<p><a href="advance/adv-sgw-cfg-import-filter.html" class="page">Import filter</a></p>
-</li>
-<li>
-<p><a href="sync-inter-syncgateway-overview.html#conflict-resolution" class="page">Conflict Resolution</a></p>
-</li>
-<li>
-<p><a href="advance/adv-rest-api-client.html" class="page">REST API Client</a></p>
-</li>
-<li>
-<p><a href="advance/logging.html" class="page">Use the Logging API</a></p>
-</li>
-<li>
-<p><a href="indexing.html" class="page">Indexing versus Views</a></p>
+<p><a href="refer/config-properties.html#databases-this_db-cacertpath" class="page">databases.$db.cacertpath</a></p>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>If the <strong>username</strong>/<strong>password</strong> properties are also specified in the configuration file then Sync Gateway will use password-based authentication and also include the client certificate in the TLS handshake.</p>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
 <div class="sect5 column">
-<h6></h6>
-<div class="ulist content">
-<div class="title">References</div>
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">API Topics</div>
 <ul>
-<li>
-<p><a href="refer/config-properties.html" class="page">Configuration File</a></p>
-</li>
 <li>
 <p><a href="refer/rest-api-public.html" class="page">Public REST API</a></p>
 </li>
@@ -769,15 +955,29 @@ It is designed to provide data synchronization for large-scale interactive web, 
 <p><a href="refer/rest-api-metrics.html" class="page">Metrics REST API</a></p>
 </li>
 <li>
-<p><a href="refer/refer-sgw-glossary.html" class="page">Sync Gateway Glossary</a></p>
+<p><a href="advance/adv-rest-api-client.html" class="page">Use the REST API?</a></p>
 </li>
 </ul>
 </div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
 <div class="ulist">
-<div class="title">Release Notes</div>
+<div class="title">Reference</div>
 <ul>
 <li>
-<p><a href="release-notes.html" class="page">Release Notes</a></p>
+<p><a href="refer/config-properties.html" class="page">Configuration File</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
 </li>
 </ul>
 </div>
