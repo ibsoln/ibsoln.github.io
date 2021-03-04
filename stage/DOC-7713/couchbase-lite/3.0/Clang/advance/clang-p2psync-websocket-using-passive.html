@@ -1799,7 +1799,7 @@ thisConfig =
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/p2psync-websocket.m">thisConfig.port =  55990; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/SampleCodeTest.cc">thisConfig.port =  55990; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1827,7 +1827,7 @@ Ensure that any port you do specify is not blocked by firewall rules.</td>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/p2psync-websocket.m">NSString *thisURL = @"10.1.1.10";
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/SampleCodeTest.cc">NSString *thisURL = @"10.1.1.10";
 thisConfig.networkInterface = thisURL; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
@@ -2224,7 +2224,13 @@ The logic should take the form of function or block (such as, a closure expressi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">// Configure the client authenticator
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">    NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
+    NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
+    SecCertificateRef rootCertRef = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
+
+    config.authenticator = [[CBLListenerCertificateAuthenticator alloc]
+                            initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];
+// Configure the client authenticator
 NSURL *certURL =
   [[NSBundle mainBundle]
     URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="1"></i><b>(1)</b>
@@ -2267,7 +2273,21 @@ A valid client will provide one or more certificates that match a certificate in
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">// Authenticate self-signed cert
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">  CBLListenerCertificateAuthenticator* listenerAuth =
+  [[CBLListenerCertificateAuthenticator alloc] initWithBlock: ^BOOL(NSArray *certs) {
+      SecCertificateRef cert = (__bridge SecCertificateRef)(certs[0]);
+      CFStringRef cnRef;
+      OSStatus status = SecCertificateCopyCommonName(cert, &amp;cnRef);
+      if (status == errSecSuccess) {
+          NSString* cn = (NSString*)CFBridgingRelease(cnRef);
+          if ([self._allowlistedUsers containsObject: cn])
+              return YES;
+      }
+      return NO;
+  }];
+
+  config.authenticator = listenerAuth;
+// Authenticate self-signed cert
 // using application logic
 CBLListenerCertificateAuthenticator* thisListenerAuth =
   [[CBLListenerCertificateAuthenticator alloc]
@@ -2325,7 +2345,7 @@ It must return a boolean value; with <code>true</code> denoting the client suppl
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">[CBLTLSIdentity deleteIdentityWithLabel:thisSecId error: &amp;error];</code></pre>
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">  [CBLTLSIdentity deleteIdentityWithLabel:thisSecId error: &amp;error];</code></pre>
 </div>
 </div>
 </div>
@@ -2449,7 +2469,7 @@ if (!success) {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/p2psync-websocket.m">NSUInteger totalConnections = thisListener.status.connectionCount;
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/SampleCodeTest.cc">NSUInteger totalConnections = thisListener.status.connectionCount;
 NSUInteger activeConnections = thisListener.status.activeConnectionCount;</code></pre>
 </div>
 </div>
@@ -2471,7 +2491,7 @@ NSUInteger activeConnections = thisListener.status.activeConnectionCount;</code>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/p2psync-websocket.m">[thisListener stop];</code></pre>
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/SampleCodeTest.cc">[thisListener stop];</code></pre>
 </div>
 </div>
 </div>
