@@ -591,17 +591,8 @@ Unresolved include directive in modules/ROOT/nav.adoc - include::profile-store:p
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<span class="in-toggle" data-depth="1"></span>
-<span class="nav-text ">Xcode Playground</span>
+<a class="nav-link" href="#tutorials:swift-playground:overview.adoc">Xcode Playground</a>
 </span>
-<ul class="nav-list">
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="#tutorials:swift-playground:overview.adoc">Overview</a>
-</span>
-</li>
-</ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
@@ -785,7 +776,10 @@ A script is provided to install Couchbase Lite comatible with different versions
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_xcode-11-1"></a>Xcode 11.1+</p>
+<p><a id="tabset1_xcode-12"></a>Xcode 12+</p>
+</li>
+<li>
+<p><a id="tabset1_xcode-11-x"></a>Xcode 11.x</p>
 </li>
 <li>
 <p><a id="tabset1_xcode-11-0"></a>Xcode 11.0</p>
@@ -802,7 +796,14 @@ A script is provided to install Couchbase Lite comatible with different versions
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_xcode-11-1">
+<div class="tab-pane" aria-labelledby="tabset1_xcode-12">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh install_12.sh</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_xcode-11-x">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sh install_11_1.sh</code></pre>
@@ -843,6 +844,128 @@ A script is provided to install Couchbase Lite comatible with different versions
 <li>
 <p>Open the <code>TravelSample.xcodeproj</code> using Xcode</p>
 </li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configure-app-to-connect-to-backend"><a class="anchor" href="#configure-app-to-connect-to-backend"></a>Configure App to connect to Backend</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You will have to update the URLs specified in the app to connect to the backend
+If you haven&#8217;t done so already, complete the steps outlined in the "Backend Installation" to install your Couchbase Server, Sync Gateway and Python web backend app.</p>
+</div>
+<div class="sect2">
+<h3 id="updating-the-web-backend-url"><a class="anchor" href="#updating-the-web-backend-url"></a>Updating the web backend URL</h3>
+<div class="paragraph">
+<p><strong>Open the file</strong> <code>QueryConsts.swift</code>.
+You must update the <code>webUrl</code> constant which points to the Python Web Server.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/couchbaselabs/mobile-travel-sample/blob/master/ios/TravelSample/TravelSample/Utilities/QueryConsts.swift">QueryConsts.swift</a></p>
+</div>
+<div class="paragraph">
+<p>Now, the URLs that you specify will vary depending on the installation option that you chose for deploying your backend</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_manual"></a>Manual</p>
+</li>
+<li>
+<p><a id="tabset2_docker"></a>Docker</p>
+</li>
+<li>
+<p><a id="tabset2_cloud"></a>Cloud</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_manual">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">static var webUrl:String = "http://localhost:8080"</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_docker">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">static var webUrl:String = "http://127.0.0.1:8080/"</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_cloud">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">// Replace the hostname with the IP Address of the RightScale instance.
+// The example states `54.148.83.39` but yours will be different.
+static var webUrl:String = "http://54.148.83.39:8080/"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="updating-the-sync-gateway-url"><a class="anchor" href="#updating-the-sync-gateway-url"></a>Updating the Sync Gateway URL</h3>
+<div class="paragraph">
+<p>Next, you will update the Sync Gateway endpoint.</p>
+</div>
+<div class="paragraph">
+<p><strong>Open the file</strong> <code>DatabaseManager.swift</code>.
+You must update the <code>kRemoteSyncUrl</code> constant.
+Now, the URLs that you specify will vary depending on the installation option that you chose for deploying your backend</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_manual"></a>Manual</p>
+</li>
+<li>
+<p><a id="tabset3_docker"></a>Docker</p>
+</li>
+<li>
+<p><a id="tabset3_cloud"></a>Cloud</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_manual">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">let kRemoteSyncUrl = "ws://localhost:4984"</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_docker">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">let kRemoteSyncUrl = "ws://127.0.0.1:4984"</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_cloud">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">// Replace the hostname with the IP Address of the RightScale instance.
+// The example states `54.148.83.39` but yours will be different.
+let kRemoteSyncUrl = "ws://54.148.83.39:4984"</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="try-it-out"><a class="anchor" href="#try-it-out"></a>Try it Out</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
 <li>
 <p>Build and run the project using simulator</p>
 </li>

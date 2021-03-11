@@ -591,17 +591,8 @@ Unresolved include directive in modules/ROOT/nav.adoc - include::profile-store:p
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<span class="in-toggle" data-depth="1"></span>
-<span class="nav-text ">Xcode Playground</span>
+<a class="nav-link" href="#tutorials:swift-playground:overview.adoc">Xcode Playground</a>
 </span>
-<ul class="nav-list">
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="#tutorials:swift-playground:overview.adoc">Overview</a>
-</span>
-</li>
-</ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
@@ -745,16 +736,16 @@ Unresolved include directive in modules/ROOT/nav.adoc - include::openid-connect-
 <div class="ulist">
 <ul>
 <li>
-<p>Android Studio 3.0 or above <a href="https://developer.android.com">Google Developer site</a></p>
+<p>Latest version of Android Studio (4.x+) downloadable from <a href="https://developer.android.com">Google Developer site</a></p>
 </li>
 <li>
 <p>Android device or emulator running API level 22 or above</p>
 </li>
 <li>
-<p>Android SDK 26</p>
+<p>Android SDK 29</p>
 </li>
 <li>
-<p>Android Build Tools 26</p>
+<p>Android Build Tools 29+</p>
 </li>
 <li>
 <p>JDK 8</p>
@@ -762,8 +753,8 @@ Unresolved include directive in modules/ROOT/nav.adoc - include::openid-connect-
 </ul>
 </div>
 <div class="paragraph">
-<p><strong>Windows Users</strong> : If you are developing on Windows, we recommend that you use a Windows 10 machine.
-Also, note that if you choose the Manual or Docker installation mode, you should also have <strong>administrative privileges on the Windows box</strong> so you can authorize the installation and running of the required executables.</p>
+<p><strong>Windows Users</strong>: If you are developing on Windows, you must use a Windows 10 machine.
+Also, note that if you choose the Manual or Docker installation mode, you must also have <strong>administrative privileges on the Windows box</strong> so you can authorize the installation and running of the required executables.</p>
 </div>
 </div>
 </div>
@@ -781,10 +772,131 @@ Also, note that if you choose the Manual or Docker installation mode, you should
 </div>
 </li>
 <li>
-<p>Open <strong>android/TravelSample/build.gradle</strong> using Android Studio.</p>
+<p>Open the project using Android Studio. The <strong>build.gradle</strong> is located in /path/to/mobile-travel-sample/android/TravelSample/ folder/directory.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configure-app-to-connect-to-backend"><a class="anchor" href="#configure-app-to-connect-to-backend"></a>Configure App to connect to Backend</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You will have to update the URLs specified in the app to connect to the backend
+If you haven&#8217;t done so already, complete the steps outlined in the "Backend Installation" to install your Couchbase Server, Sync Gateway and Python web backend app.</p>
+</div>
+<div class="sect2">
+<h3 id="updating-the-web-backend-url"><a class="anchor" href="#updating-the-web-backend-url"></a>Updating the web backend URL</h3>
+<div class="paragraph">
+<p><strong>Open the file</strong> <code>DatabaseManager.java</code> in util folder.
+You must update the <code>mPythonWebServerEndpoint</code> constant which points to the Python Web Server.</p>
+</div>
+<div class="paragraph">
+<p>Now, the URLs that you specify will vary depending on the installation option that you chose for deploying your backend</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_manual"></a>Manual</p>
 </li>
 <li>
-<p>Build and run the project.</p>
+<p><a id="tabset1_docker"></a>Docker</p>
+</li>
+<li>
+<p><a id="tabset1_cloud"></a>Cloud</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_manual">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static String mPythonWebServerEndpoint = "http://10.0.2.2:8080/api/";</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_docker">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static String mPythonWebServerEndpoint = "http://10.0.2.2:8080/api/";</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_cloud">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// Replace the hostname with the IP Address of the RightScale instance.
+// The example states `54.148.83.39` but yours will be different.
+public static String mPythonWebServerEndpoint = "http://54.148.83.39:8080/api/";</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="updating-the-sync-gateway-url"><a class="anchor" href="#updating-the-sync-gateway-url"></a>Updating the Sync Gateway URL</h3>
+<div class="paragraph">
+<p>Next, you will update the Sync Gateway endpoint.</p>
+</div>
+<div class="paragraph">
+<p><strong>Open the file</strong> <code>DatabaseManager.java</code> in util folder
+You must update the <code>mSyncGatewayEndpoint</code> constant.</p>
+</div>
+<div class="paragraph">
+<p>Now, the URLs that you specify will vary depending on the installation option that you chose for deploying your backend</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_manual"></a>Manual</p>
+</li>
+<li>
+<p><a id="tabset2_docker"></a>Docker</p>
+</li>
+<li>
+<p><a id="tabset2_cloud"></a>Cloud</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_manual">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">    public static String mSyncGatewayEndpoint = "ws://10.0.2.2:4984/travel-sample";</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_docker">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">    public static String mSyncGatewayEndpoint = "ws://10.0.2.2:4984/travel-sample";</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_cloud">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">// Replace the hostname with the IP Address of the RightScale instance.
+// The example states `54.148.83.39` but yours will be different.
+public static String mSyncGatewayEndpoint = "ws://54.148.83.39:4984/travel-sample";</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="try-it-out"><a class="anchor" href="#try-it-out"></a>Try it Out</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Build and run the project using Android emulator.</p>
 <div class="imageblock">
 <div class="content">
 <img src="https://cl.ly/1r0T100T0c22/as-build.png" alt="as build">
@@ -792,7 +904,7 @@ Also, note that if you choose the Manual or Docker installation mode, you should
 </div>
 </li>
 <li>
-<p>Verify that the login screen appears in the simulator.</p>
+<p>Verify that the login screen appears in the emuator.</p>
 <div class="imageblock">
 <div class="content">
 <img src="https://cl.ly/0T0G2S083g41/as-login.png" alt="as login" width="300">
