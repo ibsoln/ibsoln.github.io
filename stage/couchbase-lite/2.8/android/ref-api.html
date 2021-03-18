@@ -276,7 +276,7 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="http://docs.couchbase.com/mobile/3.0.0/couchbase-lite-android/">API&#160;References</a>
+<a class="nav-link" href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-android/">API&#160;References</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -489,7 +489,7 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="http://docs.couchbase.com/mobile/3.0.0/couchbase-lite-net">API&#160;References</a>
+<a class="nav-link" href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net">API&#160;References</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -702,7 +702,7 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="http://docs.couchbase.com/mobile/3.0.0/couchbase-lite-java/index.html?">API&#160;References</a>
+<a class="nav-link" href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-java/index.html?">API&#160;References</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -915,7 +915,7 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="http://docs.couchbase.com/mobile/3.0.0/couchbase-lite-objc">API&#160;References</a>
+<a class="nav-link" href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-objc">API&#160;References</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -1134,7 +1134,7 @@
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="http://docs.couchbase.com/mobile/3.0.0/couchbase-lite-swift">API&#160;References</a>
+<a class="nav-link" href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift">API&#160;References</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -1224,19 +1224,19 @@
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
-<a class="nav-link" href="../../../sync-gateway/3.0/introduction.html">Sync&#160;Gateway</a>
+<a class="nav-link" href="../../../sync-gateway/2.8/index.html">Sync&#160;Gateway</a>
 </span>
 <ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../../sync-gateway/3.0/configuration-properties.html">Configure</a>
+<a class="nav-link" href="../../../sync-gateway/2.8/configuration-properties.html">Configure</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../../sync-gateway/3.0/rest-api-admin.html">REST API</a>
+<a class="nav-link" href="../../../sync-gateway/2.8/rest-api-admin.html">REST API</a>
 </span>
 </li>
 </ul>
@@ -2001,12 +2001,23 @@ The end result will be an expression (with string content representing the date 
 <div class="sect1">
 <h2 id="live-query"><a class="anchor" href="#live-query"></a>Live Query</h2>
 <div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="activating-a-live-query"><a class="anchor" href="#activating-a-live-query"></a>Activating a Live Query</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>A live query stays active and monitors the database for changes.
-A live query is a great way to build reactive user interfaces, especially table/list views, that keep themselves up to date.
-For example, as the replicator runs and pulls new data from the server, a live query-driven UI will automatically update to show the data without the user having to manually refresh.
+<p>A live query is a query that, once activated, remains active and monitors the database for changes; refreshing the result set whenever a change occurs.
+As such, it is a great way to build reactive user interfaces&#8201;&#8212;&#8201;especially table/list views&#8201;&#8212;&#8201;that keep themselves up to date.</p>
+</div>
+<div class="paragraph">
+<p><strong>So, a simple use case may be:</strong> A replicator running and pulling new data from a server, whilst a live-query-driven UI automatically updates to show the data without the user having to manually refresh.
 This helps your app feel quick and responsive.</p>
 </div>
+<div id="ex-qry-start" class="exampleblock">
+<div class="title">Example 2. Starting a LIve Query</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code></code></pre>
@@ -2016,18 +2027,40 @@ This helps your app feel quick and responsive.</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>To start a live query, you must call <code>query.execute()</code>.
-This will immediately execute the query and post the result to the change listener.
-When there&#8217;s a change it re-runs itself automatically, and posts the new query result to any observers (change listeners).</td>
+<td>Build the query statements using the QuerybUilder</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Activate the <em>live</em> query by attaching a listener.<br>
+Save the token in order to detach the listener and stop the query later&#8201;&#8212;&#8201;se <a href="#ex-qry-stop">Example 3</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Start the query<br>
+This will immediately execute the live query and post the result to the change listener.
+When a change is detected the query automatically runs, and posts the new query result to any observers (change listeners).</td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>The following example stops the live query with the token from the previous example.</p>
 </div>
+</div>
+<div id="ex-qry-stop" class="exampleblock">
+<div class="title">Example 3. Stop a LIve Query</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we use the change lister token from <a href="#ex-qry-start">Example 2</a> to remove the listeners.
+Doing so stops the live query.</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -2395,7 +2428,7 @@ In the <code>OrderBy</code> array, use a string of the form <code>Rank(X)</code>
 </td>
 <td class="content">
 The new protocol is <strong>incompatible</strong> with CouchDB-based databases.
-And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that <a href="../../../sync-gateway/3.0/compatibility.html" class="page">supports it</a>.
+And since Couchbase Lite 2 only supports the new protocol, you will need to run a version of Sync Gateway that <a href="../../../sync-gateway/2.8/compatibility.html" class="page">supports it</a>.
 </td>
 </tr>
 </table>
@@ -2487,11 +2520,11 @@ Although <code>wss:</code> protocol URLs are not affected, in order to use the <
 <div class="ulist">
 <ul>
 <li>
-<p>Monitor the Sync Gateway sequence number returned by the database endpoint (<a href="../../../sync-gateway/3.0/rest-api.html#/database/get__db__" class="page"><code>GET /{tkn-db}/</code></a>).
+<p>Monitor the Sync Gateway sequence number returned by the database endpoint (<a href="../../../sync-gateway/2.8/rest-api.html#/database/get__db__" class="page"><code>GET /{tkn-db}/</code></a>).
 The sequence number increments for every change that happens on the Sync Gateway database.</p>
 </li>
 <li>
-<p>Query a document by ID on the Sync Gateway REST API (<a href="../../../sync-gateway/3.0/rest-api.html#/document/get__db___doc_" class="page"><code>GET /{tkn-db}/{id}</code></a>).</p>
+<p>Query a document by ID on the Sync Gateway REST API (<a href="../../../sync-gateway/2.8/rest-api.html#/document/get__db___doc_" class="page"><code>GET /{tkn-db}/{id}</code></a>).</p>
 </li>
 <li>
 <p>Query a document from the Query Workbench on the Couchbase Server Console.</p>
@@ -2501,11 +2534,11 @@ The sequence number increments for every change that happens on the Sync Gateway
 <div class="paragraph">
 <p>Couchbase Lite 2.0 uses WebSockets as the communication protocol to transmit data.
 Some load balancers are not configured for WebSocket connections by default (NGINX for example);
-so it might be necessary to explicitly enable them in the load balancer&#8217;s configuration (see <a href="../../../sync-gateway/3.0/load-balancer.html" class="page">Load Balancers</a>).</p>
+so it might be necessary to explicitly enable them in the load balancer&#8217;s configuration (see <a href="../../../sync-gateway/2.8/load-balancer.html" class="page">Load Balancers</a>).</p>
 </div>
 <div class="paragraph">
 <p>By default, the WebSocket protocol uses compression to optimize for speed and bandwidth utilization.
-The level of compression is set on Sync Gateway and can be tuned in the configuration file (<a href="../../../sync-gateway/3.0/configuration-properties.html#replicator_compression" class="page"><code>replicator_compression</code></a>).</p>
+The level of compression is set on Sync Gateway and can be tuned in the configuration file (<a href="../../../sync-gateway/2.8/configuration-properties.html#replicator_compression" class="page"><code>replicator_compression</code></a>).</p>
 </div>
 </div>
 <div class="sect2">
@@ -2716,7 +2749,7 @@ You can enable authentication with the following properties in the configuration
 </div>
 <div class="paragraph">
 <p>To authenticate with Sync Gateway, an associated user must first be created.
-Sync Gateway users can be created through the <a href="../../../sync-gateway/3.0/rest-api-admin.html#/user/post__db___user_" class="page"><code>POST /{tkn-db}/_user</code></a> endpoint on the Admin REST API.
+Sync Gateway users can be created through the <a href="../../../sync-gateway/2.8/rest-api-admin.html#/user/post__db___user_" class="page"><code>POST /{tkn-db}/_user</code></a> endpoint on the Admin REST API.
 Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.</p>
 </div>
 <div class="sect3">
@@ -2737,7 +2770,7 @@ The following example initiates a one-shot replication as the user <strong>usern
 <h4 id="session-authentication"><a class="anchor" href="#session-authentication"></a>Session Authentication</h4>
 <div class="paragraph">
 <p>Session authentication is another way to authenticate with Sync Gateway.
-A user session must first be created through the <a href="../../../sync-gateway/3.0/rest-api.html#/session/post__db___session" class="page"><code>POST /{tkn-db}/_session</code></a> endpoint on the Public REST API.
+A user session must first be created through the <a href="../../../sync-gateway/2.8/rest-api.html#/session/post__db___session" class="page"><code>POST /{tkn-db}/_session</code></a> endpoint on the Public REST API.
 The HTTP response contains a session ID which can then be used to authenticate as the user it was created for.
 The following example initiates a one-shot replication with the session ID that is returned from the <code>POST /{tkn-db}/_session</code> endpoint.</p>
 </div>
@@ -2894,12 +2927,12 @@ You should register the listener before starting your replication, to avoid havi
 </table>
 </div>
 <div class="paragraph">
-<p>For example, the code snippet in <a href="#ex-reg-doc-listener">Example 2</a> registers a listener to monitor document replication performed by the replicator referenced by the variable <code>replicator</code>.
+<p>For example, the code snippet in <a href="#ex-reg-doc-listener">Example 4</a> registers a listener to monitor document replication performed by the replicator referenced by the variable <code>replicator</code>.
 It prints the document ID of each document received and sent.
-Stop the listener as shown in <a href="#ex-stop-doc-listener">Example 3</a>.</p>
+Stop the listener as shown in <a href="#ex-stop-doc-listener">Example 5</a>.</p>
 </div>
 <div id="ex-reg-doc-listener" class="exampleblock">
-<div class="title">Example 2. Register a document listener</div>
+<div class="title">Example 4. Register a document listener</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2909,7 +2942,7 @@ Stop the listener as shown in <a href="#ex-stop-doc-listener">Example 3</a>.</p>
 </div>
 </div>
 <div id="ex-stop-doc-listener" class="exampleblock">
-<div class="title">Example 3. Stop document listener</div>
+<div class="title">Example 5. Stop document listener</div>
 <div class="content">
 <div class="paragraph">
 <p>This code snippet shows how to stop the document listener using the token from the previous example.</p>
@@ -2925,7 +2958,7 @@ Stop the listener as shown in <a href="#ex-stop-doc-listener">Example 3</a>.</p>
 <div class="title">Document Access Removal Behavior</div>
 <div class="content">
 <div class="paragraph">
-<p>When <a href="../../../sync-gateway/3.0/sync-function.html" class="page">access to a document is removed</a> on Sync Gateway, the document replication listener sends a notification with the <code>AccessRemoved</code> flag set to <code>true</code> and subsequently purges the document from the database.</p>
+<p>When <a href="../../../sync-gateway/2.8/sync-function.html" class="page">access to a document is removed</a> on Sync Gateway, the document replication listener sends a notification with the <code>AccessRemoved</code> flag set to <code>true</code> and subsequently purges the document from the database.</p>
 </div>
 </div>
 </div>
@@ -3003,7 +3036,7 @@ This is an important security mechanism in a peer-to-peer topology with peers th
 </td>
 <td class="content">
 Pull replication filters are not a substitute for channels.
-Sync Gateway <a href="../../../sync-gateway/3.0/channels.html" class="page">channels</a> are designed to be scalable (documents are filtered on the server) whereas a pull replication filter is applied to a document once it has been downloaded.
+Sync Gateway <a href="../../../sync-gateway/2.8/channels.html" class="page">channels</a> are designed to be scalable (documents are filtered on the server) whereas a pull replication filter is applied to a document once it has been downloaded.
 </td>
 </tr>
 </table>
@@ -3059,7 +3092,7 @@ This allows a Couchbase Lite replicator to store data on secondary storage.
 It is especially useful in scenarios where a user&#8217;s device may be damaged and its data moved to a different device.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 4. Replication between Local Databases</div>
+<div class="title">Example 6. Replication between Local Databases</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">

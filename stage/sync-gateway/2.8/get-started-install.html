@@ -707,14 +707,119 @@ Before starting the install, please ensure you have read, and acted-upon, the in
 </tr>
 </table>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Install Sync Gateway on the operating system of your choice:</p>
+<p>You can install Sync Gateway on any of the supported operating systems.</p>
+</div>
+<div class="sect2">
+<h3 id="installation-process"><a class="anchor" href="#installation-process"></a>Installation Process</h3>
+<div class="paragraph">
+<p>The installation process first deploys the Sync Gateway package, then defines and starts an example instance of Sync Gateway running as a service.</p>
+</div>
+<div class="paragraph">
+<p>By default Sync Gateway bases its initial setup on an example configuration file <code>serviceconfig.json</code>, provided in the <code>examples</code> directory.
+This initial configuration has limited functionality.
+It is intended primarily to verify the success of the installation by proving a connection to Sync Gateway can be made.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-your-own-configuration"><a class="anchor" href="#using-your-own-configuration"></a>Using Your Own Configuration</h3>
+<div class="paragraph">
+<p>Sync Gateway&#8217;s initial setup uses configuration details from a file its install script creates (<code>sync_gateway.json</code>, or <code>serviceconfig.json</code> on Windows).</p>
+</div>
+<div class="paragraph">
+<p>To provide your own configuration to Sync Gateway, you can either:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Continue to provide your config in the default file.
+You will need to restart Sync Gateway after each change.</p>
+</li>
+<li>
+<p>Run Sync Gateway from a command-line.
+That way you can provide a path to the required config file as a parameter.</p>
+</li>
+<li>
+<p>Change the service to use the required configuration file path.<br>
+Instructions on how to do this are given in the <em>Install</em> section for each of the platforms as they differ lightly.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="enterprise-edition"><a class="anchor" href="#enterprise-edition"></a>Enterprise Edition</h2>
+<h2 id="install-for-linux"><a class="anchor" href="#install-for-linux"></a>Install for Linux</h2>
 <div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">In this Section</dt>
+<dd>
+<p><a href="#lbl-linux-install">Install</a>  |  <a href="#lbl-linux-locn">Install Locations</a>  |  <a href="#lbl-linux-run">Run</a>  |  <a href="#lbl-linux-owncfg">Configuration</a></p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="download"><a class="anchor" href="#download"></a>Download</h3>
+<div class="paragraph">
+<p>Download the required edition of Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a> or alternatively use <code>wget</code> to copy the install package&#8201;&#8212;&#8201;see: <a href="#ex-linux-wget">Example 1</a></p>
+</div>
+<div id="ex-linux-wget" class="exampleblock">
+<div class="title">Example 1. Using wget</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">wget <a href="http://packages.couchbase.com/releases/couchbase-sync-gateway/2.8.0/&lt;package-name&gt;.&lt;package-suffix&gt" class="bare">http://packages.couchbase.com/releases/couchbase-sync-gateway/2.8.0/&lt;package-name&gt;.&lt;package-suffix&gt</a>; <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Where &lt;package-name&gt; is one of:
+<div class="ulist">
+<ul>
+<li>
+<p>Enterprise Edition&#8201;&#8212;&#8201;<code>couchbase-sync-gateway-enterprise_2.8.0_x86_64</code></p>
+</li>
+<li>
+<p>Community Edition&#8201;&#8212;&#8201;<code>couchbase-sync-gateway-community_2.8.0_x86_64</code></p>
+</li>
+</ul>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Where &lt;package-suffix&gt; is one of:
+<div class="ulist">
+<ul>
+<li>
+<p>Ubuntu&#8201;&#8212;&#8201;<code>deb</code></p>
+</li>
+<li>
+<p>Debian&#8201;&#8212;&#8201;<code>deb</code></p>
+</li>
+<li>
+<p>Red Hat / CentOS&#8201;&#8212;&#8201;<code>rpm</code></p>
+</li>
+</ul>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-linux-install"><a class="anchor" href="#lbl-linux-install"></a>Install</h3>
+<div class="paragraph">
+<p>Follow the appropriate install option from the methods shown.</p>
+</div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
@@ -727,283 +832,492 @@ Before starting the install, please ensure you have read, and acted-upon, the in
 <li>
 <p><a id="tabset1_debian"></a>Debian</p>
 </li>
-<li>
-<p><a id="tabset1_windows"></a>Windows</p>
-</li>
-<li>
-<p><a id="tabset1_macos"></a>macOS</p>
-</li>
 </ul>
 </div>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset1_ubuntu">
 <div class="paragraph">
-<p>Download Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a> or using <code>wget</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">wget http://packages.couchbase.com/releases/couchbase-sync-gateway/2.8.0/couchbase-sync-gateway-enterprise_2.8.0_x86_64.deb</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Install sync_gateway with the dpkg package manager e.g:</p>
+<p>Install sync_gateway with the dpkg package manager:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dpkg -i couchbase-sync-gateway-enterprise_2.8.0_x86_64.deb</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>When the installation is complete sync_gateway will be running as a service.</p>
-</div>
-<div class="paragraph">
-<p>To stop/start the <code>sync_gateway</code> service, use the following.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo service sync_gateway start
-sudo service sync_gateway stop</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The config file and logs are located in <code>/home/sync_gateway</code>.</p>
-</div>
-<div class="paragraph">
-<p>You can also run the <strong>sync_gateway</strong> binary directly from the command line.
-The binary is installed at <code>/opt/couchbase-sync-gateway/bin/sync_gateway</code>.</p>
-</div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_red-hat-centos">
 <div class="paragraph">
-<p>Download Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a> or using the <code>wget</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">wget http://packages.couchbase.com/releases/couchbase-sync-gateway/2.8.0/couchbase-sync-gateway-enterprise_2.8.0_x86_64.rpm</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Install sync_gateway with the rpm package manager e.g:</p>
+<p>Install sync_gateway with the rpm package manager:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rpm -i couchbase-sync-gateway-enterprise_2.8.0_x86_64.rpm</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>When the installation is complete sync_gateway will be running as a service.</p>
-</div>
-<div class="paragraph">
-<p>On CentOS 5:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">service sync_gateway start
-service sync_gateway stop</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>On CentOS 6:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">initctl start sync_gateway
-initctl stop sync_gateway</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>initctl restart sync_gateway</code> command does not work in CentOS 6.
-To restart Sync Gateway, the stop/start commands can be used instead.</p>
-</div>
-<div class="paragraph">
-<p>On CentOS 7:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl start sync_gateway
-systemctl stop sync_gateway</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The config file and logs are located in <code>/home/sync_gateway</code>.</p>
-</div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_debian">
 <div class="paragraph">
-<p>Download Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a> or using the <code>wget</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">wget http://packages.couchbase.com/releases/couchbase-sync-gateway/2.8.0/couchbase-sync-gateway-enterprise_2.8.0_x86_64.deb</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Install sync_gateway with the dpkg package manager e.g:</p>
+<p>Install sync_gateway with the dpkg package manager:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dpkg -i couchbase-sync-gateway-enterprise_2.8.0_x86_64.deb</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>When the installation is complete sync_gateway will be running as a service.</p>
 </div>
+</div>
+</div>
+<div class="paragraph">
+<p>When the installation is complete Sync Gateway will be running as a service named <code>sync_gateway</code>.</p>
+</div>
+<div class="paragraph">
+<p>To stop and start the <code>sync_gateway</code> service, use the methods show in <a href="#lbl-linux-run">Run</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-linux-locn"><a class="anchor" href="#lbl-linux-locn"></a>Install Locations</h3>
+<div class="paragraph">
+<p>The default Sync Gateway installation uses the locations shown in <a href="#tbl-linux-locns">Table 1</a>.</p>
+</div>
+<table id="tbl-linux-locns" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Default Installation Locations</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Content</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Location</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Example</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binaries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The installation directory</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/opt/couchbase-sync-gateway/bin/</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration files</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The <code>sync_gateway</code> user&#8217;s home directory</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/home/sync_gateway/sync_gateway.json</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Example Configs</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The installation directory</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/opt/couchbase-sync-gateway/examples/</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Log files</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>sync_gateway</code> user&#8217;s home directory</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/home/sync_gateway/logs/</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scripts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The installation directory</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/opt/couchbase-sync-gateway/service/</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">systemd library</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/lib/systemd/system/sync_gateway.service
+or /usr/lib/systemd/system/sync_gateway.service</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="lbl-linux-run"><a class="anchor" href="#lbl-linux-run"></a>Run</h3>
+<div class="paragraph">
+<p>You can run Sync Gateway as a service, or directly from a command line, using one of the methods show here.</p>
+</div>
+<div class="sect3">
+<h4 id="command-line"><a class="anchor" href="#command-line"></a>Command Line</h4>
 <div class="listingblock">
+<div class="title">Start</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"><i class="conum" data-value="1"></i><b>(1)</b>
+/opt/couchbase-sync-gateway/bin/sync_gateway &lt;path-to-configuration-file&gt; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Where <code>/opt/couchbase-sync-gateway/</code> is the location into which you deployed the Sync Gateway package.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Where &lt;path-to-configuration-file&gt; resolves to a JSON format file containing the Sync Gateway configuration, for example, <code>/home/sync_gateway/sync-gateway-config.json</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<div class="title">Stop</div>
+<p>You can stop Sync Gateway instances started in this way by using <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>. There is no specific shutdown procedure and it is safe to stop it at any time. For other command-line options&#8201;&#8212;&#8201;see <a href="command-line-options.html" class="page">Using Command Line</a></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="services"><a class="anchor" href="#services"></a>Services</h4>
+<div class="listingblock">
+<div class="title">Using systemd</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl start sync_gateway
 systemctl stop sync_gateway</code></pre>
 </div>
 </div>
+<div class="listingblock">
+<div class="title">Using init</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">service sync_gateway start
+service sync_gateway stop</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-linux-owncfg"><a class="anchor" href="#lbl-linux-owncfg"></a>Configuration</h3>
 <div class="paragraph">
-<p>The config file and logs are located in <code>/home/sync_gateway</code>.</p>
+<p>To change the default configuration file path of an existing Sync Gateway service you need to edit the service descriptor.</p>
 </div>
+<div class="paragraph">
+<p>For <code>systemd</code> this will be <code>sync_gateway.service</code> in either
+<code>/lib/systemd/system/sync_gateway.service</code> or <code>/usr/lib/systemd/system/sync_gateway.service</code></p>
 </div>
-<div class="tab-pane" aria-labelledby="tabset1_windows">
+<div class="paragraph">
+<p>You will need to find and replace the path in following line with your required path:
+<code>Environment="CONFIG=/home/sync_gateway/sync_gateway.json"</code></p>
+</div>
 <div class="olist arabic">
+<div class="title">One way to do this is to use <code>systemctl</code></div>
 <ol class="arabic">
 <li>
-<p>Download Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a>.</p>
+<p>Ensure the new file path includes a useable Sync Gateway configuration file</p>
 </li>
 <li>
-<p>Open the installer and follow the instructions.<br>
-If the installation was successful you will see the following.</p>
+<p>Stop the service</p>
+</li>
+<li>
+<p>Copy the existing <code>sync_gateway.service</code> file to a safe location as a back-up</p>
+</li>
+<li>
+<p>Use <code>sudo systemctl edit sync_gateway</code> to edit the service, this will automatically recycle the daemon on completion</p>
+</li>
+<li>
+<p>Replace the path in <code>Environment="CONFIG=/home/sync_gateway/sync_gateway.json"</code> with your required path</p>
+</li>
+<li>
+<p>Save the changes<br>
+When the daemon reload completes, Sync Gateway will restart using the required configuration file</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="install-for-windows"><a class="anchor" href="#install-for-windows"></a>Install for Windows</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">In this Section</dt>
+<dd>
+<p><a href="#lbl-windows-install">Install</a>  |  <a href="#lbl-windows-locn">Install Locations</a>  |  <a href="#lbl-windows-run">Run</a>  |  <a href="#lbl-windows-owncfg">Configuration</a></p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="download-2"><a class="anchor" href="#download-2"></a>Download</h3>
+<div class="paragraph">
+<p>Download the required edition of Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-windows-install"><a class="anchor" href="#lbl-windows-install"></a>Install</h3>
+<div class="paragraph">
+<p>Open the installer and follow the instructions.
+If the installation was successful you will see the following:</p>
+</div>
 <div class="imageblock">
 <div class="content">
 <img src="_images/windows-installation-complete.png" alt="windows installation complete">
 </div>
 </div>
-</li>
-<li>
-<p>Check you can Start and Stop Sync Gateway<br></p>
 <div class="paragraph">
-<p>You can start Sync Gateway from the command line&#8201;&#8212;&#8201;see: <a href="command-line-options.html" class="page">Using Command Line</a> or run it as a service.
-Either way, once it starts running you can access the REST API on:</p>
+<p>When the installation is complete Sync Gateway will be running as a service <code>SyncGateway</code>.</p>
 </div>
+<div class="paragraph">
+<p>To stop/start the <code>SyncGateway</code> service, use the methods show in <a href="#lbl-windows-run">Run</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-windows-locn"><a class="anchor" href="#lbl-windows-locn"></a>Install Locations</h3>
+<div class="paragraph">
+<p>The default Sync Gateway installation uses the locations shown in <a href="#tbl-windows-locns">Table 2</a>.</p>
+</div>
+<table id="tbl-windows-locns" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Default Installation Locations</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Content</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Location</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binaries</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>C:\Program Files\Couchbase\Sync Gateway\</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration files</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>C:\Program Files\Couchbase\Sync Gateway\</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Examples</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>C:\Program Files\Couchbase\Sync Gateway\examples</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Log files</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>C:\Program Files\Couchbase\Sync Gateway\var\lib\couchbase\logs</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tools</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>C:\Program Files\Couchbase\Sync Gateway\tools</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="lbl-windows-run"><a class="anchor" href="#lbl-windows-run"></a>Run</h3>
+<div class="paragraph">
+<p>You can run Sync Gateway as a service, or directly from a command line, using one of the methods show here.</p>
+</div>
+<div class="sect3">
+<h4 id="command-line-2"><a class="anchor" href="#command-line-2"></a>Command Line</h4>
+<div class="listingblock">
+<div class="title">Start</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">c:\PROGRA~1\COUCHB~1\SYNCGA~1\SYNC_G~1.EXE &lt;path-to-configuration-file&gt; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Where:
 <div class="ulist">
 <ul>
 <li>
-<p><code>http://localhost:4984</code>&#8201;&#8212;&#8201;public API</p>
+<p>The path to the executable uses Windows' short name notation</p>
 </li>
 <li>
-<p><code>http://localhost:4985</code>&#8201;&#8212;&#8201;admin API</p>
+<p>&lt;path-to-configuration-file&gt; resolves to a JSON format file containing the Sync Gateway configuration, for example, <code>{home-location-windows}sync-gateway-config.json</code></p>
 </li>
 </ul>
+</div></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>To stop/start the service, you can use the Services application (<strong>Control Panel &#8594; Admin Tools &#8594; Services</strong>).</p>
+<div class="title">Stop</div>
+<p>You can stop Sync Gateway instances started in this way by using <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>. There is no specific shutdown procedure and it is safe to stop it at any time. For other command-line options&#8201;&#8212;&#8201;see <a href="command-line-options.html" class="page">Using Command Line</a></p>
 </div>
+</div>
+<div class="sect3">
+<h4 id="service"><a class="anchor" href="#service"></a>Service</h4>
+<div class="olist arabic">
+<div class="title">Using the Windows' Services Application</div>
+<ol class="arabic">
+<li>
+<p>From the Start Menu, <strong>Control Panel &#8594; Admin Tools &#8594; Services</strong></p>
+</li>
+<li>
+<p>Within the Service panel, locate and <kbd>Right-Click</kbd> the service</p>
+</li>
+<li>
+<p>From the Options Menu, select <strong>Start</strong> (or Stop) <kbd>Enter</kbd></p>
+</li>
+</ol>
+</div>
+<div class="olist arabic">
+<div class="title">Using Windows' Command Line Utility <code>sc.exe</code></div>
+<ol class="arabic">
+<li>
+<p>Start Sync Gateway Service</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">c:\&gt; sc start SyncGateway</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will result in a response such as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">SERVICE_NAME: SyncGateway
+        TYPE               : 10  WIN32_OWN_PROCESS
+        STATE              : 2  START_PENDING
+                                (NOT_STOPPABLE, NOT_PAUSABLE, IGNORES_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x7d0
+        PID                : 7420
+        FLAGS              :</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Stop Sync Gateway Service</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">c:\&gt; sc stop SyncGateway</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will result in a response such as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">SERVICE_NAME: SyncGateway
+        TYPE               : 10  WIN32_OWN_PROCESS
+        STATE              : 4  RUNNING
+                                (STOPPABLE, NOT_PAUSABLE, ACCEPTS_SHUTDOWN)
+        WIN32_EXIT_CODE    : 0  (0x0)
+        SERVICE_EXIT_CODE  : 0  (0x0)
+        CHECKPOINT         : 0x0
+        WAIT_HINT          : 0x0</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-windows-owncfg"><a class="anchor" href="#lbl-windows-owncfg"></a>Configuration</h3>
+<div class="paragraph">
+<p>To change the default configuration file path of an existing Sync Gateway service you need to edit the service descriptor.</p>
+</div>
+<div class="paragraph">
+<p>For Windows, the configuration path is provided as a command line parameter embedded within the <code>SyncGateway</code> service&#8217;s <code>binpath</code>.</p>
+</div>
+<div class="paragraph">
+<p>One way to edit the <code>binpath</code> value is to use Windows' <em>Service Control Manager&#8217;s</em> command line utility <code>sc.exe config</code>.
+See the <a href="#lbl-syntax">Syntax of the sc.exe Command</a> and an example of the command in use in <a href="#ex-windows-scexe">Example 2</a>.</p>
+</div>
+<div id="lbl-syntax" class="paragraph">
+<div class="title">Syntax of the sc.exe Command</div>
+<p>The format of the <code>sc.exe</code> command is shown below.
+For presentation purposes it is split over several lines.
+It should be input as a single line.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sc &lt;remote-server-name&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+  config <i class="conum" data-value="2"></i><b>(2)</b>
+  SyncGateway <i class="conum" data-value="3"></i><b>(3)</b>
+  binpath= <i class="conum" data-value="4"></i><b>(4)</b>
+  " <i class="conum" data-value="5"></i><b>(5)</b>
+  [path-to-sg-windows.exe] start [path-to-sync_gateway.exe] <i class="conum" data-value="6"></i><b>(6)</b>
+  [path-to-config-file] <i class="conum" data-value="7"></i><b>(7)</b>
+  [path-to-error-logs] <i class="conum" data-value="8"></i><b>(8)</b>
+  " <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Omit the &lt;remote-server-name&gt; parameter if the service is local</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Specifies the function we are using, config, in this instance</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Identifies the service being changed</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Specifies the string value of the path to the binary to be run, and any command line parameters.
+The rules for formatting the <code>binpath</code> value are quite complex:
 <div class="ulist">
 <ul>
 <li>
-<p>The configuration file is located under <code>C:\Program Files\Couchbase\Sync Gateway\serviceconfig.json</code>.</p>
+<p>The entire string value must be enclosed in quotes</p>
 </li>
 <li>
-<p>Logs are located under <code>C:\Program Files\Couchbase\Sync Gateway\var\lib\couchbase\logs</code>.</p>
+<p>There must be one space (only) following the equals sign and none before it</p>
+</li>
+<li>
+<p>Each of the [path-to &#8230;&#8203;] elements must themselves be enclosed in quotes.
+These inner quotes must be escaped (for example <code>\"</code> &#8230;&#8203; <code>\"</code>)</p>
 </li>
 </ul>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Opening quotes for the <code>binpath</code>, preceded by a single space.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Path to the binaries.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>You can provide the required configuration file path name here in the form:<br>
+<code>\"path/to/file/name.json\"</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>You can provide the required log file path name here in the form:<br>
+<code>\"path/to/file/name.log\"</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Closing quotes for the <code>binpath</code>, preceded by a single space.</td>
+</tr>
+</table>
 </div>
-</li>
-</ol>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset1_macos">
+<div id="ex-windows-scexe" class="exampleblock">
+<div class="title">Example 2. Sample sc.exe Use</div>
+<div class="content">
 <div class="paragraph">
-<p>macOS is supported only for development and test environments (see <a href="supported-environments.html#supported-versions" class="page">Supported OS</a>).</p>
-</div>
-<div class="paragraph">
-<p>Download Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a> or using the <code>wget</code>.</p>
+<p>This example changes the configuration file name from <code>serviceconfig.json</code> to <code>sync-gateway-config.json</code></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">wget http://packages.couchbase.com/releases/couchbase-sync-gateway/2.8.0/couchbase-sync-gateway-enterprise_2.8.0_x86_64.tar.gz</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sc config SyncGateway binpath= "\"C:\Program Files\Couchbase\Sync Gateway\sg-windows.exe\" start \"C:\Program Files\Couchbase\Sync Gateway\sync_gateway.exe\" \"C:\Program Files\Couchbase\Sync Gateway\sync-gateway-config.json\" \"C:\Program Files\Couchbase\Sync Gateway\var\lib\couchbase\logs\sync_gateway_error.log\""</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>From here, there are two installation options.</p>
-</div>
-<div class="paragraph">
-<p><strong>Option 1:</strong> Start Sync Gateway from the Command Line</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Unpack the tar.gz installer.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo tar -zxvf couchbase-sync-gateway-enterprise_2.8.0_x86_64.tar.gz</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Launch the <code>sync_gateway</code> program from the command line.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">~/Downloads/couchbase-sync-gateway/bin/sync_gateway</code></pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Option 2:</strong> Run Sync Gateway as a service</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Unpack the tar.gz installer to the <strong>/opt</strong> directory.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo tar -zxvf couchbase-sync-gateway-enterprise_2.8.0_x86_64.tar.gz --directory /opt</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Create a new macOS user.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">sudo sysadminctl -addUser sync_gateway</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If the operation is successful, you will get the following output.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">sysadminctl ----------------------------
-sysadminctl No clear text password or interactive option was specified (adduser, change/reset password will not allow user to use FDE) !
-sysadminctl ----------------------------
-sysadminctl Creating user record…
-sysadminctl Assigning UID: 505
-sysadminctl Creating home directory at /Users/sync_gateway</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Create a new group and add the <code>sync_gateway</code> user to that group.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">sudo dseditgroup -o create sync_gateway
-sudo dseditgroup -o edit -a sync_gateway -t user sync_gateway</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Run Sync Gateway as a service with the following.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /opt/couchbase-sync-gateway/service
-sudo ./sync_gateway_service_install.sh</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Other scripts in that directory are available to update or uninstall the service.</p>
-</div>
-</li>
-<li>
-<p>Sync Gateway is now reachable on <a href="http://0.0.0.0:4984">0.0.0.0:4984</a>.
-The configuration file and logs are located in <code>/Users/sync_gateway</code>.</p>
-</li>
-</ol>
 </div>
 </div>
 </div>
@@ -1011,252 +1325,39 @@ The configuration file and logs are located in <code>/Users/sync_gateway</code>.
 </div>
 </div>
 <div class="sect1">
-<h2 id="community-edition"><a class="anchor" href="#community-edition"></a>Community Edition</h2>
+<h2 id="install-for-mac-os"><a class="anchor" href="#install-for-mac-os"></a>Install for Mac OS</h2>
 <div class="sectionbody">
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset2_ubuntu"></a>Ubuntu</p>
-</li>
-<li>
-<p><a id="tabset2_red-hat-centos"></a>Red Hat/CentOS</p>
-</li>
-<li>
-<p><a id="tabset2_debian"></a>Debian</p>
-</li>
-<li>
-<p><a id="tabset2_windows"></a>Windows</p>
-</li>
-<li>
-<p><a id="tabset2_macos"></a>macOS</p>
-</li>
-</ul>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">In this Section</dt>
+<dd>
+<p><a href="#lbl-macos-install">Install</a>  |  <a href="#lbl-macos-locn">Install Locations</a>  |  <a href="#lbl-macos-run">Run</a>  |  <a href="#lbl-macos-owncfg">Configuration</a></p>
+</dd>
+</dl>
 </div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_ubuntu">
-<div class="paragraph">
-<p>Download Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a> or using <code>wget</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">wget http://packages.couchbase.com/releases/couchbase-sync-gateway/2.8.0/couchbase-sync-gateway-community_2.8.0_x86_64.deb</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Install sync_gateway with the dpkg package manager e.g:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dpkg -i couchbase-sync-gateway-community_2.8.0_x86_64.deb</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>When the installation is complete sync_gateway will be running as a service.</p>
-</div>
-<div class="paragraph">
-<p>To stop/start the <code>sync_gateway</code> service, use the following.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo service sync_gateway start
-sudo service sync_gateway stop</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The config file and logs are located in <code>/home/sync_gateway</code>.</p>
-</div>
-<div class="paragraph">
-<p>You can also run the <strong>sync_gateway</strong> binary directly from the command line.
-The binary is installed at <code>/opt/couchbase-sync-gateway/bin/sync_gateway</code>.</p>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset2_red-hat-centos">
-<div class="paragraph">
-<p>Download Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a> or using the <code>wget</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">wget http://packages.couchbase.com/releases/couchbase-sync-gateway/2.8.0/couchbase-sync-gateway-community_2.8.0_x86_64.rpm</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Install sync_gateway with the rpm package manager e.g:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rpm -i couchbase-sync-gateway-community_2.8.0_x86_64.rpm</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>When the installation is complete sync_gateway will be running as a service.</p>
-</div>
-<div class="paragraph">
-<p>On CentOS 5:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">service sync_gateway start
-service sync_gateway stop</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>On CentOS 6:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">initctl start sync_gateway
-initctl stop sync_gateway</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>initctl restart sync_gateway</code> command does not work in CentOS 6.
-To restart Sync Gateway, the stop/start commands can be used instead.</p>
-</div>
-<div class="paragraph">
-<p>On CentOS 7:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl start sync_gateway
-systemctl stop sync_gateway</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The config file and logs are located in <code>/home/sync_gateway</code>.</p>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset2_debian">
-<div class="paragraph">
-<p>Download Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a> or using the <code>wget</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">wget http://packages.couchbase.com/releases/couchbase-sync-gateway/2.8.0/couchbase-sync-gateway-community_2.8.0_x86_64.deb</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Install sync_gateway with the dpkg package manager e.g:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dpkg -i couchbase-sync-gateway-community_2.8.0_x86_64.deb</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>When the installation is complete sync_gateway will be running as a service.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl start sync_gateway
-systemctl stop sync_gateway</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The config file and logs are located in <code>/home/sync_gateway</code>.</p>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset2_windows">
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Download Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a>.</p>
-</li>
-<li>
-<p>Open the installer and follow the instructions.<br>
-If the installation was successful you will see the following.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/windows-installation-complete.png" alt="windows installation complete">
-</div>
-</div>
-</li>
-<li>
-<p>Check you can Start and Stop Sync Gateway<br></p>
-<div class="paragraph">
-<p>You can start Sync Gateway from the command line&#8201;&#8212;&#8201;see: <a href="command-line-options.html" class="page">Using Command Line</a> or run it as a service.
-Either way, once it starts running you can access the REST API on:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>http://localhost:4984</code>&#8201;&#8212;&#8201;public API</p>
-</li>
-<li>
-<p><code>http://localhost:4985</code>&#8201;&#8212;&#8201;admin API</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>To stop/start the service, you can use the Services application (<strong>Control Panel &#8594; Admin Tools &#8594; Services</strong>).</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The configuration file is located under <code>C:\Program Files\Couchbase\Sync Gateway\serviceconfig.json</code>.</p>
-</li>
-<li>
-<p>Logs are located under <code>C:\Program Files\Couchbase\Sync Gateway\var\lib\couchbase\logs</code>.</p>
-</li>
-</ul>
-</div>
-</li>
-</ol>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset2_macos">
-<div class="paragraph">
-<p>Download Sync Gateway from the <a href="https://www.couchbase.com/downloads/?family=mobile#couchbase-mobile">Couchbase downloads page</a> or using the <code>wget</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">wget http://packages.couchbase.com/releases/couchbase-sync-gateway/2.8.0/couchbase-sync-gateway-community_2.8.0_x86_64.tar.gz</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>From here, there are two installation options.</p>
-</div>
-<div class="paragraph">
-<p><strong>Option 1:</strong> Start Sync Gateway from the Command Line</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Unpack the tar.gz installer.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo tar -zxvf couchbase-sync-gateway-community_2.8.0_x86_64.tar.gz</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>Launch the <code>sync_gateway</code> program from the command line.</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">~/Downloads/couchbase-sync-gateway/bin/sync_gateway</code></pre>
-</div>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p><strong>Option 2:</strong> Run Sync Gateway as a service</p>
-</div>
+<div class="sect2">
+<h3 id="lbl-macos-install"><a class="anchor" href="#lbl-macos-install"></a>Install</h3>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
 <p>Unpack the tar.gz installer to the <strong>/opt</strong> directory.</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo tar -zxvf couchbase-sync-gateway-community_2.8.0_x86_64.tar.gz --directory /opt</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo tar -zxvf couchbase-sync-gateway-enterprise_2.8.0_x86_64.tar.gz --directory /opt</code></pre>
+</div>
+</div>
 </div>
 </div>
 </li>
 <li>
 <p>Create a new macOS user.</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">sudo sysadminctl -addUser sync_gateway</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo sysadminctl -addUser sync_gateway</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1264,7 +1365,7 @@ Either way, once it starts running you can access the REST API on:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">sysadminctl ----------------------------
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sysadminctl ----------------------------
 sysadminctl No clear text password or interactive option was specified (adduser, change/reset password will not allow user to use FDE) !
 sysadminctl ----------------------------
 sysadminctl Creating user record…
@@ -1272,36 +1373,273 @@ sysadminctl Assigning UID: 505
 sysadminctl Creating home directory at /Users/sync_gateway</code></pre>
 </div>
 </div>
+</div>
+</div>
 </li>
 <li>
 <p>Create a new group and add the <code>sync_gateway</code> user to that group.</p>
+<div class="openblock">
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">sudo dseditgroup -o create sync_gateway
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo dseditgroup -o create sync_gateway
 sudo dseditgroup -o edit -a sync_gateway -t user sync_gateway</code></pre>
 </div>
 </div>
+</div>
+</div>
 </li>
 <li>
-<p>Run Sync Gateway as a service with the following.</p>
-<div class="listingblock">
+<p>Define the Sync Gateway Service</p>
+<div class="openblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /opt/couchbase-sync-gateway/service
-sudo ./sync_gateway_service_install.sh</code></pre>
-</div>
+<div class="paragraph">
+<p>This script will define and load the service, which is set it to automatically restart.</p>
 </div>
 <div class="paragraph">
-<p>Other scripts in that directory are available to update or uninstall the service.</p>
+<p>Other scripts in the <code>service</code> directory are available to update or uninstall the service.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /opt/couchbase-sync-gateway//service
+sudo ./sync_gateway_service_install.sh &lt;optional-args&gt; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Note that you can, by using optional parameters, provide alternative file paths for the Sync Gateway configuration file (<code>--cfgpath=</code>) or log files ()
+path (<code>--logsdir=</code>).
+These will be used instead of the default path whenever the service starts.
+<div class="paragraph">
+<p>So, for example:<br>
+<code>sudo ./sync_gateway_service_install.sh --cfgpath=sync-gateway-config.json</code></p>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
 </div>
 </li>
 <li>
-<p>Sync Gateway is now reachable on <a href="http://0.0.0.0:4984">0.0.0.0:4984</a>.
-The configuration file and logs are located in <code>/Users/sync_gateway</code>.</p>
+<p>When the install is complete the sync_gateway service will be running</p>
+<div class="paragraph">
+<p>To stop/start the <code>sync_gateway</code> service, use the methods show in <a href="#lbl-macos-run">Run</a></p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-macos-locn"><a class="anchor" href="#lbl-macos-locn"></a>Install Locations</h3>
+<div class="paragraph">
+<p>The default Sync Gateway installation uses the locations shown in <a href="#tbl-macos-locns">Table 3</a>.</p>
+</div>
+<table id="tbl-macos-locns" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. Default Installation Locations</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Content</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Location</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Example</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Binaries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The installation directory</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/opt/couchbase-sync-gateway/bin/</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Configuration files</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The <code>sync_gateway</code> user&#8217;s home directory</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/users/sync_gateway/</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Examples</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The installation directory</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/opt/couchbase-sync-gateway/examples/</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Log files</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The <code>sync_gateway</code> user&#8217;s home directory</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/users/sync_gateway/logs/</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scripts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The installation directory</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/opt/couchbase-sync-gateway/service/</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Service</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Library directory</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>/Library/LaunchDaemons/com.couchbase.mobile.sync_gateway.plist</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="lbl-macos-run"><a class="anchor" href="#lbl-macos-run"></a>Run</h3>
+<div class="paragraph">
+<p>You can run Sync Gateway as a <a href="#lbl-service">service</a>, or directly from a <a href="#lbl-command">command line</a>, using one of the methods show here.</p>
+</div>
+<div class="sect3">
+<h4 id="lbl-command"><a class="anchor" href="#lbl-command"></a>Command Line</h4>
+<div class="listingblock">
+<div class="title">Start</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"><i class="conum" data-value="1"></i><b>(1)</b>
+/opt/couchbase-sync-gateway/bin/sync_gateway &lt;path-to-configuration-file&gt; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Where <code>/opt/couchbase-sync-gateway/</code> is the location into which you deployed the Sync Gateway package.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Where &lt;path-to-configuration-file&gt; resolves to a JSON format file containing the Sync Gateway configuration, for example, <code>/users/sync_gateway/sync-gateway-config.json</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<div class="title">Stop</div>
+<p>You can stop Sync Gateway instances started in this way by using <span class="keyseq"><kbd>Ctrl</kbd>+<kbd>C</kbd></span>. There is no specific shutdown procedure and it is safe to stop it at any time. For other command-line options&#8201;&#8212;&#8201;see <a href="command-line-options.html" class="page">Using Command Line</a></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="lbl-service"><a class="anchor" href="#lbl-service"></a>Service</h4>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo launchctl load -w /Library/LaunchDaemons/com.couchbase.mobile.sync_gateway.plist <i class="conum" data-value="1"></i><b>(1)</b>
+
+sudo launchctl unload -w /Library/LaunchDaemons/com.couchbase.mobile.sync_gateway.plist <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we load, and automatically start, the default sync_gateway service</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Here we unload the default sync_gateway service.
+Note that it is not sufficient to <code>stop</code> the service.
+It is configured to automatically restart.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-macos-owncfg"><a class="anchor" href="#lbl-macos-owncfg"></a>Configuration</h3>
+<div class="paragraph">
+<p>To change the default configuration file path of an existing Sync Gateway service you need to edit the service descriptor.</p>
+</div>
+<div class="paragraph">
+<p>For Mac OS this will be the <code>.plist</code> file <code>com.couchbase.mobile.sync_gateway.plist</code>.</p>
+</div>
+<div class="olist arabic">
+<div class="title">One way to do this would be:</div>
+<ol class="arabic">
+<li>
+<p>Ensure the new file path includes a useable Sync Gateway configuration file</p>
+</li>
+<li>
+<p>Within a terminal, stop the service&#8201;&#8212;&#8201;see: <a href="#lbl-macos-run">start and stop the service</a></p>
+</li>
+<li>
+<p>Copy the existing <code>com.couchbase.mobile.sync_gateway.plist</code> file to a safe location as a back-up</p>
+</li>
+<li>
+<p>Open the <code>com.couchbase.mobile.sync_gateway.plist</code> file in an editor. You will need to use <code>sudo</code></p>
+</li>
+<li>
+<p>Within the <code>ProgramArguments</code> section of the <code>.plist</code>, find and edit the configuration file path, which by default contains:
+<code>&lt;string&gt;/Users/sync_gateway/sync_gateway.json&lt;/string&gt;</code></p>
+</li>
+<li>
+<p>Save your changes</p>
+</li>
+<li>
+<p>Restart the service &#8201;&#8212;&#8201;see: <a href="#lbl-macos-run">start and stop the service</a></p>
 </li>
 </ol>
 </div>
 </div>
 </div>
+</div>
+<div class="sect1">
+<h2 id="check-the-install"><a class="anchor" href="#check-the-install"></a>Check the Install</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To check Sync Gateway started successfully, you can now connect to it from a browser by using either:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://localhost:4984">http://localhost:4984</a> for the Public API</p>
+</li>
+<li>
+<p><a href="http://localhost:4985">http://localhost:4985</a> for the Admin API</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You should receive a response in the browser such as:<br>
+<code>{"couchdb":"Welcome","vendor":{"name":"Couchbase Sync Gateway","version":"2.8"},"version":"Couchbase Sync Gateway/2.8.0(145;e3f46be) EE"}</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="next-steps"><a class="anchor" href="#next-steps"></a>Next Steps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that you have a working version of Sync Gateway, which you can connect a console to using either the Public or Admin REST API, you can:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Verify and explore the sync functionality using&#8201;&#8212;&#8201;<a href="get-started-verify-install.html" class="page">Verify</a></p>
+</li>
+<li>
+<p>Learn more about building Couchbase Mobile applications using the <a href="https://docs.couchbase.com/tutorials/mobile-travel-sample/introduction.html">Couchbase Mobile Workshop</a> tutorial</p>
+</li>
+<li>
+<p>Learn more about the sync process</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="sync-with-couchbase-server.html" class="page">Sync with Couchbase Server</a></p>
+</li>
+<li>
+<p><a href="configuration-properties.html" class="page">Configuration File</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>
