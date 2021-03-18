@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Webhooks | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/DOC-8191/sync-gateway/2.8/webhooks.html">
+<link rel="stylesheet" href="../../_/css/site.css">
+<script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Introducing Sync Gateway events and event handling with Webhooks">
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+<meta name="dcterms.subject" content="sync-gateway">
+<meta name="dcterms.identifier" content="2.8">
+<meta name="generator" content="Antora 2.3.3">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+              <ul class="navbar-brand-list">
+                <li class="brand-logo">
+                  <a class="navbar-brand" href="https://www.couchbase.com">
+                    <img src="../../_/img/couchbase-logo.svg" alt="Couchbase" />
+                  </a>
+                </li>
+                <li>
+                  <a class="navbar-brand cb-documentation" href="https://docs.couchbase.com">
+                    <img src="../../_/img/cb-documentation.svg" alt="Couchbase Documentation" class="cb-docs" />
+                    <img src="../../_/img/cb-docs-hover.svg" alt="Couchbase Documentation" class="hide cb-hover-docs" />
+                  </a>
+                </li>
+              </ul>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a href="https://ibsoln.github.io/stage/DOC-8191/home/index.html" class="nav-link">
+                      <i class="fas fa-home"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/mobile.html">
+                      Mobile
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/sdk.html">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../tutorials/index.html">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <form class="navbar-item search">
+                  <input type="text" placeholder="Search Docs" class="query" id="search-query" />
+                  <button type="button" class="search-btn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+                <a class="btn btn-primary try-btn" href="https://www.couchbase.com/downloads">
+                  Downloads
+                </a>
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container">
+<nav class="nav">
+<div class="left-sidebar-menu">
+<div class="version-control-box">
+<div class="component-frame">
+<div class="frame-icon">
+<img src="../../_/img/server-icon.png" alt="">
+</div>
+<div class="frame-body">
+<h4 class="title"><span class="">Sync Gateway</span></h4>
+<a class="frame-link component" href="index.html"> <span class="version">2.8</span></a>
+</div>
+</div>
+</div>
+<div class="nav-menu">
+<ul class="nav-list">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<a class="nav-link" href="index.html">Sync Gateway</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="whatsnew.html">What&#8217;s New</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<a class="nav-link" href="quickstart.html">Start Here!</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="get-started-prepare.html">Prepare</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="get-started-install.html">Install</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="get-started-verify-install.html">Verify</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="data-modeling.html">Data Modelling</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="users.html">Users</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="roles.html">Roles</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="channels.html">Channels</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="what-are-tombstones.html">Tombstones</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="revisions.html">Revisions</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="configuration-properties.html">Configuration File</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<a class="nav-link" href="get-started-access-rest-api.html">REST API Access</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="rest-api.html">Public REST API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="rest-api-admin.html">Admin REST API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="rest-api-metrics.html">Metrics REST API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="rest-api-client-app.html">REST API Client</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Security</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="authentication-users.html">User Authentication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="authentication-certs.html">TLS Certificate Authentication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Access Control</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-function.html">Sync Function</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="import-filter.html">Import filter</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="read-access.html">Read Access</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="write-access.html">Write Access</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Sync</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="sync-with-couchbase-server.html">Sync with Couchbase Server</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="sync-using-app.html">Sync with Couchbase Lite</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Inter-Sync Gateway Replication</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-inter-syncgateway-overview.html">Overview</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-inter-syncgateway-run.html">Initialize</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-inter-syncgateway-manage.html">Manage</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-inter-syncgateway-monitor.html">Monitor</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-inter-syncgateway-conflict-resolution.html">Conflict Resolution</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="managing-tombstones.html">Managing Tombstones</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="delta-sync.html">Delta Sync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="resync.html">Resync</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Manage</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="stats-monitoring.html">Monitor</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Logging and Troubleshooting</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="logging.html">Logging</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sgcollect-info.html">SG Collect</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="database-offline.html">Take Database Offline/Online</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<a class="nav-link" href="deployment.html">Deploy</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="command-line-options.html">Using Command Line</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="load-balancer.html">Load Balancer</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="os-level-tuning.html">OS-level Tuning</a>
+</span>
+</li>
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="webhooks.html">Webhooks</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-integration.html">Changes Feed</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="integrating-external-stores.html">External Stores</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="stats-prometheus.html">Prometheus Feed</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="indexing.html">Indexing versus Views</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="upgrading.html">Upgrade</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Use Kubernetes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="deploy-cluster-to-kubernetes.html">Deploy</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Product Notes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="release-notes.html">Release Notes</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="supported-environments.html">Supported OS</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="compatibility.html">Compatibility Matrix</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Legacy Features</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="sync-sgreplicate-resolving-conflicts-legacy.html">Conflict Resolution 1.x Clients</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="legacy-sg-replicate.html">SG-Replicate</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#sync-gateway::legacy-legacy-logging-pre2-1.adoc">Log Rotation pre-2.1</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="glossary.html">Sync Gateway Glossary</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<a class="nav-link" href="../../couchbase-lite/2.8/index.html">Couchbase Lite</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/2.8/android/quickstart.html">Android (Java)</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/2.8/csharp/quickstart.html">C#</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/2.8/java/quickstart.html">Java</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/2.8/objc/quickstart.html">Objective-C</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/2.8/swift/quickstart.html">Swift</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<a href="#" class="menu-expand-toggle"> <span>Navigation</span> <i class="fas fa-times-circle"></i> <i class="fas fa-chevron-circle-left"></i></a>
+</div></nav>
+<aside class="toc sidebar">
+  <div class="sidebar-box">
+    <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/webhooks.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+</ul>
+</div>
+    <div class="toc-menu"></div>
+    <div class="is-this-helpful-box">
+      <h4> Is this page helpful?</h4>
+      <div class="btn-row">
+        <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                <i class="far fa-thumbs-up"></i>
+            Yes
+
+            </a>
+        <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+      </div>
+      <div class="any-feedback">
+        <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+      </div>
+      <div class="dialog-box" id="dialogBox">
+        <form>
+            <div class="form-group " id="additionalFeedbackBox">
+              <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+              <div class="action-btn-row ">
+                <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                  <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                  <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+              </div>
+
+
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="index.html">Sync Gateway</a></li>
+<li class="crumb"><a href="deployment.html">Deploy</a></li>
+<li class="crumb"><a href="webhooks.html">Webhooks</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">Webhooks</h1>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Description&#8201;&#8212;&#8201;<em>Introducing Sync Gateway events and event handling with Webhooks</em><br>
+<em>Abstract&#8201;&#8212;&#8201;You can configure webhooks to detect document_changed events and post the changed documents to specified URLs.</em><br>
+Related Content&#8201;&#8212;&#8201;<a href="server-integration.html" class="page">Changes Feed</a>  |  <a href="integrating-external-stores.html" class="page">External Stores</a>  |  <a href="stats-prometheus.html" class="page">Prometheus Integration</a></p>
+</div>
+</blockquote>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="title">Caveats</div>
+<div class="paragraph">
+<p>Webhooks post your application’s data, which might include user data, to URLs.
+Consider the security implications.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sync Gateway provides the ability to extend the replication process and build responsive services that react to changes in documents, adding value to the end to end process.</p>
+</div>
+<div class="paragraph">
+<p>For example, by initiating the sending of notifications, or specialist audit processes, when certain document changes are detected.</p>
+</div>
+<div class="paragraph">
+<p>This can be done using either the <a href="server-integration.html" class="page">changes feed</a> or <code>document_changed</code> events&#8201;&#8212;&#8201;see  <a href="#tbl-scenarios">Table 1</a> for a comparison of these scenarios.</p>
+</div>
+<div class="paragraph">
+<p>Sync Gateway&#8217;s <strong><em>webhook</em></strong> event handlers perform both document filtering, and HTTP POST operations, asynchronously.</p>
+</div>
+<div class="paragraph">
+<p>In addition to providing the opportunity to integrate with external systems, this minimizes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The performance impact on Sync Gateway&#8217;s regular processing</p>
+</li>
+<li>
+<p>The amount of Sync Gateway node CPU resources consumed by slow response times from the HTTP POST operations.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="behavior"><a class="anchor" href="#behavior"></a>Behavior</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Webhooks work on the push-cycle of a replication.</p>
+</div>
+<div class="paragraph">
+<p>If a <em>webhook</em> event handler is defined:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Sync Gateway adds a <code>document_changed</code> event to the <em>event queue</em> <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> whenever it updates a document in a Couchbase Server bucket.
+These changes <sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> can arise from Sync Gateway’s Public REST API and-or Couchbase Lite push replications.</p>
+</li>
+<li>
+<p>Whenever the <em>event queue</em> contains a <em>data_changed</em> event, Sync Gateway spawns a process to:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>FILTER&#8201;&#8212;&#8201;decide which changed documents to post.<br>
+The event process executes the <em>webhook&#8217;s</em> event handler (the <code>filter</code>) on the associated document.
+The filter determines which documents need to be POSTed.</p>
+<div class="paragraph">
+<p>If there is no filter all document changes are passed to POST.</p>
+</div>
+</li>
+<li>
+<p>POST&#8201;&#8212;&#8201;send selected changed documents to the URL endpoint.<br>
+HTTP/HTTPS is used to POST the document changes selected by the filter to the defined <em>url</em>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<table id="tbl-scenarios" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Changes Feed vs Webhooks</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Scenario</th>
+<th class="tableblock halign-center valign-top">Changes feed (pull)</th>
+<th class="tableblock halign-center valign-top">Webhooks (push)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sequence/Ordered</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User Access Control</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Fine Grain</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Limited</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Scalable</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Data Stream replay on Failure</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="definition"><a class="anchor" href="#definition"></a>Definition</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Define <em>Webhooks</em> in Sync Gateway&#8217;s <a href="configuration-properties.html" class="page">Configuration File</a> using the database level <a href="configuration-properties.html#databases-this_db-event_handlers" class="page">this_db.event_handlers</a> properties.</p>
+</div>
+<div class="paragraph">
+<p>You can define multiple webhook event handlers.
+For example, you could define webhooks with different filtering criteria, which post changed documents to different URLs&#8201;&#8212;&#8201;see: <a href="#ex-definitions">Example 1</a>.</p>
+</div>
+<div class="paragraph">
+<p>Each event handler definition comprises the following properties:</p>
+</div>
+<div class="sect2">
+<h3 id="document-change-properties"><a class="anchor" href="#document-change-properties"></a>Document Change Properties</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">A Filter</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Property name: {configuration-properties-pfx&#8212;&#8203;db}-this_db-event_handlers-document_changed-filter[this_db.event_handlers.document_changed.filter]</p>
+</div>
+<div class="paragraph">
+<p>The filter is a JavaScript function used to determine which documents to post.
+It accepts the document body as input and returns a boolean value.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the filter function returns true, then Sync Gateway posts the document.</p>
+</li>
+<li>
+<p>If the filter function returns false, then Sync Gateway does not post the document.</p>
+</li>
+<li>
+<p>If no filter function is defined, then Sync Gateway posts all changed documents.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Filtering only determines which documents to post. It does not extract specific content from documents and post only that.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">An event handler type</dt>
+<dd>
+<p>Property name: {configuration-properties-pfx&#8212;&#8203;db}-this_db-event_handlers-document_changed-handler[this_db.event_handlers.document_changed.handler]</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Sets the event handler&#8217;s type; currently, this must be <code>webhook</code>.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">A timeout value</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Property name: {configuration-properties-pfx&#8212;&#8203;db}-this_db-event_handlers-document_changed-timeout[this_db.event_handlers.document_changed.timeout]</p>
+</div>
+<div class="paragraph">
+<p>Sets the time (in seconds) to wait for a response to the POST operation.
+It ensures that slow-running POST operations don&#8217;t cause the webhook event queue to back up.
+When the timeout limit is reached, Sync Gateway stops listening for a response and discards the operation.</p>
+</div>
+<div class="paragraph">
+<p>You should not need to adjust the default setting to tune performance.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">URL</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Property name: {configuration-properties-pfx&#8212;&#8203;db}-this_db-event_handlers-document_changed-url[this_db.event_handlers.document_changed.url]</p>
+</div>
+<div class="paragraph">
+<p>Sets the address to which documents are posted.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<div id="ex-definitions" class="exampleblock">
+<div class="title">Example 1. Sample Webhook Definitions</div>
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_simple-webhook"></a>Simple Webhook</p>
+</li>
+<li>
+<p><a id="tabset1_multiple-webhooks"></a>Multiple Webhooks</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_simple-webhook">
+<div class="paragraph">
+<p>In this simple example of a <code>webhook</code> event handler we define a single instance with no filter.
+It simply listens for the <code>document_changed</code> event and immediately sends the changed document to the URL <code>http://someurl.com</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">"event_handlers": {
+    "document_changed": [
+        {
+            "handler": "webhook",
+            "url": "http://someurl.com"
+        }
+    ]
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_multiple-webhooks">
+<div class="paragraph">
+<p>In this example we define two <code>webhook</code> event handlers, both of which use filters to decide how to process the changed document.</p>
+</div>
+<div class="paragraph">
+<p>The <code>filter</code> function in the first handler recognizes documents with <code>doc.type</code> equal to <code>A</code> and posts the documents to the URL <code>http://someurl.com/type_A</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>filter</code> function in the second handler recognizes documents with <code>doc.type</code> equal to B and posts the documents to the URL <code>http://someurl.com/type_B</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">"event_handlers": {
+      "document_changed": [
+        {"handler": "webhook",
+         "url": "http://someurl.com/type_A",
+         "filter": `function(doc) {
+              if (doc.type == "A") {
+                return true;
+              }
+              return false;
+            }`
+         },
+        {"handler": "webhook",
+         "url": "http://someurl.com/type_B",
+         "filter": `function(doc) {
+              if (doc.type == "B") {
+                return true;
+              }
+              return false;
+            }`
+        }
+     ]
+  }</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="event-processing-properties"><a class="anchor" href="#event-processing-properties"></a>Event Processing Properties</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Limited Concurrent Processes</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Property name: <a href="configuration-properties.html#databases-this_db-event_handlers-max_processes" class="page">this_db.event_handlers.max_processes</a></p>
+</div>
+<div class="paragraph">
+<p>Sets the maximum number of events that can be processed concurrently.
+The default value should work well in the majority of cases.
+You should not need to adjust it to tune performance.
+However, if you wish to ensure that most webhook posts are sent, you can set it to sufficiently high value.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Limited Full-Queue Wait Time</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Property name: <a href="configuration-properties.html#databases-this_db-event_handlers-wait_for_process" class="page">this_db.event_handlers.wait_for_process</a></p>
+</div>
+<div class="paragraph">
+<p>Sets the maximum time (milliseconds) that event processing will wait for a free process, if an event is received whilst the event queue is full.
+You should not need to adjust it to tune performance.</p>
+</div>
+<div class="paragraph">
+<p>To avoid blocking standard Sync Gateway processing, set a zero value.
+Any events arriving whilst the queue is full are then immediately discarded&#8201;&#8212;&#8201;see also <a href="#lbl-evlog">Logging</a>.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-evlog"><a class="anchor" href="#lbl-evlog"></a>Logging</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sync Gateway creates a log whenever an event is discarded, and not added to the event queue.</p>
+</div>
+<div class="paragraph">
+<p>You can configure the console logging of events using the configuration file and-or the ADMIN Rest API&#8201;&#8212;&#8201;see <a href="logging.html" class="page">Use the Logging API</a>.
+The <code>log_key</code> you need to include is <code>Event</code>; or <code>Events+</code> for more verbose output.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">API Topics</div>
+<ul>
+<li>
+<p><a href="rest-api.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="rest-api-metrics.html" class="page">Metrics REST API</a></p>
+</li>
+<li>
+<p><a href="rest-api-client-app.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference</div>
+<ul>
+<li>
+<p><a href="configuration-properties.html" class="page">Configuration File</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. An asynchronous event-processing queue
+</div>
+<div class="footnote" id="_footnotedef_2">
+<a href="#_footnoteref_2">2</a>. Creations, updates, and deletions
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../_/img/couchbase_logo_black.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2021 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script async src="../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
