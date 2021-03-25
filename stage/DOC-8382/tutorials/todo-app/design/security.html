@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Security and Access Control | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/DOC-8382/tutorials/todo-app/design/security.html">
+<link rel="stylesheet" href="../../../_/css/site.css">
+<script src="../../../_/js/vendor/jquery.js"></script>
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+<meta name="dcterms.subject" content="tutorials">
+<meta name="dcterms.identifier" content="master">
+<meta name="generator" content="Antora 2.3.3">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+              <ul class="navbar-brand-list">
+                <li class="brand-logo">
+                  <a class="navbar-brand" href="https://www.couchbase.com">
+                    <img src="../../../_/img/couchbase-logo.svg" alt="Couchbase" />
+                  </a>
+                </li>
+                <li>
+                  <a class="navbar-brand cb-documentation" href="https://docs.couchbase.com">
+                    <img src="../../../_/img/cb-documentation.svg" alt="Couchbase Documentation" class="cb-docs" />
+                    <img src="../../../_/img/cb-docs-hover.svg" alt="Couchbase Documentation" class="hide cb-hover-docs" />
+                  </a>
+                </li>
+              </ul>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a href="https://ibsoln.github.io/stage/DOC-8382/home/index.html" class="nav-link">
+                      <i class="fas fa-home"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/mobile.html">
+                      Mobile
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/sdk.html">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../index.html">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <form class="navbar-item search">
+                  <input type="text" placeholder="Search Docs" class="query" id="search-query" />
+                  <button type="button" class="search-btn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+                <a class="btn btn-primary try-btn" href="https://www.couchbase.com/downloads">
+                  Downloads
+                </a>
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container">
+<nav class="nav">
+<div class="left-sidebar-menu">
+<div class="nav-menu">
+<ul class="nav-list">
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Developer Bootstrap Exercises</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../quick-start/quickstart-docker-image-manual-cb65.html">Couchbase Server Example Configuration</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../quick-start/quickstart-nosdk-webUI-firstquery-cb65.html">SQL JSON Upsert and Lookup via Web UI</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../quick-start/quickstart-java3-native-intellij-firstquery-cb65.html">Java with Couchbase SDK 3 and IntelliJ</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../quick-start/quickstart-java27-native-intellij-firstquery-cb65.html">Java with Couchbase SDK 2.7 and IntelliJ</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../quick-start/quickstart-java27-springdata32-intellij-firstquery-cb65.html">Java with Spring Data Couchbase and IntelliJ</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../quick-start/quickstart-dotnet27-aspnetcore31-visualstudio-firstquery-cb65.html">ASP.NET Core First Query</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../quick-start/quickstart-dotnet27-linq-vscode-firstquery-cb65.html">.NET Core with Linq2Couchbase First Query</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../quick-start/quickstart-nodejs26-ottoman-vscode-firstquery-cb65.html">Upsert and Lookup via Ottoman 2.6 &amp; NodeJS SDK 2.6</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../quick-start/quickstart-python3-native-firstquery-cb65.html">Native Python SDK First Query</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Couchbase Server</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">Session Storage
+Unresolved include directive in modules/ROOT/nav.adoc - include::session-storage:partial$nav.adoc[]</span>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">User Profile Storage
+Unresolved include directive in modules/ROOT/nav.adoc - include::profile-store:partial$nav.adoc[]</span>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Couchbase Mobile</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Travel Sample</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../../mobile-travel-sample/introduction.html">Introduction</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Swift</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="in-toggle" data-depth="3"></span>
+<a class="nav-link" href="../../mobile-travel-sample/swift/installation/index.html">Backend Installation</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/swift/installation/manual.html">Manual</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/swift/installation/docker.html">Docker (Local)</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/swift/installation/cloud.html">Cloud (RightScale)</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/swift/installation/travel-mobile-app.html">Installation</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/swift/design/data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/swift/develop/mvp-architecture.html">MVP Architecture</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/swift/develop/the-basics.html">The Basics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/swift/develop/security.html">Security</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/swift/develop/sync.html">Sync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/swift/develop/pre-built-database.html">Pre-built database</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/swift/develop/query.html">Query</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/swift/develop/full-text-search.html">Full Text Search</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Android-Java</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="in-toggle" data-depth="3"></span>
+<a class="nav-link" href="../../mobile-travel-sample/android/installation/index.html">Backend Installation</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/android/installation/manual.html">Manual</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/android/installation/docker.html">Docker (Local)</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/android/installation/cloud.html">Cloud (RightScale)</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/android/installation/travel-mobile-app.html">Installation</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/android/design/data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/android/develop/mvp-architecture.html">MVP Architecture</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/android/develop/the-basics.html">The Basics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/android/develop/security.html">Security</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/android/develop/sync.html">Sync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/android/develop/pre-built-database.html">Pre-built database</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/android/develop/query.html">Query</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/android/develop/full-text-search.html">Full Text Search</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Java</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="in-toggle" data-depth="3"></span>
+<a class="nav-link" href="../../mobile-travel-sample/java/installation/index.html">Backend Installation</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/java/installation/manual.html">Manual</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/java/installation/docker.html">Docker (Local)</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/java/installation/cloud.html">Cloud (RightScale)</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/java/installation/travel-mobile-app.html">Installation</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/java/design/data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/java/develop/mvp-architecture.html">MVP Architecture</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/java/develop/the-basics.html">The Basics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/java/develop/security.html">Security</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/java/develop/sync.html">Sync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/java/develop/pre-built-database.html">Pre-built database</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/java/develop/query.html">Query</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/java/develop/full-text-search.html">Full Text Search</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">C#</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="in-toggle" data-depth="3"></span>
+<a class="nav-link" href="../../mobile-travel-sample/csharp/installation/index.html">Backend Installation</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/installation/manual.html">Manual</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/installation/docker.html">Docker (Local)</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/installation/cloud.html">Cloud (RightScale)</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/installation/travel-mobile-app.html">Installation</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/design/data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/develop/mvvm-architecture.html">MVVM Architecture</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/develop/the-basics.html">The Basics</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/develop/security.html">Security</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/develop/sync.html">Sync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/develop/pre-built-database.html">Pre-built database</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/develop/query.html">Query</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="../../mobile-travel-sample/csharp/develop/full-text-search.html">Full Text Search</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="#standalone@userprofile-couchbase-mobile:userprofile:userprofile_basic.adoc">Getting Started on iOS</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="#standalone@userprofile-couchbase-mobile:userprofile:xamarin/userprofile_basic.adoc">Getting Started on Xamarin</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="#standalone@userprofile-couchbase-mobile:userprofile:android/userprofile_basic.adoc">Getting Started on Android</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="#tutorials:swift-playground:overview.adoc">Xcode Playground</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">Recycler Views with Live Queries
+Unresolved include directive in modules/ROOT/nav.adoc - include::university-lister:partial$nav.adoc[]</span>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">Build a Cordova Plugin
+Unresolved include directive in modules/ROOT/nav.adoc - include::hotel-lister:partial$nav.adoc[]</span>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">Build a React Native Module
+Unresolved include directive in modules/ROOT/nav.adoc - include::hotel-finder:partial$nav.adoc[]</span>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="nav-text ">OpenID Connect Tutorial
+Unresolved include directive in modules/ROOT/nav.adoc - include::openid-connect-implicit-flow:partial$nav.adoc[]</span>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<span class="nav-text ">Build Your Own</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Tutorial Template</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../../tutorial-template/sample.html">Basic Tutorial Template</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<a href="#" class="menu-expand-toggle"> <span>Navigation</span> <i class="fas fa-times-circle"></i> <i class="fas fa-chevron-circle-left"></i></a>
+</div></nav>
+<aside class="toc sidebar">
+  <div class="sidebar-box">
+    <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="https://github.com/couchbaselabs/mobile-training-todo/edit/tutorials/content/modules/todo-app/pages/design/security.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+</ul>
+</div>
+    <div class="toc-menu"></div>
+    <div class="is-this-helpful-box">
+      <h4> Is this page helpful?</h4>
+      <div class="btn-row">
+        <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                <i class="far fa-thumbs-up"></i>
+            Yes
+
+            </a>
+        <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+      </div>
+      <div class="any-feedback">
+        <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+      </div>
+      <div class="dialog-box" id="dialogBox">
+        <form>
+            <div class="form-group " id="additionalFeedbackBox">
+              <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+              <div class="action-btn-row ">
+                <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                  <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                  <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+              </div>
+
+
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="../../index.html">Tutorials</a></li>
+<li class="crumb"><a href="security.html">Security and Access Control</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">Security and Access Control</h1>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this lesson you&#8217;ll learn how to secure your data model using Couchbase Mobile&#8217;s built-in security framework.</p>
+</div>
+<div class="paragraph">
+<p>Security rules are used to determine who has read and write access to the database.
+They live on the server in Sync Gateway and are enforced at all times.</p>
+</div>
+<div class="paragraph">
+<p>The access control requirements for the application are the following.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A user can create a list and tasks.</p>
+</li>
+<li>
+<p>The owner of a list can invite other users to access the list.</p>
+</li>
+<li>
+<p>Users invited to a list can create tasks.</p>
+</li>
+<li>
+<p>A moderator has access to all lists.</p>
+</li>
+<li>
+<p>A moderator can create new tasks and invte users.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="routing"><a class="anchor" href="#routing"></a>Routing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sync Gateway provides an ability to assign documents to something we call channels.
+You control assigning documents to channels through the Sync Function.
+The image below specifies that the List and Task documents are assigned to the same channel ("list.user1.dk39-4kd9-lw9d").</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../_images/02-list-channel.png" alt="02 list channel"></span></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="read-access"><a class="anchor" href="#read-access"></a>Read Access</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="single-user"><a class="anchor" href="#single-user"></a>Single user</h3>
+<div class="paragraph">
+<p>Once the document is mapped to the channel you can give the user access to it.
+In doing so, that user will have read access to all the documents in the channel.
+The following image specifies the <code>access</code> call to grant read access to the list channel.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../_images/03-read-access.png" alt="03 read access"></span></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+As shown above, you can route documents of different types to the same channel.
+The <code>access</code> method can then be invoked once since the list and its tasks are in the same channel.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="multiple-users"><a class="anchor" href="#multiple-users"></a>Multiple users</h3>
+<div class="paragraph">
+<p>Now let&#8217;s consider the action of sharing a list with another user.
+Currently, List and Task models do not have an option to specify other user names.</p>
+</div>
+<div class="paragraph">
+<p>In the application, there is no limit to how many users can access a list.
+There could be thousands! So instead of embedding other user&#8217;s details on the List model we&#8217;ll introduce a 3rd document that joins a list and user.
+The image below adds the List User model.
+When processing a document of type "list-user", the Sync Function must grant the user (<code>doc.name</code>) access to the list (<code>doc.list</code>).</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../_images/04-multiple-users.png" alt="04 multiple users"></span></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="write-access"><a class="anchor" href="#write-access"></a>Write Access</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Write access security rules are necessary to protect the system.
+Generally that means checking that the user is allowed to perform the operation before persisting the document to disc.</p>
+</div>
+<div class="sect2">
+<h3 id="by-user"><a class="anchor" href="#by-user"></a>By user</h3>
+<div class="paragraph">
+<p>The image below adds a rule to ensure that only the List owner can persist those documents.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../_images/05-write-by-user.png" alt="05 write by user"></span></p>
+</div>
+<div class="paragraph">
+<p>The List model is the straightforward case, it checks that the user synchronizing the document is indeed the owner of the list (<code>doc.owner</code>).</p>
+</div>
+<div class="paragraph">
+<p>For List User and Task documents the same security can be enforced because the owner is prefixed on the List document ID ("user1.dk39-4kd9-lw9d").</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="by-access"><a class="anchor" href="#by-access"></a>By Access</h3>
+<div class="paragraph">
+<p>The image below adds a rule to allow invited users to create tasks.
+If the user sending the task has access to the list channel ("user1.dk39-4kd9-lw9d") then it must have been invited and therefore can persist the task.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../_images/06-write-by-access.png" alt="06 write by access"></span></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="roles"><a class="anchor" href="#roles"></a>Roles</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Another design requirement of the application is that certain users can be moderators.
+In that case they can perform more operations than other non-moderating users.
+A user can be elected to be a moderator by users with the admin role only.</p>
+</div>
+<div class="paragraph">
+<p>The image below adds a new Moderator model for this purpose.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="../_images/07-role.png" alt="07 role"></span></p>
+</div>
+<div class="paragraph">
+<p>The following security changes to routing, read and write permissions were added.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>List, List User and Task documents are routed to the "moderators" channel.</p>
+</li>
+<li>
+<p>Moderators have access to all the lists and can create new tasks or invite users.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="conclusion"><a class="anchor" href="#conclusion"></a>Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Well done! You&#8217;ve completed this lesson on designing the security model for each scenario in the application.
+In the next lesson you&#8217;ll learn how to create an empty database to store documents.
+Feel free to share your feedback, findings or ask any questions on the forums.</p>
+</div>
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../../_/img/couchbase_logo_black.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2021 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../../../_/js/site.js"></script>
+<script async src="../../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script async src="../../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
