@@ -7,8 +7,8 @@
 <link rel="canonical" href="localhost::/5000/sync-gateway/3.0/configuration-environment-variables.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Sync Gateway configuration API">
-<meta name="keywords" content="sync, data replication, cloud-to-edge,">
+<meta name="description" content="Using environment variables in the configuration of Sync Gateway">
+<meta name="keywords" content="sync, data replication, cloud-to-edge, configuration, variables">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="3.0">
@@ -761,9 +761,19 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Description&#8201;&#8212;&#8201;<em>Sync Gateway configuration API</em><br>
-<em>Abstract&#8201;&#8212;&#8201;This content describes using Environment Variables in Sync Gateway&#8217;s configuration</em><br>
-Related Content&#8201;&#8212;&#8201;<a href="get-started-verify-install.html" class="page">Verify</a> | <a href="rest-api-admin.html" class="page">Admin REST API</a> | <a href="rest-api.html" class="page">Public REST API</a> | <a href="rest-api-client-app.html" class="page">Use the REST API?</a></p>
+<p>Description&#8201;&#8212;&#8201;<em>Using environment variables in the configuration of Sync Gateway</em><br></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Topic Group</dt>
+<dd>
+<p>Overview
+|  Javascript Functions
+|  Environment Variables
+|  Schema
+|  REST API</p>
+</dd>
+</dl>
 </div>
 </blockquote>
 </div>
@@ -773,8 +783,230 @@ Related Content&#8201;&#8212;&#8201;<a href="get-started-verify-install.html" cl
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Sync Gateway &#8230;&#8203;</p>
+<p>Sync Gateway configuration is extended to allow the use of defined <em>environment variables</em> as substitution values inside the configuration file.
+This allows users to determine, pick-up and substitute appropriate values during Sync Gateway start-up.</p>
 </div>
+<div class="paragraph">
+<p>The use of environment variables within the configuration file increases the flexibility of the configuration process.
+It makes the switching of the runtime behavior&#8201;&#8212;&#8201;for example during development, experimentation or testing&#8201;&#8212;&#8201;much easier.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="syntax"><a class="anchor" href="#syntax"></a>Syntax</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To use an environment variable, simply insert its name as a token using <code>$var</code> or <code>${var}</code> where you would normally put the configuration value you are substituting for.</p>
+</div>
+<div class="paragraph">
+<p>You can define inline default values using the notation<br>
+<code>${var:-default}</code>.
+The default value is used if the referenced environment variable is empty or undefined.</p>
+</div>
+<div class="paragraph">
+<p>If you need to include a configuration file value that contains a literal <code>$</code> symbol, you must use <code>$$</code> instead.
+This enables the parser to differentiate between a literal <code>$</code> and the start of a variable name; so <code>pa$$$$</code> resolves to the value <code>pa$$</code>.</p>
+</div>
+<div id="ex-syntax" class="exampleblock">
+<div class="title">Example 1. Configuring with Environment Variables</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
+  "databases": {
+    "db1": {
+      "bucket": "bucket1",
+      "server": "couchbase://localhost",
+      "username": "$USERNAME", <i class="conum" data-value="1"></i><b>(1)</b>
+      "password": "$PASSWORD"
+    }
+    "db2": {
+      "bucket": "${var_bucket:-this_bucket}", <i class="conum" data-value="2"></i><b>(2)</b>
+      "server": "couchbase://localhost",
+      "username": "$USERNAME",
+      "password": "pa$$$$word" <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we provide a reference to the environment variables <code>$USERNAME</code> <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> and <code>$PASSWORD</code>.
+The values of those variable are substituted here immediately prior to the parsing of the configuration file.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The variable <code>var_bucket</code> is given a default value of 'this_bucket', which is used only if the <code>var_bucket</code> environment variable itself is empty or undefined.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This password value contains dollar symbols, so we need to use the <code>$$</code> notation.
+The value is interpreted as <code>pa$$word</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Each variable is replaced immediately prior to the parsing of the configuration file at each Sync Gateway startup.</p>
+</div>
+<div class="paragraph">
+<p>The variables are immutable.
+This means changes to the values of the environment variables are not detected by Sync Gateway whilst it is running.
+Such changes only become effective after a restart of Sync Gateway.</p>
+</div>
+<div class="paragraph">
+<p>All environment variable names are case-sensitive in this context.
+So <code>$username</code> and <code>$USERNAME</code> are not the same variable</p>
+</div>
+<div class="paragraph">
+<p>Any references to undefined variables are replaced by an empty string.
+This can result in an invalid configuration, which will cause the start-up to abandoned and an error reported.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="variable-definition"><a class="anchor" href="#variable-definition"></a>Variable Definition</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>How you define the environment variables will depend on the platform used to host Sync Gateway.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_linux-or-mac-os-terminal"></a>Linux or Mac OS Terminal</p>
+</li>
+<li>
+<p><a id="tabset1_windows-cli"></a>Windows CLI</p>
+</li>
+<li>
+<p><a id="tabset1_windows-system-properties"></a>Windows System Properties</p>
+</li>
+<li>
+<p><a id="tabset1_powershell"></a>Powershell</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_linux-or-mac-os-terminal">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export USERNAME=Administrator
+export PASSWORD=pa$$word</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_windows-cli">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dos hljs" data-lang="dos">setx USERNAME Administrator <i class="conum" data-value="1"></i><b>(1)</b>
+set PASSWORD=pa$$word <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Permanently set the <code>USERNAME</code> variable.
+Note <code>setx</code> does not require the <code>=</code> symbol</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Sets the <code>PASSWORD</code> variable, but only for the duration of the current 'Command Line' session.
+This may not be what you want.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_windows-system-properties">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open a <em>System Properties</em> panel</p>
+</li>
+<li>
+<p>On the <em>Advanced System Settings</em> tab, select <b class="button">Environment Variables</b><br>
+This displays the <em>Environment Variables</em> panel</p>
+</li>
+<li>
+<p>Here you can create <b class="button">NEW</b> variables as well as <b class="button">EDIT</b> and <b class="button">DELETE</b> existing variables</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_powershell">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">$ENV:USERNAME=Administrator
+$ENV:PASSWORD=pa$$word</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">API Topics</div>
+<ul>
+<li>
+<p><a href="rest-api.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="rest-api-metrics.html" class="page">Metrics REST API</a></p>
+</li>
+<li>
+<p><a href="rest-api-client-app.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference</div>
+<ul>
+<li>
+<p><a href="legacy-configuration-properties.html" class="page">Configuration Properties (depr)</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. On Windows systems USERNAME is already in use as a System Variable used by the operating system
 </div>
 </div>
 </article>
