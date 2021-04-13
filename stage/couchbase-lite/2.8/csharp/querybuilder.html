@@ -1364,6 +1364,18 @@ Related Content&#8201;&#8212;&#8201;<a href="query-predictive.html" class="page"
 </div>
 </blockquote>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The examples used in this topic are based on the <em>Travel Sample</em> app and data introduced in the <a href="https://docs.couchbase.com/tutorials/mobile-travel-sample/introduction.html">Couchbase Mobile Workshop</a> tutorial
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1395,7 +1407,7 @@ ORDER BY ____ <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <a href="#lbl-select">SELECT statement</a> specifies the part of the document that is to be returned</td>
+<td>The <a href="#lbl-select">SELECT statement</a> specifies the document properties that will be returned in the result set</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -1403,19 +1415,20 @@ ORDER BY ____ <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><a href="#lbl-where">WHERE statement</a> specifies the query criteria that the result must satisfy</td>
+<td><a href="#lbl-where">WHERE statement</a> specifies the query criteria.<br>
+The `SELECT`ed properties of documents matching this criteria will be returned in the result set</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><a href="#lbl-join">JOIN statement</a> specifies the matching criteria in which to join multiple documents</td>
+<td><a href="#lbl-join">JOIN statement</a> specifies the criteria for joining multiple documents</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td><a href="#lbl-group">GROUP BY statement</a> specifies the query criteria to group rows by</td>
+<td><a href="#lbl-group">GROUP BY statement</a> specifies the criteria used to group returned items in the result set</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td><a href="#lbl-order">ORDER BY statement</a> specifies the query criteria to sort the rows in the result</td>
+<td><a href="#lbl-order">ORDER BY statement</a> specifies the criteria used to order the items in the result set</td>
 </tr>
 </table>
 </div>
@@ -1424,6 +1437,18 @@ ORDER BY ____ <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 </div>
 </div>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+We recommend working through the query section of the <a href="https://docs.couchbase.com/tutorials/mobile-travel-sample/introduction.html">Couchbase Mobile Workshop</a> as a good way to build your skills in this area.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1431,8 +1456,19 @@ ORDER BY ____ <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Before we begin querying documents, let&#8217;s briefly mention the importance of having a query index.
-A query can only be fast if there&#8217;s a pre-existing database index it can search to narrow down the set of documents to examine&#8201;&#8212;&#8201;see also: <a href="query-troubleshooting.html" class="page">Query Troubleshooting</a>.
-See <a href="#e-indexing">[e-indexing]</a> for how to create an index and <a href="indexing.html" class="page">Indexing</a> to learn more about indexing.</p>
+A query can only be fast if there&#8217;s a pre-existing database index it can search to narrow down the set of documents to examine&#8201;&#8212;&#8201;see: <a href="#ex-indexing">Example 2</a>, which shows how to create an index and our <a href="query-troubleshooting.html" class="page">Query Troubleshooting</a> topic.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+See the <a href="indexing.html" class="page">Indexing</a> topic to learn more about indexing.
+</td>
+</tr>
+</table>
 </div>
 <div id="ex-indexing" class="exampleblock">
 <div class="title">Example 2. Creating a New Index</div>
@@ -1469,9 +1505,6 @@ db.CreateIndex("TypeNameIndex", index);</code></pre>
 </div>
 </div>
 </div>
-<div class="paragraph">
-<p>If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.</p>
-</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1490,6 +1523,8 @@ Thus, good performance depends on designing and creating the <em>right</em> inde
 <div class="sect1">
 <h2 id="lbl-select"><a class="anchor" href="#lbl-select"></a>SELECT statement</h2>
 <div class="sectionbody">
+<div class="openblock">
+<div class="content">
 <div class="dlist">
 <dl>
 <dt class="hdlist1">In this section</dt>
@@ -1501,6 +1536,8 @@ Thus, good performance depends on designing and creating the <em>right</em> inde
 <p><a href="#lbl-resultsets">Handling result sets</a></p>
 </dd>
 </dl>
+</div>
+</div>
 </div>
 <div class="paragraph">
 <p>Use the <code>SELECT</code> statement to specify which properties you want to return from the queried documents.
@@ -1655,7 +1692,7 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 </dl>
 </div>
 <div class="paragraph">
-<p>Similar to SQL, you can use the where clause to filter the documents to be returned as part of the query.
+<p>Like SQL, you can use the <code>WHERE</code> statement to choose  which documents are returned by your query.
 The select statement takes in an <code>Expression</code>.
 You can chain any number of Expressions in order to implement sophisticated filtering capabilities.</p>
 </div>
@@ -1776,13 +1813,17 @@ using (var query = QueryBuilder.Select(
 <p>The <a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_Like_Couchbase_Lite_Query_IExpression_">Like()</a> operator can be used for string matching.</p>
 </div>
 <div class="paragraph">
-<p>The <code>like</code> operator performs <strong>case sensitive</strong> matches.
-So if you want to make the string matching case insensitive, you would have to use <code>Function.lower</code> or <code>Function.upper</code> to transform the matched string to lowercase or uppercase equivalents.</p>
+<p>The <code>like</code> operator performs <strong>case sensitive</strong> matches.<br>
+To perform case insensitive matching, use <code>Function.lower</code> or <code>Function.upper</code> to ensure all comparators have the same case, thereby removing the case issue.</p>
+</div>
+<div id="ex-like-case-insensitive" class="exampleblock">
+<div class="title">Example 7. Case-insensitive Matching</div>
+<div class="content">
+<div class="paragraph">
+<p>This query returns <code>landmark</code> type documents where the <code>name</code> matches the string "Royal Engineers Museum", regardless of how it is capitalized (so, it selects "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on).</p>
 </div>
 <div class="paragraph">
-<p>In the example below, we are looking for documents of type <code>landmark</code> where the name property exactly matches the string "Royal engineers museum".
-Note that since <code>like</code> does a case sensitive match, we use <code>Function.lower</code> to transform the matched string to the lowercase equivalent.
-So the following query will return "landmark" type documents with the name matching "Royal Engineers Museum", "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on.</p>
+<p>Note the use of <code>Function.lower</code> to transform <code>name</code> values to the same case as the literal comparator.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1797,6 +1838,8 @@ So the following query will return "landmark" type documents with the name match
         Console.WriteLine($"Name Property :: {result.GetString("name")}");
     }
 }</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1877,10 +1920,10 @@ For more on the regex spec used by Couchbase Lite see <a href="http://www.cplusp
 </table>
 </div>
 <div class="paragraph">
-<p>The code shown in <a href="#ex-regex">Example 7</a> executes a query that will return documents of type "landmark" with a name matching "Engine", "engine" and so on.</p>
+<p>The code shown in <a href="#ex-regex">Example 8</a> executes a query that will return documents of type "landmark" with a name matching "Engine", "engine" and so on.</p>
 </div>
 <div id="ex-regex" class="exampleblock">
-<div class="title">Example 7. Using Regular Expressions</div>
+<div class="title">Example 8. Using Regular Expressions</div>
 <div class="content">
 <div class="paragraph">
 <p>This example returns documents with a <code>type</code> of "landmark" and a <code>name</code> property that matches any string that begins with "eng" and ends in the letter "e".</p>
@@ -1917,12 +1960,17 @@ For more on the regex spec used by Couchbase Lite see <a href="http://www.cplusp
 <p>You can query documents that have been deleted (tombstones)
 <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.</p>
 </div>
+<div id="ex-del-qry" class="exampleblock">
+<div class="title">Example 9. Query to select Deleted Documents</div>
+<div class="content">
 <div class="paragraph">
-<p>The following example shows how to query deleted documents in the database.</p>
+<p>This example shows how to query deleted documents in the database.
+The result set it returns is an array of key-value pairs.
+One for each document matching the criteria&#8201;&#8212;&#8201;see <a href="#lbl-id-sel">Select Document Id Only</a> for how to work with this result set.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs#L440-L444">// Query documents that have been deleted
+<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}">// Query documents that have been deleted
 var query = QueryBuilder
     .Select(SelectResult.Expression(Meta.ID))
     .From(DataSource.Database(db))
@@ -1932,17 +1980,19 @@ var query = QueryBuilder
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="lbl-join"><a class="anchor" href="#lbl-join"></a>JOIN statement</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement. For example to combine airline details with route details, linked by the airline id&#8201;&#8212;&#8201;see &lt;&lt;ex-join&gt;.</p>
+<p>The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement. For example to combine airline details with route details, linked by the airline id&#8201;&#8212;&#8201;see <a href="#ex-join">Example 10</a>.</p>
 </div>
 <div id="ex-join" class="exampleblock">
-<div class="title">Example 8. Using JOIN to Combine Document Details</div>
+<div class="title">Example 10. Using JOIN to Combine Document Details</div>
 <div class="content">
 <div class="paragraph">
-<p>This example JOINS the document of type "route" with documents of type "airline" using the document ID (<code>_id</code>) on the "airline" document and <code>airlineid</code> on the "route" document.</p>
+<p>This example JOINS the document of type <code>route</code> with documents of type <code>airline</code> using the document ID (<code><em>id</code>) on the _airline</em> document and <code>airlineid</code> on the <em>route</em> document.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1976,6 +2026,7 @@ var query = QueryBuilder
 The following example looks for the number of airports at an altitude of 300 ft or higher and groups the results by country and timezone.</p>
 </div>
 <div class="listingblock">
+<div class="title">Data Model for Example</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
     "_id": "airport123",
@@ -1985,6 +2036,13 @@ The following example looks for the number of airports at an altitude of 300 ft 
     "tz": "America/Anchorage"
 }</code></pre>
 </div>
+</div>
+<div id="ex-grpby-qry" class="exampleblock">
+<div class="title">Example 11. Query using GroupBy</div>
+<div class="content">
+<div class="paragraph">
+<p>This example shows a query that selects all airports with an altitude above 300ft.
+The output (a count, $1) is grouped by country, within timezone.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2003,13 +2061,20 @@ The following example looks for the number of airports at an altitude of 300 ft 
 }</code></pre>
 </div>
 </div>
-<div class="listingblock">
+</div>
+</div>
+<div class="paragraph">
+<p>The query shown in <a href="#ex-grpby-qry">Example 11</a> generates the following output:</p>
+</div>
+<div class="openblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">There are 138 airports on the Europe/Paris timezone located in France and above 300 ft
-There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft
-There are 50 airports on the America/Anchorage timezone located in United States and above 300 ft
-There are 279 airports on the America/Chicago timezone located in United States and above 300 ft
-There are 123 airports on the America/Denver timezone located in United States and above 300 ft</code></pre>
+<div class="paragraph">
+<p>There are 138 airports on the Europe/Paris timezone located in France and above 300 ft<br>
+There are 29 airports on the Europe/London timezone located in United Kingdom and above 300 ft<br>
+There are 50 airports on the America/Anchorage timezone located in United States and above 300 ft<br>
+There are 279 airports on the America/Chicago timezone located in United States and above 300 ft<br>
+There are 123 airports on the America/Denver timezone located in United States and above 300 ft</p>
+</div>
 </div>
 </div>
 </div>
@@ -2021,6 +2086,9 @@ There are 123 airports on the America/Denver timezone located in United States a
 <p>It is possible to sort the results of a query based on a given expression result.
 The example below returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.</p>
 </div>
+<div id="ex-orderby-qry" class="exampleblock">
+<div class="title">Example 12. Query using OrderBy</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs#L824-L834">using (var query = QueryBuilder.Select(
@@ -2035,6 +2103,11 @@ The example below returns documents of type equal to "hotel" sorted in ascending
     }
 }</code></pre>
 </div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The query shown in <a href="#ex-orderby-qry">Example 12</a> generates the following output:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2150,15 +2223,14 @@ To unpack these result sets you need to iterate this array.</p>
 <h3 id="lbl-all-sel"><a class="anchor" href="#lbl-all-sel"></a>Select All Properties</h3>
 <div class="paragraph">
 <div class="title">Query</div>
-<p>The <code>Select</code> stetement for this type of query, which returns all document prooperties for each document matching the query criteria, is fairly straightforward&#8201;&#8212;&#8201;see <a href="#ex-all-qry">Example 9</a></p>
+<p>The <code>Select</code> statement for this type of query, which returns all document properties for each document matching the query criteria, is fairly straightforward&#8201;&#8212;&#8201;see <a href="#ex-all-qry">Example 13</a></p>
 </div>
 <div id="ex-all-qry" class="exampleblock">
-<div class="title">Example 9. Query selecting All Properties</div>
+<div class="title">Example 13. Query selecting All Properties</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}">let listQuery = QueryBuilder.select(SelectResult.all)
-            .from(DataSource.database(dbName)) <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}"></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2176,10 +2248,10 @@ To unpack these result sets you need to iterate this array.</p>
 <p>The result set returned by queries using <code>SelectResult.all</code> is an array of dictionary objects&#8201;&#8212;&#8201;one for each document matching the query criteria.</p>
 </div>
 <div class="paragraph">
-<p>For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair&#8201;&#8212;&#8201;see: <a href="#ex-all-rtn">Example 10</a>.</p>
+<p>For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair&#8201;&#8212;&#8201;see: <a href="#ex-all-rtn">Example 14</a>.</p>
 </div>
 <div id="ex-all-rtn" class="exampleblock">
-<div class="title">Example 10. Format of Result Set (All Properties)</div>
+<div class="title">Example 14. Format of Result Set (All Properties)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2225,31 +2297,14 @@ To unpack these result sets you need to iterate this array.</p>
 </div>
 <div class="paragraph">
 <div class="title">Result Set Access</div>
-<p>In this case access the retrieved document properties by converting each row&#8217;s value, in turn, to a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-all-acc">Example 11</a>.</p>
+<p>In this case access the retrieved document properties by converting each row&#8217;s value, in turn, to a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-all-acc">Example 15</a>.</p>
 </div>
 <div id="ex-all-acc" class="exampleblock">
-<div class="title">Example 11. Using Document Properties (All)</div>
+<div class="title">Example 15. Using Document Properties (All)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}">do {
-    for (_,result) in try listQuery.execute().enumerated() {
-
-        if let match = row.dictionary(forKey: dbName) {
-            matches.append(match.toDictionary())
-        } <i class="conum" data-value="1"></i><b>(1)</b>
-
-        if let thisDocsProperties = match.toDictionary()] as? [String:Any] {
-          let docid = thisDocsProperties["id"]
-          let name = thisDocsProperties["name"]
-          let type = thisDocsProperties["type"]
-          let city = thisDocsProperties["city"]
-        } <i class="conum" data-value="2"></i><b>(2)</b>
-
-    } // end for
-    catch {
-        // ... handle errors as required
-    }</code></pre>
+<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}"></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2272,19 +2327,14 @@ You can add this dictionary to an array of returned matches, for processing else
 <h3 id="lbl-specific-sel"><a class="anchor" href="#lbl-specific-sel"></a>Select Specific Properties</h3>
 <div class="paragraph">
 <div class="title">Query</div>
-<p>Here we use <code>SelectResult.expression(property("&lt;property-name&gt;")))</code> to specify the document properties we want our query to return&#8201;&#8212;&#8201;see: <a href="#ex-specific-qry">Example 12</a>.</p>
+<p>Here we use <code>SelectResult.expression(property("&lt;property-name&gt;")))</code> to specify the document properties we want our query to return&#8201;&#8212;&#8201;see: <a href="#ex-specific-qry">Example 16</a>.</p>
 </div>
 <div id="ex-specific-qry" class="exampleblock">
-<div class="title">Example 12. Query selecting Specific Properties</div>
+<div class="title">Example 16. Query selecting Specific Properties</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}">let listQuery = QueryBuilder
-            .select(SelectResult.expression(Meta.id),
-                    SelectResult.expression(Expression.property("name")),
-                    SelectResult.expression(Expression.property("city")),
-                    SelectResult.expression(Expression.property("type")))
-            .from(DataSource.database(dbName))</code></pre>
+<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}"></code></pre>
 </div>
 </div>
 </div>
@@ -2294,10 +2344,10 @@ You can add this dictionary to an array of returned matches, for processing else
 <p>The result set returned when selecting only specific document properties is an array of dictionary objects&#8201;&#8212;&#8201;one for each document matching the query criteria.</p>
 </div>
 <div class="paragraph">
-<p>Each result object comprises a key-value pair for each selected document property&#8201;&#8212;&#8201;see <a href="#ex-specific-rtn">Example 13</a></p>
+<p>Each result object comprises a key-value pair for each selected document property&#8201;&#8212;&#8201;see <a href="#ex-specific-rtn">Example 17</a></p>
 </div>
 <div id="ex-specific-rtn" class="exampleblock">
-<div class="title">Example 13. Format of Result Set (Specific Properties)</div>
+<div class="title">Example 17. Format of Result Set (Specific Properties)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2331,23 +2381,14 @@ You can add this dictionary to an array of returned matches, for processing else
 </div>
 <div class="paragraph">
 <div class="title">Result Set Access</div>
-<p>Access the retrieved properties by converting each row into a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-specific-acc">Example 14</a>.</p>
+<p>Access the retrieved properties by converting each row into a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-specific-acc">Example 18</a>.</p>
 </div>
 <div id="ex-specific-acc" class="exampleblock">
-<div class="title">Example 14. Using Returned Document Properties (Specific Properties)</div>
+<div class="title">Example 18. Using Returned Document Properties (Specific Properties)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}">for (_,result) in try! listQuery.execute().enumerated() {
-  if let thisDoc = result.toDictionary()] as? [String:Any] {
-      let docid = thisDoc["id"]
-      let name = thisDoc["name"]
-      let city = thisDoc["city"]
-      let type = thisDoc["type"]
-      //
-      // ... process document properties as required
-  }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}"></code></pre>
 </div>
 </div>
 </div>
@@ -2357,15 +2398,14 @@ You can add this dictionary to an array of returned matches, for processing else
 <h3 id="lbl-id-sel"><a class="anchor" href="#lbl-id-sel"></a>Select Document Id Only</h3>
 <div class="paragraph">
 <div class="title">Query</div>
-<p>You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time&#8201;&#8212;&#8201;see: <a href="#ex-id-qry">Example 15</a>.</p>
+<p>You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time&#8201;&#8212;&#8201;see: <a href="#ex-id-qry">Example 19</a>.</p>
 </div>
 <div id="ex-id-qry" class="exampleblock">
-<div class="title">Example 15. Query selecting only Doc Id</div>
+<div class="title">Example 19. Query selecting only Doc Id</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}">let listQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(dbName))</code></pre>
+<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs]</code></pre>
 </div>
 </div>
 </div>
@@ -2373,10 +2413,10 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="paragraph">
 <div class="title">Result Set Format</div>
 <p>The result set returned by queries using a SelectResult expression of the form <code>SelectResult.expression(meta.id)</code> is an array of dictionary objects&#8201;&#8212;&#8201;one for each document matching the query criteria.
-Each result object has <code>id</code> as the key and the ID value as its value&#8201;&#8212;&#8201;-see <a href="#ex-id-rtn">Example 16</a>.</p>
+Each result object has <code>id</code> as the key and the ID value as its value&#8201;&#8212;&#8201;-see <a href="#ex-id-rtn">Example 20</a>.</p>
 </div>
 <div id="ex-id-rtn" class="exampleblock">
-<div class="title">Example 16. Format of Result Set (Doc Id only)</div>
+<div class="title">Example 20. Format of Result Set (Doc Id only)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2394,20 +2434,14 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 </div>
 <div class="paragraph">
 <div class="title">Result Set Access</div>
-<p>In this case, access the required document&#8217;s properties by unpacking the <code>id</code> and using it to get the document from the database&#8201;&#8212;&#8201;see: <a href="#ex-id-acc">Example 17</a>.</p>
+<p>In this case, access the required document&#8217;s properties by unpacking the <code>id</code> and using it to get the document from the database&#8201;&#8212;&#8201;see: <a href="#ex-id-acc">Example 21</a>.</p>
 </div>
 <div id="ex-id-acc" class="exampleblock">
-<div class="title">Example 17. Using Returned Document Properties (Document Id)</div>
+<div class="title">Example 21. Using Returned Document Properties (Document Id)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}">for result in try listQuery.execute() {
-  if let thisResult = result.toDictionary()? as [String:Any],
-  let thisDocdID = thisResult["id"] as? Strig { <i class="conum" data-value="1"></i><b>(1)</b>
-    // Now you can get the document using the ID
-    let thisDoc = try yourDb.document(withID: thisDocsId)
-  }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}"></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2424,13 +2458,11 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="sect2">
 <h3 id="lbl-count-sel"><a class="anchor" href="#lbl-count-sel"></a>Select Count-only</h3>
 <div id="ex-count-qry" class="exampleblock">
-<div class="title">Example 18. Query selecting a Count-only</div>
+<div class="title">Example 22. Query selecting a Count-only</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}">listQuery = QueryBuilder
-    .select(SelectResult.expression(Function.count(Expression.all())).as("mycount"))
-    .from (DataSource.database(dbName)).groupBy(Expression.property("type"))</code></pre>
+<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}"></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2446,10 +2478,10 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="paragraph">
 <div class="title">Result Set Format</div>
 <p>The result set returned by a count such as <code>Select.expression(Function.count(Expression.all)))</code> is a key-value pair.
-The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&#8212;&#8201;see: <a href="#ex-count-rtn">Example 19</a> for the format and <a href="#ex-count-qry">Example 18</a> for the query.</p>
+The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&#8212;&#8201;see: <a href="#ex-count-rtn">Example 23</a> for the format and <a href="#ex-count-qry">Example 22</a> for the query.</p>
 </div>
 <div id="ex-count-rtn" class="exampleblock">
-<div class="title">Example 19. Format of Result Set (Count)</div>
+<div class="title">Example 23. Format of Result Set (Count)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2470,19 +2502,14 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
 </div>
 <div class="paragraph">
 <div class="title">Result Set Access</div>
-<p>Access the count using its alias name (<code>mycount</code> in this example)&#8201;&#8212;&#8201;see <a href="#ex-count-acc">Example 20</a></p>
+<p>Access the count using its alias name (<code>mycount</code> in this example)&#8201;&#8212;&#8201;see <a href="#ex-count-acc">Example 24</a></p>
 </div>
 <div id="ex-count-acc" class="exampleblock">
-<div class="title">Example 20. Using Returned Document Properties (Count)</div>
+<div class="title">Example 24. Using Returned Document Properties (Count)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}">for result in try! listQuery.execute() {
-    if let dict = result.toDictionary() as? [String: Int] {
-        let thiscount = dict["mycount"]! <i class="conum" data-value="1"></i><b>(1)</b>
-        print("There are ", thiscount, " rows")
-    }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-{source-language} hljs" data-lang="{source-language}"></code></pre>
 </div>
 </div>
 <div class="colist arabic">
