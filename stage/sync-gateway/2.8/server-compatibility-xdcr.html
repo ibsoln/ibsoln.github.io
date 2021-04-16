@@ -7,7 +7,8 @@
 <link rel="canonical" href="localhost::/5000/sync-gateway/2.8/server-compatibility-xdcr.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="How Sync Gateway can work with Couchbase Server&#x27;s XDCR">
+<meta name="description" content="How Sync Gateway works with Couchbase Server&#x27;s Cross Data Center Replication">
+<meta name="keywords" content="high-availability, disaster recovery, sync, replicate, edge, cloud, dr, ha, sync gateway cluster, mobile cluster, data migration. data provisioning, active standby, lift-and-shift, in hybrid cloud">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -479,6 +480,12 @@
 <a class="nav-link" href="indexing.html">Indexing versus Views</a>
 </span>
 </li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="deploy-dr-cluster.html">Deploy DR Cluster</a>
+</span>
+</li>
 </ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -733,7 +740,7 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Description&#8201;&#8212;&#8201;<em>How Sync Gateway can work with Couchbase Server&#8217;s XDCR</em><br>
+<p>Description&#8201;&#8212;&#8201;<em>How Sync Gateway works with Couchbase Server&#8217;s Cross Data Center Replication</em><br>
 <em>Abstract&#8201;&#8212;&#8201;Sync Gateway is specifically designed for mobile synchronization, but it can work alongside Couchbase Servers Cross Data Centre Replication (XDCR) to provide a comprehensive solution.</em><br>
 Related Content&#8201;&#8212;&#8201;<a href="server-compatibility-xdcr.html" class="page">Server Compatibility - XDCR</a>  |  <a href="#sync-gateway::server-compatibility-eventing.adoc" class="page unresolved">Server Compatibility - Eventing</a>  |   <a href="#sync-gateway::server-compatibility-transactions.adoc" class="page unresolved">Server Compatibility - Transactions</a>  |   <a href="#sync-gateway::server-compatibility-collections.adoc" class="page unresolved">Server Compatibility - Collections</a>  | <a href="compatibility.html" class="page">Compatibility Matrix</a></p>
 </div>
@@ -745,8 +752,12 @@ Related Content&#8201;&#8212;&#8201;<a href="server-compatibility-xdcr.html" cla
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Couchbase Mobile and Couchbase Server&#8217;s Cross Data Center Replication (XDCR) use different replication technologies.
-This topic covers how the two can co-exist,minimizing any functional or performance impact.</p>
+<p>Couchbase Server provides the backing data store for Sync Gateway and it is compatible&#8201;&#8212;&#8201;see: <a href="compatibility.html" class="page">Compatibility Matrix</a>.
+However, there are considerations you needs to be aware of when using some Couchbase Server features with Sync Gateway.</p>
+</div>
+<div class="paragraph">
+<p>One of those instances concerns the use of Couchbase Mobile and <a href="#server:learn/clusters-and-availability/xdcr-overview.adoc" class="page unresolved">Couchbase Server Cross Data Center Replication</a> (XDCR), which use different replication technologies.
+Here we show how you can combine the two, maximizing the strengths of both, whist minimizing any functional or performance impact.</p>
 </div>
 </div>
 </div>
@@ -765,49 +776,8 @@ A typical architecture for this use case is shown in <a href="#icr-active-mobile
 </div>
 <div class="title">Figure 1. Active-to-active mobile synchronization</div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="xdcr"><a class="anchor" href="#xdcr"></a>XDCR</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The Couchbase Server Cross Data Center Replication API (<a href="#server:manage:manage-xdcr/xdcr-management-overview.adoc" class="page unresolved">XDCR</a>) is similarly used to replicate between Couchbase Server clusters.</p>
-</div>
-<div class="paragraph">
-<p>Where possible, you should use inter-Sync&#160;Gateway replication, which is specifically designed for Sync Gateway deployments, for replication between mobile clusters&#8201;&#8212;&#8201;see: <a href="#lbl-isgr">Inter Sync Gateway Replication</a></p>
-</div>
-<div class="paragraph">
-<p>However, where there is a clear need or requirement to use XDCR to replicate mobile clusters, for example in a Disaster Recovery scenario where you need to setup target mobile clusters, then you must:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Use XDCR in unidirectional replication mode only</p>
-</li>
-<li>
-<p>Configure Sync Gateway instances on the cluster to run in read-only mode on the target cluster to avoid any mobile sync sequence issues.
-The main purpose of these will be to (re)build indexes.</p>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>Running import at both ends (source and target) of an XDCR-replicated bucket isn&#8217;t a supported configuration.
-It can will lead to sequence issues on the target cluster.</p>
-</div>
-<div class="paragraph">
-<p>For safe operation when using uni-directional XDCR with Sync Gateway, Sync Gateway should only be deployed at one end of the replication (source or target).
-If Sync Gateway writes occur in both clusters (which would be the case with import enabled), conflicting or duplicate sequence values are generated, leading to mobile replication problems.</p>
-</div>
-</div>
-</div>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="reasons-to-use-inter-sync-gateway"><a class="anchor" href="#reasons-to-use-inter-sync-gateway"></a>Reasons to Use Inter-Sync Gateway</h2>
-<div class="sectionbody">
-<div class="paragraph">
+<div id="lbl-isgr-rsns" class="paragraph">
+<div class="title">Reasons to Use Inter-Sync Gateway</div>
 <p>Currently, XDCR replicates all of Sync Gateway’s metadata (_sync xattr) along with associated documents.
 This can overwrite existing metadata on the target cluster.</p>
 </div>
@@ -829,6 +799,188 @@ This can overwrite existing metadata on the target cluster.</p>
 <p>Cluster-specific _sync documents are not replicated to other mobile clusters</p>
 </li>
 </ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-xdcr"><a class="anchor" href="#lbl-xdcr"></a>Cross Data Center Replication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Like inter-Sync Gateway Replication, Couchbase Server&#8217;s Cross Data Center Replication (<a href="../../server/6.6/manage/manage-xdcr/xdcr-management-overview.html" class="page">XDCR</a>) can be used to replicate between Couchbase Mobile clusters.</p>
+</div>
+<div class="paragraph">
+<p>Your default preference should always be to use inter-Sync&#160;Gateway replication for replication between mobile clusters.
+As stated in <a href="#lbl-isgr-rsns">Reasons to Use Inter-Sync Gateway</a>, inter-Sync Gateway Replication is specifically designed for that purpose.</p>
+</div>
+<div class="paragraph">
+<p>However, there are use-case categories where it makes sense to use XDCR to replicate Couchbase Mobile clusters, for example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Data provisioning from a central to a regional data center&#8201;&#8212;&#8201;<a href="#lbl-prov-data">[lbl-prov-data]</a></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>In this use-case, unidirectional XDCR (typically with a filter) is used to push data from a central/master data center to regional data centers, where the data is subsequently pulled by downstream clients.
+There are no updates coming in from regional data centers.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/data-provisioning-xdcr.png" alt="data provisioning xdcr" width="600">
+</div>
+<div class="title">Figure 2. Using XDCR in Data Provisioning Scenarios</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>In a Disaster Recovery scenario where you need to setup target mobile clusters.</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This category of use-cases includes, for example, active standby, disaster recovery, data migration, <em>lift-and-shift</em> cases in hybrid cloud.
+These are all cases where the entire dataset from a source is replicated to the target&#8201;&#8212;&#8201;see: <a href="#lbl-prov-drc">Using XDCR in Disaster Recovery Scenarios</a> for more on the Disaster Recover use-case.</p>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that running import at both ends (source and target) of an XDCR-replicated bucket is not a supported configuration.
+It can lead to sequence issues on the target cluster.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-prov-drc"><a class="anchor" href="#lbl-prov-drc"></a>Using XDCR in Disaster Recovery Scenarios</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Her XDCR serves an important role in supporting Disaster Recovery (DR) and Data Migration, even though Sync Gateway is the operational replicator of choice for mobile data.</p>
+</div>
+<div class="sect2">
+<h3 id="clusters-in-same-region"><a class="anchor" href="#clusters-in-same-region"></a>Clusters in Same Region</h3>
+<div class="paragraph">
+<p>This model caters for situations where the Active and Disaster Recovery clusters are in the same region or data center&#8201;&#8212;&#8201;see: <a href="#fig-dr-same-rgns">Figure 3</a>.
+It includes an optional optimization step, which will ensure that there is no downtime during the activation stage.</p>
+</div>
+<div class="paragraph">
+<div class="title">Set Up</div>
+<p>To set up and maintain a disaster recovery cluster:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>[<em>Optional step&#8201;&#8212;&#8201;for optimization</em>] Connect Sync Gateway to the Disaster Recovery cluster just long enough to create indexes.
+Having everything reindexed lowers switching costs.<br>
+If you skip this test, you will incur latency when Sync Gateway is switched to the Disaster Recovery cluster and Sync Gateway rebuilds its indexes.</p>
+</li>
+<li>
+<p>Connect Sync Gateway to your Primary cluster.</p>
+</li>
+<li>
+<p>Initiate the <strong>unidirectional</strong> XDCR from the Primary cluster to the Disaster Recovery cluster.</p>
+</li>
+</ol>
+</div>
+<div id="fig-dr-same-rgns" class="imageblock">
+<div class="content">
+<img src="_images/sgw-xdcr-dr-same-regn.png" alt="sgw xdcr dr same regn" width="600">
+</div>
+<div class="title">Figure 3. DR for Clusters in Same Regions</div>
+</div>
+<div class="paragraph">
+<div class="title">Activation</div>
+<p>When you are ready to switch to Disaster Recovery operations:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Stop the replication (XDCR) from the Primary cluster to Disaster Recovery cluster.</p>
+</li>
+<li>
+<p><strong>When XDCR is stopped:</strong> Switch the Load Balancer to point to the Sync Gateway on the Disaster Recovery cluster.</p>
+</li>
+<li>
+<p>Promote the Disaster Recovery cluster to Primary and the <strong>old</strong> Primary to Disaster Recovery.</p>
+</li>
+<li>
+<p>Flush all buckets in the Primary cluster; this prevents any writes coming into the Primary cluster that had not been replicated when XDCR was stopped.</p>
+</li>
+<li>
+<p>Reverse the XDCR to replicate from the newly promoted Primary to the old Primary to set up a new Backup.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="clusters-in-different-regions"><a class="anchor" href="#clusters-in-different-regions"></a>Clusters in Different Regions</h3>
+<div class="paragraph">
+<p>This model caters for situations where the Active and Disaster Recovery clusters are in different regions or data centers.
+It has a separate Sync Gateway cluster attached to the Disaster Recovery cluster.
+The optional optimization step will ensure that there is no downtime during the activation stage.</p>
+</div>
+<div class="paragraph">
+<div class="title">Set Up</div>
+<p>To set up and maintain a disaster recovery cluster - see: <a href="#fig-dr-diff-regn-setup">Figure 4</a>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>[<em>Optional step&#8201;&#8212;&#8201;for optimization</em>] Turn on <em>Sync Gateway</em> in the Disaster Recovery cluster just long enough to create indexes.
+Having everything re-indexed lowers switching costs.<br>
+If you skip this test, you will incur latency when Sync Gateway is switched to the Disaster Recovery cluster and Sync Gateway rebuilds its indexes.</p>
+</li>
+<li>
+<p>[<em>Critical step</em>] Turn off <strong>all</strong> the Sync Gateways in the Disaster Recovery cluster.</p>
+</li>
+<li>
+<p>Initiate the <strong>unidirectional</strong> XDCR from the Primary cluster to the Disaster Recovery cluster.</p>
+</li>
+</ol>
+</div>
+<div id="fig-dr-diff-regn-setup" class="imageblock">
+<div class="content">
+<img src="_images/sgw-xdcr-dr-diff-regn-setup.png" alt="sgw xdcr dr diff regn setup" width="600">
+</div>
+<div class="title">Figure 4. DR Cluster Setup (Clusters in Different Regions)</div>
+</div>
+<div class="paragraph">
+<div class="title">Activation</div>
+<p>When you are ready to switch to Disaster Recovery operations&#8201;&#8212;&#8201;see: <a href="#fig-dr-diff-regn-recovery">Figure 5</a>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Stop Sync Gateway on the Primary cluster</p>
+</li>
+<li>
+<p>Stop the replication (XDCR) from the Primary cluster to the Disaster Recovery cluster.</p>
+</li>
+<li>
+<p>Ensure that any and all Load Balancer(s) are updated to direct all traffic to the new Sync Gateway cluster(s).</p>
+</li>
+<li>
+<p>Turn on the Sync Gateway cluster(s) in the Disaster Recovery cluster.</p>
+</li>
+<li>
+<p>Promote the Disaster Recovery cluster to be the <strong>new</strong> Primary cluster, and make the <strong>old</strong> Primary cluster the <strong>new</strong> Disaster Recovery cluster</p>
+</li>
+<li>
+<p>Flush all buckets in the <strong>new</strong> Primary cluster; this prevents any writes coming into the Primary cluster that had not been replicated when XDCR was stopped.</p>
+</li>
+<li>
+<p>Reverse the original XDCR to replicate from the newly promoted Primary to the old Primary, to set up a new Backup.</p>
+</li>
+</ol>
+</div>
+<div id="fig-dr-diff-regn-recovery" class="imageblock">
+<div class="content">
+<img src="_images/sgw-xdcr-dr-diff-regn-in-disaster.png" alt="sgw xdcr dr diff regn in disaster" width="600">
+</div>
+<div class="title">Figure 5. DR In-Recovery (clusters in different regions)</div>
+</div>
 </div>
 </div>
 </div>

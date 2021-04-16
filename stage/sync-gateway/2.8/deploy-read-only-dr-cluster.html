@@ -718,7 +718,7 @@ Related Content&#8201;&#8212;&#8201;<a href="get-started-verify-install.html" cl
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Cross Data Center Replication (XDCR) replicates data between two or more autonomous Couchbase Server clusters&#8201;&#8212;&#8201;see: <a href="#server:learn/clusters-and-availability/xdcr-overview.adoc" class="page unresolved">Couchbase Server Cross Data Center Replication</a>.
+<p><a href="#server:learn/clusters-and-availability/xdcr-overview.adoc" class="page unresolved">Couchbase Server Cross Data Center Replication</a> (XDCR) replicates data between two or more autonomous Couchbase Server clusters.
 It serves an important role in supporting Disaster Recovery (DR) and Data Migration, even where Sync Gateway is the normal replicator of choice for mobile data.</p>
 </div>
 </div>
@@ -729,10 +729,14 @@ It serves an important role in supporting Disaster Recovery (DR) and Data Migrat
 <div class="sect2">
 <h3 id="clusters-in-same-region"><a class="anchor" href="#clusters-in-same-region"></a>Clusters in Same Region</h3>
 <div class="paragraph">
-<p>This model caters for situations where the Active and Disaster Recovery clusters are in the same region or data center&#8201;&#8212;&#8201;see: <a href="#fig-dr-same-rgns">Figure 1</a></p>
+<p>This model caters for situations where the Active and Disaster Recovery clusters are in the same region or data center&#8201;&#8212;&#8201;see: <a href="#fig-dr-same-rgns">Figure 1</a>.
+It includes an optional optimization step, which will ensure that there is no downtime during the activation stage.</p>
+</div>
+<div class="paragraph">
+<div class="title">Set Up</div>
+<p>To set up and maintain a disaster recovery cluster:</p>
 </div>
 <div class="olist arabic">
-<div class="title">Setup</div>
 <ol class="arabic">
 <li>
 <p>[<em>Optional step&#8201;&#8212;&#8201;for optimization</em>] Connect Sync Gateway to the Disaster Recovery cluster just long enough to create indexes.
@@ -753,8 +757,11 @@ If you skip this test, you will incur latency when Sync Gateway is switched to t
 </div>
 <div class="title">Figure 1. DR for Clusters in Same Regions</div>
 </div>
+<div class="paragraph">
+<div class="title">Activation</div>
+<p>When you are ready to switch to Disaster Recovery operations:</p>
+</div>
 <div class="olist arabic">
-<div class="title">On disaster, when ready to switch</div>
 <ol class="arabic">
 <li>
 <p>Stop the replication (XDCR) from the Primary cluster to Disaster Recovery cluster.</p>
@@ -773,29 +780,22 @@ If you skip this test, you will incur latency when Sync Gateway is switched to t
 </li>
 </ol>
 </div>
-<div class="ulist">
-<div class="title">Takeaways</div>
-<ul>
-<li>
-<p>There is no down time.</p>
-</li>
-<li>
-<p>This model requires both clusters to be in same region or data center.</p>
-</li>
-</ul>
-</div>
 </div>
 <div class="sect2">
 <h3 id="clusters-in-different-regions-or-data-centers"><a class="anchor" href="#clusters-in-different-regions-or-data-centers"></a>Clusters in Different Regions or Data Centers</h3>
 <div class="paragraph">
 <p>This model caters for situations where the Active and Disaster Recovery clusters are in different regions or data centers.
-It has a separate Sync Gateway cluster attached to the Disaster Recovery cluster&#8201;&#8212;&#8201;see: <a href="#fig-dr-diff-rgns">Figure 2</a></p>
+It has a separate Sync Gateway cluster attached to the Disaster Recovery cluster.
+The optional optimization step will ensure that there is no downtime during the activation stage.</p>
+</div>
+<div class="paragraph">
+<div class="title">Set Up</div>
+<p>To set up and maintain a disaster recovery cluster - see: <a href="#fig-dr-diff-regn-setup">Figure 2</a>:</p>
 </div>
 <div class="olist arabic">
-<div class="title">Setup</div>
 <ol class="arabic">
 <li>
-<p>[<em>Optional step&#8201;&#8212;&#8201;for optimization</em>] Turn on <em>Sync Gateway #1</em> in the Disaster Recovery cluster just long enough to create indexes.
+<p>[<em>Optional step&#8201;&#8212;&#8201;for optimization</em>] Turn on <em>Sync Gateway</em> in the Disaster Recovery cluster just long enough to create indexes.
 Having everything re-indexed lowers switching costs.<br>
 If you skip this test, you will incur latency when Sync Gateway is switched to the Disaster Recovery cluster and Sync Gateway rebuilds its indexes.</p>
 </li>
@@ -807,14 +807,17 @@ If you skip this test, you will incur latency when Sync Gateway is switched to t
 </li>
 </ol>
 </div>
-<div id="fig-dr-diff-rgns" class="imageblock">
+<div id="fig-dr-diff-regn-setup" class="imageblock">
 <div class="content">
-<img src="_images/sgw-xdcr-dr-diff-regn.png" alt="sgw xdcr dr diff regn" width="600">
+<img src="_images/sgw-xdcr-dr-diff-regn-setup.png" alt="sgw xdcr dr diff regn setup" width="600">
 </div>
-<div class="title">Figure 2. DR for Clusters in Different Regions</div>
+<div class="title">Figure 2. DR Cluster Setup (Clusters in Different Regions)</div>
+</div>
+<div class="paragraph">
+<div class="title">Activation</div>
+<p>When you are ready to switch to Disaster Recovery operations&#8201;&#8212;&#8201;see: <a href="#fig-dr-diff-regn-recovery">Figure 3</a>:</p>
 </div>
 <div class="olist arabic">
-<div class="title">On disaster, When ready to switch</div>
 <ol class="arabic">
 <li>
 <p>Stop Sync Gateway on the Primary cluster</p>
@@ -838,6 +841,12 @@ If you skip this test, you will incur latency when Sync Gateway is switched to t
 <p>Reverse the original XDCR to replicate from the newly promoted Primary to the old Primary, to set up a new Backup.</p>
 </li>
 </ol>
+</div>
+<div id="fig-dr-diff-regn-recovery" class="imageblock">
+<div class="content">
+<img src="_images/sgw-xdcr-dr-diff-regn-in-disaster.png" alt="sgw xdcr dr diff regn in disaster" width="600">
+</div>
+<div class="title">Figure 3. DR In-Recovery (clusters in different regions)</div>
 </div>
 </div>
 </div>
