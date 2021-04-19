@@ -4387,8 +4387,32 @@
 <div class="sectionbody">
 <div class="quoteblock abstract">
 <blockquote>
-Primary and Global Secondary Indexes can be managed with Couchbase Web Console.
+Indexes provided by the Index Service can be managed with Couchbase Web Console.
 </blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="defining-editing-and-managing-indexes"><a class="anchor" href="#defining-editing-and-managing-indexes"></a>Defining, Editing, and Managing Indexes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Indexes provided by the <em>Index Service</em> facilitate and enhance use of the <em>Query Service</em>; which reads information from and writes information to <em>documents</em>, provided by the <em>Data Service</em>.
+These indexes are administered by means of two facilities:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <em>N1QL</em> language, which is provided by the Query Service as a means of querying data within documents; and of defining and editing indexes.
+See the <a href="../../n1ql/n1ql-language-reference/index.html" class="page">N1QL Language Reference</a> for information.</p>
+</li>
+<li>
+<p><em>Couchbase Web Console</em>, which provides a user interface for the management of existing indexes.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This page describes how to use Couchbase Web Console&#8217;s UI to manage existing indexes.
+It also shows how to use the the console&#8217;s <strong>Query Editor</strong>, provided on the <strong>Query</strong> screen, to define and edit indexes by means of N1QL.</p>
 </div>
 </div>
 </div>
@@ -4396,7 +4420,8 @@ Primary and Global Secondary Indexes can be managed with Couchbase Web Console.
 <h2 id="access-indexes"><a class="anchor" href="#access-indexes"></a>Access the Indexes Screen</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To access the <strong>Indexes</strong> screen, left-click on the tab in the left-hand navigation bar:</p>
+<p>The user interface for index management is provided on the <strong>Indexes</strong> screen.
+Access this by left-clicking on the tab in the left-hand navigation bar:</p>
 </div>
 <div class="imageblock text-left">
 <div class="content">
@@ -4404,57 +4429,36 @@ Primary and Global Secondary Indexes can be managed with Couchbase Web Console.
 </div>
 </div>
 <div class="paragraph">
-<p>An index list, showing a summary of all indexes, is displayed in table format.</p>
+<p>An index list, showing a summary of all currently-defined indexes, is displayed in table format.</p>
 </div>
 <div class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-ui/indexScreenWithIndexes.png" alt="indexScreenWithIndexes" width="700">
+<img src="../_images/manage-ui/indexesScreenFullyPrepared.png" alt="indexesScreenFullyPrepared" width="700">
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="change-index-view"><a class="anchor" href="#change-index-view"></a>Change the Index View</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>To change the index view, open the <strong>view by</strong> drop-down list and choose a view.</p>
+<p>The <strong>Bucket &amp; Scope</strong> fields allow selection of a bucket from those defined on the cluster; and of a scope from those defined within the bucket.
+Left-click on the left-hand field, to display a pull-down menu of available buckets:</p>
 </div>
 <div class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-indexes/view-by-menu.png" alt="view by menu">
+<img src="../_images/manage-indexes/buckets-pulldown-menu.png" alt="buckets pulldown menu" width="400">
 </div>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>index</strong> displays all the available indexes in a single list.</p>
-</li>
-<li>
-<p><strong>bucket</strong> groups the indexes by bucket.</p>
-</li>
-<li>
-<p><strong>server node</strong> groups the indexes by server.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="filter-indexes"><a class="anchor" href="#filter-indexes"></a>Filter the Indexes</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To filter the indexes, type a filter term in the <strong>filter indexes</strong> box.</p>
 </div>
 <div class="paragraph">
-<p>Only indexes whose definition contains the filter term are shown.</p>
+<p>Likewise, left-click on the right-hand field, to display a pull-down menu of scopes within the selected bucket:</p>
 </div>
 <div class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-indexes/filter-indexes.png" alt="filter indexes" width="700">
+<img src="../_images/manage-indexes/scopes-pulldown-menu.png" alt="scopes pulldown menu" width="400">
 </div>
 </div>
 <div class="paragraph">
-<p>To remove the filter and display all indexes, left-click the <em>cross icon</em>, at the end of the <strong>filter indexes</strong> box.</p>
+<p>Each time a selection is made, the list of indexes in the lower panel is redisplayed; so as to show the indexes that are defined on data within the selected scope and bucket.</p>
+</div>
+<div class="paragraph">
+<p>Note that towards the right, an additional control provides a pull-down menu whereby indexes can be viewed either for all Index-Service nodes on the cluster, or by node.
+Additionally, an interactive field is provided, to allow the displayed content to be filtered; by entering either all or part of an index-name.</p>
 </div>
 </div>
 </div>
@@ -4478,10 +4482,14 @@ There may also be one or more indicators after the index name, giving further in
 <div class="ulist">
 <ul>
 <li>
-<p><code>partitioned</code> indicates that the index is <a href="../../learn/services-and-indexes/indexes/index-replication.html#index-partitioning" class="page">partitioned</a>.</p>
+<p><code>partitioned</code> indicates that the index is <em>partitioned</em>.
+An overview of partitioning is provided in <a href="../../learn/services-and-indexes/indexes/index-replication.html#index-partitioning" class="page">Index Partitioning</a>.
+Examples of creating partitioned indexes are provided in
+<a href="../../n1ql/n1ql-language-reference/index-partitioning.html#partition-keys" class="page">Partition Keys</a>.</p>
 </li>
 <li>
-<p><code>replica <em>n</em></code> indicates that this is an <a href="../../learn/services-and-indexes/indexes/index-replication.html#index-replication" class="page">index replica</a>, where <code><em>n</em></code> is the replica ID.</p>
+<p><code>replica <em>n</em></code> indicates that this is an <em>index replica</em>, where <code><em>n</em></code> is the replica ID.
+An overview of index replication, and examples of creating index replicas, are provided in <a href="../../learn/services-and-indexes/indexes/index-replication.html#index-replication" class="page">Index Replication</a>.</p>
 </li>
 <li>
 <p><code>stale</code> indicates that the node on which the index or partition is stored is not available.</p>
@@ -4506,18 +4514,13 @@ The number of items currently indexed.</p>
 The size of indexable data that is maintained for the index or replica.</p>
 </li>
 <li>
-<p><strong>bucket</strong>.
-(Only displayed if viewing the indexes by index, or by server node.)
-The bucket for which the index or replica was created.</p>
-</li>
-<li>
-<p><strong>node</strong>.
-(Only displayed if viewing the indexes by bucket.)
-The server node on which the index or replica is stored, or a list of the nodes on which index partitions are stored.</p>
+<p><strong>keyspace</strong>.
+The keyspace for which the index or replica was created.</p>
 </li>
 <li>
 <p><strong>status</strong>.
-The current state of the index service on the node on which this index is stored: <strong>ready</strong>, <strong>pause</strong>, or <strong>warmup</strong>.</p>
+The current state of the Index Service on the node on which this index is stored.
+The state can be expressed as <strong>ready</strong>, <strong>pause</strong>, <strong>warmup</strong>, or <strong>n mutations remaining</strong> (where <strong>n</strong> is an integer).</p>
 <div class="paragraph">
 <p>The color of the left margin of the index row also reflects the current state of the index.
 For example, the left margin of the index row is green when the index is <strong>ready</strong>, orange when the index is in <strong>warmup</strong>, and so on.</p>
@@ -4536,16 +4539,17 @@ For example, the left margin of the index row is green when the index is <strong
 <h2 id="expand-index"><a class="anchor" href="#expand-index"></a>Index Administration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To administer an index, left-click the index row in the indexes list, to expand the index row.
-The index row is a toggle &#8212; left-click the row again to collapse it.</p>
-</div>
-<div class="paragraph">
-<p>When the index row is expanded, the following extra information is displayed.</p>
+<p>To administer an index, left-click on a specific index row in the indexes list, to expand the row.
+(Subsequently, whenever appropriate, left-click on the row again, to collapse it.)
+When the row is expanded, the following information is displayed.</p>
 </div>
 <div class="imageblock text-left">
 <div class="content">
 <img src="../_images/manage-indexes/index-row-expanded.png" alt="index row expanded" width="700">
 </div>
+</div>
+<div class="paragraph">
+<p>The following information is thus provided:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -4555,69 +4559,63 @@ The N1QL statement used to define the index.</p>
 </li>
 <li>
 <p><strong>Storage Mode</strong>.
-The <a href="../../learn/services-and-indexes/indexes/storage-modes.html" class="page">storage mode</a> used by the index service on the node on which this index is stored.</p>
+The <a href="../../learn/services-and-indexes/indexes/storage-modes.html" class="page">storage mode</a> used by the Index Service on the node on which this index is stored.</p>
 </li>
 <li>
 <p><strong>Nodes</strong>.
 (Only displayed for partitioned indexes.)
 The nodes on which the index partitions are stored, and the number of partitions stored on each node.</p>
 </li>
-<li>
-<p><strong>Last Scanned</strong>.
-The time and data of the last <a href="../../learn/services-and-indexes/indexes/index-scans.html" class="page">scan request</a> received for this index.
-If the index service cannot determine when this index was last scanned, this statistic is not displayed.
-This may be useful for determining whether this index is currently unused.</p>
-<div class="paragraph">
-<p>Note that this statistic is persisted to disk every 15 minutes, so it is preserved when the indexer restarts.</p>
-</div>
-</li>
 </ul>
 </div>
 <div class="paragraph">
-<p>In addition, when the index row is expanded, the <strong>Index Stats</strong> heading is also displayed, along with the <strong>Open in Workbench</strong> and <strong>Drop</strong> buttons.</p>
+<p>In addition, when the index row is expanded, the <strong>Index Stats</strong> control is displayed, along with the <strong>Open in Workbench</strong> and <strong>Drop</strong> buttons.
+These controls are described below.</p>
 </div>
 <div class="sect2">
 <h3 id="index-stats"><a class="anchor" href="#index-stats"></a>Show the Index Statistics</h3>
 <div class="paragraph">
-<p>To see statistics for the index, left-click the <strong>Index Stats</strong> heading in the expanded index row.</p>
+<p>To see statistics for the index, left-click on the <strong>Index Stats</strong> control in the expanded index row.
+The panel expands vertically, and provides the following display of interactive charts:</p>
+</div>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-indexes/index-stats-display.png" alt="index stats display" width="700">
+</div>
 </div>
 <div class="paragraph">
-<p>The <strong>Index Stats</strong> heading is a toggle &#8212; left-click the heading again to hide the statistics.</p>
-</div>
-<div class="paragraph">
-<p>For details of the index statistics, refer to <a href="../monitor/monitoring-indexes.html#index-stats" class="page">Index Statistics</a>.</p>
+<p>For more information on these charts, see <a href="../monitor/monitoring-indexes.html#index-stats" class="page">Index Statistics</a>.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="edit-index"><a class="anchor" href="#edit-index"></a>Open the Index Definition</h3>
+<h3 id="edit-index"><a class="anchor" href="#edit-index"></a>Open the Index in the Query Workbench</h3>
 <div class="paragraph">
-<p>To open the index definition:</p>
+<p>If an index is opened in the <em>Query Workbench</em>, its definition can be inspected and modified.</p>
+</div>
+<div class="paragraph">
+<p>Proceed as follows:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Left-click the <strong>Open in Workbench</strong> button, in the expanded index row.</p>
+<p>From the <strong>Indexes</strong> screen, left-click the <strong>Open in Workbench</strong> button, in the expanded index row.</p>
 <div class="paragraph">
 <p>The index definition is displayed in the Query Workbench.</p>
 </div>
 </li>
 <li>
-<p>Modify the index definition as required.
-(You cannot change the definition of the existing index, but you can create a new index with the modified definition.)</p>
+<p>Modify the N!QL index-definition, as required.
+(Note that you cannot change the definition of the existing index, but you can create a new index with the modified definition.)</p>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-indexes/indexInQueryWorkbench.png" alt="indexInQueryWorkbench" width="700">
+</div>
+</div>
 </li>
 </ol>
 </div>
-<div class="imageblock text-left">
-<div class="content">
-<img src="../_images/manage-ui/indexInQueryWorkbench.png" alt="indexInQueryWorkbench" width="700">
-</div>
-</div>
 <div class="paragraph">
-<p>Note that the defining and editing of indexes is performed by means of <em>N1QL</em>.
-See the <a href="../../n1ql/n1ql-language-reference/index.html" class="page">N1QL Language Reference</a> for information.</p>
-</div>
-<div class="paragraph">
-<p>Immediately beneath the <strong>Query Editor</strong>, three buttons are displayed.
+<p>Immediately beneath the <strong>Query Editor</strong>, four buttons are displayed.
 These can be used to test queries, and to determine how to design corresponding indexes; so as to maximize query-performance.
 The buttons are as follows.</p>
 </div>
@@ -4641,7 +4639,7 @@ This selects every <code>icao</code> key-value pair from the bucket <code>travel
 </div>
 <div class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-ui/leftClickOnExecuteButton.png" alt="leftClickOnExecuteButton" width="130">
+<img src="../_images/manage-ui/leftClickOnExecuteButton.png" alt="leftClickOnExecuteButton" width="110">
 </div>
 </div>
 <div class="paragraph">
@@ -4649,7 +4647,7 @@ This selects every <code>icao</code> key-value pair from the bucket <code>travel
 </div>
 <div class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-ui/executingQuery.png" alt="executingQuery" width="400">
+<img src="../_images/manage-indexes/executingQuery.png" alt="executingQuery" width="320">
 </div>
 </div>
 <div class="paragraph">
@@ -4657,8 +4655,11 @@ This selects every <code>icao</code> key-value pair from the bucket <code>travel
 </div>
 <div class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-ui/resultsOfqueryExecution.png" alt="resultsOfqueryExecution" width="720">
+<img src="../_images/manage-indexes/resultsOfqueryExecution.png" alt="resultsOfqueryExecution" width="520">
 </div>
+</div>
+<div class="paragraph">
+<p>Left-click on the right-pointing arrowhead, located to the immediate right of the <strong>Execute</strong> button, in order to redisplay the other buttons.</p>
 </div>
 </div>
 <div class="sect3">
@@ -4668,7 +4669,7 @@ This selects every <code>icao</code> key-value pair from the bucket <code>travel
 </div>
 <div class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-ui/leftClickOnExplainButton.png" alt="leftClickOnExplainButton" width="130">
+<img src="../_images/manage-ui/leftClickOnExplainButton.png" alt="leftClickOnExplainButton" width="110">
 </div>
 </div>
 <div class="paragraph">
@@ -4690,7 +4691,7 @@ This selects every <code>icao</code> key-value pair from the bucket <code>travel
 </div>
 <div class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-ui/leftClickOnAdviseButton.png" alt="leftClickOnAdviseButton" width="130">
+<img src="../_images/manage-ui/leftClickOnAdviseButton.png" alt="leftClickOnAdviseButton" width="110">
 </div>
 </div>
 <div class="paragraph">
@@ -4728,6 +4729,30 @@ When index-creation is completed, the following success-message appears on the <
 </div>
 </div>
 </div>
+<div class="sect3">
+<h4 id="run-as-transaction"><a class="anchor" href="#run-as-transaction"></a>Run as Transaction</h4>
+<div class="paragraph">
+<p>The <strong>Run as Transaction</strong> button allows the specified query to be run transactionally, across multiple indexes.
+For information on transactions, see <a href="../../learn/data/transactions.html" class="page">Transactions</a>.</p>
+</div>
+<div class="paragraph">
+<p>Left-click on the button:</p>
+</div>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-indexes/transactionButton.png" alt="transactionButton" width="150">
+</div>
+</div>
+<div class="paragraph">
+<p>The query is now run as a transaction.
+When the transaction is complete, status is displayed as follows:</p>
+</div>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-indexes/transactionSuccessDisplay.png" alt="transactionSuccessDisplay" width="620">
+</div>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="index-definition-support-in-community-edition"><a class="anchor" href="#index-definition-support-in-community-edition"></a>Index-Definition Support in Community Edition</h3>
@@ -4741,7 +4766,7 @@ The area immediately below the <strong>Query Editor</strong> appears as follows:
 </div>
 </div>
 <div class="paragraph">
-<p>The <a href="https://index-advisor.couchbase.com/indexadvisor/#1">External Query Advisor</a> link takes the user to an external web-site, where the <strong>Query Advisor</strong> can be accessed and used.</p>
+<p>The <a href="https://index-advisor.couchbase.com/indexadvisor/#1" target="_blank" rel="noopener">External Query Advisor</a> link takes the user to an external web-site, where the <strong>Query Advisor</strong> can be accessed and used.</p>
 </div>
 </div>
 <div class="sect2">
@@ -4752,13 +4777,13 @@ The area immediately below the <strong>Query Editor</strong> appears as follows:
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Left-lick the <strong>Drop</strong> button in the expanded index row.</p>
+<p>Left-click the <strong>Drop</strong> button in the expanded index row.</p>
 <div class="paragraph">
 <p>A pop-up message appears, asking if you are sure you want to drop the index.</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../_images/manage-indexes/drop-index.png" alt="drop index" width="382">
+<img src="../_images/manage-indexes/drop-index.png" alt="drop index" width="322">
 </div>
 </div>
 </li>
@@ -4777,11 +4802,11 @@ The area immediately below the <strong>Query Editor</strong> appears as follows:
 <h2 id="index-summary-stats"><a class="anchor" href="#index-summary-stats"></a>Index Summary Statistics</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Summary statistics for the index service are displayed in the footer of the Indexes screen.</p>
+<p>Summary statistics for the Index Service are displayed in the footer of the Indexes screen.</p>
 </div>
 <div class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-indexes/service-stats.png" alt="service stats" width="700">
+<img src="../_images/manage-indexes/service-stats.png" alt="service stats" width="720">
 </div>
 </div>
 <div class="paragraph">
@@ -4793,7 +4818,7 @@ The area immediately below the <strong>Query Editor</strong> appears as follows:
 <h2 id="cli"><a class="anchor" href="#cli"></a>Manage Indexes with the CLI</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can manage some index service settings using the CLI.
+<p>You can manage some Index-Service settings using the CLI.
 Refer to <a href="../manage-settings/general-settings.html#index-storage-settings-via-cli" class="page">Index Storage Settings via CLI</a>.</p>
 </div>
 <div class="paragraph">
@@ -4811,7 +4836,7 @@ Refer to <a href="../../n1ql/n1ql-language-reference/index.html" class="page">N1
 <h2 id="rest-api"><a class="anchor" href="#rest-api"></a>Manage Indexes with the REST API</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can manage some index service settings using the REST API.
+<p>You can manage some Index-Service settings using the REST API.
 Refer to <a href="../manage-settings/general-settings.html#index-settings-via-rest" class="page">Index Settings via REST</a>.</p>
 </div>
 <div class="paragraph">
@@ -4820,14 +4845,10 @@ Refer to <a href="../manage-settings/general-settings.html#index-settings-via-re
 </div>
 </div>
 <div class="sect1">
-<h2 id="related-links"><a class="anchor" href="#related-links"></a>Related Links</h2>
+<h2 id="related-links"><a class="anchor" href="#related-links"></a>See Also</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="../monitor/monitoring-indexes.html" class="page">Monitor Indexes</a></p>
-</li>
-</ul>
+<div class="paragraph">
+<p>Information on index statistics is provided in <a href="../monitor/monitoring-indexes.html" class="page">Monitor Indexes</a>.</p>
 </div>
 </div>
 </div>
