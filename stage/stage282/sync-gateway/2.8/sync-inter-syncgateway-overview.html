@@ -479,12 +479,6 @@
 <a class="nav-link" href="indexing.html">Indexing versus Views</a>
 </span>
 </li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="deploy-dr-cluster.html">Deploy DR Cluster</a>
-</span>
-</li>
 </ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -492,39 +486,6 @@
 <span class="nav-line "  data-depth="1">
 <a class="nav-link" href="upgrading.html">Upgrade</a>
 </span>
-</li>
-<li class="nav-item  is-inactive " data-depth="1">
-
-<span class="nav-line "  data-depth="1">
-<span class="in-toggle" data-depth="1"></span>
-<span class="nav-text ">Server Compatibility</span>
-</span>
-<ul class="nav-list">
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="server-compatibility-xdcr.html">XDCR</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="server-compatibility-eventing.html">Eventing</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="server-compatibility-transactions.html">Transactions</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="server-compatibility-collections.html">Collections</a>
-</span>
-</li>
-</ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
@@ -1509,32 +1470,6 @@ It delivers this by applying one of its built-in <a href="glossary.html#conflict
 <h3 id="how-resolution-works"><a class="anchor" href="#how-resolution-works"></a>How Resolution Works</h3>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">See also</dt>
-<dd>
-<p>our blog post: <a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">Document Conflicts &amp; Resolution in Couchbase Mobile</a></p>
-</dd>
-</dl>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>Conflicts are only resolved during a <strong>pull</strong> replication.
-If you believe conflicts may occur, you are recommended to configure a <code>pushAndPull</code> replication when using Conflict Free mode.</p>
-</div>
-<div class="paragraph">
-<p><em>Alternatively</em>: Run the replicator from the other side, flipping the direction (to <code>pull</code>) and the resolution policy (for example <code>localWins</code> becomes <code>remoteWins</code>)</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="dlist">
-<dl>
 <dt class="hdlist1">Conflict Response on Active Replicator</dt>
 <dd>
 <p>As soon as the <em>active</em> Sync Gateway database detects a conflict in a replicated document revision, it initiates its configured <em>conflict resolver policy</em> to determine a <em>winning</em> revision.
@@ -1563,22 +1498,28 @@ It is expected that the active Sync Gateway will pull the conflicting revision f
 </dd>
 <dt class="hdlist1">Push Replications</dt>
 <dd>
-<p>The <em>passive</em> Sync Gateway will automatically detect and reject conflicting revisions being <em>pushed</em> to it (<code>409 Conflict</code> response).
-Conflicts are <strong>not</strong> resolved.</p>
+<div class="openblock">
+<div class="content">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Passive Sync Gateway</dt>
+<dd>
+<p>The <em>passive</em> Sync Gateway will automatically detect and reject conflicting revisions being <em>pushed</em> to it.</p>
+<div class="paragraph">
+<p>Note that conflicts are not resolved.
+The revision is rejected and the document returned&#8201;&#8212;&#8201;with a <code>409 Conflict</code>&#8201;&#8212;&#8201;response to the active Sync Gateway.</p>
+</div>
+</dd>
+<dt class="hdlist1">Active Sync Gateway</dt>
+<dd>
+<p>It is  the responsibility of the active sync Gateway to address rejected revisions in accordance with its specified <em>conflict_resolution_type</em>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
 <div class="paragraph">
 <p>This approach is the same as that adopted when Couchbase Lite clients push documents to Sync Gateway.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Conflicts are only resolved during a <strong>pull</strong> replication.
-</td>
-</tr>
-</table>
 </div>
 </dd>
 </dl>
