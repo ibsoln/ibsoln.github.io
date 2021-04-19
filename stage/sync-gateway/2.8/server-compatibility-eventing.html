@@ -479,6 +479,12 @@
 <a class="nav-link" href="indexing.html">Indexing versus Views</a>
 </span>
 </li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="deploy-dr-cluster.html">Deploy DR Cluster</a>
+</span>
+</li>
 </ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -761,8 +767,38 @@ This content relates only to <a href="https://www.couchbase.com/products/edition
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <a href="#server:eventing/eventing-overview.adoc" class="page unresolved">Couchbase Eventing Service</a> is a framework to operate on changes to data in real time.
-In this context, events are changes to data in the Couchbase cluster.</p>
+<p>Couchbase Server provides the backing data store for Sync Gateway and it is compatible&#8201;&#8212;&#8201;see: <a href="compatibility.html" class="page">Compatibility Matrix</a>.
+However, there are considerations you needs to be aware of when using some Couchbase Server features with Sync Gateway.</p>
+</div>
+<div class="paragraph">
+<p>One of those instances concerns the use of <a href="#server:eventing/eventing-overview.adoc" class="page unresolved">Couchbase Eventing Service</a>.
+This service provides a framework to operate on changes to data in real time.
+In this context, events are changes to data in the Couchbase Mobile cluster.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-eventing"><a class="anchor" href="#using-eventing"></a>Using Eventing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can use Eventing and Sync Gateway connected to the same bucket, when Eventing operates in <strong>read only</strong> mode.</p>
+</div>
+<div class="paragraph">
+<p>To do this, you also need to write your Eventing function to be <strong>idempotent</strong>&#8201;&#8212;&#8201;that is, to behave correctly when the same mutation is seen more than once.</p>
+</div>
+<div class="paragraph">
+<p>This is necessary because:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>When Sync Gateway executes a single document update, it appears over DCP as multiple mutations for the same document update; some modifying the document body and others modifying its metadata (XATTRs).</p>
+</li>
+<li>
+<p>Eventing detects these mutations and invokes its <code>OnUpdate</code> <strong>for each</strong>; whether it is for the modified body of the document, XATTRs, or both.
+It is here that you need to code the function to apply the update once only.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -770,17 +806,8 @@ In this context, events are changes to data in the Couchbase cluster.</p>
 <h2 id="constraints"><a class="anchor" href="#constraints"></a>Constraints</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>Do not</strong> use the Eventing service and Sync Gateway operating on the same bucket in read-write mode.</p>
-</div>
-<div class="paragraph">
-<p>Doing so, could cause an infinitely recursive loop.
-Where for example, a source bucket mutating handler creates a change, this change is picked up by Sync Gateway, which creates its own revision, which fires-off eventing, leading to a change picked up by Sync Gateway .. and so on.</p>
-</div>
-<div class="paragraph">
-<p>Watch too for the use of bucket-aliases, which may mask the fact that a shared-bucket is being used by Eventing and Sync Gateway.</p>
-</div>
-<div class="paragraph">
-<p>If Eventing detects a potential clash with Sync Gateway, it generates an error message of the form:<br>
+<p>Note that you <strong>cannot</strong> use the Eventing service and Sync Gateway operating on the same bucket in <strong>read-write</strong> mode (for example, an Eventing function listening to bucket change events cannot make updates to the same bucket.
+In fact Eventing treats this as an error, returning a warning:<br>
 <code>SyncGateway is enabled on: &lt;bucket-name&gt;, deployment of source bucket mutating handler will cause Intra Bucket Recursion</code></p>
 </div>
 </div>

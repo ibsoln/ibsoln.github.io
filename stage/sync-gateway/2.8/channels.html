@@ -7,6 +7,8 @@
 <link rel="canonical" href="localhost::/5000/sync-gateway/2.8/channels.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="How to implement access-control and document routing using channels">
+<meta name="keywords" content="access control, document routing, sync,">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -508,19 +510,19 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="#sync-gateway::server-compatibility-eventing.adoc">Eventing</a>
+<a class="nav-link" href="server-compatibility-eventing.html">Eventing</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="#sync-gateway::server-compatibility-transactions.adoc">Transactions</a>
+<a class="nav-link" href="server-compatibility-transactions.html">Transactions</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="#sync-gateway::server-compatibility-collections.adoc">Collections</a>
+<a class="nav-link" href="server-compatibility-collections.html">Collections</a>
 </span>
 </li>
 </ul>
@@ -733,79 +735,217 @@
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div class="sect1">
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Description&#8201;&#8212;&#8201;<em>How to implement access-control and document routing using channels</em><br>
+<em>Abstract&#8201;&#8212;&#8201;Sync Gateway&#8217;s Channels are a key part of a flexible approach to data routing and access control.</em><br></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Sync Gateway uses channels to make it easy to share a database between a large number of users and control access to the database.
-Channels are the intermediaries between documents and users.
-Every document in the database belongs to a set of channels, and every user is allowed to access a set of channels.</p>
+<p>Sync Gateway uses channels to make it easy to share a database&#8217;s documents across a large user base whilst retaining effective access control.
+They serve as a security conduit between the document and a user:</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>Every document in the database is assigned a list of channels it belongs to.</p>
+</li>
+<li>
+<p>Every user is assigned a list of channels they are allowed to access.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This dual-purpose is reflected in the way you define channels:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>By assigning a channel to a user you are imposing access control</p>
+</li>
+<li>
+<p>By assigning a channel to a document you are imposing document routing</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="use-cases"><a class="anchor" href="#use-cases"></a>Use-cases</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>You typically will use channels to:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Partition the data set.</p>
+<p>Control who can access what</p>
 </li>
 <li>
-<p>Authorize users to access documents.</p>
+<p>Partition your data set</p>
 </li>
 <li>
-<p>Minimize the amount of data synced down to devices.</p>
+<p>Enable users to access just the documents they need</p>
+</li>
+<li>
+<p>Minimize the amount of data synced to mobile devices</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="public-channel"><a class="anchor" href="#public-channel"></a>Public Channel</h2>
+<h2 id="channel-wildcards"><a class="anchor" href="#channel-wildcards"></a>Channel Wildcards</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <strong>public channel</strong>, written as <code>!</code> in the sync function, is automatically created when Sync Gateway starts.
-Documents added to this channel are visible to any user (i.e all users are automatically granted access to the <code>!</code> channel).
-This channel can be used as a public distribution channel.</p>
-</div>
-<div class="paragraph">
-<p>The following Sync Function maps the document to the public channel if it contains an <code>isPublic</code> property set to true and grants users with the 'admin' role access to the all docs channel.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc) {
-    if (doc.isPublic) {
-        channel('!');
-    }
-    if (doc.type == 'user') {
-        requireRole('admin');
-        access(doc.username, '*');
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="star-channel"><a class="anchor" href="#star-channel"></a>Star Channel</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The <strong>star</strong> channel, written as <code>*</code> in the sync function, is automatically created when Sync Gateway starts.
-All documents are added to this channel.
-So any user that is granted access to the <code>*</code> channel can access all the documents in the database.
-A user can be given access to the <strong>star</strong> channel through the sync function or in the configuration file (see <a href="read-access.html#add-access" class="page">Add Access</a>).</p>
+<p>Sync Gateway provides two special channels, which are referred to using one of the <strong>channel wildcards</strong>.
+These wildcards confer distinctly different access rights:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>Note 1:</strong> Sync Gateway automatically assigns documents to the all docs channel.
-Explicitly assigning a document to it in the Sync Function (i.e <code>channel('*')</code>) will result in unexpected behavior such as receiving the document twice on the client side.</p>
+<p><a href="#lbl-public-channel">The Public Channel</a> wildcard ("!")&#8201;&#8212;&#8201;essentially marks the document as publicly available; this provides for the public dissemination of documents.<br>
+All users have access to all documents belonging to the Public Channel.
+This access extends to users assigned no specific channel access.</p>
 </li>
 <li>
-<p><strong>Note 2:</strong> The <strong>star</strong> channel doesn&#8217;t mean that the user is granted access to all channels.
-It is only being granted access to 1 channel which contains <strong>all documents</strong>.
-This distinction is important when using the <a href="sync-function.html#requireaccess-channels" class="page"><code>requireAccess()</code></a> Sync Function method.</p>
+<p><a href="#lbl-all-docs">The All-Documents Channel</a> wildcard ("*")&#8201;&#8212;&#8201;is essentially an Access All Areas pass.<br>
+When assigned to a user it grants them access to a channel comprising all documents (including those from private channels).
+Because of the wide-ranging access and the potential for syncing large volumes of data (sync pulls all documents in the bucket, regardless of channel), you are advised to only use this wildcard in conjunction with a filter.</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>This Sync Function&#8201;&#8212;&#8201;see: <a href="#ex-using-wildcard-channels">Example 1</a>&#8201;&#8212;&#8201;shows how you might uses these wildcards</p>
+</div>
+<div id="ex-using-wildcard-channels" class="exampleblock">
+<div class="title">Example 1. Using wildcard channels</div>
+<div class="content">
+<div class="paragraph">
+<p>This example uses the <em>public channel</em> and <em>all-documents channel</em> wildcards for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Document Routing&#8201;&#8212;&#8201;it routes public documents to the public channel</p>
+</li>
+<li>
+<p>Access Control &#8201;&#8212;&#8201;it grants all-documents access to an admin user.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// "sync": `
+function sync(doc, oldDoc) {
+
+  /* Validation -- add validation rules here */
+  // e.g. Verify the requesting user is the oldDoc's user
+  if ((oldDoc != null) &amp;&amp; (oldDoc.username)) {
+   	requireUser(oldDoc.username);
+  }
+
+  /* Routing -- add channel routing rules here */
+  // e.g. add public docs to the public channel.
+  if (doc.isPublic) {
+    channel('!');
+  } else {
+    channel("channel." + getUserName()); <i class="conum" data-value="1"></i><b>(1)</b>
+  }
+
+  /* Access Control -- add user access rules here */
+  // If this is an admin user, give access to all-docs channel
+  if (doc.type == 'user') {
+    requireRole('admin');
+    access(doc.username, '*'); <i class="conum" data-value="2"></i><b>(2)</b>
+  }
+
+  //  further processing as required
+
+  /* Supporting Functions */
+  function getUserName() {
+    return (isDelete() ? oldDoc.username : doc.username);
+  }
+}
+// `</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>If the document is public, we assign it to the <em>public channel</em>, otherwise we assign it to the user&#8217;s channel</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>For documents of type <code>user</code>, if the user has an admin role, we grant them access to the <em>all-documents channel</em></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-public-channel"><a class="anchor" href="#lbl-public-channel"></a>The Public Channel</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <strong>Public Channel</strong> , referred to by the wildcard symbol (<code>!</code>), is automatically created when Sync Gateway starts.</p>
+</div>
+<div class="paragraph">
+<p>Documents added to this channel are visible to any user, even those assigned no channel access.<br>
+New users are automatically granted access to the channel.
+It is ideal for use in making information available across the user community.</p>
+</div>
+<div class="paragraph">
+<p>For an example of how to use the public channel&#8201;&#8212;&#8201;see: <a href="#ex-using-wildcard-channels">Example 1</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-all-docs"><a class="anchor" href="#lbl-all-docs"></a>The All-Documents Channel</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Assigning the <strong>All-Documents Channel</strong> wildcard, (<code>*</code>) to a user grants the user access to the <strong>All-Documents</strong> channel <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</div>
+<div class="paragraph">
+<p>Note that this doesn&#8217;t mean that the user is granted access to all available channels.
+They are granted access to one channel, the <strong>all documents</strong> channel and all its documents.
+This distinction is important when using the <a href="sync-function.html#requireaccess-channels" class="page"><code>requireAccess()</code></a> method&#8201;&#8212;&#8201;see <a href="sync-function.html" class="page">Sync Function&#8201;&#8212;&#8201;requireAccess()</a>.</p>
+</div>
+<div class="paragraph">
+<p>The <strong>all documents</strong> channel is automatically created and maintained by Sync Gateway.
+It is a single channel to which all documents are automatically assigned, no matter what other channels they may be assigned-to, even private channels.</p>
+</div>
+<div class="paragraph">
+<p>Assigning a channel to a user will not only allow them access to documents in the channel, it will also cause sync to pull all documents in that channel.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+When using the <em>all-documents</em> channel you will need to use a filter to avoid large numbers of documents being unnecessarily sync&#8217;d to mobile devices.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>You can assign channels using the sync function&#8201;&#8212;&#8201;see <a href="read-access.html#add-access" class="page">Add Access</a>.</p>
+</div>
+<div class="paragraph">
+<p>For an example of how to use the all-documents channel&#8201;&#8212;&#8201;see: <a href="#ex-using-wildcard-channels">Example 1</a></p>
 </div>
 </div>
 </div>
@@ -814,11 +954,12 @@ This distinction is important when using the <a href="sync-function.html#require
 <div class="sectionbody">
 <div class="paragraph">
 <p>You can use the admin REST API to see the channels that documents are assigned to.
-Issue a {rest-api-admin-pfx}#/database/get
-__db___all_docs[/{db}/_all_docs] request, and add the query parameter <code>?channels=true</code> to the URL.
-Here&#8217;s an example of the response.
-The output shows that the document is in the channels <code>short</code> and <code>word</code>.</p>
+Issue a <a href="rest-api-admin.html#/database/get
+__db___all_docs" class="page">/{db}/_all_docs</a> request, and add the query parameter <code>?channels=true</code> to the URL&#8201;&#8212;&#8201;see output response in <a href="#ex-inspect-doc-response">Example 2</a>.</p>
 </div>
+<div id="ex-inspect-doc-response" class="exampleblock">
+<div class="title">Example 2. Output from Inspect Document</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
@@ -827,7 +968,7 @@ The output shows that the document is in the channels <code>short</code> and <co
       "id": "foo",
       "key": "foo",
       "value": {
-        "channels": [
+        "channels": [ <i class="conum" data-value="1"></i><b>(1)</b>
           "short",
           "word"
         ],
@@ -840,31 +981,52 @@ The output shows that the document is in the channels <code>short</code> and <co
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The output shows that the document is in two channels: <code>short</code> and <code>word</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="add-to-channel"><a class="anchor" href="#add-to-channel"></a>Add to Channel</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You assign documents to channels by writing a Sync Function in the configuration file ({configuration-properties-pfx}#databases-this_db-sync[databases.$db.sync]).
+<p>You assign documents to channels in a Sync Function.
+You can provide this function in the configuration file (<a href="configuration-properties.html#databases-this_db-sync" class="page">databases.$db.sync</a>).
 The Sync Function is a JavaScript function that takes a document body as input and, based on the document content, decides what channels to assign the document to (see the <a href="sync-function.html#function-definition" class="page">Function Definition</a>).</p>
 </div>
 <div class="paragraph">
-<p>Based on the contents of the document, the Sync Function can call <a href="sync-function.html#channelchannelname" class="page">channel()</a> to add the document to one or more channels.
+<p>Based on the contents of the document, the Sync Function can call <a href="sync-function.html#channelchannelname" class="page">channel()</a> to add the document to one or more channels&#8201;&#8212;&#8201;see <a href="#ex-use-channel">Example 3</a>
 This makes it accessible to users who have access to those channels, and will cause the document to be pulled by users that are subscribed to those channels.</p>
 </div>
-<div class="paragraph">
-<p>The following Sync Function routes incoming documents to a channel named <code>foo</code>.</p>
-</div>
+<div id="ex-use-channel" class="exampleblock">
+<div class="title">Example 3. Routing Documents</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc) {
-  channel("foo");
+  channel("foo"); <i class="conum" data-value="1"></i><b>(1)</b>
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The Sync Function routes incoming documents to a channel named <code>foo</code>.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 <div class="paragraph">
-<p>Channels come into existence as documents are assigned to them.
+<p>Channels are created as documents are assigned to them.
 The Sync Function cannot reference any external state and must return the same results every time it&#8217;s called on the same input.</p>
 </div>
 <div class="paragraph">
@@ -873,8 +1035,20 @@ Channel names are case-sensitive.
 Channels with no documents assigned to them are empty.</p>
 </div>
 <div class="paragraph">
-<p>If you don&#8217;t supply a Sync Function in the configuration file, Sync Gateway uses the {configuration-properties-pfx}#databases-this_db-sync[default Sync Function].
-The default Sync Function is really only useful for experimentation and development, it is recommended to write a Sync Function which contains the appropriate Validation, and Read and Write access for your application.</p>
+<p>If you don&#8217;t supply a Sync Function in the configuration file, Sync Gateway uses the <a href="configuration-properties.html#databases-this_db-sync" class="page">default Sync Function</a>.
+This default function is really only useful for experimentation and development.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+You are advised to write a Sync Function that provides validation, routing and access-control appropriate to your business needs&#8201;&#8212;&#8201;see: <a href="sync-function.html" class="page">Sync Function</a> for more on sync functions.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -888,38 +1062,90 @@ The default Sync Function is really only useful for experimentation and developm
 <p>This may cause users to lose access to that document.
 If that happens, the next time Couchbase Lite pulls changes from the gateway, it will purge the document from the database and trigger the document replication listener on Couchbase Lite with the <code>AccessRemoved</code> flag.</p>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Related Couchbase Lite content</dt>
+<dd>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p><a href="../../couchbase-lite/2.8/swift/replication.html#replication-events" class="page">Swift</a> | <a href="../../couchbase-lite/2.8/java/replication.html#replication-events" class="page">Java</a> |  <a href="../../couchbase-lite/2.8/android/replication.html#replication-events" class="page">Android (Java)</a> | <a href="../../couchbase-lite/2.8/csharp/replication.html#replication-events" class="page">C#</a> | <a href="../../couchbase-lite/2.8/objc/replication.html#replication-events" class="page">Objective-C</a></p>
+<p><a href="../../couchbase-lite/2.8/android/replication.html#replication-events" class="page">Android</a> |
+<a href="../../couchbase-lite/2.8/csharp/replication.html#replication-events" class="page">C#</a> |
+<a href="../../couchbase-lite/2.8/java/replication.html#replication-events" class="page">Java</a> |
+<a href="../../couchbase-lite/2.8/objc/replication.html#replication-events" class="page">Objective-C</a> |
+<a href="../../couchbase-lite/2.8/swift/replication.html#replication-events" class="page">Swift</a></p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="sync-metadata"><a class="anchor" href="#sync-metadata"></a>Sync Metadata</h2>
+<h2 id="limits-and-constraints"><a class="anchor" href="#limits-and-constraints"></a>Limits and Constraints</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="channel-limits"><a class="anchor" href="#channel-limits"></a>Channel Limits</h3>
+<table id="tbl-limits" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Guidance on Channel Assignment Limits</caption>
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 44.4444%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Element</th>
+<th class="tableblock halign-left valign-top">Limiting factor</th>
+<th class="tableblock halign-center valign-top">Guidance Limit (Channels)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Channels per document</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The amount of memory consumed by the combined number of channels and access grants must fit within the maximum 1Mb xattr size limit&#8201;&#8212;&#8201;see: <a href="#tbl-metadata-size">Table 2</a>.</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">50</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Channels per user</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The amount of memory consumed by channels must fit within the 20 MB available on Couchbase Server docs for storing metadata&#8201;&#8212;&#8201;see: <a href="#tbl-metadata-size">Table 2</a><br>
+Note that the memory is retained for as long as the replication remains active.</p>
+</div></div></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">1,000</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="sync-metadata-limits"><a class="anchor" href="#sync-metadata-limits"></a>Sync Metadata Limits</h3>
 <div class="paragraph">
 <p>Every time a document is assigned to a new channel, the channel name is appended to that document&#8217;s sync metadata.</p>
 </div>
 <div class="paragraph">
-<p>Therefore, a document&#8217;s set of channels is bound by the allowed sync metadata size described in the following table.</p>
+<p>Therefore, a document&#8217;s set of channels is limited by the allowed sync metadata size described in <a href="#tbl-metadata-size">Table 2</a>.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
+<table id="tbl-metadata-size" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Size Limits for Sync Metadata</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
 </colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">Value of <code>enable_shared_bucket_access</code></th>
+<th class="tableblock halign-center valign-top">Size (Mb per Document)</th>
+</tr>
+</thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enable_shared_bucket_access: false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>enable_shared_bucket_access: true</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>false</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">20</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top" colspan="2"><div class="content"><div class="paragraph">
-<p><strong>Sync metadata size limit</strong></p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">20 MB per document</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">1 MB per document</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><code>true</code></p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">1</p></td>
 </tr>
 </tbody>
 </table>
@@ -942,10 +1168,11 @@ If that happens, the next time Couchbase Lite pulls changes from the gateway, it
 A shorter channel name will occupy less space ("customer==0030169303" vs "cs==0030169303").</p>
 </li>
 <li>
-<p>Lower the {configuration-properties-pfx}#databases-this_db-revs_limit[revs_limit] value.
+<p>Lower the <a href="configuration-properties.html#databases-this_db-revs_limit" class="page">revs_limit</a> value.
 Indeed, a copy of channel metadata is retained for each revision of a document.</p>
 </li>
 </ul>
+</div>
 </div>
 </div>
 </div>
@@ -963,6 +1190,12 @@ Indeed, a copy of channel metadata is retained for each revision of a document.<
 </li>
 <li>
 <p><a href="import-filter.html" class="page">Import filter</a></p>
+</li>
+<li>
+<p><a href="sync-inter-syncgateway-overview.html" class="page">Inter-Sync Gateway Replication</a></p>
+</li>
+<li>
+<p><a href="sync-with-couchbase-server.html" class="page">Sync with Couchbase Server</a></p>
 </li>
 </ul>
 </div>
@@ -997,7 +1230,27 @@ Indeed, a copy of channel metadata is retained for each revision of a document.<
 </li>
 </ul>
 </div>
+<div class="ulist">
+<div class="title">Sync Function Blogs</div>
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/augment-your-sync-function-with-roles-in-couchbase-sync-gateway/">Using roles in sync functions</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/data-synchronization-offline-first-apps-couchbase/">Tutorial: Getting Started with Data Synchronization using Couchbase Mobile for Offline-First Apps</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/sync-function/">Sync Function (category)</a></p>
+</li>
+</ul>
 </div>
+</div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. This channel is sometimes referred to as the star channel.
 </div>
 </div>
 </article>

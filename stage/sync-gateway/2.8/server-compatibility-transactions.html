@@ -479,6 +479,12 @@
 <a class="nav-link" href="indexing.html">Indexing versus Views</a>
 </span>
 </li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="deploy-dr-cluster.html">Deploy DR Cluster</a>
+</span>
+</li>
 </ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -744,38 +750,46 @@ Related Content&#8201;&#8212;&#8201;<a href="server-compatibility-xdcr.html" cla
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Couchbase Transactions guarantee that multiple documents can be updated atomically.</p>
+<p>Couchbase Server provides the backing data store for Sync Gateway and it is compatible&#8201;&#8212;&#8201;see: <a href="compatibility.html" class="page">Compatibility Matrix</a>.
+However, there are considerations you needs to be aware of when using some Couchbase Server features with Sync Gateway.
+One of those instances concerns the use of Couchbase Server Transactions.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="local-transactions"><a class="anchor" href="#local-transactions"></a>Local Transactions</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Distributed ACID Transactions ensure that when multiple documents need to be modified a binary success or fail outcome is achieved.
-Either the transaction will persist all modifications, or it will persist no modifications.
-This Atomicity supports insert, update, and delete operations, across any number of documents&#8201;&#8212;&#8201;see <a href="server-compatibility-transactions.html" class="page">Server Compatibility - Transactions</a>.</p>
+<p>Within the Couchbase Mobile cluster all transactions are local, either to the Couchbase Server or to the Couchbase Lite database:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Couchbase Server supports server side transactions&#8201;&#8212;&#8201;see: <a href="#server:learn/data/transactions.adoc" class="page unresolved">Couchbase Transactions</a>.<br>
+Changes made on the server within a transaction block are guaranteed to be imported by the Sync Gateway only after all the changes in a transaction are committed.</p>
+</li>
+<li>
+<p>Similarly, Couchbase Lite supports transactions that are local to the Couchbase Lite database&#8201;&#8212;&#8201;see: <a href="http://docs.couchbase.com/mobile/2.8.0/couchbase-lite-swift/Classes/Database.html#/s:18CouchbaseLiteSwift8DatabaseC7inBatch5usingyyyKXE_tKF">Database.inBatch()</a>.<br>
+Only committed transactions will ever reach Sync Gateway.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="constraints"><a class="anchor" href="#constraints"></a>Constraints</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>Sync Gateway does not support end-to-end transactions.
-It is agnostic to the sequence in which changes arrive.</p>
-</li>
-<li>
-<p>Changes made by a Couchbase Server SDK in a transaction are not guaranteed to be in a transaction when they arrive in a Couchbase Lite application.</p>
-</li>
-<li>
-<p>Similarly, changes made by a Couchbase Lite app within a transaction (in Batch API) are not propagated as a transaction to Couchbase Server.</p>
-</li>
-<li>
-<p>In flight Couchbase transactions do not cater for writes arriving from non-transaction aware clients such as Sync Gateway.</p>
-</li>
-<li>
-<p>Using transactions in a mobile read-only cluster is not an issue.
-However, if you use them in a mobile read-write cluster, you must beware of changes coming from Sync Gateway affecting documents that are part of an in-flight transaction sequence.</p>
-</li>
-</ul>
+<div class="paragraph">
+<p>Sync Gateway itself is not <em>transaction-aware</em>.
+So, Couchbase provides no support for end-to-end transactions between Couchbase Server and Couchbase Lite clients.</p>
+</div>
+<div class="paragraph">
+<p>There is no guarantee that a series of updates made within a transaction block&#8201;&#8212;&#8201;on either the server or Couchbase Lite client side&#8201;&#8212;&#8201;will be ACID compliant when it syncs to the other end.
+With clients potentially partitioned off due to network disruptions, efficiently providing such ACID guarantees in a distributed, disconnected environment has challenges.</p>
+</div>
+<div class="paragraph">
+<p>If there is a need for end-to-end transactions, you would implement it within the application layer.
+Perhaps by having a separate <em>control document</em> of transaction log entries, which must be synced from the clients that capture the list of related changes.</p>
 </div>
 </div>
 </div>
