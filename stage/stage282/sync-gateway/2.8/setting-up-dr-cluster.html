@@ -799,13 +799,14 @@ If you skip this test, you will incur latency when Sync Gateway is switched to t
 <p>Stop the replication (XDCR) from the Primary cluster to Disaster Recovery cluster.</p>
 </li>
 <li>
-<p><strong>When XDCR is stopped:</strong> Switch the Load Balancer to point to the Sync Gateway on the Disaster Recovery cluster.</p>
+<p><strong>When XDCR is stopped:</strong> Switch the Load Balancer to point to the Sync Gateway on the Disaster Recovery cluster.
+This maintains the deployment of Sync Gateway at only one end of the XDCR replication.</p>
 </li>
 <li>
 <p>Promote the Disaster Recovery cluster to Primary and the <strong>old</strong> Primary to Disaster Recovery.</p>
 </li>
 <li>
-<p>Flush all buckets in the Primary cluster; this prevents any writes coming into the Primary cluster that had not been replicated when XDCR was stopped.</p>
+<p>Flush all replicated buckets in the Primary cluster; as a precaution against any spurious writes coming into the Primary cluster that had not been replicated when XDCR was stopped.</p>
 </li>
 <li>
 <p>Reverse the XDCR to replicate from the newly promoted Primary to the old Primary to set up a new Backup.</p>
@@ -823,7 +824,7 @@ If you skip this test, you will incur latency when Sync Gateway is switched to t
 <h3 id="clusters-in-different-regions-or-data-centers"><a class="anchor" href="#clusters-in-different-regions-or-data-centers"></a>Clusters in Different Regions or Data Centers</h3>
 <div class="paragraph">
 <p>This model caters for situations where the Active and Disaster Recovery clusters are in different regions or data centers.
-It has a separate Sync Gateway cluster attached to the Disaster Recovery cluster.
+Although the model has a separate Sync Gateway cluster attached to the Disaster Recovery cluster, it maintains the deployment of Sync Gateway at only one end of the XDCR replication.
 The optional optimization step will ensure that there is no downtime during the activation stage.</p>
 </div>
 <div class="paragraph">
