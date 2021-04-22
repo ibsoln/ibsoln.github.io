@@ -2346,6 +2346,12 @@ Couchbase Server
 <li class="nav-item " data-depth="4">
 
 <span class="nav-line "  data-depth="4">
+<a class="nav-link" href="eventing-handler-simpleTimer.html">simpleTimer</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
 <a class="nav-link" href="eventing-handler-cascadeKvDeleteWithDoc.html">cascadeKvDeleteWithDoc</a>
 </span>
 </li>
@@ -2451,6 +2457,12 @@ Couchbase Server
 <a class="nav-link" href="eventing-handler-genericFlatten.html">genericFlatten</a>
 </span>
 </li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="eventing-handler-convertXMLtoJSON.html">convertXMLtoJSON</a>
+</span>
+</li>
 </ul>
 </li>
 <li class="nav-item " data-depth="3">
@@ -2512,6 +2524,27 @@ Couchbase Server
 
 <span class="nav-line "  data-depth="4">
 <a class="nav-link" href="eventing-handler-advanced-docControlledSelfExpiry.html">advanced-DocControlledSelfExpiry</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="in-toggle" data-depth="3"></span>
+<a class="nav-link" href="eventing-examples.html#examples-scriptlets-binary-documents">Binary Document Support</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="eventing-handler-basicBinaryKV.html">basicBinaryKV</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="eventing-handler-advancedBinaryKV.html">advancedBinaryKV</a>
 </span>
 </li>
 </ul>
@@ -4360,7 +4393,13 @@ Eventing nodes can be added as more Functions are added, or if the mutation rate
 <li>
 <p>Is it supported for both text and binary formats of the documents?</p>
 <div class="paragraph">
-<p>No, the value or the document must always be text. Eventing currently doesn&#8217;t process binary documents (binary documents will not generate mutations).  Additionally, an Eventing handler can’t currently read a binary value from a bucket alias. The documents are based on a key-value format where the value can be arbitrary text. However, in practice the value is typically a well formatted JSON text payload.  There is one exception, Eventing handlers via the curl() function can handle binary data to and from an external REST endpoint.</p>
+<p>Yes but only for versions 6.6.2 and later</p>
+</div>
+<div class="paragraph">
+<p>No, for versions 6.6.1 and earlier the value or the document must always be text. Eventing currently doesn&#8217;t process binary documents (binary documents will not generate mutations).  Additionally, an Eventing handler can’t currently read a binary value from a bucket alias. The documents are based on a key-value format where the value can be arbitrary text. However, in practice the value is typically a well formatted JSON text payload.  There is one exception, Eventing handlers via the curl() function can handle binary data to and from an external REST endpoint.</p>
+</div>
+<div class="paragraph">
+<p>Yes, for versions 6.6.2 and later the value or the document must can be either text or binary. As of version 6.6.2 Eventing now processes binary documents. Eventing handler can now read a binary value from a bucket alias or via an Advanced Accessor. The documents are based on a key-value format where the value can be arbitrary text or binary data. However, in practice the value is typically a well formatted JSON text payload.  Note, Eventing handlers via the curl() function can also handle binary data to and from an external REST endpoint. Furthermore every mutation OnUpdate(doc,meta) will now have a property "datatype" set to either "binary" or "json", however this information is not avaliable via OnDelete(meta,options) or Basic Bucket Ops.  <span class="status">Couchbase Server 6.6.2</span></p>
 </div>
 </li>
 </ul>
@@ -4578,7 +4617,7 @@ For example, you can your enrich or update a document with data from another doc
 </div>
 </div>
 <div class="sect1">
-<h2 id="the-metadata-bucket"><a class="anchor" href="#the-metadata-bucket"></a>The Metadata Bucket</h2>
+<h2 id="the-metadata-bucket-or-the-eventing-storage-bucket"><a class="anchor" href="#the-metadata-bucket-or-the-eventing-storage-bucket"></a>The Metadata Bucket (or the Eventing Storage bucket)</h2>
 <div class="sectionbody">
 <div class="ulist">
 <ul>
@@ -4764,6 +4803,21 @@ In this case each eventing node is assigned a subset of vBuckets. Note this shar
 <div class="paragraph">
 <p>However keep in mind that sometimes the Function is limited by the overall performance of the Data Service.
 In this case it is appropriate to scale the Data service.</p>
+</div>
+</li>
+<li>
+<p>When I maximize the workers Eventing Function I sometimes see a stall in processing?</p>
+<div class="paragraph">
+<p>When scaling up vertically by adding additional workers (in the handler&#8217;s settings) typically above 48 workers (<em>the issues is workload
+dependent and occurs typically on source bucket updates</em>) you may see a stall in Eventing handler&#8217;s progress.  This is typically related
+to resources given to the Eventing service and can be solved by adding additional Memory Quota to Eventing in the Cluster Settings.  By
+default Eventing allocates 256 MB, raising this value to 512 MB will typically solve this resource issue (this is one of the rare instances
+that you may need to raise the Memory Quota for Eventing).</p>
+</div>
+<div class="paragraph">
+<p>However keep in mind that sometimes the Function is limited by both the number of cores in the Eventing instance the overall
+performance of the Data Service.  In these cases it is appropriate to either scale compute power of the Eventing node, scale the
+Eventing service, or scale the Data service.</p>
 </div>
 </li>
 </ul>

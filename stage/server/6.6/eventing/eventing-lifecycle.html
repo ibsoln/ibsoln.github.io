@@ -2346,6 +2346,12 @@ Couchbase Server
 <li class="nav-item " data-depth="4">
 
 <span class="nav-line "  data-depth="4">
+<a class="nav-link" href="eventing-handler-simpleTimer.html">simpleTimer</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
 <a class="nav-link" href="eventing-handler-cascadeKvDeleteWithDoc.html">cascadeKvDeleteWithDoc</a>
 </span>
 </li>
@@ -2451,6 +2457,12 @@ Couchbase Server
 <a class="nav-link" href="eventing-handler-genericFlatten.html">genericFlatten</a>
 </span>
 </li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="eventing-handler-convertXMLtoJSON.html">convertXMLtoJSON</a>
+</span>
+</li>
 </ul>
 </li>
 <li class="nav-item " data-depth="3">
@@ -2512,6 +2524,27 @@ Couchbase Server
 
 <span class="nav-line "  data-depth="4">
 <a class="nav-link" href="eventing-handler-advanced-docControlledSelfExpiry.html">advanced-DocControlledSelfExpiry</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="in-toggle" data-depth="3"></span>
+<a class="nav-link" href="eventing-examples.html#examples-scriptlets-binary-documents">Binary Document Support</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="eventing-handler-basicBinaryKV.html">basicBinaryKV</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="eventing-handler-advancedBinaryKV.html">advancedBinaryKV</a>
 </span>
 </li>
 </ul>
@@ -4396,6 +4429,13 @@ This bucket stores artifacts and checkpoint information.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">A name, for the Function you are creating.</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deployment Feed Boundary</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Using the Feed Boundary option, you can either invoke a handler on all data mutations available in the cluster (Everything) or
+choose to invoke a handler to process only future data mutations. As of 6.6.2 the Feed Boundary is now a persistent setting in the
+Function’s definition and can only be set or altered when a Function is created, undeployed or paused. Thus there is no longer a
+choice of a feed boundary when a function is deployed as the value is taken from this setting. <span class="status">Couchbase Server 6.6.2</span></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Description</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">A description of the Function you are creating.
 This is optional.</p></td>
@@ -4422,10 +4462,16 @@ The default is 3 (the minimum is 1 maximum is 64).</p>
 </li>
 <li>
 <p><strong>Language compatibility:</strong> The language version of the handler for backward compatibility either 6.0.0 or 6.5.0. Primarily to allow older handlers to continue to see the runtime behavior that existed at the time they were authored</p>
+<div class="paragraph">
+<p>Only a Function with “language compatibility” of 6.6.2 in its settings will pass binary documents to the OnUpdate(doc,meta) handler. Earlier “language compatibility” values of 6.0.0 and 6.5.0 will filter all binary documents out of the DCP mutation stream. <span class="status">Couchbase Server 6.6.2</span></p>
+</div>
 </li>
 <li>
 <p><strong>Script Timeout:</strong> The number of seconds that should elapse before the script times out and is terminated.
 The default is 60.</p>
+</li>
+<li>
+<p><strong>Timer Context Max Size</strong>: Timer Context Max Size limits the size of the context for any Timer created by the Function. By default the size is 1024 bytes, but this can be adjusted on a per Function basis. <span class="status">Couchbase Server 6.6.2</span></p>
 </li>
 </ul>
 </div></div></td>
@@ -4531,6 +4577,9 @@ You will accept the default for your <strong>my_evt_function code</strong>.</p>
 <p>The Feed Boundary determines whether documents previously in existence need to be included in the Function&#8217;s activities: the options are <strong>Everything</strong> and <strong>From now</strong>.
 The <strong>Everything</strong> option invokes a Function on all mutations available in the cluster.
 The <strong>From now</strong> option invokes a Function during future instances of data mutation, post Function deployment.</p>
+</div>
+<div class="paragraph">
+<p>As of 6.6.2 selecting a Feed Boundary has been depricated the Feed Boundary is read from the Function&#8217;s settings. <span class="status">Couchbase Server 6.6.2</span></p>
 </div>
 </li>
 <li>
