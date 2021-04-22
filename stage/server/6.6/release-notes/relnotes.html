@@ -4362,6 +4362,491 @@ Couchbase Server
 </div>
 </div>
 <div class="sect1">
+<h2 id="release-662"><a class="anchor" href="#release-662"></a>Release 6.6.2 (April 2021)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Server 6.6.2, released in April 2021, is the second maintenance release in the 6.6.x series for Couchbase Server.</p>
+</div>
+<div class="paragraph">
+<p>In addition to bug fixes in multiple components, this release also includes improvements in the Eventing and Search services.</p>
+</div>
+<div class="paragraph">
+<p><em>Quick Links</em>: <a href="#new-features-improvements-662">New Features and Improvements</a> | <a href="#supported-platforms-662">New Supported Platforms</a> | <a href="#known-issues-662">Known Issues</a> | <a href="#fixed-issues-662">Fixed Issues</a></p>
+</div>
+<div class="sect2">
+<h3 id="new-features-improvements-662"><a class="anchor" href="#new-features-improvements-662"></a>New Features and Improvements</h3>
+<div class="paragraph">
+<p>This section highlights the notable new features and improvements in this release.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The minimum TLS version has been set to 1.2 on port 21150.</p>
+</li>
+<li>
+<p>Improved failover processing time seen as a result of pipeline processing of vBuckets during failover instead of sequential processing.</p>
+</li>
+<li>
+<p>Improvements in the Eventing Service</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Supports binary documents in addition to JSON documents.  Binary documents are only sent to Functions having a language compatibility setting of 6.6.2 or above.</p>
+</li>
+<li>
+<p>The Feed Boundary or "dcp_stream_boundary" is no longer selected at deployment time but part of the Function&#8217;s configuration.</p>
+</li>
+<li>
+<p>Provides the ability to adjust context size for timers using the setting <code>Timer Context Max Size</code> on the Admin UI.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Improvements in the Search service</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Enables cluster level managerOptions to be persistent and available across the nodes.</p>
+</li>
+<li>
+<p>Enables configuring the rebalance concurrency knob runtime using the <code>MaxConcurrentPartitionMovesPerNode</code> setting.</p>
+</li>
+<li>
+<p>Enables overriding the <code>maxConcurrentPartitionMovesPerNode</code> parameter to N as a runtime cluster option, thereby speeding up the rebalance operation.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="supported-platforms-662"><a class="anchor" href="#supported-platforms-662"></a>New Supported Platforms</h3>
+<div class="paragraph">
+<p>This release adds support for the following platforms:
+* Ubuntu 20.04
+* Windows Server 2016 Datacenter Edition</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../install/install-platforms.html" class="page">Supported Platforms</a> for the complete list of supported platforms.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="known-issues-662"><a class="anchor" href="#known-issues-662"></a>Known Issues</h3>
+<div class="paragraph">
+<p>This section highlights the notable known issues in this release.</p>
+</div>
+<div class="sect3">
+<h4 id="analytics-service"><a class="anchor" href="#analytics-service"></a>Analytics Service</h4>
+<table id="table_knownissues_v662-analytics" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.4725%;">
+<col style="width: 72.5275%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44993" target="_blank" rel="noopener">MB-44993</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: In the following syntax the <code>link_dataverse_name</code> is optional.
++
+----
+CREATE EXTERNAL DATASET ds_dataverse_name?.ds_name
+    ON &#8230;&#8203;
+    AT link_dataverse_name?.link_name
+----
++
+If the <code>link_dataverse_name</code> is not specified, it incorrectly defaults to the Default dataverse (or the dataverse provided by a prior USE statement).</p>
+<p class="tableblock"><strong>Workaround</strong>: Specify the <code>link_dataverse_name</code> explicitly when creating external datasets.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44986" target="_blank" rel="noopener">MB-44986</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: A dataset that was created using a filter that contains an IN or a NOT IN predicate (such as the example shown below) results in an error on executing the corresponding CONNECT LINK statement.
++
+----
+CREATE DATASET dataset ON bucket WHERE field NOT IN ['value1', 'value2'];
+----</p>
+<p class="tableblock"><strong>Workaround</strong>: Reformulate the CREATE DATASET statement to avoid IN or NOT IN predicates, for example:
++
+----
+CREATE DATASET dataset ON bucket WHERE field &lt;&gt; 'value1' and field &lt;&gt; 'value2';
+----</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="fixed-issues-662"><a class="anchor" href="#fixed-issues-662"></a>Fixed Issues</h3>
+<div class="paragraph">
+<p>This section highlights the notable issues fixed in this release.</p>
+</div>
+<table id="table_fixedissues_v662-analytics" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.4725%;">
+<col style="width: 72.5275%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43632" target="_blank" rel="noopener">MB-43632</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where the RBAC user was unable to access the web console when creating an Analytics dataset and the user did not have the <code>Analytics Admin</code> role.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42573" target="_blank" rel="noopener">MB-42573</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed a server 500 error when running an Analytics query with more than one join.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42305" target="_blank" rel="noopener">MB-42305</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Falling back from using TLS for remote link authentication to using SCRAM-SHA has been fixed.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="sect3">
+<h4 id="cluster-manager"><a class="anchor" href="#cluster-manager"></a>Cluster Manager</h4>
+<table id="table_fixedissues_v662-cluster-manager" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.4725%;">
+<col style="width: 72.5275%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-40375" target="_blank" rel="noopener">MB-40375</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed a rare condition where a hard or unsafe failover caused the preconditions to be checked more than once.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="cross-data-center-replication-xdcr"><a class="anchor" href="#cross-data-center-replication-xdcr"></a>Cross Data Center Replication (XDCR)</h4>
+<table id="table_fixedissues_v662-xdcr" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.4725%;">
+<col style="width: 72.5275%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44182" target="_blank" rel="noopener">MB-44182</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed a rare case of XDCR TCP connection leaks when the host did not respond  and ended up taking up all the file descriptors of a system.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44131" target="_blank" rel="noopener">MB-44131</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an XMEM connection leak when pipeline start timed out.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="data-service"><a class="anchor" href="#data-service"></a>Data Service</h4>
+<table id="table_fixedissues_v662-data" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.4725%;">
+<col style="width: 72.5275%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44832" target="_blank" rel="noopener">MB-44832</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Disconnecting in the middle of a replica backfill could cause the replication connection to be torn down if the connection between the prepare seqno of an abort and the abort itself was disconnected. The replication stream was unable to progress until the abort had been overwritten or purged (duration of the metadata purge interval). This has been fixed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44534" target="_blank" rel="noopener">MB-44534</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: The SetWithMeta MCBP operation allowed storing empty documents with invalid datatypes. This has been fixed by sanitizing the payload and the datatype is set to RAW as per KV invariant.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44079" target="_blank" rel="noopener">MB-44079</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Ephemeral item purging may not be done in seqno order as we iterate HashTable buckets rather than the Ephemeral sequence list. As such, it&#8217;s possible for the commit of a durable write to be purged before the corresponding prepare. If a replica vBucket received a prepare without the corresponding commit then it would attempt to recommit the prepare if the vBucket was promoted to active. This causes montonicity exceptions to be thrown on the new active vBucket and any replica vBucket which did receive the corresponding commit.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43717" target="_blank" rel="noopener">MB-43717</a>, <a href="https://issues.couchbase.com/browse/MB-41406" target="_blank" rel="noopener">MB-41406</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Potential race in background task removing stale data from Ephemeral buckets.</p>
+<p class="tableblock">The StaleItemDeleter task updated an iterator which is read by incoming KV operations, without taking the appropriate lock to ensure exclusive access.
+This issue is believed to be rare and has only been seen during data race analysis; no failures resulting from this issue have been identified in a full Couchbase Server instance.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42918" target="_blank" rel="noopener">MB-42918</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: If a durable write is performed via INSERT (Add), an existing item may be removed from the hash table if it was deleted and not yet persisted. Another client performing a GET could trigger a fetch of the item from disk, and the returned item could be the logical predecessor of the unpersisted DELETE that was removed from the hash table if it had not yet been persisted. This means that the client would not be able to read their own write. This issue has been fixed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42610" target="_blank" rel="noopener">MB-42610</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: If a replica vBucket was promoted to active having only received a partial backfill (a data loss scenario), then a subsequent expiration of an item could expire a pending durable write if it had the same CAS. This caused any future lookups or writes to that key to cause memcached to crash. This issue has been fixed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42607" target="_blank" rel="noopener">MB-42607</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: During TLS handshake with the Data Service, if the node certificate required more than 8192 bytes to transmit, then the handshake would fail. This has been fixed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-41407" target="_blank" rel="noopener">MB-41407</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Potential crash during eviction for Ephemeral bucket with nruEviction configured.</p>
+<p class="tableblock">The crash is a result of a race condition leading to heap use after free. This issue is believed to be rare and has only been seen during data race analysis.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-41300" target="_blank" rel="noopener">MB-41300</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixing a potential issue where sanity checks may trigger at Replica and cause a crash when the node receives temporary mutations for Sync Replication.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-38444" target="_blank" rel="noopener">MB-38444</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: A DCP Producer on an ephemeral bucket may encode a wrong EndSeqno in the SnapshotMarker for disk snapshots. That was a rare situation that might cause DCP clients to see an inconsistency between what is declared in the marker and what is received in the actual snapshot. This has been fixed.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="eventing-service"><a class="anchor" href="#eventing-service"></a>Eventing Service</h4>
+<table id="table_fixedissues_v662-eventing" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.4725%;">
+<col style="width: 72.5275%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44637" target="_blank" rel="noopener">MB-44637</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Duplicate mutations were possible due to a race condition during eventing node rebalance. This has been fixed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44016" target="_blank" rel="noopener">MB-44016</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed a performance issue causing timeouts when using the REST API to get Eventing status. This issue occurred on high (20+) Function deployment counts.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43762" target="_blank" rel="noopener">MB-43762</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: The Feed Boundary or "dcp_stream_boundary" is no longer selected at deployment time. The value is configured via the Admin UI (or REST API) to either "Everything" or "From now" as a persistent setting per Function.  This prevents accidental deployments on the incorrect Feed Boundary.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43365" target="_blank" rel="noopener">MB-43365</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where Event handlers hung in the deploying state following a rebalance failure.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43364" target="_blank" rel="noopener">MB-43364</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where the metadata bucket was not cleared even when all handlers were undeployed from the paused state.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42804" target="_blank" rel="noopener">MB-42804</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where Eventing service did not throw an inter handler recursion error when the same handler with the same binding was deployed via the REST API.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42498" target="_blank" rel="noopener">MB-42498</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where a function was stuck in the deploying state when a bucket was deleted and rebalance was triggered.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42497" target="_blank" rel="noopener">MB-42497</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed a race condition between undeploy and vBucket restream on rollback which resulted in a panic.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-38403" target="_blank" rel="noopener">MB-38403</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue  to close N1QL iterators at time of garbage collection to free up resources where the user forgot to close them.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="index-service-and-views"><a class="anchor" href="#index-service-and-views"></a>Index Service and Views</h4>
+<table id="table_fixedissues_v662-gsi-views" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.4725%;">
+<col style="width: 72.5275%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-45541" target="_blank" rel="noopener">MB-45541</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: A stale vBucket map in projector caused stale=false scans to timeout during KV rebalance. This has been fixed.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44409" target="_blank" rel="noopener">MB-44409</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where the DDLServiceMgr took a long time to build a partitioned index with replica.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43959" target="_blank" rel="noopener">MB-43959</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: The cluster info cache refresh has been optimized by querying the buckets.uri endpoint only on a change in version hash.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43766" target="_blank" rel="noopener">MB-43766</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: The index build tokens were cleaned up only during rebalance. This has been updated so the index build tokens are cleaned up periodically on index deletion and by the lifecycle manager&#8217;s janitor as well.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43764" target="_blank" rel="noopener">MB-43764</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where the partition index order was not honored when index projection included all keys and the document key.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43280" target="_blank" rel="noopener">MB-43280</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where <code>listReplicaCount</code> took more than 10s and timed out.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43072" target="_blank" rel="noopener">MB-43072</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fixed a delay in the connectBucket function that caused the indexer to projector connection time out.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="query-service"><a class="anchor" href="#query-service"></a>Query Service</h4>
+<table id="table_fixedissues_v662-query" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.4725%;">
+<col style="width: 72.5275%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-45273" target="_blank" rel="noopener">MB-45273</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where the primary index scan was incorrectly used with query containing an OR condition.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44979" target="_blank" rel="noopener">MB-44979</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Connections that timeout on read are now discarded.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44331" target="_blank" rel="noopener">MB-44331</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where ANSI JOIN with intersect scan did not return any results.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43488" target="_blank" rel="noopener">MB-43488</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where an adaptive index with UNNEST alias returned wrong results.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43384" target="_blank" rel="noopener">MB-43384</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where setupSSL() failed and impacted query execution.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="search-service"><a class="anchor" href="#search-service"></a>Search Service</h4>
+<table id="table_fixedissues_v662-search" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.4725%;">
+<col style="width: 72.5275%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44485" target="_blank" rel="noopener">MB-44485</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed a rebalance failure caused due to a hash mismatch between plan and directory.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43423" target="_blank" rel="noopener">MB-43423</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where the rebalance stats monitor failed under heavy load.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43421" target="_blank" rel="noopener">MB-43421</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where indexes were not deleted upon bucket deletion.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42989" target="_blank" rel="noopener">MB-42989</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed the incorrect initialisation of partition UUID with consistency vector search requests.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="tools-web-console-ui-and-rest-api"><a class="anchor" href="#tools-web-console-ui-and-rest-api"></a>Tools, Web Console (UI), and REST API</h4>
+<table id="table_fixedissues_v662-tools-ui-rest-api" class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 27.4725%;">
+<col style="width: 72.5275%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44925" target="_blank" rel="noopener">MB-44925</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed a case where the <code>cbbackupmgr</code> utility used the incorrect network port when alternative addressing was set.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44580" target="_blank" rel="noopener">MB-44580</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue to ensure that the flag <code>-x uncompress=1</code> operates as expected when using the <code>cbtransfer</code> utility to transfer data out of a cluster.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-44451" target="_blank" rel="noopener">MB-44451</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: The Admin console now displays a tooltip to help distinguish very long bucket names.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43630" target="_blank" rel="noopener">MB-43630</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: The <code>cbbackupmgr</code> utility now correctly handles empty directories created by the 'Create folder' button in the S3 Web UI.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43611" target="_blank" rel="noopener">MB-43611</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: The <code>cbimport</code> utility now handles MONO_INCR starting at a non-default value.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-43134" target="_blank" rel="noopener">MB-43134</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where <code>cbbackupmgr merge</code> failed on Windows with a "file is being used by another process" error.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42967" target="_blank" rel="noopener">MB-42967</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where the <code>cbrestore</code> utility failed to restore backups with mid transaction data.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42782" target="_blank" rel="noopener">MB-42782</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: The <code>cbbackupmgr</code> utility will now retry 'connection reset by peer' errors whilst streaming vBucket data files allowing large restores to complete as expected.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-42479" target="_blank" rel="noopener">MB-42479</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: Fixed an issue where the <code>cbbackupmgr</code> AWS SDK HTTP client would impose an unexpectedly short timeout which included reading the response body causing large restores to fail due to reaching the timeout.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://issues.couchbase.com/browse/MB-39998" target="_blank" rel="noopener">MB-39998</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Summary</strong>: The <code>cbtransfer</code> utility now correctly handles the snappy data type when transferring from Couchstore into a live cluster.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="release-661"><a class="anchor" href="#release-661"></a>Release 6.6.1 (December 2020)</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -4405,7 +4890,7 @@ Couchbase Server
 <p>This section highlights the notable known issues in this release.</p>
 </div>
 <div class="sect3">
-<h4 id="eventing-service"><a class="anchor" href="#eventing-service"></a>Eventing Service</h4>
+<h4 id="eventing-service-2"><a class="anchor" href="#eventing-service-2"></a>Eventing Service</h4>
 <table id="table_knownissues_v661-eventing" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4438,7 +4923,7 @@ Couchbase Server
 <p>This section highlights the notable issues fixed in this release.</p>
 </div>
 <div class="sect3">
-<h4 id="analytics-service"><a class="anchor" href="#analytics-service"></a>Analytics Service</h4>
+<h4 id="analytics-service-2"><a class="anchor" href="#analytics-service-2"></a>Analytics Service</h4>
 <table id="table_fixedissues_v661-analytics" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4467,7 +4952,7 @@ Couchbase Server
 </table>
 </div>
 <div class="sect3">
-<h4 id="cluster-manager"><a class="anchor" href="#cluster-manager"></a>Cluster Manager</h4>
+<h4 id="cluster-manager-2"><a class="anchor" href="#cluster-manager-2"></a>Cluster Manager</h4>
 <table id="table_fixedissues_v661-cluster-manager" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4488,7 +4973,7 @@ Couchbase Server
 </table>
 </div>
 <div class="sect3">
-<h4 id="cross-data-center-replication-xdcr"><a class="anchor" href="#cross-data-center-replication-xdcr"></a>Cross Data Center Replication (XDCR)</h4>
+<h4 id="cross-data-center-replication-xdcr-2"><a class="anchor" href="#cross-data-center-replication-xdcr-2"></a>Cross Data Center Replication (XDCR)</h4>
 <table id="table_fixedissues_v661-xdcr" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4513,7 +4998,7 @@ Couchbase Server
 </table>
 </div>
 <div class="sect3">
-<h4 id="data-service"><a class="anchor" href="#data-service"></a>Data Service</h4>
+<h4 id="data-service-2"><a class="anchor" href="#data-service-2"></a>Data Service</h4>
 <table id="table_fixedissues_v661-data" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4538,7 +5023,7 @@ Couchbase Server
 </table>
 </div>
 <div class="sect3">
-<h4 id="eventing-service-2"><a class="anchor" href="#eventing-service-2"></a>Eventing Service</h4>
+<h4 id="eventing-service-3"><a class="anchor" href="#eventing-service-3"></a>Eventing Service</h4>
 <table id="table_fixedissues_v661-eventing" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4599,7 +5084,7 @@ Couchbase Server
 </table>
 </div>
 <div class="sect3">
-<h4 id="index-service-and-views"><a class="anchor" href="#index-service-and-views"></a>Index Service and Views</h4>
+<h4 id="index-service-and-views-2"><a class="anchor" href="#index-service-and-views-2"></a>Index Service and Views</h4>
 <table id="table_fixedissues_v661-gsi-views" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4693,7 +5178,7 @@ Couchbase Server
 </table>
 </div>
 <div class="sect3">
-<h4 id="query-service"><a class="anchor" href="#query-service"></a>Query Service</h4>
+<h4 id="query-service-2"><a class="anchor" href="#query-service-2"></a>Query Service</h4>
 <table id="table_fixedissues_v661-query" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4714,7 +5199,7 @@ Couchbase Server
 </table>
 </div>
 <div class="sect3">
-<h4 id="search-service"><a class="anchor" href="#search-service"></a>Search Service</h4>
+<h4 id="search-service-2"><a class="anchor" href="#search-service-2"></a>Search Service</h4>
 <table id="table_fixedissues_v661-search" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4735,7 +5220,7 @@ Couchbase Server
 </table>
 </div>
 <div class="sect3">
-<h4 id="tools-web-console-ui-and-rest-api"><a class="anchor" href="#tools-web-console-ui-and-rest-api"></a>Tools, Web Console (UI), and REST API</h4>
+<h4 id="tools-web-console-ui-and-rest-api-2"><a class="anchor" href="#tools-web-console-ui-and-rest-api-2"></a>Tools, Web Console (UI), and REST API</h4>
 <table id="table_fixedissues_v661-tools-ui-rest-api" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4838,7 +5323,7 @@ Couchbase Server
 <p>This section highlights some of the known issues in this release.</p>
 </div>
 <div class="sect3">
-<h4 id="analytics-service-2"><a class="anchor" href="#analytics-service-2"></a>Analytics Service</h4>
+<h4 id="analytics-service-3"><a class="anchor" href="#analytics-service-3"></a>Analytics Service</h4>
 <table id="table_knownissues_v660-analytics" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4886,7 +5371,7 @@ For example, <code>curl -u Administrator:password -X PUT 'http://localhost:8095/
 </table>
 </div>
 <div class="sect3">
-<h4 id="search-service-2"><a class="anchor" href="#search-service-2"></a>Search Service</h4>
+<h4 id="search-service-3"><a class="anchor" href="#search-service-3"></a>Search Service</h4>
 <table id="table_knownissues_v660-search" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4925,7 +5410,7 @@ For example, <code>curl -u Administrator:password -X PUT 'http://localhost:8095/
 </table>
 </div>
 <div class="sect3">
-<h4 id="query-service-2"><a class="anchor" href="#query-service-2"></a>Query Service</h4>
+<h4 id="query-service-3"><a class="anchor" href="#query-service-3"></a>Query Service</h4>
 <table id="table_knownissues_v660-query" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4952,7 +5437,7 @@ For example, <code>curl -u Administrator:password -X PUT 'http://localhost:8095/
 <p>This section highlights some of the issues fixed in this release.</p>
 </div>
 <div class="sect3">
-<h4 id="cluster-manager-2"><a class="anchor" href="#cluster-manager-2"></a>Cluster Manager</h4>
+<h4 id="cluster-manager-3"><a class="anchor" href="#cluster-manager-3"></a>Cluster Manager</h4>
 <table id="table_fixedissues_v660-cluster-manager" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4973,7 +5458,7 @@ For example, <code>curl -u Administrator:password -X PUT 'http://localhost:8095/
 </table>
 </div>
 <div class="sect3">
-<h4 id="cross-data-center-replication-xdcr-2"><a class="anchor" href="#cross-data-center-replication-xdcr-2"></a>Cross Data Center Replication (XDCR)</h4>
+<h4 id="cross-data-center-replication-xdcr-3"><a class="anchor" href="#cross-data-center-replication-xdcr-3"></a>Cross Data Center Replication (XDCR)</h4>
 <table id="table_fixedissues_v660-xdcr" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -4994,7 +5479,7 @@ For example, <code>curl -u Administrator:password -X PUT 'http://localhost:8095/
 </table>
 </div>
 <div class="sect3">
-<h4 id="eventing-service-3"><a class="anchor" href="#eventing-service-3"></a>Eventing Service</h4>
+<h4 id="eventing-service-4"><a class="anchor" href="#eventing-service-4"></a>Eventing Service</h4>
 <table id="table_fixedissues_v660-eventing" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -5071,7 +5556,7 @@ For example, <code>curl -u Administrator:password -X PUT 'http://localhost:8095/
 </table>
 </div>
 <div class="sect3">
-<h4 id="index-service-and-views-2"><a class="anchor" href="#index-service-and-views-2"></a>Index Service and Views</h4>
+<h4 id="index-service-and-views-3"><a class="anchor" href="#index-service-and-views-3"></a>Index Service and Views</h4>
 <table id="table_fixedissues_v660-gsi-views" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -5116,7 +5601,7 @@ For example, <code>curl -u Administrator:password -X PUT 'http://localhost:8095/
 </table>
 </div>
 <div class="sect3">
-<h4 id="query-service-3"><a class="anchor" href="#query-service-3"></a>Query Service</h4>
+<h4 id="query-service-4"><a class="anchor" href="#query-service-4"></a>Query Service</h4>
 <table id="table_fixedissues_v660-query" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -5142,7 +5627,7 @@ For example, <code>curl -u Administrator:password -X PUT 'http://localhost:8095/
 </table>
 </div>
 <div class="sect3">
-<h4 id="search-service-3"><a class="anchor" href="#search-service-3"></a>Search Service</h4>
+<h4 id="search-service-4"><a class="anchor" href="#search-service-4"></a>Search Service</h4>
 <table id="table_fixedissues_v660-search" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">
@@ -5167,7 +5652,7 @@ For example, <code>curl -u Administrator:password -X PUT 'http://localhost:8095/
 </table>
 </div>
 <div class="sect3">
-<h4 id="tools-web-console-ui-and-rest-api-2"><a class="anchor" href="#tools-web-console-ui-and-rest-api-2"></a>Tools, Web Console (UI), and REST API</h4>
+<h4 id="tools-web-console-ui-and-rest-api-3"><a class="anchor" href="#tools-web-console-ui-and-rest-api-3"></a>Tools, Web Console (UI), and REST API</h4>
 <table id="table_fixedissues_v660-tools-ui-rest-api" class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 27.4725%;">

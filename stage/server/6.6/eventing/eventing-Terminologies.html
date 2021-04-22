@@ -4392,13 +4392,8 @@ Since the 6.5 release, the handler code is compressed (with the compressed size 
 <div class="paragraph">
 <p>Eventing framework calls the following JavaScript functions as entry points to the handler.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Insert/Update Handler</p>
-</li>
-</ul>
-</div>
+<div class="sect3">
+<h4 id="insertupdate-handler"><a class="anchor" href="#insertupdate-handler"></a>Insert/Update Handler</h4>
 <div class="paragraph">
 <p>The <strong>OnUpdate</strong> handler gets called when a document is created or modified. Two major limitations exist. First, if a document is modified several times in a short duration, the calls may be coalesced into a single event due to deduplication. Second, it is not possible to discern between Create and Update operations.</p>
 </div>
@@ -4406,20 +4401,17 @@ Since the 6.5 release, the handler code is compressed (with the compressed size 
 <p>The entry point OnUpdate(doc,meta) passes both the document and meta which contains useful information such as the document&#8217;s id, cas, expiration.</p>
 </div>
 <div class="paragraph">
-<p>As of version 6.6.2 meta also contains the property datatype (json or binary) because Eventing can now process binary documents which were previously suppressed. <span class="status">Couchbase Server 6.6.2</span></p>
+<p>Starting with version 6.6.2, meta also contains the property datatype (JSON or binary) because Eventing can now process binary documents which were previously suppressed. <span class="status">Couchbase Server 6.6.2</span></p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Delete Handler</p>
-</li>
-</ul>
 </div>
+<div class="sect3">
+<h4 id="delete-handler"><a class="anchor" href="#delete-handler"></a>Delete Handler</h4>
 <div class="paragraph">
 <p>The <strong>OnDelete</strong> handler gets called when a document is deleted. One major limitation exists - it is not possible to get the value of the document that was just deleted or expired.</p>
 </div>
 <div class="paragraph">
-<p>The entry point OnDelete(meta) passes meta which contains useful information such as the document&#8217;s id, cas, expiration.  However, starting with 6.6 the entry point OnDelete(meta) can have a second optional parameter "options", which makes it possible to discern between Expiration and Delete operations by checking the the new parameter, options.expired for true or false.</p>
+<p>The entry point OnDelete(meta) passes meta which contains useful information such as the document&#8217;s ID, CAS, expiration.  However, starting with version 6.6, the entry point OnDelete(meta) can have a second optional parameter <code>options</code>, which makes it possible to discern between Expiration and Delete operations by checking the the new parameter, <code>options.expired</code>, for true or false.</p>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -4474,7 +4466,7 @@ Since the 6.5 release, the handler code is compressed (with the compressed size 
 <div class="sect2">
 <h3 id="feed-boundary"><a class="anchor" href="#feed-boundary"></a>Feed Boundary</h3>
 <div class="paragraph">
-<p>Feed Boundary is a time milestone used during an Eventing Function or Handler configuration. Using the Feed Boundary option, you can either invoke a handler on all data mutations available in the cluster (Everything) or choose to invoke a handler to process only future data mutations, post deployment (From now). However once deployed you may Pause/Resume a handler in this case; the Feed Boundary is a checkpoint such that no mutations are reprocessed or lost.</p>
+<p>Feed Boundary is a time milestone used during an Eventing Function or Handler configuration. Using the <code>Feed Boundary</code> option, you can either invoke a handler on all data mutations available in the cluster (<code>Everything</code>) or choose to invoke a handler to process only future data mutations, post deployment (<code>From now</code>). However, once deployed you may Pause/Resume a handler in this case; the Feed Boundary is a checkpoint such that no mutations are reprocessed or lost.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -4483,7 +4475,7 @@ Since the 6.5 release, the handler code is compressed (with the compressed size 
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-As of 6.6.2 the Feed Boundary is now a persistent setting in the Function&#8217;s definition and can only be set or altered when a Function is created, undeployed or paused.  Thus there is no longer a choice of a feed boundary when a function is deployed as the value is taken from the Function&#8217;s definition <span class="status">Couchbase Server 6.6.2</span>
+Starting with version 6.6.2, the Feed Boundary is now a persistent setting in the Function&#8217;s definition and can only be set or altered when a Function is created, undeployed or paused. Thus, there is no longer a choice of a feed boundary when a function is deployed as the value is taken from the Function&#8217;s definition <span class="status">Couchbase Server 6.6.2</span>
 </td>
 </tr>
 </table>
@@ -4554,19 +4546,19 @@ At any point, refrain from deleting the metadata bucket. Also, ensure that your 
 <p><strong>Function Name</strong></p>
 </div>
 <div class="paragraph">
-<p>All Eventing Functoins must have a unique in a Couchbase cluster. A Function name can only start with characters in range A-Z, a-z, 0-9 and can only contain characters in range A-Z, a-z, 0-9, underscore and hyphen.</p>
+<p>All Eventing Functoins must have a unique name in a Couchbase cluster. A Function name can only start with characters in range A-Z, a-z, 0-9, and can only contain characters in range A-Z, a-z, 0-9, underscore, and hyphen.</p>
 </div>
 <div class="paragraph">
 <p><strong>Description</strong></p>
 </div>
 <div class="paragraph">
-<p>The Description is optional text that can be added to the Function, typically to describe the purpose of the particular business logic.</p>
+<p>The Description is an optional text that can be added to the Function, typically to describe the purpose of the particular business logic.</p>
 </div>
 <div class="paragraph">
 <p><strong>Deployment Feed Boundary</strong></p>
 </div>
 <div class="paragraph">
-<p>Using the Feed Boundary drop down, you can either set a handler to deploy for all data mutations available in the cluster (Everything) or choose to deploy the handler to process only future data mutations, post deployment (From now). However once deployed you may Pause/Resume a handler in the Resume case; the Feed Boundary is a checkpoint made when the Function was paused such that no mutations are reprocessed or lost. <span class="status">Couchbase Server 6.6.2</span></p>
+<p>Using the <code>Feed Boundary</code> drop down, you can either set a handler to deploy for all data mutations available in the cluster (<code>Everything</code>) or choose to deploy the handler to process only future data mutations, post deployment (<code>From now</code>). However, once deployed you may Pause/Resume a handler in the Resume case; the Feed Boundary is a checkpoint made when the Function was paused such that no mutations are reprocessed or lost. <span class="status">Couchbase Server 6.6.2</span></p>
 </div>
 </div>
 <div class="sect2">
@@ -4597,7 +4589,7 @@ At any point, refrain from deleting the metadata bucket. Also, ensure that your 
 <li>
 <p><strong>Language compatibility</strong>: The language version of the handler for backward compatibility.</p>
 <div class="paragraph">
-<p>If the semantics of a language construct change in any given release the “language compatibility” setting will ensure an older handler will continue to see the runtime behavior that existed at the time it was authored, until such behavior is deprecated and removed. For example accessing non-existent items from a bucket returns undefined in 6.5.0, while in 6.0.0 an exception is thrown.(Note 6.0.0, 6.5.0, and 6.6.2 are the only currently defined versions.)</p>
+<p>If the semantics of a language construct change in any given release the “language compatibility” setting will ensure an older handler will continue to see the runtime behavior that existed at the time it was authored, until such behavior is deprecated and removed. For example, accessing non-existent items from a bucket returns undefined in 6.5.0, while in 6.0.0 an exception is thrown.(Note 6.0.0, 6.5.0, and 6.6.2 are the only currently defined versions.)</p>
 </div>
 <div class="paragraph">
 <p>Only a Function with “language compatibility” of 6.6.2 in its settings will pass binary documents to the OnUpdate(doc,meta) handler. Earlier “language compatibility” values of 6.0.0 and 6.5.0 will filter all binary documents out of the DCP mutation stream. <span class="status">Couchbase Server 6.6.2</span></p>
