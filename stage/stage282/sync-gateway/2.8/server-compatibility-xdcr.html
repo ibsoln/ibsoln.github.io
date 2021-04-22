@@ -823,19 +823,16 @@ XDCR replicates all of Sync Gateway’s metadata (_sync xattr) along with associ
 <h2 id="data-provisioning-scenario"><a class="anchor" href="#data-provisioning-scenario"></a>Data Provisioning Scenario</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The setup for Data provisioning from a central to a regional data center is illustrated in <a href="#fig-prov-data">[fig-prov-data]</a>.</p>
+<p>The model for Data provisioning from a central to a regional data center is illustrated in <a href="#fig-prov-data">Figure 2</a>.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>XDCR is deployed in unidirectional XDCR (typically with a filter).
+<p>XDCR is deployed unidirectionally, typically with a filter.
 It is used to push data from a primary data center to secondary (perhaps, regional) data centers, where the data is subsequently pulled by downstream clients.</p>
 </li>
 <li>
 <p>Sync Gateway is deployed only at one end of the replication</p>
-</li>
-<li>
-<p>There is no route for updates to come in from regional data centers.</p>
 </li>
 </ul>
 </div>
@@ -843,21 +840,24 @@ It is used to push data from a primary data center to secondary (perhaps, region
 <div class="content">
 <img src="_images/data-provisioning-xdcr.png" alt="data provisioning xdcr" width="std-image-size">
 </div>
+<div class="title">Figure 2. Using XDCR for Data Provisioning</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-prov-drc"><a class="anchor" href="#lbl-prov-drc"></a>Disaster Recovery</h2>
+<h2 id="lbl-prov-drc"><a class="anchor" href="#lbl-prov-drc"></a>Disaster Recovery Scenario</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In a Disaster Recovery scenario XDCR serves an important role in setting-up target mobile clusters.
-Here it supports Disaster Recovery and Data Migration.
+<p>In a Disaster Recovery scenario XDCR serves an important role in setting-up target mobile clusters.</p>
+</div>
+<div class="paragraph">
+<p>Here XDCR supports Disaster Recovery and Data Migration.
 Even though Sync Gateway is the operational replicator of choice for mobile data, it is only ever deployed at one end of the unidirectional XDCR replication.</p>
 </div>
 <div class="sect2">
 <h3 id="clusters-in-same-region"><a class="anchor" href="#clusters-in-same-region"></a>Clusters in Same Region</h3>
 <div class="paragraph">
-<p>This model caters for situations where the Active and Disaster Recovery clusters are in the same region or data center&#8201;&#8212;&#8201;see: <a href="#fig-dr-same-regn">Figure 2</a>.
+<p>This model caters for situations where the Active and Disaster Recovery clusters are in the same region or data center&#8201;&#8212;&#8201;see: <a href="#fig-dr-same-regn">Figure 3</a>.
 It includes an optional optimization step, which will ensure that there is no downtime during the activation stage.</p>
 </div>
 <div class="paragraph">
@@ -883,7 +883,7 @@ If you skip this test, you will incur latency when Sync Gateway is switched to t
 <div class="content">
 <img src="_images/sgw-xdcr-dr-same-regn-setup.png" alt="sgw xdcr dr same regn setup" width="600">
 </div>
-<div class="title">Figure 2. DR Cluster Setup (Clusters in Same Regions)</div>
+<div class="title">Figure 3. DR Cluster Setup (Clusters in Same Regions)</div>
 </div>
 <div class="paragraph">
 <div class="title">Activation</div>
@@ -913,7 +913,7 @@ This maintains the deployment of Sync Gateway at only one end of the XDCR replic
 <div class="content">
 <img src="_images/sgw-xdcr-dr-same-regn-in-recovery.png" alt="sgw xdcr dr same regn in recovery" width="600">
 </div>
-<div class="title">Figure 3. DR Cluster In-recovery (Clusters in Same Regions)</div>
+<div class="title">Figure 4. DR Cluster In-recovery (Clusters in Same Regions)</div>
 </div>
 </div>
 <div class="sect2">
@@ -925,7 +925,7 @@ The optional optimization step will ensure that there is no downtime during the 
 </div>
 <div class="paragraph">
 <div class="title">Set Up</div>
-<p>To set up and maintain a disaster recovery cluster - see: <a href="#fig-dr-diff-regn-setup">Figure 4</a>:</p>
+<p>To set up and maintain a disaster recovery cluster - see: <a href="#fig-dr-diff-regn-setup">Figure 5</a>:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -946,11 +946,11 @@ If you skip this test, you will incur latency when Sync Gateway is switched to t
 <div class="content">
 <img src="_images/sgw-xdcr-dr-diff-regn-setup.png" alt="sgw xdcr dr diff regn setup" width="600">
 </div>
-<div class="title">Figure 4. DR Cluster Setup (Clusters in Different Regions)</div>
+<div class="title">Figure 5. DR Cluster Setup (Clusters in Different Regions)</div>
 </div>
 <div class="paragraph">
 <div class="title">Activation</div>
-<p>When you are ready to switch to Disaster Recovery operations&#8201;&#8212;&#8201;see: <a href="#fig-dr-diff-regn-in-recovery">Figure 5</a>:</p>
+<p>When you are ready to switch to Disaster Recovery operations&#8201;&#8212;&#8201;see: <a href="#fig-dr-diff-regn-in-recovery">Figure 6</a>:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
@@ -970,7 +970,7 @@ If you skip this test, you will incur latency when Sync Gateway is switched to t
 <p>Promote the Disaster Recovery cluster to be the <strong>new</strong> Primary cluster, and make the <strong>old</strong> Primary cluster the <strong>new</strong> Disaster Recovery cluster</p>
 </li>
 <li>
-<p>Flush all buckets in the <strong>new</strong> Primary cluster; this prevents any writes coming into the Primary cluster that had not been replicated when XDCR was stopped.</p>
+<p>Flush all replicated buckets in the  Primary cluster; as a precaution against any spurious writes coming into the Primary cluster that had not been replicated when XDCR was stopped.</p>
 </li>
 <li>
 <p>Reverse the original XDCR to replicate from the newly promoted Primary to the old Primary, to set up a new Backup.</p>
@@ -981,7 +981,7 @@ If you skip this test, you will incur latency when Sync Gateway is switched to t
 <div class="content">
 <img src="_images/sgw-xdcr-dr-diff-regn-in-recovery.png" alt="sgw xdcr dr diff regn in recovery" width="600">
 </div>
-<div class="title">Figure 5. DR In-Recovery (clusters in different regions)</div>
+<div class="title">Figure 6. DR In-Recovery (clusters in different regions)</div>
 </div>
 </div>
 </div>
