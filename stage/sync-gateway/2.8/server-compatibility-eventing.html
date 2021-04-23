@@ -7,7 +7,7 @@
 <link rel="canonical" href="localhost::/5000/sync-gateway/2.8/server-compatibility-eventing.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="How Sync Gateway works with Eventing">
+<meta name="description" content="How &lt;em&gt;Sync Gateway&lt;/em&gt; works with &lt;em&gt;Couchbase Server&#x27;s&lt;/em&gt; &lt;em&gt;Eventing&lt;/em&gt; feature">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -285,12 +285,6 @@
 <li class="nav-item " data-depth="3">
 
 <span class="nav-line "  data-depth="3">
-<a class="nav-link" href="import-filter.html">Import filter</a>
-</span>
-</li>
-<li class="nav-item " data-depth="3">
-
-<span class="nav-line "  data-depth="3">
 <a class="nav-link" href="read-access.html">Read Access</a>
 </span>
 </li>
@@ -378,6 +372,12 @@
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="resync.html">Resync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="import-filter.html">Import filter</a>
 </span>
 </li>
 </ul>
@@ -744,10 +744,12 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Description&#8201;&#8212;&#8201;<em>How Sync Gateway works with Eventing</em><br>
-Related Content&#8201;&#8212;&#8201;<a href="server-compatibility-xdcr.html" class="page">Server Compatibility - XDCR</a>  |  <a href="server-compatibility-eventing.html" class="page">Server Compatibility - Eventing</a>  |   <a href="server-compatibility-transactions.html" class="page">Server Compatibility - Transactions</a>  |   <a href="server-compatibility-collections.html" class="page">Server Compatibility - Collections</a>  | <a href="compatibility.html" class="page">Compatibility Matrix</a></p>
+<p>How <em>Sync Gateway</em> works with <em>Couchbase Server&#8217;s</em> <em>Eventing</em> feature<br></p>
 </div>
 </blockquote>
+</div>
+<div class="paragraph">
+<p>Related <em>compatibility</em> topics: <a href="server-compatibility-xdcr.html" class="page">Server Compatibility - XDCR</a>  |  <a href="server-compatibility-eventing.html" class="page">Server Compatibility - Eventing</a>  |   <a href="server-compatibility-transactions.html" class="page">Server Compatibility - Transactions</a>  |   <a href="server-compatibility-collections.html" class="page">Server Compatibility - Collections</a>  | <a href="compatibility.html" class="page">Compatibility Matrix</a></p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -784,24 +786,24 @@ In this context, events are changes to data in the Couchbase Mobile cluster.</p>
 <p>You can use Eventing and Sync Gateway connected to the same bucket, when Eventing operates in <strong>read only</strong> mode.</p>
 </div>
 <div class="paragraph">
-<p>To do this, you also need to write your Eventing function to be <strong>idempotent</strong>&#8201;&#8212;&#8201;that is, to behave correctly when the same mutation is seen more than once.</p>
-</div>
-<div class="paragraph">
-<p>This is necessary because:</p>
+<p>To do this, you must write your Eventing function to be <strong>idempotent</strong>; to behave correctly when the same mutation is seen more than once.
+This is necessary because:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>When Sync Gateway executes a single document update, it appears over DCP as multiple mutations for the same document update; some modifying the document body and others modifying its metadata (XATTRs).</p>
+<p>When <em>Sync Gateway</em> executes a single document update, it appears over DCP as multiple mutations for the same document update; some modifying the document body and others modifying its metadata (XATTRs).</p>
 </li>
 <li>
-<p>Eventing detects these mutations and invokes its <code>OnUpdate</code> <strong>for each</strong>; whether it is for the modified body of the document, XATTRs, or both.
-It is here that you need to code the function to apply the update once only.</p>
+<p><em>Eventing</em> detects these mutations and invokes its <code>OnUpdate</code> <strong>for each</strong>; whether it is for the modified body of the document, XATTRs, or both.
+It is here that you need to code the function to apply the same update once only.
+One way to do this is to use the crc64 function call&#8201;&#8212;&#8201;see: <a href="#server:eventing/eventing-language-constructs.adoc#crc64_call" class="page unresolved">Eventing&#8201;&#8212;&#8201;crc64()</a> for more on how to do this.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Also, the Eventing set-up process prevents the inadvertent use of Eventing functions on the same bucket as a Sync Gateway (read-write mode), returning a log message warning:<br>
+<p><em>Eventing</em> prevents inadvertent use of its functions on <em>Sync Gateway</em> read-write buckets.
+You will see the following  warning if you try to do this:<br>
 <code>SyncGateway is enabled on: &lt;bucket-name&gt;, deployment of source bucket mutating handler will cause Intra Bucket Recursion</code></p>
 </div>
 </div>

@@ -7,6 +7,7 @@
 <link rel="canonical" href="localhost::/5000/sync-gateway/2.8/write-access.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="How to manage write-access in Sync Gateway to ensure secure cloud-to-edge synchronization of enterprize data.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -284,12 +285,6 @@
 <li class="nav-item " data-depth="3">
 
 <span class="nav-line "  data-depth="3">
-<a class="nav-link" href="import-filter.html">Import filter</a>
-</span>
-</li>
-<li class="nav-item " data-depth="3">
-
-<span class="nav-line "  data-depth="3">
 <a class="nav-link" href="read-access.html">Read Access</a>
 </span>
 </li>
@@ -377,6 +372,12 @@
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="resync.html">Resync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="import-filter.html">Import filter</a>
 </span>
 </li>
 </ul>
@@ -734,79 +735,103 @@
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div class="sect1">
-<h2 id="data-validation"><a class="anchor" href="#data-validation"></a>Data Validation</h2>
+</div><div id="preamble">
 <div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
 <div class="paragraph">
-<p>If the document has invalid contents, the Sync Function can throw an exception to reject it.</p>
+<p>How to manage write-access in Sync Gateway to ensure secure cloud-to-edge synchronization of enterprize data.<br>
+The Sync Function API provides several methods that you can use to validate document creation, updates and deletions.</p>
 </div>
-<div class="paragraph">
-<p>For document schema validation, you can write your own rules in the Sync Function and when the document body is invalid, you can simply call the built-in JavaScript <a href="sync-function.html#throw" class="page">throw()</a> function.</p>
-</div>
-<div class="paragraph">
-<p>What happens to rejected documents? Firstly, they aren&#8217;t saved to the Sync Gateway&#8217;s database, so no access changes take effect.
-Instead an error code (usually 403 Forbidden) is returned to Couchbase Lite&#8217;s replicator.</p>
-</div>
-<div class="paragraph">
-<p>Any other exception (including implicit ones thrown by the JavaScript runtime, like array bounds exceptions) will also prevent the document update, but will cause the gateway to return an HTTP 500 "Internal Error" status.</p>
-</div>
-<div class="paragraph">
-<p>Sync functions can also authorize document updates.
-A sync function can reject the document by throwing an exception:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">throw ({forbidden: "error message"})</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>A 403 Forbidden status and the given error string is returned to the client.</p>
-</div>
-<div class="paragraph">
-<p>To validate a document you often need to know which user is changing it, and sometimes you need to compare the old and new revisions.
-To get access to the old revision, declare the sync function like this:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function(doc, oldDoc) { ... }</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p><code>oldDoc</code> is the old revision of the document (or empty if this is a new document).</p>
+</blockquote>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="write-access"><a class="anchor" href="#write-access"></a>Write Access</h2>
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Sync Function can call <a href="sync-function.html#requireuserusername" class="page">requireUser()</a> or <a href="sync-function.html#requirerolerolename" class="page">requireRole()</a> to specify what user(s) are allowed to modify the document.
-If the user making the change isn&#8217;t in that list, an exception is thrown and the update is rejected with an error.</p>
+<p>You should use the <em>Sync Function</em> to validate any changes and to authorize document writes.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="access-old-document"><a class="anchor" href="#access-old-document"></a>Access Old Document</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Similarly, <a href="sync-function.html#requireaccesschannels" class="page">requireAccess()</a> requires that the user making the change have access to any of the listed channels.</p>
+<p>Before you can validate a document update, you often need to know which user is changing it, and sometimes you need to compare the old and new revisions.
+The Sync Function makes it easy to access any pre-revision document content&#8201;&#8212;&#8201;see <a href="#ex-old-doc">Example 1</a>:</p>
 </div>
-<div class="paragraph">
-<p>Here are some examples of how you can use the helper functions:</p>
-</div>
+<div id="ex-old-doc" class="exampleblock">
+<div class="title">Example 1. Access Pre-revision Document Content]</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// throw an error if username is not "snej"
-requireUser("snej")
-// throw if username is not in the list
-requireUser(["snej", "jchris", "tleyden"])
-// throw an error unless the user has the "admin" role
-requireRole("admin")
-// throw an error unless the user has one of those roles
-requireRole(["admin", "old-timer"])
-// throw an error unless the user has access to read the "events" channel
-requireAccess("events")
-// throw an error unless the can read one of these channels
-requireAccess(["events", "messages"])</code></pre>
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function(doc, oldDoc) { ... } <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here in the Sync Function header, the <code>oldDoc</code> contains the document content prior to any changes.
+It is empty if this is a new document.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="validate-document-changes"><a class="anchor" href="#validate-document-changes"></a>Validate Document Changes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For document schema validation, you can write your own rules in the Sync Function.
+Use it to validate any document changes made before writing them.</p>
 </div>
 <div class="paragraph">
-<p>Here is a simple sync function that validates whether the user is modifying a document in the old document&#8217;s <code>owner</code> list:</p>
+<p>When a document is deemed invalid, you can simply call the built-in JavaScript <a href="sync-function.html#throw" class="page">throw()</a> function to raise an exception and reject the revision&#8201;&#8212;&#8201;see <a href="#ex-reject">Example 2</a>.</p>
+</div>
+<div class="paragraph">
+<p>Rejected documents are not saved to the Sync Gateway database, so no access changes take effect.
+Instead an error code (usually 403 Forbidden) is returned to Couchbase Lite&#8217;s replicator.</p>
+</div>
+<div class="paragraph">
+<p>Any other exception (including implicit ones thrown by the JavaScript runtime, like array bounds exceptions) will also prevent the document update.
+These will cause the gateway to return an HTTP <code>500&#8201;&#8212;&#8201;Internal Error</code> status.</p>
+</div>
+<div id="ex-reject" class="exampleblock">
+<div class="title">Example 2. Rejecting Invalid Documents</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">throw ({forbidden: "error message"}) <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>A <code>403&#8201;&#8212;&#8201;Forbidden</code> status and the given error string is returned to the client.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="check-for-write-access"><a class="anchor" href="#check-for-write-access"></a>Check for Write Access</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use the Sync Function&#8217;s helper functions such as <a href="sync-function.html#requireuserusername" class="page">requireUser()</a> or <a href="sync-function.html#requirerolerolename" class="page">requireRole()</a> to specify the user(s) allowed to write a document&#8201;&#8212;&#8201;see <a href="#ex-check-write-access">Example 3</a></p>
+</div>
+<div id="ex-check-write-access" class="exampleblock">
+<div class="title">Example 3. Checking the User to Allow Write Access</div>
+<div class="content">
+<div class="paragraph">
+<p>In this example, our simple Sync Function validates whether the user modifying a document is a valid owner by checking if they are recorded as an owner of the old document:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -817,11 +842,89 @@ requireAccess(["events", "messages"])</code></pre>
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>When sending a change to Sync Gateway through the <a href="rest-api-admin.html" class="page">Admin REST API</a>, the Sync Function is executed with admin privileges: calls to <code>requireUser</code>, <code>requireAccess</code> and <code>requireRole</code> are no-ops (i.e will always be successful).</p>
+</div>
 </div>
 <div class="paragraph">
-<p>To create and manage user accounts, refer to <a href="users.html" class="page">Users</a>.</p>
+<p>If the user or role making the change is not in that list, an exception is thrown and the update is rejected with an error.</p>
+</div>
+<div class="paragraph">
+<p>Similarly, <a href="sync-function.html#requireaccesschannels" class="page">requireAccess()</a> requires that the user making the change has access to any of the listed channels&#8201;&#8212;&#8201;see <a href="#ex-helpers">Example 4</a> for more helper function usage.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The Sync Function executes with admin privileges for changes made using the <a href="rest-api-admin.html" class="page">Admin REST API</a>.
+So, <code>requireUser</code>, <code>requireAccess</code> and <code>requireRole</code> are no-ops; they will always be successful.
+</td>
+</tr>
+</table>
+</div>
+<div id="ex-helpers" class="exampleblock">
+<div class="title">Example 4. Helper Function examples</div>
+<div class="content">
+<div class="paragraph">
+<p>This example shows how to use some of the helper functions:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">requireUser("snej") <i class="conum" data-value="1"></i><b>(1)</b>
+
+requireUser(["snej", "jchris", "tleyden"]) <i class="conum" data-value="2"></i><b>(2)</b>
+
+requireRole("admin") <i class="conum" data-value="3"></i><b>(3)</b>
+
+requireRole(["admin", "old-timer"]) <i class="conum" data-value="4"></i><b>(4)</b>
+
+requireAccess("events") <i class="conum" data-value="5"></i><b>(5)</b>
+
+requireAccess(["events", "messages"]) <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>throw an error if username is not "snej"</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>throw if username is not in the list</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>throw an error unless the user has the "admin" role</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>throw an error unless the user has one of those roles</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>throw an error unless the user has access to read the "events" channel</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>throw an error unless the can read one of these channels</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+To create and manage user accounts, refer to <a href="users.html" class="page">Users</a>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -832,7 +935,27 @@ requireAccess(["events", "messages"])</code></pre>
 <div class="sect5 column">
 <h6 id=""><a class="anchor" href="#"></a></h6>
 <div class="ulist">
-<div class="title">API Topics</div>
+<div class="title">Learn more ...</div>
+<ul>
+<li>
+<p><a href="sync-function.html" class="page">Sync Function</a></p>
+</li>
+<li>
+<p><a href="import-filter.html" class="page">Import filter</a></p>
+</li>
+<li>
+<p><a href="sync-inter-syncgateway-overview.html" class="page">Inter-Sync Gateway Replication</a></p>
+</li>
+<li>
+<p><a href="sync-with-couchbase-server.html" class="page">Sync with Couchbase Server</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference material ...</div>
 <ul>
 <li>
 <p><a href="rest-api.html" class="page">Public REST API</a></p>
@@ -850,23 +973,26 @@ requireAccess(["events", "messages"])</code></pre>
 </div>
 </div>
 <div class="sect5 column">
-<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
-<div class="ulist">
-<div class="title">Reference</div>
-<ul>
-<li>
-<p><a href="configuration-properties.html" class="page">Configuration Properties</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
 <h6 id="-3"><a class="anchor" href="#-3"></a></h6>
 <div class="ulist">
 <div class="title">Community</div>
 <ul>
 <li>
 <p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Sync Function Blogs</div>
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/augment-your-sync-function-with-roles-in-couchbase-sync-gateway/">Using roles in sync functions</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/data-synchronization-offline-first-apps-couchbase/">Tutorial: Getting Started with Data Synchronization using Couchbase Mobile for Offline-First Apps</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/tag/sync-function/">Sync Function (category)</a></p>
 </li>
 </ul>
 </div>

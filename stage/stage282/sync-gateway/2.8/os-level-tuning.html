@@ -7,6 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/stage/stage282/sync-gateway/2.8/os-level-tuning.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="OS level parameters you can use to tune _Couchbase Sync&amp;nbspGateway">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -284,12 +285,6 @@
 <li class="nav-item " data-depth="3">
 
 <span class="nav-line "  data-depth="3">
-<a class="nav-link" href="import-filter.html">Import filter</a>
-</span>
-</li>
-<li class="nav-item " data-depth="3">
-
-<span class="nav-line "  data-depth="3">
 <a class="nav-link" href="read-access.html">Read Access</a>
 </span>
 </li>
@@ -377,6 +372,12 @@
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="resync.html">Resync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="import-filter.html">Import filter</a>
 </span>
 </li>
 </ul>
@@ -735,51 +736,90 @@
 <span  id="otherContributor"> + </span>
 </div><div id="preamble">
 <div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
 <div class="paragraph">
-<p>To get the most out of Sync Gateway, it may be necessary to tune a few parameters of the OS.</p>
+<p>OS level parameters you can use to tune _Couchbase Sync&nbspGateway<br></p>
+</div>
+</blockquote>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="file-descriptors"><a class="anchor" href="#file-descriptors"></a>File Descriptors</h2>
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>To get the most out of Sync Gateway, it may be necessary to tune a few parameters of the OS.</p>
+</div>
 <div class="paragraph">
 <p>Raising the maximum number of file descriptors available to Sync Gateway is important because it directly affects the maximum number of <strong>sockets</strong> the Sync Gateway can have open, and therefore the maximum number of endpoints that the Sync Gateway can support.</p>
 </div>
-<div class="sect2">
-<h3 id="linux-instructions-centos"><a class="anchor" href="#linux-instructions-centos"></a>Linux Instructions (CentOS)</h3>
 <div class="paragraph">
-<p>The following instructions are geared towards CentOS.</p>
+<p>The instructions here are geared towards CentOS deployments.</p>
 </div>
-<div class="sect3">
-<h4 id="global-limits"><a class="anchor" href="#global-limits"></a>Global Limits</h4>
+</div>
+</div>
+<div class="sect1">
+<h2 id="operating-system-file-descriptor-limits"><a class="anchor" href="#operating-system-file-descriptor-limits"></a>Operating System File Descriptor Limits</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Increase the max number of file descriptors available to <strong>all processes</strong>.
-To specify the number of system wide file descriptors allowed, open up the <code>/etc/sysctl.conf</code> file and add the following line.</p>
+<p>Increase the max number of file descriptors available to <strong>all processes</strong>.</p>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Set the number of system wide file descriptors</dt>
+<dd>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Edit the <code>/etc/sysctl.conf</code> file</p>
+</li>
+<li>
+<p>Add the following line.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">fs.file-max = 500000</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Apply the changes and persist them (this will last across reboots) by running the following command.</p>
-</div>
+</li>
+<li>
+<p>Apply the changes by running the following command.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ sysctl -p</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ sysctl -p <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>-p</code> will persist the change across reboots</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="sync-gateway-config-limits"><a class="anchor" href="#sync-gateway-config-limits"></a>Sync Gateway Config Limits</h4>
+<div class="sect1">
+<h2 id="sync-gateway-file-descriptor-limits"><a class="anchor" href="#sync-gateway-file-descriptor-limits"></a>Sync Gateway File Descriptor Limits</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>The maximum number of open files descriptors should also be configured in the Sync Gateway configuration file.
-Refer to the <a href="configuration-properties.html#server-configuration" class="page">server section</a> of the configuration guide and to the example below.</p>
+<p>Configure the maximum number of open files descriptors in Sync Gateway in line with the above changes.</p>
 </div>
+<div class="paragraph">
+<p>See the <a href="configuration-properties.html#maxFileDescriptors" class="page">maxFileDescriptors property</a> in the configuration file and <a href="#ex-max-file-desc">Example 1</a>.</p>
+</div>
+<div id="ex-max-file-desc" class="exampleblock">
+<div class="title">Example 1. Set the Maximum File Descriptors</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "maxFileDescriptors": 250000,
   "databases": {
     "todo": { ... }
@@ -788,41 +828,67 @@ Refer to the <a href="configuration-properties.html#server-configuration" class=
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="ulimits-systemd-config"><a class="anchor" href="#ulimits-systemd-config"></a>Ulimits systemd config</h4>
-<div class="paragraph">
-<p>The <code>/usr/lib/systemd/system/sync_gateway.service</code> has a hardcoded limit specified by <code>LimitNOFILE=65535</code>.
-To increase that, edit the <code>/sync_gateway.service</code> file to your desired value and restart the service.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="ulimits-cli"><a class="anchor" href="#ulimits-cli"></a>Ulimits CLI</h4>
-<div class="paragraph">
-<p>If you are running Sync Gateway outside of systemd, use the following instructions.
-If you are using systemd, you can skip this section.</p>
 </div>
+<div class="sect1">
+<h2 id="service-file-descriptor-limits"><a class="anchor" href="#service-file-descriptor-limits"></a>Service File Descriptor Limits</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">For systemd config</dt>
+<dd>
+<p>The <code>/usr/lib/systemd/system/sync_gateway.service</code> has a hardcoded limit specified by <code>LimitNOFILE=65535</code>.</p>
 <div class="paragraph">
+<p>To increase that, edit the <code>/sync_gateway.service</code> file to your desired value and restart the service.</p>
+</div>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="process-file-descriptor-limits"><a class="anchor" href="#process-file-descriptor-limits"></a>Process File Descriptor Limits</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you are running Sync Gateway outside of <em>systemd</em>, use the following instructions.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If you are using systemd, you can skip this section.
+</td>
+</tr>
+</table>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
 <p>Increase the <strong>ulimit</strong> setting for max number of file descriptors available to a single process.
 For example, setting it to 250K will allow the Sync Gateway to have 250K connections open at any given time, and leave 250K remaining file descriptors available for the rest of the processes on the machine.
 These settings are just an example, you will probably want to tune them for your own particular use case.</p>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ ulimit -n 250000</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>In order to persist the ulimit change across reboots, add the following lines to <code>/etc/security/limits.conf</code>.</p>
-</div>
+</li>
+<li>
+<p>To persist the ulimit change across reboots, add the following lines to:<br>
+<code>/etc/security/limits.conf</code>.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">* soft nofile 250000
 * hard nofile 250000</code></pre>
 </div>
 </div>
-<div class="paragraph">
+</li>
+<li>
 <p>Verify your changes by running the following commands.</p>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cat /proc/sys/fs/file-max
@@ -830,19 +896,13 @@ $ ulimit -n</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The value of both commands above should be <code>250000</code>.</p>
+<p>The output value of both commands above should be <code>250000</code>.</p>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="references"><a class="anchor" href="#references"></a>References</h3>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://glassonionblog.wordpress.com/2013/01/27/increase-ulimit-and-file-descriptors-limit/">Increasing ulimit and file descriptors limit on Linux</a></p>
 </li>
-</ul>
+</ol>
 </div>
+<div class="paragraph">
+<p>See also: <a href="https://glassonionblog.wordpress.com/2013/01/27/increase-ulimit-and-file-descriptors-limit/">Increasing ulimit and file descriptors limit on Linux</a></p>
 </div>
 </div>
 </div>
@@ -927,7 +987,7 @@ Add the following line to your <code>/etc/sysctl.conf</code> file:</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="references-2"><a class="anchor" href="#references-2"></a>References</h3>
+<h3 id="references"><a class="anchor" href="#references"></a>References</h3>
 <div class="ulist">
 <ul>
 <li>
