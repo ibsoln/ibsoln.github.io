@@ -811,12 +811,12 @@ It provides for the public dissemination of documents.</p>
 All documents are implicitly assigned this channel.</p>
 </li>
 <li>
-<p><a href="#lbl-all-channels">The All Channels Wildcard</a> ('<strong>*</strong>')&#8201;&#8212;&#8201;this wildcard can be used in the <a href="sync-function.html#accessusername-channelname" class="page">`access(username, channel)`</a> method to grant a user access to any document in any channel.</p>
+<p><a href="#lbl-all-channels">The All Channels Wildcard</a> ('<strong>*</strong>')&#8201;&#8212;&#8201;this wildcard can be used in the <a href="sync-function.html#accessusername-channelname" class="page">access(username, channel)</a> method to grant a user access to any document in any channel.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>You can assign a document to the <em>public</em> (<strong>!</strong>) channel using the <a href="sync-function.html#channelchannelname" class="page">`channel(channel)`</a> function, but you cannot explicitly assign a document to the <em>all documents</em> (<strong>*</strong>) channel.
+<p>You can assign a document to the <em>public</em> (<strong>!</strong>) channel using the <a href="sync-function.html#channelchannelname" class="page">channel(channel)</a> function, but you cannot explicitly assign a document to the <em>all documents</em> (<strong>*</strong>) channel.
 Granting user access by using the '<em>All Channels</em>' wildcard gives the user an Access All Areas pass .</p>
 </div>
 <div class="paragraph">
@@ -935,7 +935,7 @@ It also causes sync to pull <strong>all</strong> documents.</p>
 <p>Because of this potential for syncing large volumes of data (sync pulls all documents in the bucket, regardless of its channel), you should only use the <em>all channels</em> wildcard in conjunction with a channel filter.</p>
 </div>
 <div class="paragraph">
-<p><strong>Note:</strong> Users granted access using the <em>all channels</em> wildcard <strong>do not</strong> inherit <a href="sync-function.html#requireaccess-channels" class="page">`requireAccess(&lt;channel&gt;)`</a> rights to any specific channel (<em>&lt;channel&gt;</em> here)&#8201;&#8212;&#8201;see also: {sync-function&#8212;&#8203;bmk-requireAccess}.</p>
+<p><strong>Note:</strong> Users granted access using the <em>all channels</em> wildcard <strong>do not</strong> inherit <a href="sync-function.html#requireaccesschannels" class="page">requireAccess(&lt;channel&gt;)</a> rights to any specific channel.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -961,9 +961,18 @@ Use the <em>all channels</em> wildcard in conjunction with a filter to avoid syn
 <h2 id="inspect-a-document"><a class="anchor" href="#inspect-a-document"></a>Inspect a Document</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can use the admin REST API to see the channels that documents are assigned to.
-Issue a <a href="rest-api-admin.html#/database/get
-__db___all_docs" class="page">/\{db}/_all_docs</a> request, and add the query parameter <code>?channels=true</code> to the URL&#8201;&#8212;&#8201;see output response in <a href="#ex-inspect-doc-response">Example 2</a>.</p>
+<p>You can use the admin REST API to see the channels that documents are assigned to.</p>
+</div>
+<div class="paragraph">
+<p>Issue a <a href="rest-api-admin.html#/database/GetAllDocs" class="page">_all_docs</a> request as follows:<br></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-http hljs" data-lang="http">http://localhost:4984/travel-sample/_all_docs?channels=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The output response will be similar to that shown in <a href="#ex-inspect-doc-response">Example 2</a>.</p>
 </div>
 <div id="ex-inspect-doc-response" class="exampleblock">
 <div class="title">Example 2. Output from Inspect Document</div>
@@ -993,7 +1002,7 @@ __db___all_docs" class="page">/\{db}/_all_docs</a> request, and add the query pa
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The output shows that the document is in two channels: <code>short</code> and <code>word</code>.</td>
+<td>The output shows that the document is distributed to two channels: <code>short</code> and <code>word</code>.</td>
 </tr>
 </table>
 </div>
@@ -1010,7 +1019,7 @@ You can provide this function in the configuration file (<a href="configuration-
 The Sync Function is a JavaScript function that takes a document body as input and, based on the document content, decides what channels to assign the document to (see the <a href="sync-function.html#function-definition" class="page">Function Definition</a>).</p>
 </div>
 <div class="paragraph">
-<p>Based on the contents of the document, the Sync Function can call <a href="sync-function.html#channelchannelname" class="page">`channel(channel)`</a> to add the document to one or more channels&#8201;&#8212;&#8201;see <a href="#ex-use-channel">Example 3</a>
+<p>Based on the contents of the document, the Sync Function can call <a href="sync-function.html#channelchannelname" class="page">channel(channel)</a> to add the document to one or more channels&#8201;&#8212;&#8201;see <a href="#ex-use-channel">Example 3</a>
 This makes it accessible to users who have access to those channels, and will cause the document to be pulled by users that are subscribed to those channels.</p>
 </div>
 <div id="ex-use-channel" class="exampleblock">
