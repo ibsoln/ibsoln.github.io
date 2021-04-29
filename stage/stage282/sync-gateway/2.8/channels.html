@@ -8,7 +8,7 @@
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
 <meta name="description" content="About Sync Gateway &lt;em&gt;Channels&lt;/em&gt; and their part in data routing for secure cloud-to-edge enterprise data synchronization.">
-<meta name="keywords" content="access control, document routing, sync,">
+<meta name="keywords" content="access control, document routing, sync">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="2.8">
@@ -734,7 +734,7 @@ Sync Gateway&#8217;s <em>Channels</em> are a key part of a flexible approach to 
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Related <em>concept</em> topics: <a href="revisions.html" class="page">Revisions</a>  |  <a href="roles.html" class="page">Roles</a> |  <a href="what-are-tombstones.html" class="page">Tombstones</a>  |  <a href="users.html" class="page">Users</a></p>
+<p><em>Related concepts topics</em>:  <a href="users.html" class="page">Users</a>  |  <a href="roles.html" class="page">Roles</a>  |  Channels  |  <a href="revisions.html" class="page">Revisions</a>  |  <a href="what-are-tombstones.html" class="page">Tombstones</a></p>
 </div>
 </div>
 </div>
@@ -748,23 +748,23 @@ They serve as a security conduit between the document and a user:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>Every document in the database is assigned a list of channels it belongs to.</p>
+<p>Every user is granted access to a list of channels.</p>
 </li>
 <li>
-<p>Every user is assigned a list of channels they are allowed to access.</p>
+<p>Every document in the database is assigned a list of channels it is distributed to.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>This dual-purpose is reflected in the way you define channels:</p>
+<p>This dual-purpose is reflected in the way you use channels:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>By assigning a channel to a user you are imposing access control</p>
+<p>By granting a user access to a channel, you are imposing access control</p>
 </li>
 <li>
-<p>By assigning a channel to a document you are imposing document routing</p>
+<p>By assigning a document to a channel you are imposing document routing</p>
 </li>
 </ul>
 </div>
@@ -795,42 +795,46 @@ They serve as a security conduit between the document and a user:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="channel-wildcards"><a class="anchor" href="#channel-wildcards"></a>Channel Wildcards</h2>
+<h2 id="channels-and-wildcards"><a class="anchor" href="#channels-and-wildcards"></a>Channels and Wildcards</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Sync Gateway provides two special channels, which are referred to using one of the <strong>channel wildcards</strong>.
-These wildcards confer distinctly different access rights:</p>
+<p>Sync Gateway provides two special channels and a channel wildcard character:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="#lbl-public-channel">The Public Channel</a> wildcard ("!")&#8201;&#8212;&#8201;essentially marks the document as publicly available; this provides for the public dissemination of documents.<br>
-All users have access to all documents belonging to the Public Channel.
-This access extends to users assigned no specific channel access.</p>
+<p><a href="#lbl-public-channel">The Public Channel</a> ('<strong>!</strong>')&#8201;&#8212;&#8201;is a channel for publicly available documents.
+It provides for the public dissemination of documents.</p>
 </li>
 <li>
-<p><a href="#lbl-all-docs">The All-Documents Channel</a> wildcard ("*")&#8201;&#8212;&#8201;is essentially an Access All Areas pass.<br>
-When assigned to a user it grants them access to a channel comprising all documents (including those from private channels).
-Because of the wide-ranging access and the potential for syncing large volumes of data (sync pulls all documents in the bucket, regardless of channel), you are advised to only use this wildcard in conjunction with a filter.</p>
+<p>All Documents Channel ('<strong>*</strong>')&#8201;&#8212;&#8201;is a channel comprising all documents from all channels.
+All documents are implicitly assigned this channel.</p>
+</li>
+<li>
+<p><a href="#lbl-all-channels">The All Channels Wildcard</a> ('<strong>*</strong>')&#8201;&#8212;&#8201;this wildcard can be used in the <a href="sync-function.html#accessusername-channelname" class="page">access(username, channel)</a> method to grant a user access to any document in any channel.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>This Sync Function&#8201;&#8212;&#8201;see: <a href="#ex-using-wildcard-channels">Example 1</a>&#8201;&#8212;&#8201;shows how you might uses these wildcards</p>
+<p>You can assign a document to the <em>public</em> (<strong>!</strong>) channel using the <a href="sync-function.html#channelchannelname" class="page">channel(channel)</a> function, but you cannot explicitly assign a document to the <em>all documents</em> (<strong>*</strong>) channel.
+Granting user access by using the '<em>All Channels</em>' wildcard gives the user an Access All Areas pass .</p>
+</div>
+<div class="paragraph">
+<p>This Sync Function&#8201;&#8212;&#8201;see: <a href="#ex-using-wildcard-channels">Example 1</a>&#8201;&#8212;&#8201;shows how you might use these channels and wildcards.</p>
 </div>
 <div id="ex-using-wildcard-channels" class="exampleblock">
-<div class="title">Example 1. Using wildcard channels</div>
+<div class="title">Example 1. Using channels and wildcards</div>
 <div class="content">
 <div class="paragraph">
-<p>This example uses the <em>public channel</em> and <em>all-documents channel</em> wildcards for:</p>
+<p>This example uses the <em>public channel</em> and <em>all channels wildcard</em>  for:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Document Routing&#8201;&#8212;&#8201;it routes public documents to the public channel</p>
+<p>Document Routing&#8201;&#8212;&#8201;it routes public documents to the <em>public</em> channel</p>
 </li>
 <li>
-<p>Access Control &#8201;&#8212;&#8201;it grants all-documents access to an admin user.</p>
+<p>Access Control &#8201;&#8212;&#8201;it grants users with an admin role access to <em>all documents in all channels</em>.</p>
 </li>
 </ul>
 </div>
@@ -845,19 +849,27 @@ function sync(doc, oldDoc) {
    	requireUser(oldDoc.username);
   }
 
+  ourChannel = "channel." + getUserName());
+
   /* Routing -- add channel routing rules here */
   // e.g. add public docs to the public channel.
   if (doc.isPublic) {
     channel('!');
   } else {
-    channel("channel." + getUserName()); <i class="conum" data-value="1"></i><b>(1)</b>
+    channel(ourChannel); <i class="conum" data-value="1"></i><b>(1)</b>
   }
 
   /* Access Control -- add user access rules here */
-  // If this is an admin user, give access to all-docs channel
+  // If this is an admin user, grant access to 'all documents'
   if (doc.type == 'user') {
     requireRole('admin');
     access(doc.username, '*'); <i class="conum" data-value="2"></i><b>(2)</b>
+  }
+
+   // If this is a ticket, require user have access to ourChannel
+  if (doc.type == 'ticket') {
+    requireAccess(ourChannel); <i class="conum" data-value="3"></i><b>(3)</b>
+    //  further processing as required
   }
 
   //  further processing as required
@@ -874,11 +886,16 @@ function sync(doc, oldDoc) {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>If the document is public, we assign it to the <em>public channel</em>, otherwise we assign it to the user&#8217;s channel</td>
+<td>If the document is public, we assign it to the <em>public channel</em>, using the public channel wildcard; otherwise we assign it to the user&#8217;s channel.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>For documents of type <code>user</code>, if the user has an admin role, we grant them access to the <em>all-documents channel</em></td>
+<td>For documents of type <code>user</code>, if the user has an admin role, we grant them access to <em>all</em> documents using the <em>all channels</em> wildcard.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>For documents of type <code>ticket</code>, we require the user to have <strong>explicit</strong> access to 'ourChannel'.
+Users with access granted only using the <em>all channels</em> wildcard will <strong>not</strong> satisfy this criteria.</td>
 </tr>
 </table>
 </div>
@@ -890,12 +907,14 @@ function sync(doc, oldDoc) {
 <h2 id="lbl-public-channel"><a class="anchor" href="#lbl-public-channel"></a>The Public Channel</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <strong>Public Channel</strong> , referred to by the wildcard symbol (<code>!</code>), is automatically created when Sync Gateway starts.</p>
+<p>The <strong>Public Channel</strong> is referred to by the symbol ('<strong>!</strong>').
+It is ideal for use in making information available across the user community.</p>
 </div>
 <div class="paragraph">
-<p>Documents added to this channel are visible to any user, even those assigned no channel access.<br>
-New users are automatically granted access to the channel.
-It is ideal for use in making information available across the user community.</p>
+<p>Documents assigned to this channel can be accessed by all users; even users assigned no specific channel access.</p>
+</div>
+<div class="paragraph">
+<p>New users are automatically granted access to the channel.</p>
 </div>
 <div class="paragraph">
 <p>For an example of how to use the public channel&#8201;&#8212;&#8201;see: <a href="#ex-using-wildcard-channels">Example 1</a></p>
@@ -903,22 +922,20 @@ It is ideal for use in making information available across the user community.</
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-all-docs"><a class="anchor" href="#lbl-all-docs"></a>The All-Documents Channel</h2>
+<h2 id="lbl-all-channels"><a class="anchor" href="#lbl-all-channels"></a>The All Channels Wildcard</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Assigning the <strong>All-Documents Channel</strong> wildcard, (<code>*</code>) to a user grants the user access to the <strong>All-Documents</strong> channel <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+<p>The <strong>All Channels</strong> wildcard is referred to by the symbol ('<strong>*</strong>').</p>
 </div>
 <div class="paragraph">
-<p>Note that this doesn&#8217;t mean that the user is granted access to all available channels.
-They are granted access to one channel, the <strong>all documents</strong> channel and all its documents.
-This distinction is important when using the <a href="sync-function.html#requireaccess-channels" class="page"><code>requireAccess()</code></a> method&#8201;&#8212;&#8201;see <a href="sync-function.html" class="page">Sync Function&#8201;&#8212;&#8201;requireAccess()</a>.</p>
+<p>Granting a user access to <strong>All Channels</strong> gives them access to any document in any channel (including those from private channels).
+It also causes sync to pull <strong>all</strong> documents.</p>
 </div>
 <div class="paragraph">
-<p>The <strong>all documents</strong> channel is automatically created and maintained by Sync Gateway.
-It is a single channel to which all documents are automatically assigned, no matter what other channels they may be assigned-to, even private channels.</p>
+<p>Because of this potential for syncing large volumes of data (sync pulls all documents in the bucket, regardless of its channel), you should only use the <em>all channels</em> wildcard in conjunction with a channel filter.</p>
 </div>
 <div class="paragraph">
-<p>Assigning a channel to a user will not only allow them access to documents in the channel, it will also cause sync to pull all documents in that channel.</p>
+<p><strong>Note:</strong> Users granted access using the <em>all channels</em> wildcard <strong>do not</strong> inherit <a href="sync-function.html#requireaccess-channels" class="page">requireAccess(&lt;channel&gt;)</a> rights to any specific channel (<em>&lt;channel&gt;</em> here)&#8201;&#8212;&#8201;see also: {sync-function&#8212;&#8203;bmk-requireAccess}.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -927,16 +944,16 @@ It is a single channel to which all documents are automatically assigned, no mat
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-When using the <em>all-documents</em> channel you will need to use a filter to avoid large numbers of documents being unnecessarily sync&#8217;d to mobile devices.
+Use the <em>all channels</em> wildcard in conjunction with a filter to avoid sync unnecessarily pulling large numbers of documents to mobile devices.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>You can assign channels using the sync function&#8201;&#8212;&#8201;see <a href="read-access.html#add-access" class="page">Add Access</a>.</p>
+<p>You can assign channels using the sync function&#8201;&#8212;&#8201;see: <a href="read-access.html#add-access" class="page">Add Access</a>.</p>
 </div>
 <div class="paragraph">
-<p>For an example of how to use the all-documents channel&#8201;&#8212;&#8201;see: <a href="#ex-using-wildcard-channels">Example 1</a></p>
+<p>For an example of how to use the <em>all channels</em> wildcard&#8201;&#8212;&#8201;see: <a href="#ex-using-wildcard-channels">Example 1</a></p>
 </div>
 </div>
 </div>
@@ -993,7 +1010,7 @@ You can provide this function in the configuration file (<a href="configuration-
 The Sync Function is a JavaScript function that takes a document body as input and, based on the document content, decides what channels to assign the document to (see the <a href="sync-function.html#function-definition" class="page">Function Definition</a>).</p>
 </div>
 <div class="paragraph">
-<p>Based on the contents of the document, the Sync Function can call <a href="sync-function.html#channelchannelname" class="page">channel()</a> to add the document to one or more channels&#8201;&#8212;&#8201;see <a href="#ex-use-channel">Example 3</a>
+<p>Based on the contents of the document, the Sync Function can call <a href="sync-function.html#channelchannelname" class="page">channel(channel)</a> to add the document to one or more channels&#8201;&#8212;&#8201;see <a href="#ex-use-channel">Example 3</a>
 This makes it accessible to users who have access to those channels, and will cause the document to be pulled by users that are subscribed to those channels.</p>
 </div>
 <div id="ex-use-channel" class="exampleblock">
@@ -1236,12 +1253,6 @@ Indeed, a copy of channel metadata is retained for each revision of a document.<
 </ul>
 </div>
 </div>
-</div>
-</div>
-<div id="footnotes">
-<hr>
-<div class="footnote" id="_footnotedef_1">
-<a href="#_footnoteref_1">1</a>. This channel is sometimes referred to as the star channel.
 </div>
 </div>
 </article>
