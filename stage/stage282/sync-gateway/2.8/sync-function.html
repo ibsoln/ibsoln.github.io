@@ -512,18 +512,6 @@
 <a class="nav-link" href="server-compatibility-collections.html">Collections</a>
 </span>
 </li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="server-compatibility-eventing.html">Eventing</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="server-compatibility-transactions.html">Transactions</a>
-</span>
-</li>
 </ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -746,7 +734,7 @@ The sync function is crucial to the security of an app. It is in charge of data 
 </blockquote>
 </div>
 <div class="paragraph">
-<p><em>Related access-control topics</em>:  <strong>Sync function</strong>  |  <a href="read-access.html" class="page">Read access</a>  |  <a href="#sync-gateway::{write-access-page}">Write access</a>  |  {topic-4&#8212;&#8203;xref}  |  {topic-5&#8212;&#8203;xref}</p>
+<p>Related <em>access control</em> topics: <a href="read-access.html" class="page">Read Access</a>  |  <a href="write-access.html" class="page">Write Access</a></p>
 </div>
 </div>
 </div>
@@ -848,7 +836,7 @@ If you&#8217;re running a single Couchbase Server node for development purposes 
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>The sync function&#8201;&#8212;&#8201;a javascript function enclosed in backticks, which is actioned every time a new document, document revision or deletion is made to a database&#8201;&#8212;&#8201;see the:
-<a href="configuration-properties.html#databases-this_db-sync" class="page">databases.$db.sync</a> property.</td>
+{configuration-properties-pfx}#databases-this_db-sync[databases.$db.sync] property.</td>
 </tr>
 </table>
 </div>
@@ -927,7 +915,7 @@ Your implementation of the sync function can omit the <code>oldDoc</code> parame
 </dl>
 </div>
 <div class="paragraph">
-<p>If you don&#8217;t supply a sync function, Sync Gateway uses the <a href="configuration-properties.html#databases-this_db-sync" class="page">default Sync Function</a>.</p>
+<p>If you don&#8217;t supply a sync function, Sync Gateway uses the {configuration-properties-pfx}#databases-this_db-sync[default Sync Function].</p>
 </div>
 </div>
 </div>
@@ -999,9 +987,6 @@ As a convenience, either argument may be <code>null</code> or <code>undefined</c
 <p>If a user name begins with the prefix <code>role:</code>, the rest of the name is interpreted as a role rather than a user.
 The call then grants access to the specified channels for all users with that role.</p>
 </div>
-<div class="paragraph">
-<p>You can use the <em>all channels</em> wildcard ('<strong>*</strong>') to grant the user access to all documents in all channels.</p>
-</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1060,26 +1045,9 @@ role ("ed", null);  // no-op</code></pre>
 </td>
 <td class="content">
 Roles, like users, have to be explicitly created by an administrator.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Unlike channels, which come into existence simply by being named, you can&#8217;t create new roles with a <code>role()</code> call.
-Like <em>users</em>, they must be defined in the configuration or by API.</p>
-</div>
-<div class="paragraph">
-<p>Nonexistent roles don&#8217;t cause an error, but have no effect on the user&#8217;s access privileges.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-You can create roles retrospectively.
-As soon as a role is created, any pre-existing references to it take effect.
+So unlike channels, which come into existence simply by being named, you can&#8217;t create new roles with a <code>role()</code> call.
+Nonexistent roles don&#8217;t cause an error, but have no effect on the user&#8217;s access privileges.
+You can create a role after the fact; as soon as a role is created, any pre-existing references to it take effect.
 </td>
 </tr>
 </table>
@@ -1155,23 +1123,7 @@ if (oldDoc) {
 <p>The function signals rejection by throwing an exception, so the rest of the sync function will not be run.</p>
 </div>
 <div class="paragraph">
-<p>You can specify multiple channel names, for example:<br>
-<code>requireAccess('any channel name', '*')'</code></p>
-</div>
-<div class="paragraph">
-<p>If a user was granted access using only the <a href="channels.html#lbl-all-channels" class="page">all channels wildcard</a>] (<code>*</code>), then <code>requireAccess('any channel name')'</code> will fail because the user wasn&#8217;t granted access to that channel (only to the <code>*</code> channel).</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-requireAccess() will only recognize grants made explicitly using a channel name (not by wildcard).
-</td>
-</tr>
-</table>
+<p>If a user was granted access to the <a href="channels.html#special-channels" class="page">star channel</a> (noted <code>*</code>), a call to <code>requireAccess('any channel name')'</code> will fail because the user wasn&#8217;t granted access to that channel (only to the <code>*</code> channel). To allow a user to perform a document update in this case, you can specify multiple channel names (<code>requireAccess('any channel name', '*')'</code>)</p>
 </div>
 </div>
 </div>
