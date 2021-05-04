@@ -1356,9 +1356,6 @@
 <span  id="otherContributor"> + </span>
 </div><div id="preamble">
 <div class="sectionbody">
-<div class="paragraph">
-<p>source-language is = C#</p>
-</div>
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
@@ -2173,7 +2170,8 @@ The end result will be an expression (with string content representing the date 
 <a href="#lbl-all-sel">Select All Properties</a>&#160;&#160;|&#160;&#160;
 <a href="#lbl-specific-sel">Select Specific Properties</a>&#160;&#160;|&#160;&#160;
 <a href="#lbl-id-sel">Select Document Id Only</a>&#160;&#160;|&#160;&#160;
-<a href="#lbl-count-sel">Select Count-only</a></p>
+<a href="#lbl-count-sel">Select Count-only</a>&#160;&#160;|&#160;&#160;
+<a href="#lbl-pagination">Handling Pagination</a></p>
 </dd>
 </dl>
 </div>
@@ -2235,7 +2233,7 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">  var query = QueryBuilder
         .Select(SelectResult.all())
-        .From(DataSource.Database(this_Db))); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+        .From(DataSource.Database(this_Db)); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2574,6 +2572,49 @@ foreach (var result in results) {
 </table>
 </div>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-pagination"><a class="anchor" href="#lbl-pagination"></a>Handling Pagination</h3>
+<div class="paragraph">
+<p>One way to handle pagination in high-volume queries is to retrieve the results in batches.
+Use the <code>limit</code> and <code>offset</code> feature, to return a defined number of results starting from a given offset&#8201;&#8212;&#8201;see: <a href="#ex-pagination">Example 25</a>.</p>
+</div>
+<div id="ex-pagination" class="exampleblock">
+<div class="title">Example 25. Query Pagination</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs">var thisOffset = 0;
+var thisLimit = 20;
+
+var listQuery = QueryBuilder
+                  .Select(SelectResult.All())
+                  .From(DataSource.Database(this_Db))
+                  .Limit(thisLimit, thisOffset); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Return <code>limit</code> results starting from result number <code>offset</code></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+For more on using the querybuilder API, see our blog: <a href="https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/" target="_blank" rel="noopener">Introducing the Query Interface in Couchbase Mobile</a>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
