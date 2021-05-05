@@ -114,7 +114,7 @@
 </div>
 <div class="nav-menu">
 <ul class="nav-list">
-<li class="nav-item " data-depth="0">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
@@ -493,7 +493,7 @@
 <a class="nav-link" href="upgrading.html">Upgrade</a>
 </span>
 </li>
-<li class="nav-item  is-inactive " data-depth="1">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
@@ -503,13 +503,25 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="server-compatibility-xdcr.html">XDCR</a>
+<a class="nav-link" href="server-compatibility-collections.html">Collections</a>
+</span>
+</li>
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-compatibility-eventing.html">Eventing</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="server-compatibility-collections.html">Collections</a>
+<a class="nav-link" href="server-compatibility-transactions.html">Transactions</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-compatibility-xdcr.html">XDCR</a>
 </span>
 </li>
 </ul>
@@ -709,7 +721,8 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb"><a href="server-compatibility-eventing.html">Eventing&#8201;&#8212;&#8201;Server Compatibility</a></li>
+<li class="crumb">Server Compatibility</li>
+<li class="crumb"><a href="server-compatibility-eventing.html">Eventing</a></li>
 </ul>
 </nav>
 </div>
@@ -736,10 +749,7 @@
 </blockquote>
 </div>
 <div class="paragraph">
-<p><em>Related compatibility topics</em>:  <a href="server-compatibility-xdcr.html" class="page">XDCR</a>  |  Eventing  |  <a href="server-compatibility-transactions.html" class="page">Transactions</a>  |  <a href="server-compatibility-collections.html" class="page">Collections</a></p>
-</div>
-<div class="paragraph">
-<p><em>Other related topics</em>: <a href="compatibility.html" class="page">Compatibility Matrix</a></p>
+<p>Related <em>compatibility</em> topics: <a href="server-compatibility-xdcr.html" class="page">Server Compatibility - XDCR</a>  |  <a href="server-compatibility-eventing.html" class="page">Server Compatibility - Eventing</a>  |   <a href="server-compatibility-transactions.html" class="page">Server Compatibility - Transactions</a>  |   <a href="server-compatibility-collections.html" class="page">Server Compatibility - Collections</a>  | <a href="compatibility.html" class="page">Compatibility Matrix</a></p>
 </div>
 <div class="admonitionblock important">
 <table>
@@ -759,13 +769,11 @@ This content relates only to <a href="https://www.couchbase.com/products/edition
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Couchbase Server provides the backing data store for Sync Gateway and it is compatible&#8201;&#8212;&#8201;see: <a href="compatibility.html" class="page">Compatibility Matrix</a>.
-However, there are considerations you needs to be aware of when using some Couchbase Server features with Sync Gateway.</p>
+<p>Couchbase Server provides the backing data store for Sync Gateway and there are some considerations you needs to be aware of when using its features alongside Couchbase mobile.</p>
 </div>
 <div class="paragraph">
-<p>One of those instances concerns the use of <a href="#server:eventing/eventing-overview.adoc" class="page unresolved">Couchbase Eventing Service</a>.
-This service provides a framework to operate on changes to data in real time.
-In this context, events are changes to data in the Couchbase Mobile cluster.</p>
+<p>For example, Couchbase Server&#8217;s <a href="../../server/7.0/eventing/eventing-overview.html" class="page">Couchbase Eventing Service</a> feature provides a framework to operate on changes to data in real time.
+Here we provide details on how <a href="../../server/7.0/eventing/eventing-overview.html" class="page">Couchbase Eventing Service</a> relates to data changes in the Couchbase Mobile ecosystem.</p>
 </div>
 </div>
 </div>
@@ -782,12 +790,16 @@ This is necessary because:</p>
 <div class="ulist">
 <ul>
 <li>
-<p>When <em>Sync Gateway</em> executes a single document update, it appears over DCP as multiple mutations for the same document update; some modifying the document body and others modifying its metadata (XATTRs).</p>
+<p>When a single document update is made directly by Sync Gateway, such as those replicated from Couchbase Lite, it generates a single server mutation that writes both the document body and the metadata.</p>
+<div class="paragraph">
+<p>But when an update originates outside of Couchbase mobile then multiple mutations are generated.
+That is because Sync Gateway must update both the document&#8217;s body and its _sync metadata (XATTRs).</p>
+</div>
 </li>
 <li>
 <p><em>Eventing</em> detects these mutations and invokes its <code>OnUpdate</code> <strong>for each</strong>; whether it is for the modified body of the document, XATTRs, or both.
 It is here that you need to code the function to apply the same update once only.
-One way to do this is to use the crc64 function call&#8201;&#8212;&#8201;see: {server-eventing-constructs-crc64&#8212;&#8203;xref} for more on how to do this.</p>
+One way to do this is to use the crc64 function call&#8201;&#8212;&#8201;see: <a href="../../server/7.0/eventing/eventing-language-constructs.html#crc64_call" class="page">Eventing&#8201;&#8212;&#8201;crc64()</a> for more on how to do this.</p>
 </li>
 </ul>
 </div>
