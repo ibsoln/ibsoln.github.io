@@ -221,7 +221,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="configuration-schema.html">Schema</a>
+<a class="nav-link" href="configuration-schema-bootstrap.html">Bootstrap Configuration</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="configuration-schema-database.html">Database Configuration</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -623,7 +629,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{release-notes&#8212;&#8203;xref}</span>
+<a class="nav-link" href="release-notes.html">Release Notes</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -812,13 +818,16 @@ The sync function is crucial to the security of an app. It is in charge of data 
 </blockquote>
 </div>
 <div class="paragraph">
-<p><em>Related access-control topics</em>:  <strong>Sync function</strong>  |  <a href="read-access.html" class="page">Read access</a>  |  <a href="#sync-gateway::{write-access-page}">Write access</a>  |  {topic-4&#8212;&#8203;xref}  |  {topic-5&#8212;&#8203;xref}</p>
+<p><em>Related access-control topics</em>:  <strong>Sync function</strong>  |  <a href="read-access.html" class="page">Read access</a>  |  <a href="write-access.html" class="page">Write access</a></p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="sync-function-basics"><a class="anchor" href="#sync-function-basics"></a>Sync Function Basics</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p><a href="#introduction">Introduction</a> | <a href="#operation">Operation</a> | <a href="#provision">Provision</a> | <a href="#arguments">Arguments</a></p>
+</div>
 <div class="sect2">
 <h3 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h3>
 <div class="paragraph">
@@ -878,7 +887,7 @@ For more complex applications it is still a primary touchpoint for managing data
 <h3 id="provision"><a class="anchor" href="#provision"></a>Provision</h3>
 <div class="paragraph">
 <p>Sync Gateway supports the use of Javascript functions to customize the sync process.
-These functions are referenced from within the <a href="configuration-schema.html" class="page">Configuration Schema</a> file and may be provided either as:</p>
+These functions are referenced from within the <a href="configuration-schema-bootstrap.html" class="page">Bootstrap Configuration</a> file and may be provided either as:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -976,11 +985,8 @@ Although the example uses the Sync Function, the same approach applies wherever 
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h3>
 <div class="paragraph">
 <p>The sync function arguments are:</p>
 </div>
@@ -1016,16 +1022,64 @@ Your implementation of the sync function can omit the <code>oldDoc</code> parame
 <div class="paragraph">
 <p>If you don&#8217;t supply a sync function, Sync Gateway uses the {legacy-configuration-properties-pfx}#databases-this_db-sync[default Sync Function].</p>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>meta</code></dt>
+<dd>
+<p>This object references the access grant xattr identifying the channel (or channels) we should route the current document to.
+You can see a simple example of its use in <a href="#ex-xattr-access-grant">Example 2</a>.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This is only available if the following configuration settings are in place: <a href="configuration-schema-database.html#databases-this_db-enable_shared_bucket_access" class="page">enable_shared_bucket_access</a> is <code>true</code> and <a href="configuration-schema-database.html#databases-this_db-user_xattr_key" class="page">user_xattr_key</a> is set to a valid xattr name.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+</dl>
+</div>
+<div id="ex-xattr-access-grant" class="exampleblock">
+<div class="title">Example 2. Access Grants using Xattr</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) {
+  // Additional processing as required
+
+  // Route the document
+    channel(meta.xattrs.myxattr.channels); <i class="conum" data-value="1"></i><b>(1)</b>
+
+  // Additional processing as required
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we reference 'myattr', the xattr defined in the database configuration as being the key for the access-grant xattr field.
+We use it to set the channel(s) we need to route this document to.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="an-example-sync-function"><a class="anchor" href="#an-example-sync-function"></a>An Example Sync Function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This section shows a simple Sync Function definitions which could be included in your <code>sync-gateway-config.json</code>&#8201;&#8212;&#8201;see <a href="#sync-example">Example 2</a></p>
+<p>This section shows a simple Sync Function definitions which could be included in your <code>sync-gateway-config.json</code>&#8201;&#8212;&#8201;see <a href="#sync-example">Example 3</a></p>
 </div>
 <div id="sync-example" class="exampleblock">
-<div class="title">Example 2. A Simple Sync Function</div>
+<div class="title">Example 3. A Simple Sync Function</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
