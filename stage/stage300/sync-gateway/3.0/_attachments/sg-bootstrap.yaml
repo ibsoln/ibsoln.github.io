@@ -12,33 +12,33 @@ properties:
       buckets:
         type: array
         description: |+
-          Some text describing this object
+          A list of buckets holding config data
         items:
           bucket_name:
             type: string
             description: |+
-              Name of the bucket storing configuration data
+              Name of a bucket storing configuration data
       config_update_frequency_secs:
         type: int
         default: 0
         description: |+
-          Some text describing this object
+          Sets the interval, in seconds, between configuration update checks
       server:
         type: string
         default: none
         description: |+
-          Some text describing this object
+          Sets the endpoint for the Couchbase Server holding (database) configuration details.
 
       username:
         type: string
         default: none
         description: |+
-          Some text describing this object
+          The username to be used when accessing the server.
       password:
         type: string
         default: none
         description: |+
-          Some text describing this object
+          The password to be used when accessing the server.
 
       certpath:
         type: string
@@ -59,7 +59,8 @@ properties:
   api:
     type: object
     description: |+
-      Some text describing this object
+      Holding object for API related settings.
+
     properties:
       admin_interface:
         type: string
@@ -124,15 +125,18 @@ properties:
           origin:
             type: array
             description: |+
-              List of allowed origins; use an asterisk (*) to allow access from everywhere. Note that the asterisk (*) cannot be used if you plan to authenticate users as well (by using the `withCredentials` flag on the client side). In this case, the explicit domain(s) must be specified in the `origin` and `login_origin` properties of the configuration file.
+              List of allowed origins; use a wildcard character (*) to allow access from everywhere.
+
+              Note that the wildcard (*) cannot be used if you plan to authenticate users as well (by using the `withCredentials` flag on the client side).
+              In this case, the explicit domain(s) must be specified in the `origin` and `login_origin` properties of the configuration file.
             items:
               origin:
                 type: string
-                description: an allowed origin array element
+                description: An allowed origin array element
       hide_product_version:
         type: boolean
         default: false
-        description: |2
+        description: |+
           Determines whether product versions are removed from Server headers and REST API responses.
           This setting does not apply to the Admin REST API.
 
@@ -175,7 +179,7 @@ properties:
       tls:
         type: object
         description: |+
-          Object description
+          Holding object for TLS settings
         properties:
           cert:
             type: string
@@ -199,7 +203,8 @@ properties:
 
   logging:
     type: object
-    description: The logging object.
+    description: |+
+      Holding object for all logging-related settings
     properties:
       log_file_path:
         type: string
@@ -412,60 +417,11 @@ properties:
 
       warn:
         description: |+
-          The level of logging as a key. Log levels accumulate as you read down the table (i.e log entries at WARN will also be included in the INFO and DEBUG logs).
+          The warning logging-level is triggered when Sync Gateway detects something is wrong but it can still service requests
 
-          | Level| Description| Minimum max_age| Log File Name|
-          | :---| :---| :---| :---|
-          | ERROR| Critical error messages.| 180 days| sg_error.log|
-          | WARN| Something is wrong but SG can still service requests| 90 days| sg_warn.log|
-          | INFO| Important diagnostics for support and customers| 3 days| sg_info.log|
-          | DEBUG| Lower level development analysis| 1 day| sg_debug.log|
+          - Minimum max_age is 90 days
+          - Log File Name is ```sg_wan.log```
 
-          Each log level takes a dictionary as value and various properties can set for each log level. For example:
-
-          ```javascript
-          "logging": {
-              "log_file_path": "/home/sync_gateway/logs", // Where to put log files
-              "console": {
-                  "log_level": "info",  // What level to output to console - [error|+warn|+info|+debug|+none]
-                  "log_keys": ["HTTP"], // What log keys to output to console (comma separated)
-                  "color_enabled": true
-              },
-              "error": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,    // Threshold in megabytes to rotate logs
-                      "max_age": 360,     // Maximum days to retain log files (Min: 180)
-                      "localtime": false // Use local computer's time on backup timestamps (false=UTC)
-                  }
-              },
-              "warn": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 180,     // (Minimum: 90)
-                      "localtime": false
-                  }
-              },
-              "info": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 6,     // (Minimum: 3)
-                      "localtime": false
-                  }
-              },
-              "debug": {
-                  "enabled": false,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 2,     // (Minimum: 1)
-                      "localtime": false
-                  }
-              }
-          }
-
-          ```
         type: object
         properties:
           enabled:
@@ -506,75 +462,20 @@ properties:
               Size of the collation buffer
 
       info:
-        description: |+
-          The level of logging as a key. Log levels accumulate as you read down the table (i.e log entries at WARN will also be included in the INFO and DEBUG logs).
-
-          | Level| Description| Minimum max_age| Log File Name|
-          | :---| :---| :---| :---|
-          | ERROR| Critical error messages.| 180 days| sg_error.log|
-          | WARN| Something is wrong but SG can still service requests| 90 days| sg_warn.log|
-          | INFO| Important diagnostics for support and customers| 3 days| sg_info.log|
-          | DEBUG| Lower level development analysis| 1 day| sg_debug.log|
-
-          Each log level takes a dictionary as value and various properties can set for each log level. For example:
-
-          ```javascript
-          "logging": {
-              "log_file_path": "/home/sync_gateway/logs", // Where to put log files
-              "console": {
-                  "log_level": "info",  // What level to output to console - [error|+warn|+info|+debug|+none]
-                  "log_keys": ["HTTP"], // What log keys to output to console (comma separated)
-                  "color_enabled": true
-              },
-              "error": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,    // Threshold in megabytes to rotate logs
-                      "max_age": 360,     // Maximum days to retain log files (Min: 180)
-                      "localtime": false // Use local computer's time on backup timestamps (false=UTC)
-                  }
-              },
-              "warn": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 180,     // (Minimum: 90)
-                      "localtime": false
-                  }
-              },
-              "info": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 6,     // (Minimum: 3)
-                      "localtime": false
-                  }
-              },
-              "debug": {
-                  "enabled": false,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 2,     // (Minimum: 1)
-                      "localtime": false
-                  }
-              }
-          }
-
-          ```
         type: object
+        description: |+
+          The information logging-level provides important diagnostics for support and customers
         properties:
           enabled:
+            type: boolean
+            default: true
             description: |+
               Whether to enable this log level.
-              The *error*, *warn* and *info* log levels are enabled by default.
-              The *debug* log level is disabled by default.
 
-              Note, however, that you are advised to keep this log level enabled to troubleshoot issues. Enabling this log level is a requirement to receive [Enterprise Support](https://www.couchbase.com/support-policy).
-            type: boolean
           rotation:
             type: object
             description: |+
-              The log file may be rotated by defining a "rotation" sub document. See details in the table below.
+              The log file may be rotated by defining a "rotation" sub document
             properties:
               max_size:
                 type: integer
@@ -601,71 +502,21 @@ properties:
               Size of the collation buffer
 
       debug:
-        description: |+
-          The level of logging as a key. Log levels accumulate as you read down the table (i.e log entries at WARN will also be included in the INFO and DEBUG logs).
-
-          | Level| Description| Minimum max_age| Log File Name|
-          | :---| :---| :---| :---|
-          | ERROR| Critical error messages.| 180 days| sg_error.log|
-          | WARN| Something is wrong but SG can still service requests| 90 days| sg_warn.log|
-          | INFO| Important diagnostics for support and customers| 3 days| sg_info.log|
-          | DEBUG| Lower level development analysis| 1 day| sg_debug.log|
-
-          Each log level takes a dictionary as value and various properties can set for each log level. For example:
-
-          ```javascript
-          "logging": {
-              "log_file_path": "/home/sync_gateway/logs", // Where to put log files
-              "console": {
-                  "log_level": "info",  // What level to output to console - [error|+warn|+info|+debug|+none]
-                  "log_keys": ["HTTP"], // What log keys to output to console (comma separated)
-                  "color_enabled": true
-              },
-              "error": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,    // Threshold in megabytes to rotate logs
-                      "max_age": 360,     // Maximum days to retain log files (Min: 180)
-                      "localtime": false // Use local computer's time on backup timestamps (false=UTC)
-                  }
-              },
-              "warn": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 180,     // (Minimum: 90)
-                      "localtime": false
-                  }
-              },
-              "info": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 6,     // (Minimum: 3)
-                      "localtime": false
-                  }
-              },
-              "debug": {
-                  "enabled": false,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 2,     // (Minimum: 1)
-                      "localtime": false
-                  }
-              }
-          }
-
-          ```
         type: object
+        description: |+
+          The debug logging-level provides lower level development analysis
+
+          - Minimum max_age is 1 day
+          _ Log File Name is ```sg_debug.log```
         properties:
           enabled:
-            description: |+
-              Whether to enable this log level.
-              The *error*, *warn* and *info* log levels are enabled by default.
-              The *debug* log level is disabled by default.
-
-              Note, however, that you are advised to keep this log level enabled to troubleshoot issues. Enabling this log level is a requirement to receive [Enterprise Support](https://www.couchbase.com/support-policy).
             type: boolean
+            default: false
+            description: |+
+              Sets this logging-level on or off.
+
+              Note, you are advised to keep this log level enabled when troubleshooting issues.
+              Enabling this log level is a requirement to receive [Enterprise Support](https://www.couchbase.com/support-policy).
           rotation:
             type: object
             description: |+
@@ -698,69 +549,14 @@ properties:
       trace:
         type: object
         description: |+
-          The level of logging as a key. Log levels accumulate as you read down the table (i.e log entries at WARN will also be included in the INFO and DEBUG logs).
-
-          | Level| Description| Minimum max_age| Log File Name|
-          | :---| :---| :---| :---|
-          | ERROR| Critical error messages.| 180 days| sg_error.log|
-          | WARN| Something is wrong but SG can still service requests| 90 days| sg_warn.log|
-          | INFO| Important diagnostics for support and customers| 3 days| sg_info.log|
-          | DEBUG| Lower level development analysis| 1 day| sg_debug.log|
-
-          Each log level takes a dictionary as value and various properties can set for each log level. For example:
-
-          ```javascript
-          "logging": {
-              "log_file_path": "/home/sync_gateway/logs", // Where to put log files
-              "console": {
-                  "log_level": "info",  // What level to output to console - [error|+warn|+info|+debug|+none]
-                  "log_keys": ["HTTP"], // What log keys to output to console (comma separated)
-                  "color_enabled": true
-              },
-              "error": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,    // Threshold in megabytes to rotate logs
-                      "max_age": 360,     // Maximum days to retain log files (Min: 180)
-                      "localtime": false // Use local computer's time on backup timestamps (false=UTC)
-                  }
-              },
-              "warn": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 180,     // (Minimum: 90)
-                      "localtime": false
-                  }
-              },
-              "info": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 6,     // (Minimum: 3)
-                      "localtime": false
-                  }
-              },
-              "debug": {
-                  "enabled": false,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 2,     // (Minimum: 1)
-                      "localtime": false
-                  }
-              }
-          }
-
-          ```
+          The trace logging-level.
         properties:
           enabled:
             type: boolean
+            default:
             description: |+
               Whether to enable this log level.
-              The *error*, *warn* and *info* log levels are enabled by default.
-              The *debug* log level is disabled by default.
 
-              Note, however, that you are advised to keep this log level enabled to troubleshoot issues. Enabling this log level is a requirement to receive [Enterprise Support](https://www.couchbase.com/support-policy).
           rotation:
             type: object
             description: |+
@@ -791,71 +587,15 @@ properties:
               Size of the collation buffer
 
       stats:
-        description: |+
-          The level of logging as a key. Log levels accumulate as you read down the table (i.e log entries at WARN will also be included in the INFO and DEBUG logs).
-
-          | Level| Description| Minimum max_age| Log File Name|
-          | :---| :---| :---| :---|
-          | ERROR| Critical error messages.| 180 days| sg_error.log|
-          | WARN| Something is wrong but SG can still service requests| 90 days| sg_warn.log|
-          | INFO| Important diagnostics for support and customers| 3 days| sg_info.log|
-          | DEBUG| Lower level development analysis| 1 day| sg_debug.log|
-
-          Each log level takes a dictionary as value and various properties can set for each log level. For example:
-
-          ```javascript
-          "logging": {
-              "log_file_path": "/home/sync_gateway/logs", // Where to put log files
-              "console": {
-                  "log_level": "info",  // What level to output to console - [error|+warn|+info|+debug|+none]
-                  "log_keys": ["HTTP"], // What log keys to output to console (comma separated)
-                  "color_enabled": true
-              },
-              "error": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,    // Threshold in megabytes to rotate logs
-                      "max_age": 360,     // Maximum days to retain log files (Min: 180)
-                      "localtime": false // Use local computer's time on backup timestamps (false=UTC)
-                  }
-              },
-              "warn": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 180,     // (Minimum: 90)
-                      "localtime": false
-                  }
-              },
-              "info": {
-                  "enabled": true,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 6,     // (Minimum: 3)
-                      "localtime": false
-                  }
-              },
-              "debug": {
-                  "enabled": false,
-                  "rotation": {
-                      "max_size": 100,
-                      "max_age": 2,     // (Minimum: 1)
-                      "localtime": false
-                  }
-              }
-          }
-
-          ```
         type: object
+        description: |+
+          The stats logging level
         properties:
           enabled:
+            type: boolean
+            default:
             description: |+
               Whether to enable this log level.
-              The *error*, *warn* and *info* log levels are enabled by default.
-              The *debug* log level is disabled by default.
-
-              Note, however, that you are advised to keep this log level enabled to troubleshoot issues. Enabling this log level is a requirement to receive [Enterprise Support](https://www.couchbase.com/support-policy).
-            type: boolean
           rotation:
             type: object
             description: |+
