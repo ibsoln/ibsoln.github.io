@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Integrating External Stores | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/stage282/sync-gateway/3.0/integrating-external-stores.html">
+<link rel="stylesheet" href="../../_/css/site.css">
+<script src="../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Introducing Sync Gateway integration with external data stores">
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+<meta name="dcterms.subject" content="sync-gateway">
+<meta name="dcterms.identifier" content="3.0">
+<meta name="generator" content="Antora 2.3.3">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+              <ul class="navbar-brand-list">
+                <li class="brand-logo">
+                  <a class="navbar-brand" href="https://www.couchbase.com">
+                    <img src="../../_/img/couchbase-logo.svg" alt="Couchbase" />
+                  </a>
+                </li>
+                <li>
+                  <a class="navbar-brand cb-documentation" href="https://docs.couchbase.com">
+                    <img src="../../_/img/cb-documentation.svg" alt="Couchbase Documentation" class="cb-docs" />
+                    <img src="../../_/img/cb-docs-hover.svg" alt="Couchbase Documentation" class="hide cb-hover-docs" />
+                  </a>
+                </li>
+              </ul>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a href="https://ibsoln.github.io/stage/stage282/home/index.html" class="nav-link">
+                      <i class="fas fa-home"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/mobile.html">
+                      Mobile
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/sdk.html">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../tutorials/index.html">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <form class="navbar-item search">
+                  <input type="text" placeholder="Search Docs" class="query" id="search-query" />
+                  <button type="button" class="search-btn">
+                    <i class="fas fa-search"></i>
+                  </button>
+                </form>
+                <a class="btn btn-primary try-btn" href="https://www.couchbase.com/downloads">
+                  Downloads
+                </a>
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container">
+<nav class="nav">
+<div class="left-sidebar-menu">
+<div class="version-control-box">
+<div class="component-frame">
+<div class="frame-icon">
+<img src="../../_/img/server-icon.png" alt="">
+</div>
+<div class="frame-body">
+<h4 class="title"><span class="">Sync Gateway</span></h4>
+<a class="frame-link component" href="index.html"> <span class="version">3.0</span></a>
+</div>
+</div>
+</div>
+<div class="nav-menu">
+<ul class="nav-list">
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<a class="nav-link" href="index.html">Sync Gateway</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="whatsnew.html">What&#8217;s New</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Start Here!</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="introduction.html">Introduction</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="get-started-prepare.html">Prepare</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="get-started-install.html">Install</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="get-started-verify-install.html">Verify</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="data-modeling.html">Data Modeling</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Concepts</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="users.html">Users</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="roles.html">Roles</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="channels.html">Channels</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="what-are-tombstones.html">Tombstones</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="revisions.html">Revisions</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Configuration</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="configuration-overview.html">Overview</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="configuration-schema-bootstrap.html">Bootstrap Configuration</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="configuration-schema-database.html">Database Configuration</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="configuration-javascript-functions.html">Javascript Functions</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="configuration-environment-variables.html">Environment Variables</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="configuration-rest-api.html">REST API</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">REST API</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="rest-api-access.html">REST API Access</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="rest-api.html">Public REST API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<a class="nav-link" href="rest-api-admin.html">Admin REST API</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="rest-api-admin-access-control.html">Access Controls</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="rest-api-admin-database.html">Database</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="rest-api-admin-sync.html">Inter-Sync-Gateway Replication</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="rest-api-metrics.html">Metrics REST API</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="rest-api-client-app.html">Use the REST API?</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Security</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="authentication-users.html">User Authentication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="authentication-certs.html">TLS Certificate Authentication</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Access Control</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-function.html">Sync Function</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="read-access.html">Read Access</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="write-access.html">Write Access</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Sync</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="sync-with-couchbase-server.html">Sync with Couchbase Server</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="sync-using-app.html">Sync Using App</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Inter-Sync Gateway Replication</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-inter-syncgateway-overview.html">Overview</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-inter-syncgateway-run.html">Initialize</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-inter-syncgateway-manage.html">Manage</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-inter-syncgateway-monitor.html">Monitor</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<span class="nav-text ">{sgw-xref}sync-inter-syncgateway-conflict-resolution.adoc[Conflict Resolution]</span>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="managing-tombstones.html">Managing Tombstones</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="delta-sync.html">Delta Sync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="resync.html">Resync</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="import-filter.html">Import filter</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Manage</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="stats-monitoring.html">Stats Monitoring</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<span class="in-toggle" data-depth="2"></span>
+<span class="nav-text ">Logging and Troubleshooting</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="logging.html">Logging</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sgcollect-info.html">SGCollect Info</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="database-offline.html">Database Offline</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Deploy</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="deployment.html">Overview</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="command-line-options.html">Command Line Options</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="load-balancer.html">Load Balancer</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#3.0@sync-gateway:os-level-tuning.adoc">OS-level Tuning</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#3.0@sync-gateway:webhooks.adoc">Webhooks</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-integration.html">Changes Feed</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#3.0@sync-gateway:integrating-external-stores.adoc">External Stores</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#3.0@sync-gateway:stats-prometheus.adoc">Prometheus Feed</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="indexing.html">Indexing versus Views</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="setting-up-dr-cluster.html">Disaster Recovery</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="upgrading.html">Upgrade</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Use Kubernetes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="deploy-cluster-to-kubernetes.html">Deploy</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Server Compatibility</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-compatibility-collections.html">Collections</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-compatibility-eventing.html">Eventing</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-compatibility-transactions.html">Transactions</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="server-compatibility-xdcr.html">XDCR</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Product Notes</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="release-notes.html">Release Notes</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="supported-environments.html">Supported Environments</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="compatibility.html">Compatibility Matrix</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<span class="in-toggle" data-depth="1"></span>
+<span class="nav-text ">Legacy Features</span>
+</span>
+<ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="legacy-configuration-properties.html">Configuration Properties (depr)</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="legacy-sgreplicate-resolving-conflicts.html">SG-Replicate - Resolving Conflicts (depr)</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="legacy-sg-replicate.html">SG-Replicate</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="legacy-logging-pre2-1.html">Legacy Logging Pre2 1</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="glossary.html">Glossary</a>
+</span>
+</li>
+</ul>
+</li>
+<li class="nav-item " data-depth="0">
+
+<span class="nav-line "  data-depth="0">
+<span class="in-toggle" data-depth="0"></span>
+<a class="nav-link" href="../../couchbase-lite/3.0/index.html">Couchbase Lite</a>
+</span>
+<ul class="nav-list">
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/3.0/android/quickstart.html">Android (Java)</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/3.0/csharp/quickstart.html">C#</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/3.0/java/quickstart.html">Java</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/3.0/objc/quickstart.html">Objective-C</a>
+</span>
+</li>
+<li class="nav-item  is-inactive " data-depth="1">
+
+<span class="nav-line "  data-depth="1">
+<a class="nav-link" href="../../couchbase-lite/3.0/swift/quickstart.html">Swift</a>
+</span>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<a href="#" class="menu-expand-toggle"> <span>Navigation</span> <i class="fas fa-times-circle"></i> <i class="fas fa-chevron-circle-left"></i></a>
+</div></nav>
+<aside class="toc sidebar">
+  <div class="sidebar-box">
+    <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/integrating-external-stores.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+</ul>
+</div>
+    <div class="toc-menu"></div>
+    <div class="is-this-helpful-box">
+      <h4> Is this page helpful?</h4>
+      <div class="btn-row">
+        <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                <i class="far fa-thumbs-up"></i>
+            Yes
+
+            </a>
+        <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+      </div>
+      <div class="any-feedback">
+        <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+      </div>
+      <div class="dialog-box" id="dialogBox">
+        <form>
+            <div class="form-group " id="additionalFeedbackBox">
+              <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+              <div class="action-btn-row ">
+                <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                  <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                  <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+              </div>
+
+
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="index.html">Sync Gateway</a></li>
+<li class="crumb"><a href="integrating-external-stores.html">Integrating External Stores</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">Integrating External Stores</h1>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Introducing Sync Gateway integration with external data stores<br></p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Related <em>integration</em> topics: <a href="server-integration.html" class="page">Changes Feed</a>  |  <a href="webhooks.html" class="page">Event Handling</a>  |  <a href="stats-prometheus.html" class="page">Prometheus Integration</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this guide, you will learn how to run the following operations using the Admin REST API:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Bulk importing of documents.</p>
+</li>
+<li>
+<p>Exporting via the changes feed.</p>
+</li>
+<li>
+<p>Importing attachments.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="external-store"><a class="anchor" href="#external-store"></a>External Store</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this guide, you will use a simple movies API as the external data store. <a href="https://cl.ly/140P313l0p23/external-store.zip">Download the stub data and API server</a> and unzip the content into a new directory.
+To start the server of the external store run the following commands:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd external-store
+npm install
+node server.js</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can open a browser window at <code>http://localhost:8000/movies</code> to view the JSON data.</p>
+</div>
+<div class="paragraph">
+<p>The external store supports two endpoints:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">GET <code>/movies</code></dt>
+<dd>
+<p>Retrieves all movies (from <strong>movies.json</strong>).</p>
+</dd>
+<dt class="hdlist1">POST <code>/movies</code></dt>
+<dd>
+<p>Takes one movie as the request body and updates the item with the same <code>_id</code> in <strong>movies.json</strong>.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="importing-documents"><a class="anchor" href="#importing-documents"></a>Importing Documents</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Sync Gateway Swagger JS library is a handy tool to send HTTP requests without having to write your own HTTP API wrapper.
+It relies on the Couchbase Mobile Swagger specs.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+We do not guarantee that the swagger spec will be aligned with the latest version of the REST API.
+The REST API must be considered as the source of truth and in case of any deviations, the REST API will override the swagger spec.
+So please consider the spec as a starting point and make any relevant changes as needed to ensure that it is in conformance with the REST API.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>In this case, you will use the <a href="rest-api-admin.html" class="page">Admin REST API</a>.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Get Dependencies</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>In the same directory, install the following dependencies.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">npm install swagger-client &amp;&amp; request-promise</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Get Sync Gateway</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p><a href="https://www.couchbase.com/downloads#couchbase-mobile">Download Sync Gateway</a> and start it from the command line with a database called <code>movies_lister</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">~/Downloads/couchbase-sync-gateway/bin/sync_gateway -dbname movies_lister</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The Sync Gateway database is now available at <code>http://localhost:4985/movies_lister/</code>.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Create import function</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Create a new file called <code>import.js</code> with the following to retrieve the movies and insert them in the Sync Gateway database.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 1. Importing to Sync Gateway</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">var request = require('request-promise')
+  , Swagger = require('swagger-client');
+
+var api = 'http://localhost:8000/movies'
+  , db = 'movies_lister';
+
+var client = new Swagger({
+  url: 'https://docs.couchbase.com/sync-gateway/current/_attachments/rest-api-public.yaml',
+  usePromise: true
+}).then(function (client) {
+  var data = [];
+  request({uri: api, json: true}) <i class="conum" data-value="1"></i><b>(1)</b>
+    .then(function (movies) {
+      data = movies;
+      return client.database.post_db_bulk_docs({db: db, BulkDocsBody: {docs: movies}}); <i class="conum" data-value="2"></i><b>(2)</b>
+    })
+    .then(function (res) {
+      return res.obj;
+    })
+    .each(function (row) { <i class="conum" data-value="3"></i><b>(3)</b>
+      var movie = data.filter(function (movie) {
+        return movie._id == row.id ? true : false
+      })[0];
+      movie._rev = row.rev;
+      var options = {
+        method: 'POST',
+        uri: api,
+        body: movie,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        json: true
+      };
+      return request(options);
+    })
+    .then(function (res) {
+      console.log('Revs of ' + res.length + ' imported');
+    });
+});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here&#8217;s what the code above is doing:</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the <a href="https://github.com/request/request-promise">request-promise</a> library to retrieve the movies from the external store.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Save the movies to Sync Gateway.
+The <code>post_db_bulk_docs</code> method takes a db name (<code>movies_lister</code>) and the documents to save in the request body.
+Notice that the response from the external store is an array and must be wrapped in a JSON object of the form <code>{docs: movies}</code>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The response of the <code>/\{tkn-db}/_bulk_docs</code> request contains the generated revision numbers which are written back to the external store.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The Admin REST API Swagger spec is dynamically loaded.
+You can use the <code>.help()</code> method to query the available object and methods.
+This method is very helpful during development as it offers the documentation on the fly in the console.
+</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock">
+<div class="title">Example 2. Getting Help Information</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">client.help(); // prints all the tags to the console
+client.database.help(); // prints all the database methods to the console
+client.database.post_db_bulk_docs.help(); // prints all the parameters (querystring and request body)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Start the program</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>From the command line, use:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">node import.js</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Verify the import</p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>To verify that the movie documents have been imported, you can:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Monitor the Sync Gateway sequence number returned by the database endpoint (<a href="rest-api.html#/database/get__db__" class="page"><code>GET /\{tkn-db}/</code></a>).
+The sequence number increments for every change that happens on the Sync Gateway database.</p>
+</li>
+<li>
+<p>Query a document by ID on the Sync Gateway REST API (<a href="rest-api.html#/document/get__db___doc_" class="page"><code>GET /\{tkn-db}/\{id}</code></a>).</p>
+</li>
+<li>
+<p>Query a document from the Query Workbench on the Couchbase Server Console.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Notice that the <code>_rev</code> property is also stored on each record on the external store, <code>movies.json</code>.</p>
+</div>
+</div>
+</div>
+</li>
+<li>
+<p>Run the program again<br>
+You will see the same number of documents are visible in Sync Gateway.
+This time with a 2nd generation revision number.
+This update operation was successful because the parent revision number was sent as part of the request body.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exporting-documents"><a class="anchor" href="#exporting-documents"></a>Exporting Documents</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To export documents from Couchbase Mobile to the external system you will use a changes feed request to subscribe to changes and persist them to the external store.</p>
+</div>
+<div class="paragraph">
+<p>Install the following modules:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">npm install swagger-client &amp;&amp; request</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a new file called <code>export.js</code> with the following:</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 3. Exporting from Sync Gateway</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">var request = require('request')
+  , Swagger = require('swagger-client');
+
+var api = 'http://localhost:8000/movies'
+  , db = 'movies_lister';
+
+var client = new Swagger({
+  url: 'https://docs.couchbase.com/sync-gateway/current/_attachments/rest-api-admin.yaml',
+  success: function () {
+
+    client.database.get_db({db: db}, function (res) { <i class="conum" data-value="1"></i><b>(1)</b>
+
+      getChanges(res.obj.update_seq); <i class="conum" data-value="2"></i><b>(2)</b>
+    });
+
+    function getChanges(seq) {<i class="conum" data-value="3"></i><b>(3)</b>
+      var options = {db: db, feed: 'longpoll', since: seq, include_docs: true};
+      client.database.get_db_changes(options, function (res) {
+
+        var results = res.obj.results;
+        for (var i = 0; i &lt; results.length; i++) {
+          var row = results[i];
+          console.log("Document with ID " + row.id);
+
+          var options = { <i class="conum" data-value="4"></i><b>(4)</b>
+            url: api,
+            method: 'POST',
+            body: JSON.stringify(row.doc),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          };
+          request(options, function (error, response, body) {
+            if (!error &amp;&amp; response.statusCode == 200) {
+              var json = JSON.parse(body);
+              console.log(json);
+              console.log("Wrote update for doc " + json.id + " to external store.");
+            }
+          });
+        }
+
+        getChanges(res.obj.last_seq);
+      });
+    }
+
+  }
+});</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Here&#8217;s what the code above is doing:</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Gets the last sequence number of the database.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Calls the <code>getChanges</code> method with the last sequence number.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Sends changes request to Sync Gateway with the following parameters:
+<div class="ulist">
+<ul>
+<li>
+<p><code>feed=longpoll</code></p>
+</li>
+<li>
+<p><code>include_docs=true</code></p>
+</li>
+<li>
+<p><code>since=X</code> (where X is the sequence number)</p>
+</li>
+</ul>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Write the document to the external store.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Run the program from the command line:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">node export.js</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Update a document through the Sync Gateway REST API.
+Notice that the change is also updated in the external store.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/export-update.gif" alt="export update">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="importing-attachments"><a class="anchor" href="#importing-attachments"></a>Importing Attachments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Every movie in the stub API has a link to a thumbnail (in the <code>posters.thumbnail</code> property).
+Before sending the <code>_bulk_docs</code> request, you will fetch the thumbnail for each movie and embed it as a base64 string under the <code>_attachments</code> property.</p>
+</div>
+<div class="paragraph">
+<p>Install the following dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">npm install request-promise &amp;&amp; swagger-client</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a new file called <code>attachments.js</code> with the following to retrieve the movies, their thumbnails and insert them in the Sync Gateway database.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 4. Importing Attachments</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">var request = require('request-promise')
+  , Swagger = require('swagger-client');
+
+var api = 'http://localhost:8000/movies'
+  , db = 'movies_lister';
+
+var movies = [];
+
+var client = new Swagger({
+  url: 'https://docs.couchbase.com/sync-gateway/current/_attachments/rest-api-admin.yaml',
+  usePromise: true
+}).then(function (client) {
+  // Get movies from stub API
+  request({uri: api, json: true})
+    .then(function (res) {
+      movies = res;
+      // return array of links
+      return movies.map(function (movie) {
+        return movie.posters.thumbnail;
+      });
+    })
+    .map(function (link) {
+      // Fetch each thumbnail, the program continues once
+      // all 24 thumbnails are downloaded
+      return request({uri: link, encoding: null});
+    })
+    .then(function (thumbnails) {
+      // Save the attachment on each document
+      for (var i = 0; i &lt; movies.length; i++) {
+        var base64 = thumbnails[i].toString('base64');
+        movies[i]._attachments = {
+          image: {
+            content_type: 'image\/jpg',
+            data: base64
+          }
+        };
+      }
+      return movies;
+    })
+    .then(function (movies) {
+      // Save the documents and attachments in the same request
+      return client.database.post_db_bulk_docs({db: db, BulkDocsBody: {docs: movies}});
+    })
+    .then(function (res) {
+      console.log(res);
+    });
+});</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Restart Sync Gateway to have an empty database and run the program.
+The documents are saved with the attachment metadata.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/admin-ui-attachment.png" alt="admin ui attachment">
+</div>
+</div>
+<div class="paragraph">
+<p>You can view the thumbnail at <code>http://localhost:4984/movies_lister/\{tkn-db}/\{doc}/\{attachment}/</code> (note it&#8217;s on the public port 4984).</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/sg-attachment.png" alt="sg attachment">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">API Topics</div>
+<ul>
+<li>
+<p><a href="rest-api.html" class="page">Public REST API</a></p>
+</li>
+<li>
+<p><a href="rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p><a href="rest-api-metrics.html" class="page">Metrics REST API</a></p>
+</li>
+<li>
+<p><a href="rest-api-client-app.html" class="page">Use the REST API?</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference</div>
+<ul>
+<li>
+<p><a href="legacy-configuration-properties.html" class="page">Configuration Properties (depr)</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../_/img/couchbase_logo_black.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2021 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<script src="../../_/js/site.js"></script>
+<script async src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script async src="../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
