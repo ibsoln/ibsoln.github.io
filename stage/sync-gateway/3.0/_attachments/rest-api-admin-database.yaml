@@ -17,14 +17,14 @@ produces:
 - application/json
 paths:
   /{db}/:
+    parameters:
+    - $ref: '#/parameters/db'
     get:
-      parameters:
-      - $ref: '#/parameters/db'
       tags:
       - configure
       summary: Database info
       description: |
-        This request retrieves information about the database.
+        This request retrieves basic database information.
       responses:
         200:
           description: Request completed successfully.
@@ -34,50 +34,6 @@ paths:
           description: Unauthorized. Login required.
         404:
           description: Not Found. Requested database not found.
-    put:
-      tags:
-      - configure
-      parameters:
-        - $ref: '#/parameters/db'
-        - in: body
-          name: body
-          description: Database Configuration Settings
-          required: true
-          schema:
-            $ref: '#/definitions/Database-config'
-      summary: Create database
-      description: |+
-        This request creates a new database and-or updates settings for an existing database.
-
-        The database name is taken from the URL path.
-
-        You pass the required database configuration settings as a JSON objects in the request body.
-        For example:
-
-        ```
-        {
-            "server":"http://localhost:8091",<br>
-            "bucket": "todo_app",<br>
-            "users": {"john": {"password": "pass", "admin_channels": ["*"]}}
-        }
-        ```
-
-        If the parameters passed are invalid it will create a walrus-backed database with all values set to default.
-
-        By default the created database is brought online immediately, **unless** you include `"offline": true` in the configuration.
-      responses:
-        201:
-          description: The database was created successfully.
-    delete:
-      tags:
-      - configure
-      summary: Delete database
-      description: Delete database
-      responses:
-        200:
-          description: Success
-          schema:
-            $ref: '#/definitions/Success'
   /{db}/_compact:
     parameters:
     - $ref: '#/parameters/db'
@@ -113,29 +69,66 @@ paths:
     get:
       tags:
       - configure
-      summary: Database configuration
+      summary: Database info
       description: |
-        Returns the Sync Gateway configuration of the database specified in the URL. This is a good method to check if a particular key was set correctly on the config file.
+        This request retrieves information about the database.
       responses:
         200:
-          description: Sync Gateway configuration of the running instance.
+          description: Request completed successfully.
+          schema:
+            $ref: '#/definitions/Database-config'
+        401:
+          description: Unauthorized. Login required.
+        404:
+          description: Not Found. Requested database not found.
     put:
       tags:
       - configure
-      summary: Update database configuration
-      description: |
-        This request updates the configuration for the database specified in the URL.
-        NOTE -- Changes made via REST API are not persisted and won’t survive sync gateway restart.
-        Make the change in the configuration file if the change is required to persist beyond Sync Gateway restarts.
       parameters:
-      - in: body
-        name: body
-        description: The message body is a JSON document with the same set of properties described in the Database configuration section of the configuration file documentation.
-        schema:
-          type: object
+        - $ref: '#/parameters/db'
+        - in: body
+          name: body
+          description: Database Configuration Settings
+          required: true
+          schema:
+            $ref: '#/definitions/Database-config'
+      summary: Create database
+      description: |+
+        This request upserts a database configuration.
+        Use it to create new databases and-or to update the configuration of an existing database.
+
+        The database name is taken from the URL path.
+
+        You pass the required database configuration settings as a JSON object in the request body.
+        For example:
+
+        ```
+        {
+            "server":"http://localhost:8091",<br>
+            "bucket": "todo_app",<br>
+            "users": {"john": {"password": "pass", "admin_channels": ["*"]}}
+        }
+        ```
+
+        If the parameters passed are invalid it will create a walrus-backed database with all values set to default.
+
+        By default the created database is brought online immediately, **unless** you include `"offline": true` in the configuration.
+
+        NOTE -- Changes made via REST API are persisted by default.
+        This behavior can be changed by the command-line setting `disable_persistent_config=true`.
       responses:
         201:
-          description: Created
+          description: The database configuration was upserted successfully.
+    delete:
+      tags:
+      - configure
+      summary: Delete database
+      description: Delete database
+      responses:
+        200:
+          description: Success
+          schema:
+            $ref: '#/definitions/Success'
   /{db}/_offline:
     parameters:
     - $ref: '#/parameters/db'

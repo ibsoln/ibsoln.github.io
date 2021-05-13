@@ -857,18 +857,54 @@ This approach has the benefit of:</p>
 <h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You must identify the xattr designated for use in channel routing by defining it in the <a href="configuration-schema-bootstrap.html" class="page">Bootstrap Configuration</a>&#8201;&#8212;&#8201;see: <a href="#ex-config">Example 1</a></p>
+<p>Identify the extended attribute key to be used for channel routing by defining it in the {ref-api-admin-database&#8212;&#8203;xref}-- see: <a href="#ex-config">Example 1</a></p>
 </div>
 <div id="ex-config" class="exampleblock">
 <div class="title">Example 1. Define the Xattr</div>
 <div class="content">
+<div class="paragraph">
+<p>This example uses the Admin Rest API to specify the required xattr key <code>myxattr</code> on the database <code>mydatabase</code>.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_curl"></a>CURL</p>
+</li>
+<li>
+<p><a id="tabset1_http"></a>HTTP</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_curl">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"databases": {
-    "db": {
-  		“user_xattr_key”: “myXattr”
-	  }
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl -X PUT 'http://localhost:4985/mydatabase/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "user_xattr_key": "myxattr" <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_http">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-http hljs" data-lang="http">PUT /mydatabase/_config HTTP/1.1
+Host: http://localhost:4985
+Accept: application/json
+Content-Type: application/json
+Content-Length: 999
+
+{
+  “user_xattr_key”: “myXattr” <i class="conum" data-value="1"></i><b>(1)</b>
 }</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="colist arabic">
@@ -887,16 +923,19 @@ This approach has the benefit of:</p>
 <h2 id="setting"><a class="anchor" href="#setting"></a>Setting</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The value of the xattr designated for use in channel routing can only be set within the Couchbase Server SDK API.
+<p>With an extended attribute key defined, you can manipulate its value within the Couchbase Server SDK API.
 It cannot be set using the <em>Sync Gateway</em> REST API.</p>
 </div>
 <div class="paragraph">
-<p>For an example of setting xattrs using the SDK&#8201;&#8212;&#8201;see: <a href="#ex-cbs-metadata-setting">Example 2</a>.
+<p>For an example of setting the value of the extended attribute key using the SDK&#8201;&#8212;&#8201;see: <a href="#ex-cbs-metadata-setting">Example 2</a>.
 See <a href="#ex-cbs-metadata">Example 3</a> for an example of the metadata model.</p>
 </div>
 <div id="ex-cbs-metadata-setting" class="exampleblock">
 <div class="title">Example 2. Set Metadata using Couchbase Server SDK</div>
 <div class="content">
+<div class="paragraph">
+<p>In thi example we set the extended attribute key <code>channelsXattr</code> to the channel <code>required-channels</code></p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#">using System;
