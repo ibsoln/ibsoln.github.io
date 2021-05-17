@@ -69,9 +69,9 @@ paths:
     get:
       tags:
       - configure
-      summary: Database info
+      summary: Database configuration settings
       description: |
-        This request retrieves information about the database.
+        This request retrieves the database configuration
       responses:
         200:
           description: Request completed successfully.
@@ -92,10 +92,9 @@ paths:
           required: true
           schema:
             $ref: '#/definitions/Database-config'
-      summary: Create database
+      summary: Create or update a database configuration
       description: |+
-        This request upserts a database configuration.
-        Use it to create new databases and-or to update the configuration of an existing database.
+        Use this endpoint to create new databases and-or to update the configuration of an existing database.
 
         The database name is taken from the URL path.
 
@@ -104,13 +103,9 @@ paths:
 
         ```
         {
-            "server":"http://localhost:8091",<br>
-            "bucket": "todo_app",<br>
-            "users": {"john": {"password": "pass", "admin_channels": ["*"]}}
+           "users": {"john": {"password": "pass", "admin_channels": ["*"]}}
         }
         ```
-
-        If the parameters passed are invalid it will create a walrus-backed database with all values set to default.
 
         By default the created database is brought online immediately, **unless** you include `"offline": true` in the configuration.
 
@@ -118,12 +113,12 @@ paths:
         This behavior can be changed by the command-line setting `disable_persistent_config=true`.
       responses:
         201:
-          description: The database configuration was upserted successfully.
+          description: The database configuration was created/updated successfully.
     delete:
       tags:
       - configure
-      summary: Delete database
-      description: Delete database
+      summary: Delete a database configuration
+      description: Delete the specified database and its configuration details
       responses:
         200:
           description: Success
