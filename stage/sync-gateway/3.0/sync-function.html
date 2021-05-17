@@ -182,7 +182,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="configuration-schema-bootstrap.html">Bootstrap Configuration</a>
+<a class="nav-link" href="#sync-gateway::configuration-schema-bootstrap.adoc">Bootstrap Configuration</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -302,29 +302,14 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="access-grants.html">Grant Access</a>
+<a class="nav-link" href="#sync-gateway::xref:sync-gateway::access-grants.adoc">Access Grants</a>
 </span>
 </li>
 <li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="in-toggle" data-depth="2"></span>
 <a class="nav-link" href="sync-function.html">Sync Function</a>
 </span>
-<ul class="nav-list">
-<li class="nav-item " data-depth="3">
-
-<span class="nav-line "  data-depth="3">
-<a class="nav-link" href="read-access.html">Read Access</a>
-</span>
-</li>
-<li class="nav-item " data-depth="3">
-
-<span class="nav-line "  data-depth="3">
-<a class="nav-link" href="write-access.html">Write Access</a>
-</span>
-</li>
-</ul>
 </li>
 <li class="nav-item " data-depth="2">
 
@@ -347,7 +332,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="xattr-access-grants.html">Xattrs Access Grants</a>
+<a class="nav-link" href="user-extended-attribute-key.html">User Extended Attribute Key</a>
 </span>
 </li>
 </ul>
@@ -823,8 +808,8 @@ The sync function is crucial to the security of an app. It is in charge of data 
 </blockquote>
 </div>
 <div class="paragraph">
-<p><em>Related access-control topics</em>:  <a href="access-grants.html" class="page">Access Grants</a>  |  Sync Function  |  <a href="channels.html" class="page">Channels</a>  |  <a href="roles.html" class="page">Users</a>  |  <a href="users.html" class="page">Roles</a>  |
-<a href="xattr-access-grants.html" class="page">Extended Attributes Key</a></p>
+<p><em>Related access-control topics</em>:  <a href="access-grants.html" class="page">Access Grants</a>  |  Sync Function  |  <a href="channels.html" class="page">Channels</a>  |  <a href="roles.html" class="page">Roles</a>  |  <a href="users.html" class="page">Users</a>  |
+<a href="user-extended-attribute-key.html" class="page">Extended Attributes Key</a></p>
 </div>
 </div>
 </div>
@@ -893,7 +878,7 @@ For more complex applications it is still a primary touchpoint for managing data
 <h3 id="provision"><a class="anchor" href="#provision"></a>Provision</h3>
 <div class="paragraph">
 <p>Sync Gateway supports the use of Javascript functions to customize the sync process.
-These functions are referenced from within the <a href="configuration-schema-bootstrap.html" class="page">Bootstrap Configuration</a> file and may be provided either as:</p>
+These functions are referenced from within the <a href="rest-api-admin-database.html" class="page">Database Configuration</a> configuration and may be provided either as:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -901,21 +886,21 @@ These functions are referenced from within the <a href="configuration-schema-boo
 <p>An inline Javascript function</p>
 </li>
 <li>
-<p>An external Javascript file or HTTP/HTTPS endpoint
+<p>A reference to an external Javascript file or HTTP/HTTPS endpoint
 <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>You can learn more about this property ($db.sync) in the Configuration Schema Reference&#8201;&#8212;&#8201;see: <a href="legacy-configuration-properties.html#databases-this_db-sync" class="page">sync</a>.</p>
+<p>You can learn more about this property (<code>{db}.sync</code>) in the <a href="configuration-schema-database.html" class="page">Database Configuration</a>.</p>
 </div>
 <div class="paragraph">
-<p>Configuration of Javascript functions, whether inline or external, is done within the configuration file&#8201;&#8212;&#8201;see: <a href="#ex-jsfunc-opts">Example 1</a></p>
+<p>Configuration of Javascript functions, whether inline or external, is done within the database configuration&#8201;&#8212;&#8201;see: <a href="#ex-jsfunc-opts">Example 1</a></p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Inline Javascript functions provided within the Configuration file must be enclosed by a backtick pair (``).</p>
+<p>Inline Javascript functions provided within the database configuration must be enclosed by a backtick pair (``).</p>
 </li>
 <li>
 <p></p>
@@ -951,22 +936,31 @@ Although the example uses the Sync Function, the same approach applies wherever 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-   "databases": {
-      "db1": { <i class="conum" data-value="1"></i><b>(1)</b>
-         "bucket": "bucket1",
-         "server": "couchbase://localhost1",
-         "sync": "/opt/couchbase-sync-gateway/sync.js"
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl -X PUT 'http://localhost:4985/db1/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+         "sync": "/opt/couchbase-sync-gateway/sync.js" <i class="conum" data-value="1"></i><b>(1)</b>
       },
-      "db2": { <i class="conum" data-value="2"></i><b>(2)</b>
-         "bucket": "bucket2",
-         "server": "couchbase://localhost2",
-         "sync": "https://localhost/sync/func2"
-      },
-      "db3": { <i class="conum" data-value="3"></i><b>(3)</b>
-         "bucket": "bucket3",
-         "server": "couchbase://localhost3",
-         "sync": `function(doc,oldDoc){ if (doc.published) { channel("public");} }`
+    }
+}'
+
+
+  curl -X PUT 'http://localhost:4985/db2/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+         "sync": "https://localhost/sync/func2" <i class="conum" data-value="2"></i><b>(2)</b>
+      }
+   }
+}
+
+
+curl -X PUT 'http://localhost:4985/db3/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+         "sync": `function(doc,oldDoc, meta){ if (doc.published) { channel("public");} }`
       }
    }
 }</code></pre>
@@ -1032,7 +1026,7 @@ Your implementation of the sync function can omit the <code>oldDoc</code> parame
 <dl>
 <dt class="hdlist1"><code>meta</code></dt>
 <dd>
-<p>This object references the access grant xattr identifying the channel (or channels) we should route the current document to.
+<p>This object references the user extended attribute key designated as identifying access granta ad-or routing information.
 You can see a simple example of its use in <a href="#ex-xattr-access-grant">Example 2</a>.</p>
 <div class="admonitionblock note">
 <table>
@@ -1041,7 +1035,7 @@ You can see a simple example of its use in <a href="#ex-xattr-access-grant">Exam
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This is only available if the following configuration settings are in place: <a href="configuration-schema-database.html#databases-this_db-enable_shared_bucket_access" class="page">enable_shared_bucket_access</a> is <code>true</code> and <a href="configuration-schema-database.html#databases-this_db-user_xattr_key" class="page">user_xattr_key</a> is set to a valid xattr name.
+This is only available if the following configuration settings are in place: <a href="configuration-schema-database.html#databases-this_db-enable_shared_bucket_access" class="page">enable_shared_bucket_access</a> is <code>true</code> and <a href="configuration-schema-database.html#databases-this_db-user_xattr_key" class="page">user_xattr_key</a> is set to a valid, and existing, extended attribute.
 </td>
 </tr>
 </table>
@@ -1058,7 +1052,7 @@ This is only available if the following configuration settings are in place: <a 
   // Additional processing as required
 
   // Route the document
-    channel(meta.xattrs.myxattr.channels); <i class="conum" data-value="1"></i><b>(1)</b>
+    channel(meta.xattrs.channelsXattr.channels); <i class="conum" data-value="1"></i><b>(1)</b>
 
   // Additional processing as required
 }</code></pre>
@@ -1068,7 +1062,7 @@ This is only available if the following configuration settings are in place: <a 
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we reference 'myattr', the xattr defined in the database configuration as being the key for the access-grant xattr field.
+<td>Here we reference 'channelsXattr', the extended attribute defined in the database configuration as being the user extended attribute key.
 We use it to set the channel(s) we need to route this document to.</td>
 </tr>
 </table>
@@ -1165,7 +1159,7 @@ The channel function can be called zero or more times from the sync function, fo
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc) {
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) {
    if (doc.published) {
       channel("public");
    }
@@ -1533,7 +1527,7 @@ The requirements are:</p>
 <p>Every document must also have a <code>title</code> and a <code>channels</code> property.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc) {
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) {
   if (doc._deleted) {
     // Only editors with write access can delete documents:
     requireRole("role:editor");

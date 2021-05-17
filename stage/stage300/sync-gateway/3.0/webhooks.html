@@ -302,29 +302,14 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="access-grants.html">Grant Access</a>
+<a class="nav-link" href="#sync-gateway::xref:sync-gateway::access-grants.adoc">Access Grants</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="in-toggle" data-depth="2"></span>
 <a class="nav-link" href="sync-function.html">Sync Function</a>
 </span>
-<ul class="nav-list">
-<li class="nav-item " data-depth="3">
-
-<span class="nav-line "  data-depth="3">
-<a class="nav-link" href="read-access.html">Read Access</a>
-</span>
-</li>
-<li class="nav-item " data-depth="3">
-
-<span class="nav-line "  data-depth="3">
-<a class="nav-link" href="write-access.html">Write Access</a>
-</span>
-</li>
-</ul>
 </li>
 <li class="nav-item " data-depth="2">
 
@@ -347,7 +332,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="xattr-access-grants.html">Xattrs Access Grants</a>
+<a class="nav-link" href="user-extended-attribute-key.html">User Extended Attribute Key</a>
 </span>
 </li>
 </ul>
@@ -955,7 +940,7 @@ HTTP/HTTPS is used to POST the document changes selected by the filter to the de
 </div>
 <div class="paragraph">
 <p>Sync Gateway supports the use of Javascript functions to customize the sync process.
-These functions are referenced from within the <a href="configuration-schema-bootstrap.html" class="page">Bootstrap Configuration</a> file and may be provided either as:</p>
+These functions are referenced from within the <a href="rest-api-admin-database.html" class="page">Database Configuration</a> configuration and may be provided either as:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -963,7 +948,7 @@ These functions are referenced from within the <a href="configuration-schema-boo
 <p>An inline Javascript function</p>
 </li>
 <li>
-<p>An external Javascript file or HTTP/HTTPS endpoint
+<p>A reference to an external Javascript file or HTTP/HTTPS endpoint
 <sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnotedef_3" title="View footnote.">3</a>]</sup>.</p>
 </li>
 </ul>
@@ -972,12 +957,12 @@ These functions are referenced from within the <a href="configuration-schema-boo
 <p>Learn more about this property ($db.event_handlers) in the Configuration Schema Reference&#8201;&#8212;&#8201;see: <a href="legacy-configuration-properties.html#databases-this_db-event_handlers" class="page">this_db.event_handlers</a>.</p>
 </div>
 <div class="paragraph">
-<p>Configuration of Javascript functions, whether inline or external, is done within the configuration file&#8201;&#8212;&#8201;see: <a href="#ex-jsfunc-opts">Example 1</a></p>
+<p>Configuration of Javascript functions, whether inline or external, is done within the database configuration&#8201;&#8212;&#8201;see: <a href="#ex-jsfunc-opts">Example 1</a></p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Inline Javascript functions provided within the Configuration file must be enclosed by a backtick pair (``).</p>
+<p>Inline Javascript functions provided within the database configuration must be enclosed by a backtick pair (``).</p>
 </li>
 <li>
 <p></p>
@@ -1013,22 +998,31 @@ Although the example uses the Sync Function, the same approach applies wherever 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-   "databases": {
-      "db1": { <i class="conum" data-value="1"></i><b>(1)</b>
-         "bucket": "bucket1",
-         "server": "couchbase://localhost1",
-         "sync": "/opt/couchbase-sync-gateway/sync.js"
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl -X PUT 'http://localhost:4985/db1/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+         "sync": "/opt/couchbase-sync-gateway/sync.js" <i class="conum" data-value="1"></i><b>(1)</b>
       },
-      "db2": { <i class="conum" data-value="2"></i><b>(2)</b>
-         "bucket": "bucket2",
-         "server": "couchbase://localhost2",
-         "sync": "https://localhost/sync/func2"
-      },
-      "db3": { <i class="conum" data-value="3"></i><b>(3)</b>
-         "bucket": "bucket3",
-         "server": "couchbase://localhost3",
-         "sync": `function(doc,oldDoc){ if (doc.published) { channel("public");} }`
+    }
+}'
+
+
+  curl -X PUT 'http://localhost:4985/db2/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+         "sync": "https://localhost/sync/func2" <i class="conum" data-value="2"></i><b>(2)</b>
+      }
+   }
+}
+
+
+curl -X PUT 'http://localhost:4985/db3/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+         "sync": `function(doc,oldDoc, meta){ if (doc.published) { channel("public");} }`
       }
    }
 }</code></pre>
