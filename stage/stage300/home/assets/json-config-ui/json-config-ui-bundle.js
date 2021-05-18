@@ -4479,8 +4479,8 @@
                         switch (s) {
                             case "string":
                             case "integer":
+                            case "number":
                             case "boolean":
-                            case "number": /* added 18May2021- Ian Bridge */
                                 n.push({
                                     name: i,
                                     path: t ? t + "-" + i : i,
@@ -4577,8 +4577,8 @@
                                 break;
                             /* Begin addition -- 18May2021-IB */
                             case "number":
-                            t[r] = 0.00;
-                            break;
+                                t[r] = 0.00;
+                                break;
                             /* End addition -- 18May2021-IB */
                             case "boolean":
                                 t[r] = !1;
