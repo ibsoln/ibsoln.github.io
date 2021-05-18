@@ -114,7 +114,7 @@
 </div>
 <div class="nav-menu">
 <ul class="nav-list">
-<li class="nav-item " data-depth="0">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
@@ -182,7 +182,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="#sync-gateway::configuration-schema-bootstrap.adoc">Bootstrap Configuration</a>
+<a class="nav-link" href="configuration-schema-bootstrap.html">Bootstrap Configuration</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -292,17 +292,17 @@
 </li>
 </ul>
 </li>
-<li class="nav-item  is-inactive " data-depth="1">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
 <span class="nav-text ">Access Control</span>
 </span>
 <ul class="nav-list">
-<li class="nav-item " data-depth="2">
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="#sync-gateway::xref:sync-gateway::access-grants.adoc">Access Grants</a>
+<a class="nav-link" href="access-grants.html">Access Grants</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -784,6 +784,7 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
+<li class="crumb">Access Control</li>
 <li class="crumb"><a href="access-grants.html">Access Grants</a></li>
 </ul>
 </nav>
@@ -852,16 +853,13 @@ So, the next replication pull request, will retrieve all documents to which the 
 <p>Directly through the Admin REST API&#8201;&#8212;&#8201;see: <a href="#lbl-admin-rest-api">Admin REST API</a></p>
 </li>
 <li>
-<p>Statically, by inclusion in the configuration file&#8201;&#8212;&#8201;see: <a href="#lbl-configuration-file">Configuration File</a></p>
-</li>
-<li>
 <p>Dynamically, in the <a href="#lbl-sync-function">Sync Function</a> when a document is accessed:</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
 <p>The <a href="sync-function.html" class="page">Sync Function</a> is the preferred method for granting access to channels programmatically.
-Here the document&#8217;s channel can be derived from a document property or, more securely, from a designated extended attribute (xattr)&#8201;&#8212;&#8201;see: <a href="user-extended-attribute-key.html" class="page">User Extended Attribute Key</a> for how to define the extended attribute key.</p>
+Here the document access and routing requirements are derived from document properties or, more securely, from a designated extended attribute (xattr) object&#8201;&#8212;&#8201;see: <a href="user-extended-attribute-key.html" class="page">User Extended Attribute Key</a> for how to define the extended attribute key.</p>
 </div>
 <div class="paragraph">
 <p>Note that access grants do not confer, nor constrain, the type of access.
@@ -873,8 +871,10 @@ You can explicitly implement write access controls within your Sync Function; pe
 <h2 id="lbl-sync-function"><a class="anchor" href="#lbl-sync-function"></a>Sync Function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Calling <a href="sync-function.html#lbl-access" class="page">access(user, channel)</a> grants a user access to a channel.
-This allows documents to act as membership lists or access-control lists.</p>
+<p>Calling <a href="sync-function.html#lbl-access" class="page">access(user, channel)</a> grants a user access to a channel.</p>
+</div>
+<div class="paragraph">
+<p>So, for example, this would allow a document to act as a membership, or access-control, list.</p>
 </div>
 <div class="paragraph">
 <p>A typical example is a document that represents a shared resource (like a chat room or photo gallery)&#8201;&#8212;&#8201;see: <a href="#ex-helper">Example 1</a>.</p>
@@ -884,7 +884,7 @@ This allows documents to act as membership lists or access-control lists.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc) {
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, olddoc, meta) {
   if (doc.type == "chatroom") {  <i class="conum" data-value="1"></i><b>(1)</b>
     access(doc.members, <i class="conum" data-value="2"></i><b>(2)</b>
       doc.channel_id);  <i class="conum" data-value="3"></i><b>(3)</b>
@@ -920,14 +920,6 @@ There&#8217;s no ambiguity here, because ":" is an illegal character in a user o
 </div>
 <div class="paragraph">
 <p>Because anonymous requests are authenticated as the user "GUEST", you can make a channel and its documents public by calling <code>access</code> with a username of <code>GUEST</code>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-configuration-file"><a class="anchor" href="#lbl-configuration-file"></a>Configuration File</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>A user can be granted access to a channel through the <a href="legacy-configuration-properties.html#databases-this_db-users-this_user-admin_channels" class="page">admin_channels</a> property in the configuration file.</p>
 </div>
 </div>
 </div>
