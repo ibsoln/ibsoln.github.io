@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Supported Environments | Couchbase Docs</title>
-<link rel="canonical" href="https://ibsoln.github.io/stage/stage300/sync-gateway/3.0/supported-environments.html">
+<title>Extended Attribute Key Access Grants | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/stage300/sync-gateway/3.0/user-extended-attribute-key.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Couchbase Sync Gateway&#x27;s Supported Operating System and Cloud environments">
-<meta name="keywords" content="edge nosql api synchronization replication">
+<meta name="description" content="How to set access grants using extended attributes (xattrs).">
+<meta name="keywords" content="access control, sync, replicate, secure,">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="3.0">
@@ -99,7 +99,7 @@
     </div>
    </div>
 </header>
-<div class="body container Reference">
+<div class="body container">
 <nav class="nav">
 <div class="left-sidebar-menu">
 <div class="version-control-box">
@@ -314,7 +314,7 @@
 </li>
 </ul>
 </li>
-<li class="nav-item  is-inactive " data-depth="1">
+<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
@@ -351,7 +351,7 @@
 <a class="nav-link" href="channels.html">Channels</a>
 </span>
 </li>
-<li class="nav-item " data-depth="2">
+<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="user-extended-attribute-key.html">User Extended Attribute Key</a>
@@ -632,7 +632,7 @@
 </li>
 </ul>
 </li>
-<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
+<li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
@@ -645,7 +645,7 @@
 <a class="nav-link" href="release-notes.html">Release Notes</a>
 </span>
 </li>
-<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
+<li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="supported-environments.html">Supported Environments</a>
@@ -741,7 +741,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/supported-environments.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/user-extended-attribute-key.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -800,14 +800,14 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb">Product Notes</li>
-<li class="crumb"><a href="supported-environments.html">Supported Environments</a></li>
+<li class="crumb">Access Control</li>
+<li class="crumb"><a href="user-extended-attribute-key.html">User Extended Attribute Key</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Supported Environments</h1>
+<h1 class="page">Extended Attribute Key Access Grants</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -818,213 +818,367 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Couchbase Sync Gateway&#8217;s Supported Operating System and Cloud environments<br>
-Couchbase Sync Gateway is supported on several popular operating systems and virtual environments.</p>
+<p>How to set access grants using extended attributes (xattrs).<br>
+Here we introduce the concept of <em>xattrs</em> for access grants and their role in assuring secure access control within <em>Sync Gateway</em>.</p>
 </div>
 </blockquote>
 </div>
+<div class="paragraph">
+<p><em>Related access-control topics</em>:  <a href="access-grants.html" class="page">Access Grants</a>  |  <a href="sync-function.html" class="page">Sync Function</a>  |  <a href="channels.html" class="page">Channels</a>  |  <a href="roles.html" class="page">Roles</a>  |  <a href="users.html" class="page">Users</a>  |
+Extended Attributes Key</p>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="supported-versions"><a class="anchor" href="#supported-versions"></a>Supported Versions</h2>
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Make sure that your chosen operating system or cloud environment is listed in one of the following tables before you install Sync Gateway.
-See the <a href="#deprecated-versions">Deprecated Versions</a> section for information about platform support changes, including deprecated platforms.</p>
+<p>Access grants are one of the cornerstone concepts behind <em>Sync Gateway</em>'s access control feature.</p>
 </div>
-<div class="admonitionblock important">
+<div class="paragraph">
+<p>Using the <a href="sync-function.html" class="page">Sync Function</a>, you can grant users access to specific documents and channels based on the contents of the document being processed.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can instead nominate a specific <em>extended attribute</em> (xattr) to determine the access grants<sup class="footnote" id="_footnote_fn-3x0">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.
+This approach has the benefit of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Providing an added level of security, users can no longer identify the channels and users a document is available to from reading its contents</p>
+</li>
+<li>
+<p>Removing the necessity to create a new revision and push the full document to a client following changes to access-control information only</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Identify the user extended attribute key
+(see: <a href="configuration-schema-database.html#databases-this_db-user_xattr_key" class="page">user_xattr_key</a>) to be used for channel routing by defining it using the Admin Rest API&#8217;s <a href="rest-api-admin-database.html" class="page">Database Configuration API</a>&#8201;&#8212;&#8201;see: <a href="#ex-config">Example 1</a>.</p>
+</div>
+<div class="paragraph">
+<p>The actual value of this key can be anything that enables the Sync Function to make an appropriate access grant.
+Its data type can be string, array, object&#8201;&#8212;&#8201;any valid JSON that meets the required use case.</p>
+</div>
+<div id="ex-config" class="exampleblock">
+<div class="title">Example 1. Define the User Extended Attribute Key</div>
+<div class="content">
+<div class="paragraph">
+<p>This example uses the Admin Rest API to specify the required user extended attribute key <code>channelXattr</code> on the database <code>mydatabase</code>.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_curl"></a>CURL</p>
+</li>
+<li>
+<p><a id="tabset1_http"></a>HTTP</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_curl">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl -X PUT 'http://localhost:4985/mydatabase/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "user_xattr_key": "channelXattr" <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_http">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-http hljs" data-lang="http">PUT /mydatabase/_config HTTP/1.1
+Host: http://localhost:4985
+Accept: application/json
+Content-Type: application/json
+Content-Length: 999
+
+{
+  “user_xattr_key”: “channelXattr” <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-Sync Gateway clusters on mixed platforms are not supported.
-Nodes in a Sync Gateway cluster should all be running on the same OS, and every effort should be made to apply the same OS patches across the entire cluster.
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here <em>channelXattr</em> is the name of the  extended attribute designated to hold channel routing information.</td>
 </tr>
 </table>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Supported Operating Systems for Development, Testing, and Production</caption>
-<colgroup>
-<col style="width: 42.5531%;">
-<col style="width: 57.4469%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Operating System</th>
-<th class="tableblock halign-left valign-top">Supported Versions</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Red Hat Enterprise Linux (RHEL)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">7.x and 8.x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CentOS</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">7.x and 8.x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Ubuntu</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">16.04 LTS and 18.04</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Debian</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">8.x and 9.x</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Windows Server</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>2012 (64-bit) DEPRECATED at Sync Gateway 2.8+
-  2016 (64-bit)</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Supported Cloud Environments for Development, Testing, and Production</caption>
-<colgroup>
-<col style="width: 21.2765%;">
-<col style="width: 21.2765%;">
-<col style="width: 57.447%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Platform</th>
-<th class="tableblock halign-left valign-top">Operating System</th>
-<th class="tableblock halign-left valign-top">Supported Versions</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">AWS</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Amazon Linux AMI</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>2017.09<br>
-2018.03</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Azure</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Ubuntu</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">16.04</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Google Cloud</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Ubuntu</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">16.04</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Docker (Docker Hub)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">CentOS</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">7</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">OpenShift (RedHat Portal)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">RHEL</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">7.2</p></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. Supported Operating Systems for Development and Testing Only</caption>
-<colgroup>
-<col style="width: 42.5531%;">
-<col style="width: 57.4469%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Operating System</th>
-<th class="tableblock halign-left valign-top">Supported Versions</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">macOS</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>10.15(Catalina)<br>
-10.14 (Mojave)</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Windows Desktop</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2010</p></td>
-</tr>
-</tbody>
-</table>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="deprecated-versions"><a class="anchor" href="#deprecated-versions"></a>Deprecated Versions</h2>
+<h2 id="setting"><a class="anchor" href="#setting"></a>Setting</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Deprecated versions will be removed in a future release and we recommend that you plan to migrate away from the deprecated OS versions.</p>
+<p>With an extended attribute key defined, you can manipulate its value within the Couchbase Server SDK API.
+It cannot be set using the <em>Sync Gateway</em> REST API.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. Deprecated at 2.8</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
+<div class="paragraph">
+<p>For an example of setting the value of the extended attribute key using the SDK&#8201;&#8212;&#8201;see: <a href="#ex-cbs-metadata-setting">Example 2</a>.
+See <a href="#ex-cbs-metadata">Example 3</a> for an example of the metadata model.</p>
+</div>
+<div id="ex-cbs-metadata-setting" class="exampleblock">
+<div class="title">Example 2. Set Metadata using Couchbase Server SDK</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/code/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs">using System;
+using System.Threading.Tasks;
+using Couchbase;
+using Couchbase.KeyValue; <i class="conum" data-value="1"></i><b>(1)</b>
+
+
+namespace examples
+{
+
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            // Set scope - cluster, bucket and collection
+            var cluster =
+                    await Cluster.ConnectAsync(
+                                    "couchbase://localhost",
+                                    "Administrator",
+                                    "password");
+
+            var bucket = await cluster.BucketAsync("hotels");
+            var collection = bucket.DefaultCollection();
+
+            // Set required  user_xattr_key name and value
+            var our_user_xattr_key_name = "channelXattr"; <i class="conum" data-value="2"></i><b>(2)</b>
+            String[] channelXattrValue =
+                {"channel1","channel3", "useradmin" }; <i class="conum" data-value="3"></i><b>(3)</b>
+
+            var ourDocumentType = "hotel";
+            var documentKey = "";
+
+            // Find our documents and get their ids
+            var queryResult =
+               await cluster.QueryAsync&lt;dynamic&gt;(
+                   "select meta().id from `hotels`.`_default`.`_default` h where h.type = $1",
+                        new Couchbase.Query.QueryOptions().Parameter(ourDocumentType)); <i class="conum" data-value="4"></i><b>(4)</b>
+            await foreach (var row in queryResult)
+            {
+                documentKey = row.id;
+                Console.WriteLine("Working with document id: {0} ",
+                                    documentKey);
+
+                // Check if the document has an existing
+                // user_xattr_key and update or insert new value
+                var result =
+                    await collection.LookupInAsync(
+                            documentKey,
+                            specs =&gt; specs.Exists(
+                                path: our_user_xattr_key_name,
+                                isXattr: true)
+                            ); <i class="conum" data-value="5"></i><b>(5)</b>
+
+                if (result.Exists(0))
+                {
+                    // Update xattr for retrieved Id
+                    await collection.MutateInAsync(
+                            documentKey,
+                            specs =&gt; specs.Upsert(
+                                path: our_user_xattr_key_name, <i class="conum" data-value="6"></i><b>(6)</b>
+                                value: channelXattrValue, <i class="conum" data-value="7"></i><b>(7)</b>
+                                isXattr: true)); <i class="conum" data-value="8"></i><b>(8)</b>
+
+                    Console.Write("Updated Existing user_xattr_key: {0} to this value: {1}\n",
+                        our_user_xattr_key_name,
+                        string.Join(", ", channelXattrValue));
+
+                }
+                else
+                {
+                    // Insert xattr for retrieved id
+                    await collection.MutateInAsync(
+                            documentKey,
+                            specs =&gt; specs.Insert(
+                                path: our_user_xattr_key_name, <i class="conum" data-value="9"></i><b>(9)</b>
+                                value: channelXattrValue, <i class="conum" data-value="10"></i><b>(10)</b>
+                                isXattr: true)); <i class="conum" data-value="11"></i><b>(11)</b>
+
+                    Console.Write("Inserted New user_xattr_key: {0} with value {1}\n",
+                        our_user_xattr_key_name,
+                        string.Join(", ", channelXattrValue));
+
+                }
+
+            }
+            Console.WriteLine("Completed Changes\n");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Operating System</th>
-<th class="tableblock halign-left valign-top">Deprecated Versions</th>
-<th class="tableblock halign-left valign-top">Deprecation Release</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Linux</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>RHEL 6.x<br>
-Centos 6.x<br>
-Ubuntu 14.04 LTS</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.6</p></td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is required to make the <code>MutateInSpec</code> class available, providing access to sub-documents, of which metadata is a special class</td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Microsoft Windows Server</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2012</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.8</p></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This string&#8217;s value is what we  want this document&#8217;s user_xattr_key to be called</td>
 </tr>
-</tbody>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This array contains the channels we want to include as the user_xatra_key value</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Here we Upsert a new record (a hotel in this instance), for which we want to set channel routing data</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Check if the xattr has been defined yet</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Update the xattr&#8201;&#8212;&#8201;specify the item name we want to update</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Update the xattr&#8201;&#8212;&#8201;set the named item to the required value</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Update the xattr&#8201;&#8212;&#8201;specify that the item is an xattr rather than data</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Insert the xattr&#8201;&#8212;&#8201;specify the item name we want to add (<code>channelXattr</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Insert the xattr&#8201;&#8212;&#8201;set the named item to the required value using <code>channelXattrValue</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Insert the xattr&#8201;&#8212;&#8201;specify that the item is an xattr rather than regular data</td>
+</tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Working with document id: 1000
+Updated Existing user_xattr_key: channelXattr to this value: channel1, channel3, useradmin
+
+Working with document id: 1001
+Inserted New user_xattr_key: channelXattr with this value: channel1, channel3, useradmin</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Completed Changes</p>
+</div>
+</div>
+</div>
+<div id="ex-cbs-metadata" class="exampleblock">
+<div class="title">Example 3. Metadata on Couchbase Server document</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "meta": { <i class="conum" data-value="1"></i><b>(1)</b>
+    "id": "1000",
+    "rev": "7-1680c88cbce700000000000002000006",
+    "expiration": 0,
+    "flags": 33554438,
+    "type": "json"
+  },
+  "xattrs": { <i class="conum" data-value="2"></i><b>(2)</b>
+    "channelXattr": [ <i class="conum" data-value="3"></i><b>(3)</b>
+      "channel1",
+      "channel3",
+      "useradmin"
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is the Fixed (or System) metadata</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the User metadata, where you can define extended attributes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Here <em>channelXattr</em> is the name of the designated xattr holding the channel routing information to be passed to the Sync Function.
+You will set the value of the xattr using the SDK API when the document is created and-or updated.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For more on Couchbase Server metadata and extended attributes&#8201;&#8212;&#8201;see: <a href="https://docs.couchbase.com/server/current/learn/data/data.html#metadata" class="bare">https://docs.couchbase.com/server/current/learn/data/data.html#metadata</a>
+<a href="https://docs.couchbase.com/server/6.5/learn/data/extended-attributes-fundamentals.html" class="bare">https://docs.couchbase.com/server/6.5/learn/data/extended-attributes-fundamentals.html</a></p>
+</div>
+<div class="paragraph">
+<p>Before using extended attributes you will/may need to set the extended attributes flag on your buckets capabilities using <a href="https://docs.couchbase.com/sdk-api/couchbase-net-client/html/T_Couchbase_Core_Configuration_Server_BucketCapabilities.htm" class="bare">https://docs.couchbase.com/sdk-api/couchbase-net-client/html/T_Couchbase_Core_Configuration_Server_BucketCapabilities.htm</a></p>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="end-of-life"><a class="anchor" href="#end-of-life"></a>End of Life</h2>
+<h2 id="sync-function"><a class="anchor" href="#sync-function"></a>Sync Function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Support for Couchbase Sync Gateway on these operating systems is removed at the current major release</p>
+<p>The designated extended attribute is exposed to the Sync Function as an additional argument <code>meta.xattrs.&lt;xattr name&gt;</code></p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. Removed at 2.8</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<thead>
+<div id="ex-syncfunc-args" class="exampleblock">
+<div class="title">Example 4. Sync Function Arguments</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) {
+  // Additional processing as required
+
+  // Route the document
+    channel(meta.xattrs.channelXattr.channels); <i class="conum" data-value="1"></i><b>(1)</b>
+
+  // Additional processing as required
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
 <tr>
-<th class="tableblock halign-left valign-top">Operating System</th>
-<th class="tableblock halign-left valign-top">Deprecated Versions</th>
-<th class="tableblock halign-left valign-top">Deprecation Release</th>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we reference 'channelXattr', the extended attribute defined in the database configuration as being the user extended attribute key.
+We use it to set the channel(s) we need to route this document to.</td>
 </tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">OSX</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10.12.6 "High Sierra"</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2.6</p></td>
-</tr>
-</tbody>
 </table>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -1034,7 +1188,21 @@ Ubuntu 14.04 LTS</p>
 <div class="sect5 column">
 <h6 id=""><a class="anchor" href="#"></a></h6>
 <div class="ulist">
-<div class="title">API Topics</div>
+<div class="title">Learn more ...</div>
+<ul>
+<li>
+<p><a href="sync-function.html" class="page">Sync Function</a></p>
+</li>
+<li>
+<p><a href="import-filter.html" class="page">Import filter</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference material ...</div>
 <ul>
 <li>
 <p><a href="rest-api.html" class="page">Public REST API</a></p>
@@ -1052,17 +1220,6 @@ Ubuntu 14.04 LTS</p>
 </div>
 </div>
 <div class="sect5 column">
-<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
-<div class="ulist">
-<div class="title">Reference</div>
-<ul>
-<li>
-<p><a href="configuration-schema-static.html" class="page">Static Configuration Schema</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
 <h6 id="-3"><a class="anchor" href="#-3"></a></h6>
 <div class="ulist">
 <div class="title">Community</div>
@@ -1073,6 +1230,12 @@ Ubuntu 14.04 LTS</p>
 </ul>
 </div>
 </div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. From release 3.0
 </div>
 </div>
 </article>
