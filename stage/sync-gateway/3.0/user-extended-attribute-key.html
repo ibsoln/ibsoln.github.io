@@ -698,37 +698,37 @@
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
-<a class="nav-link" href="../../couchbase-lite/3.0/index.html">Couchbase Lite</a>
+<a class="nav-link" href="../../couchbase-lite/2.1/introduction.html">Couchbase Lite</a>
 </span>
 <ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/android/quickstart.html">Android (Java)</a>
+<a class="nav-link" href="#couchbase-lite:android:quickstart.adoc">Android (Java)</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/csharp/quickstart.html">C#</a>
+<a class="nav-link" href="#couchbase-lite:csharp:quickstart.adoc">C#</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/java/quickstart.html">Java</a>
+<a class="nav-link" href="#couchbase-lite:java:quickstart.adoc">Java</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/objc/quickstart.html">Objective-C</a>
+<a class="nav-link" href="#couchbase-lite:objc:quickstart.adoc">Objective-C</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/swift/quickstart.html">Swift</a>
+<a class="nav-link" href="#couchbase-lite:swift:quickstart.adoc">Swift</a>
 </span>
 </li>
 </ul>
@@ -869,7 +869,7 @@ Its data type can be string, array, object&#8201;&#8212;&#8201;any valid JSON th
 <div class="title">Example 1. Define the User Extended Attribute Key</div>
 <div class="content">
 <div class="paragraph">
-<p>This example uses the Admin Rest API to specify the required user extended attribute key <code>channelsXattr</code> on the database <code>mydatabase</code>.</p>
+<p>This example uses the Admin Rest API to specify the required user extended attribute key <code>channelXattr</code> on the database <code>mydatabase</code>.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -890,7 +890,7 @@ Its data type can be string, array, object&#8201;&#8212;&#8201;any valid JSON th
 --header 'Accept: application/json' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "user_xattr_key": "channelsXattr" <i class="conum" data-value="1"></i><b>(1)</b>
+    "user_xattr_key": "channelXattr" <i class="conum" data-value="1"></i><b>(1)</b>
     }
 }'</code></pre>
 </div>
@@ -906,7 +906,7 @@ Content-Type: application/json
 Content-Length: 999
 
 {
-  “user_xattr_key”: “channelsXattr” <i class="conum" data-value="1"></i><b>(1)</b>
+  “user_xattr_key”: “channelXattr” <i class="conum" data-value="1"></i><b>(1)</b>
 }</code></pre>
 </div>
 </div>
@@ -917,7 +917,7 @@ Content-Length: 999
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here <em>channelsXattr</em> is the name of the  extended attribute designated to hold channel routing information.</td>
+<td>Here <em>channelXattr</em> is the name of the  extended attribute designated to hold channel routing information.</td>
 </tr>
 </table>
 </div>
@@ -939,22 +939,21 @@ See <a href="#ex-cbs-metadata">Example 3</a> for an example of the metadata mode
 <div id="ex-cbs-metadata-setting" class="exampleblock">
 <div class="title">Example 2. Set Metadata using Couchbase Server SDK</div>
 <div class="content">
-<div class="paragraph">
-<p>In this example we set the extended attribute key <code>channelsXattr</code> to the channel <code>required-channels</code></p>
-</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#">using System;
+<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/code/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs">using System;
 using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.KeyValue; <i class="conum" data-value="1"></i><b>(1)</b>
 
 namespace examples
 {
+
     class Program
     {
         static async Task Main(string[] args)
         {
+            // Set scope - cluster, bucket and collection
             var cluster =
                     await Cluster.ConnectAsync(
                                     "couchbase://localhost",
@@ -962,36 +961,70 @@ namespace examples
                                     "password");
 
             var bucket = await cluster.BucketAsync("hotels");
-
-            var documentKey = "1000";
-
             var collection = bucket.DefaultCollection();
 
-            var upsertResult =
-                await collection.UpsertAsync(documentKey,
-                        new { name = "Hotel Ted",
-                                type = "hotel",
-                                city = "Paris",
-                                country = "France" }); <i class="conum" data-value="2"></i><b>(2)</b>
+            // Set required  user_xattr_key name and value
+            var our_user_xattr_key_name = "channelXattr"; <i class="conum" data-value="2"></i><b>(2)</b>
+            String[] channelXattrValue =
+                {"channel1","channel3", "useradmin" }; <i class="conum" data-value="3"></i><b>(3)</b>
 
-            await collection.MutateInAsync(documentKey,
-                                specs =&gt; specs.Upsert(path: "channelsXattr", <i class="conum" data-value="3"></i><b>(3)</b>
-                                            value: "required-channels" , <i class="conum" data-value="4"></i><b>(4)</b>
-                                            isXattr: true)); <i class="conum" data-value="5"></i><b>(5)</b>
+            var ourDocumentType = "hotel";
+            var documentKey = "";
 
-            var getResult = await collection.GetAsync(documentKey);
-
-            Console.WriteLine(getResult.ContentAs&lt;dynamic&gt;());
-
+            // Find our documents and get their ids
             var queryResult =
-                await cluster.QueryAsync&lt;dynamic&gt;(
-                        "select \"Hello World\" as greeting",
-                        new Couchbase.Query.QueryOptions());
+               await cluster.QueryAsync&lt;dynamic&gt;(
+                   "select meta().id from `hotels`.`_default`.`_default` h where h.type = $1",
+                        new Couchbase.Query.QueryOptions().Parameter(ourDocumentType)); <i class="conum" data-value="4"></i><b>(4)</b>
             await foreach (var row in queryResult)
             {
-                Console.WriteLine(row);
+                documentKey = row.id;
+                Console.WriteLine("Working with document id: {0} ",
+                                    documentKey);
+
+                // Check if the document has an existing
+                // user_xattr_key and update or insert new value
+                var result =
+                    await collection.LookupInAsync(
+                            documentKey,
+                            specs =&gt; specs.Exists(
+                                path: our_user_xattr_key_name,
+                                isXattr: true)
+                            ); <i class="conum" data-value="5"></i><b>(5)</b>
+
+                if (result.Exists(0))
+                {
+                    // Update xattr for retrieved Id
+                    await collection.MutateInAsync(
+                            documentKey,
+                            specs =&gt; specs.Upsert(
+                                path: our_user_xattr_key_name, <i class="conum" data-value="6"></i><b>(6)</b>
+                                value: channelXattrValue, <i class="conum" data-value="7"></i><b>(7)</b>
+                                isXattr: true)); <i class="conum" data-value="8"></i><b>(8)</b>
+
+                    Console.Write("Updated Existing user_xattr_key: {0} to this value: {1}\n",
+                        our_user_xattr_key_name,
+                        string.Join(", ", channelXattrValue));
+
+                }
+                else
+                {
+                    // Insert xattr for retrieved id
+                    await collection.MutateInAsync(
+                            documentKey,
+                            specs =&gt; specs.Insert(
+                                path: our_user_xattr_key_name, <i class="conum" data-value="9"></i><b>(9)</b>
+                                value: channelXattrValue, <i class="conum" data-value="10"></i><b>(10)</b>
+                                isXattr: true)); <i class="conum" data-value="11"></i><b>(11)</b>
+
+                    Console.Write("Inserted New user_xattr_key: {0} with value {1}\n",
+                        our_user_xattr_key_name,
+                        string.Join(", ", channelXattrValue));
+
+                }
 
             }
+            Console.WriteLine("Completed Changes\n");
         }
     }
 }</code></pre>
@@ -1005,21 +1038,60 @@ namespace examples
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we Upsert a new record (a hotel in this instance), for which we want to set channel routing data</td>
+<td>This string&#8217;s value is what we  want this document&#8217;s user_xattr_key to be called</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>This is the name of our new extended attribute <code>channelsXattr</code> to hold the channel routing data</td>
+<td>This array contains the channels we want to include as the user_xatra_key value</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>This is the value we want to set for the extended attribute <code>channelsXattr</code></td>
+<td>Here we Upsert a new record (a hotel in this instance), for which we want to set channel routing data</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Here we state that we want <code>channelsXattr</code> to be an extended attribute and not just another item within the document body.</td>
+<td>Check if the xattr has been defined yet</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Update the xattr&#8201;&#8212;&#8201;specify the item name we want to update</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Update the xattr&#8201;&#8212;&#8201;set the named item to the required value</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Update the xattr&#8201;&#8212;&#8201;specify that the item is an xattr rather than data</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Insert the xattr&#8201;&#8212;&#8201;specify the item name we want to add (<code>channelXattr</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Insert the xattr&#8201;&#8212;&#8201;set the named item to the required value using <code>channelXattrValue</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Insert the xattr&#8201;&#8212;&#8201;specify that the item is an xattr rather than regular data</td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>Output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Working with document id: 1000
+Updated Existing user_xattr_key: channelXattr to this value: channel1, channel3, useradmin
+
+Working with document id: 1001
+Inserted New user_xattr_key: channelXattr with this value: channel1, channel3, useradmin</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Completed Changes</p>
 </div>
 </div>
 </div>
@@ -1029,15 +1101,19 @@ namespace examples
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "meta": {
-    "id": "hotelted-key",
-    "rev": "2-167e0c03227700000000000002000001",
+  "meta": { <i class="conum" data-value="1"></i><b>(1)</b>
+    "id": "1000",
+    "rev": "7-1680c88cbce700000000000002000006",
     "expiration": 0,
-    "flags": 33554433,
+    "flags": 33554438,
     "type": "json"
   },
-  "xattrs": {
-    "channelsXattr": "required-channels"
+  "xattrs": { <i class="conum" data-value="2"></i><b>(2)</b>
+    "channelXattr": [ <i class="conum" data-value="3"></i><b>(3)</b>
+      "channel1",
+      "channel3",
+      "useradmin"
+    ]
   }
 }</code></pre>
 </div>
@@ -1054,7 +1130,7 @@ namespace examples
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Here <em>channelsXattr</em> is the name of the designated xattr holding the channel routing information to be passed to the Sync Function.
+<td>Here <em>channelXattr</em> is the name of the designated xattr holding the channel routing information to be passed to the Sync Function.
 You will set the value of the xattr using the SDK API when the document is created and-or updated.</td>
 </tr>
 </table>
@@ -1085,7 +1161,7 @@ You will set the value of the xattr using the SDK API when the document is creat
   // Additional processing as required
 
   // Route the document
-    channel(meta.xattrs.channelsXattr.channels); <i class="conum" data-value="1"></i><b>(1)</b>
+    channel(meta.xattrs.channelXattr.channels); <i class="conum" data-value="1"></i><b>(1)</b>
 
   // Additional processing as required
 }</code></pre>
@@ -1095,7 +1171,7 @@ You will set the value of the xattr using the SDK API when the document is creat
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we reference 'channelsXattr', the extended attribute defined in the database configuration as being the user extended attribute key.
+<td>Here we reference 'channelXattr', the extended attribute defined in the database configuration as being the user extended attribute key.
 We use it to set the channel(s) we need to route this document to.</td>
 </tr>
 </table>
