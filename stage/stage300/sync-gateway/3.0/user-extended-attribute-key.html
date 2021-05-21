@@ -941,7 +941,7 @@ See <a href="#ex-cbs-metadata">Example 3</a> for an example of the metadata mode
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/code/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs">using System;
+<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/code/csharp/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs">using System;
 using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.KeyValue; <i class="conum" data-value="1"></i><b>(1)</b>
@@ -1077,22 +1077,22 @@ namespace examples
 <td><i class="conum" data-value="11"></i><b>11</b></td>
 <td>Insert the xattr&#8201;&#8212;&#8201;specify that the item is an xattr rather than regular data</td>
 </tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Output:</p>
-</div>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>Running the code produces the following output:
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Working with document id: 1000
 Updated Existing user_xattr_key: channelXattr to this value: channel1, channel3, useradmin
 
 Working with document id: 1001
-Inserted New user_xattr_key: channelXattr with this value: channel1, channel3, useradmin</code></pre>
+Inserted New user_xattr_key: channelXattr with this value: channel1, channel3, useradmin
+
+Completed Changes</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Completed Changes</p>
+</div></td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1139,11 +1139,7 @@ You will set the value of the xattr using the SDK API when the document is creat
 </div>
 </div>
 <div class="paragraph">
-<p>For more on Couchbase Server metadata and extended attributes&#8201;&#8212;&#8201;see: <a href="https://docs.couchbase.com/server/current/learn/data/data.html#metadata" class="bare">https://docs.couchbase.com/server/current/learn/data/data.html#metadata</a>
-<a href="https://docs.couchbase.com/server/6.5/learn/data/extended-attributes-fundamentals.html" class="bare">https://docs.couchbase.com/server/6.5/learn/data/extended-attributes-fundamentals.html</a></p>
-</div>
-<div class="paragraph">
-<p>Before using extended attributes you will/may need to set the extended attributes flag on your buckets capabilities using <a href="https://docs.couchbase.com/sdk-api/couchbase-net-client/html/T_Couchbase_Core_Configuration_Server_BucketCapabilities.htm" class="bare">https://docs.couchbase.com/sdk-api/couchbase-net-client/html/T_Couchbase_Core_Configuration_Server_BucketCapabilities.htm</a></p>
+<p>For more on Couchbase Server metadata and extended attributes&#8201;&#8212;&#8201;see Couchbase Server topics:  <a href="#server:learn/data/data.html#metadata" class="page unresolved">Metadata</a> | <a href="#server:learn/data/extended-attributes-fundamentals.html">Extended Attributes</a></p>
 </div>
 </div>
 </div>
@@ -1151,33 +1147,49 @@ You will set the value of the xattr using the SDK API when the document is creat
 <h2 id="sync-function"><a class="anchor" href="#sync-function"></a>Sync Function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The designated extended attribute is exposed to the Sync Function as an additional argument <code>meta.xattrs.&lt;xattr name&gt;</code></p>
+<p>The designated xattr is exposed to the <a href="sync-function.html" class="page">Sync Function</a> as an additional argument <code>meta.xattrs.&lt;xattr name&gt;</code></p>
 </div>
 <div id="ex-syncfunc-args" class="exampleblock">
 <div class="title">Example 4. Sync Function Arguments</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) {
-  // Additional processing as required
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/code/javascript/javasnippets.js">function (doc, oldDoc, meta) { <i class="conum" data-value="1"></i><b>(1)</b>
 
-  // Route the document
-    channel(meta.xattrs.channelXattr.channels); <i class="conum" data-value="1"></i><b>(1)</b>
+  if (meta.xattrs.channelXattr == "undefined") <i class="conum" data-value="2"></i><b>(2)</b>
+    {
+      console.log("no user_xattr_key defined")
+      channel(null)
+    } else {
+      channel(meta.xattrs.channelXattr) <i class="conum" data-value="3"></i><b>(3)</b>
 
-  // Additional processing as required
-}</code></pre>
+
+
+    }
+
+  // Further processing as required ../</code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we reference 'channelXattr', the extended attribute defined in the database configuration as being the user extended attribute key.
-We use it to set the channel(s) we need to route this document to.</td>
+<td>The meta parameter exposes the user defined user_xattr_key if defined. The item takes the name configured for the database</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Access the meta parameter object to check an xattr exists on this document</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use the content of the xattr to define the <code>channels</code> setting for this document</td>
 </tr>
 </table>
 </div>
 </div>
+</div>
+<div class="paragraph">
+<p>See: <a href="sync-function.html" class="page">Sync Function</a> topic for more information.</p>
 </div>
 </div>
 </div>
