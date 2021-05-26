@@ -115,7 +115,7 @@
 </div>
 <div class="nav-menu">
 <ul class="nav-list">
-<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="0">
+<li class="nav-item " data-depth="0">
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
@@ -314,13 +314,19 @@
 </li>
 </ul>
 </li>
-<li class="nav-item is-current-path is-active is-active-depth-2  " data-depth="1">
+<li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
 <span class="in-toggle" data-depth="1"></span>
 <span class="nav-text ">Access Control</span>
 </span>
 <ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="access-control-overview.html">Access Control Overview</a>
+</span>
+</li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
@@ -351,10 +357,10 @@
 <a class="nav-link" href="channels.html">Channels</a>
 </span>
 </li>
-<li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
+<li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="user-extended-attribute-key.html">User Extended Attribute Key</a>
+<a class="nav-link" href="#sync-gateway::using-xattr-access-grants.adoc">Using XATTR Access Grants</a>
 </span>
 </li>
 </ul>
@@ -698,37 +704,37 @@
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
-<a class="nav-link" href="../../couchbase-lite/3.0/index.html">Couchbase Lite</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/index.html">Couchbase Lite</a>
 </span>
 <ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/android/quickstart.html">Android (Java)</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/android/quickstart.html">Android (Java)</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/csharp/quickstart.html">C#</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/csharp/quickstart.html">C#</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/java/quickstart.html">Java</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/java/quickstart.html">Java</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/objc/quickstart.html">Objective-C</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/objc/quickstart.html">Objective-C</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/swift/quickstart.html">Swift</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/swift/quickstart.html">Swift</a>
 </span>
 </li>
 </ul>
@@ -800,8 +806,7 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb">Access Control</li>
-<li class="crumb"><a href="user-extended-attribute-key.html">User Extended Attribute Key</a></li>
+<li class="crumb"><a href="user-extended-attribute-key.html">Extended Attribute Key Access Grants</a></li>
 </ul>
 </nav>
 </div>
@@ -825,7 +830,7 @@ Here we introduce the concept of <em>xattrs</em> for access grants and their rol
 </div>
 <div class="paragraph">
 <p><em>Related access-control topics</em>:  <a href="access-grants.html" class="page">Access Grants</a>  |  <a href="sync-function.html" class="page">Sync Function</a>  |  <a href="channels.html" class="page">Channels</a>  |  <a href="roles.html" class="page">Roles</a>  |  <a href="users.html" class="page">Users</a>  |
-Extended Attributes Key</p>
+<a href="#sync-gateway::using-xattr-access-grants.adoc" class="page unresolved">Extended Attributes Key</a></p>
 </div>
 </div>
 </div>
@@ -839,18 +844,21 @@ Extended Attributes Key</p>
 <p>Using the <a href="sync-function.html" class="page">Sync Function</a>, you can grant users access to specific documents and channels based on the contents of the document being processed.</p>
 </div>
 <div class="paragraph">
-<p>Alternatively, you can instead nominate a specific <em>extended attribute</em> (xattr) to determine the access grants<sup class="footnote" id="_footnote_fn-3x0">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.
+<p>Alternatively, you can instead nominate a specific <em>extended attribute</em> (XATTR) to determine the access grants<sup class="footnote" id="_footnote_fn-3x0">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.
 This approach has the benefit of:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Providing an added level of security, users can no longer identify the channels and users a document is available to from reading its contents</p>
+<p>Providing an added level of security, users can no longer identify the channels and users a document is available to from reading its contents, because the information is in metadata that is inaccessible to them</p>
 </li>
 <li>
 <p>Removing the necessity to create a new revision and push the full document to a client following changes to access-control information only</p>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>Sync Gateway exposes a single user-definable XATTR for this purpose.</p>
 </div>
 </div>
 </div>
@@ -858,18 +866,18 @@ This approach has the benefit of:</p>
 <h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Identify the user extended attribute key
+<p>Name the XATTR
 (see: <a href="configuration-schema-database.html#databases-this_db-user_xattr_key" class="page">user_xattr_key</a>) to be used for channel routing by defining it using the Admin Rest API&#8217;s <a href="rest-api-admin-database.html" class="page">Database Configuration API</a>&#8201;&#8212;&#8201;see: <a href="#ex-config">Example 1</a>.</p>
 </div>
 <div class="paragraph">
-<p>The actual value of this key can be anything that enables the Sync Function to make an appropriate access grant.
+<p>The actual value of this XATTR can be anything that enables the Sync Function to make an appropriate access grant.
 Its data type can be string, array, object&#8201;&#8212;&#8201;any valid JSON that meets the required use case.</p>
 </div>
 <div id="ex-config" class="exampleblock">
 <div class="title">Example 1. Define the User Extended Attribute Key</div>
 <div class="content">
 <div class="paragraph">
-<p>This example uses the Admin Rest API to specify the required user extended attribute key <code>channelXattr</code> on the database <code>mydatabase</code>.</p>
+<p>This example uses the Admin Rest API to specify the required XATTR name as <code>channelXattr</code> on the database <code>hotels</code>.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -886,7 +894,7 @@ Its data type can be string, array, object&#8201;&#8212;&#8201;any valid JSON th
 <div class="tab-pane" aria-labelledby="tabset1_curl">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl -X PUT 'http://localhost:4985/mydatabase/_config' \
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl -X PUT 'http://localhost:4985/hotels/_config' \
 --header 'Accept: application/json' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -899,7 +907,7 @@ Its data type can be string, array, object&#8201;&#8212;&#8201;any valid JSON th
 <div class="tab-pane" aria-labelledby="tabset1_http">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-http hljs" data-lang="http">PUT /mydatabase/_config HTTP/1.1
+<pre class="highlightjs highlight"><code class="language-http hljs" data-lang="http">PUT /hotels/_config HTTP/1.1
 Host: http://localhost:4985
 Accept: application/json
 Content-Type: application/json
@@ -917,7 +925,7 @@ Content-Length: 999
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here <em>channelXattr</em> is the name of the  extended attribute designated to hold channel routing information.</td>
+<td>Here <em>channelXattr</em> is set as the name of the XATTR designated to hold channel routing information.</td>
 </tr>
 </table>
 </div>
@@ -929,15 +937,15 @@ Content-Length: 999
 <h2 id="setting"><a class="anchor" href="#setting"></a>Setting</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>With an extended attribute key defined, you can manipulate its value within the Couchbase Server SDK API.
-It cannot be set using the <em>Sync Gateway</em> REST API.</p>
+<p>You can set and maintain the value of the XATTR using a Couchbase Server SDK API.
+You cannot set it using the <em>Sync Gateway</em> REST API.</p>
 </div>
 <div class="paragraph">
-<p>For an example of setting the value of the extended attribute key using the SDK&#8201;&#8212;&#8201;see: <a href="#ex-cbs-metadata-setting">Example 2</a>.
+<p>For an example of setting the value of the XATTR using the C# SDK, see <a href="#ex-cbs-metadata-setting">Example 2</a>, this cn be easily translated to any of the available SDK languages.
 See <a href="#ex-cbs-metadata">Example 3</a> for an example of the metadata model.</p>
 </div>
 <div id="ex-cbs-metadata-setting" class="exampleblock">
-<div class="title">Example 2. Set Metadata using Couchbase Server SDK</div>
+<div class="title">Example 2. Set XATTR using Couchbase Server SDK</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1039,43 +1047,43 @@ namespace examples
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>This string&#8217;s value is what we  want this document&#8217;s user_xattr_key to be called</td>
+<td>This string&#8217;s value is what we want this document&#8217;s XATTR to be called</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>This array contains the channels we want to include as the user_xatra_key value</td>
+<td>This array contains the channels we want to include as the XATTR value</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Here we Upsert a new record (a hotel in this instance), for which we want to set channel routing data</td>
+<td>Here we get all documents that we want to set the XATTR on (type = 'hotel' in this instance)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Check if the xattr has been defined yet</td>
+<td>Check if the XATTR has been defined yet</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Update the xattr&#8201;&#8212;&#8201;specify the item name we want to update</td>
+<td>Update the XATTR&#8201;&#8212;&#8201;specify the item to update</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Update the xattr&#8201;&#8212;&#8201;set the named item to the required value</td>
+<td>Update the XATTR&#8201;&#8212;&#8201;set the required value</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
-<td>Update the xattr&#8201;&#8212;&#8201;specify that the item is an xattr rather than data</td>
+<td>Update the XATTR&#8201;&#8212;&#8201;specify the item is an XATTR</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="9"></i><b>9</b></td>
-<td>Insert the xattr&#8201;&#8212;&#8201;specify the item name we want to add (<code>channelXattr</code>)</td>
+<td>Insert the XATTR&#8201;&#8212;&#8201;specify the item to add (<code>channelXattr</code>)</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="10"></i><b>10</b></td>
-<td>Insert the xattr&#8201;&#8212;&#8201;set the named item to the required value using <code>channelXattrValue</code></td>
+<td>Insert the XATTR&#8201;&#8212;&#8201;set the required value using <code>channelXattrValue</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="11"></i><b>11</b></td>
-<td>Insert the xattr&#8201;&#8212;&#8201;specify that the item is an xattr rather than regular data</td>
+<td>Insert the XATTR&#8201;&#8212;&#8201;specify the item is an XATTR</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="12"></i><b>12</b></td>
@@ -1083,10 +1091,12 @@ namespace examples
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Working with document id: 1000
-Updated Existing user_xattr_key: channelXattr to this value: channel1, channel3, useradmin
+Updated Existing user_xattr_key:
+  channelXattr to this value: channel1, channel3, useradmin
 
 Working with document id: 1001
-Inserted New user_xattr_key: channelXattr with this value: channel1, channel3, useradmin
+Inserted New user_xattr_key:
+  channelXattr with this value: channel1, channel3, useradmin
 
 Completed Changes</code></pre>
 </div>
@@ -1147,7 +1157,7 @@ You will set the value of the xattr using the SDK API when the document is creat
 <h2 id="sync-function"><a class="anchor" href="#sync-function"></a>Sync Function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The designated xattr is exposed to the <a href="sync-function.html" class="page">Sync Function</a> as an additional argument <code>meta.xattrs.&lt;xattr name&gt;</code></p>
+<p>The designated XATTR is exposed to the <a href="sync-function.html" class="page">Sync Function</a> as an additional argument <code>meta.xattrs.&lt;xattr name&gt;</code></p>
 </div>
 <div id="ex-syncfunc-args" class="exampleblock">
 <div class="title">Example 4. Sync Function Arguments</div>

@@ -320,6 +320,12 @@
 <span class="nav-text ">Access Control</span>
 </span>
 <ul class="nav-list">
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="access-control-overview.html">Access Control Overview</a>
+</span>
+</li>
 <li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
@@ -353,7 +359,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="user-extended-attribute-key.html">User Extended Attribute Key</a>
+<a class="nav-link" href="#sync-gateway::using-xattr-access-grants.adoc">Using XATTR Access Grants</a>
 </span>
 </li>
 </ul>
@@ -697,37 +703,37 @@
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
-<a class="nav-link" href="../../couchbase-lite/3.0/index.html">Couchbase Lite</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/index.html">Couchbase Lite</a>
 </span>
 <ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/android/quickstart.html">Android (Java)</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/android/quickstart.html">Android (Java)</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/csharp/quickstart.html">C#</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/csharp/quickstart.html">C#</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/java/quickstart.html">Java</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/java/quickstart.html">Java</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/objc/quickstart.html">Objective-C</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/objc/quickstart.html">Objective-C</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../couchbase-lite/3.0/swift/quickstart.html">Swift</a>
+<a class="nav-link" href="../../couchbase-lite/2.8/swift/quickstart.html">Swift</a>
 </span>
 </li>
 </ul>
@@ -824,7 +830,7 @@ The sync function API provides several methods that you can use to validate and 
 </div>
 <div class="paragraph">
 <p><em>Related access-control topics</em>:  <strong>Access Grants</strong>  |  <a href="sync-function.html" class="page">Sync Function</a>  |  <a href="channels.html" class="page">Channels</a>  |  <a href="roles.html" class="page">Roles</a>  |  <a href="users.html" class="page">Users</a>  |
-<a href="user-extended-attribute-key.html" class="page">Extended Attributes Key</a></p>
+<a href="#sync-gateway::using-xattr-access-grants.adoc" class="page unresolved">Extended Attributes Key</a></p>
 </div>
 </div>
 </div>
@@ -874,7 +880,7 @@ So, the next replication pull request, will retrieve all documents to which the 
 </div>
 <div class="paragraph">
 <p>The <a href="sync-function.html" class="page">Sync Function</a> is the preferred method for granting access to channels programmatically.
-Here the document access and routing requirements are derived from document properties or, more securely, from a designated extended attribute (xattr) object&#8201;&#8212;&#8201;see: <a href="user-extended-attribute-key.html" class="page">User Extended Attribute Key</a> for how to define the extended attribute key.</p>
+Here the document access and routing requirements are derived from document properties or, more securely, from a designated extended attribute (XATTR)&#8201;&#8212;&#8201;see: <a href="#sync-gateway::using-xattr-access-grants.adoc" class="page unresolved">Using XATTR Access Grants</a> for how to define the XATTR.</p>
 </div>
 <div class="paragraph">
 <p>Note that access grants do not confer, nor constrain, the type of access.
@@ -902,7 +908,7 @@ You can explicitly implement write access controls within your Sync Function; pe
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, olddoc, meta) {
   if (doc.type == "chatroom") {  <i class="conum" data-value="1"></i><b>(1)</b>
     access(doc.members, <i class="conum" data-value="2"></i><b>(2)</b>
-      doc.channel_id);  <i class="conum" data-value="3"></i><b>(3)</b>
+      meta.xattrs.channelXattr);  <i class="conum" data-value="3"></i><b>(3)</b>
   }
 }</code></pre>
 </div>
@@ -918,11 +924,12 @@ You can explicitly implement write access controls within your Sync Function; pe
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>The <code>channel_id</code> property names the associated channel, with which the actual chat messages are tagged</td>
+<td>Here the chatroom document&#8217;s <code>members</code> property contains the names of all valid chatroom users.
+These users need to be granted access to the chat channel</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The <code>members</code> property lists the users who have access to that channel.</td>
+<td>Here the chat message channel is picked up from the XATTR key <code>channelXattr</code> and the 'access()' function grants all members access to that channel.</td>
 </tr>
 </table>
 </div>

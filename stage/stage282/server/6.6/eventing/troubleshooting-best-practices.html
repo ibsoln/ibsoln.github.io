@@ -2462,6 +2462,12 @@ Couchbase Server
 <a class="nav-link" href="eventing-handler-convertXMLtoJSON.html">convertXMLtoJSON</a>
 </span>
 </li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="eventing-handler-convertAdvXMLtoJSON.html">convertAdvXMLtoJSON</a>
+</span>
+</li>
 </ul>
 </li>
 <li class="nav-item " data-depth="3">
@@ -3498,6 +3504,12 @@ Couchbase Server
 
 <span class="nav-line "  data-depth="4">
 <a class="nav-link" href="../rest-api/rest-get-internal-setting.html">Viewing Internal Settings</a>
+</span>
+</li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="../rest-api/rest-manage-cluster-connections.html">Managing Cluster Connections</a>
 </span>
 </li>
 <li class="nav-item " data-depth="4">
@@ -4593,9 +4605,9 @@ Watch the number of documents in your buckets (source, metadata, and destination
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>2020-03-13T11:46:32.383-07:00 [INFO] "Exception: " {"message":{"code":392,"desc": \
+<pre>2020-03-13T11:46:32.383-07:00 [INFO] "Exception: " {"message":{"code":392,"desc": \
 "Temporary failure received from server. Try again later","name":"LCB_ETMPFAIL"}, \
-"stack":"Error\n    at OnUpdate (MyEventingFunction.js:177:25)"}</code></pre>
+"stack":"Error\n    at OnUpdate (MyEventingFunction.js:177:25)"}</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4613,6 +4625,27 @@ Watch the number of documents in your buckets (source, metadata, and destination
 <p>The second solution is to add more Data nodes, faster disk IO, and more memory to eliminate the resource bottleneck.</p>
 </li>
 </ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="always-escape-quotes-in-regular-expressions-in-your-eventing-function"><a class="anchor" href="#always-escape-quotes-in-regular-expressions-in-your-eventing-function"></a>Always escape quotes in regular expressions in your Eventing Function.</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When using bare regular expressions you should always escape a single quote or a double quote with a backslash character. Although non-escaped quotes are legal in the JavaScript language they do not pass Eventing Service’s parser.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>mystring.match(/(\S+)[^=]=["']?((?:.(?!["']?\s+(?:\S+)[^=]=|[&gt;"']))+.)["']?/g);</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The above bare regular expression should be written with the quotes escaped via the \ character.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>mystring.match(/(\S+)[^=]=[\"\']?((?:.(?![\"\']?\s+(?:\S+)[^=]=|[&gt;\"\']))+.)[\"\']?/g);</pre>
+</div>
 </div>
 </div>
 </div>

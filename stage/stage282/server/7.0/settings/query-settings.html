@@ -2526,12 +2526,6 @@ Couchbase Server
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../install/install-client-server.html">Client Deployment Strategies</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../install/install-security-bp.html">Security Considerations</a>
 </span>
 </li>
@@ -4622,6 +4616,9 @@ For example, if the node-level <code>timeout</code> is set to 500, then the requ
 <p><a href="#format">format</a></p>
 </div>
 <div class="paragraph">
+<p><a href="#kvtimeout">kvtimeout</a></p>
+</div>
+<div class="paragraph">
 <p><a href="#metrics">metrics</a></p>
 </div>
 <div class="paragraph">
@@ -4938,7 +4935,7 @@ These settings cannot be set by <code>cbq</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell" data-source-url="https://github.com/couchbase/docs-server/blob/6ef42518ee3bcc8a4fab3dd4027b9cf73a857c35/modules/settings/examples/node-level-settings.txt">$ curl http://localhost:8093/admin/settings -u user:pword</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell" data-source-url="https://github.com/couchbase/docs-server/blob/08b6188806d91707b028835e453bc12d829e8ab2/modules/settings/examples/node-level-settings.txt">$ curl http://localhost:8093/admin/settings -u user:pword</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4946,7 +4943,7 @@ These settings cannot be set by <code>cbq</code>.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/6ef42518ee3bcc8a4fab3dd4027b9cf73a857c35/modules/settings/examples/node-level-settings.jsonc">{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/08b6188806d91707b028835e453bc12d829e8ab2/modules/settings/examples/node-level-settings.jsonc">{
   "atrcollection": "",
   "auto-prepare": false,
   "cleanupclientattempts": true,
@@ -4992,7 +4989,7 @@ For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell" data-source-url="https://github.com/couchbase/docs-server/blob/6ef42518ee3bcc8a4fab3dd4027b9cf73a857c35/modules/settings/examples/save-node-level-settings.txt">$ curl http://localhost:8093/admin/settings -u user:pword -o ./query_settings.json</code></pre>
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell" data-source-url="https://github.com/couchbase/docs-server/blob/08b6188806d91707b028835e453bc12d829e8ab2/modules/settings/examples/save-node-level-settings.txt">$ curl http://localhost:8093/admin/settings -u user:pword -o ./query_settings.json</code></pre>
 </div>
 </div>
 </div>
@@ -5072,9 +5069,6 @@ Positional parameters apply to <code>prepared</code> also.
 <em>Optional</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><span class="edition"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></span></p>
-</div>
-<div class="paragraph">
 <p>Specifies the collection where the <a href="../learn/data/transactions.html#understanding-transactions" class="page">active transaction record</a> (ATR) is stored.
 The collection must be present.
 If not specified, the ATR is stored in the default collection in the default scope in the bucket containing the first mutated document within the transaction.</p>
@@ -5319,9 +5313,6 @@ $ curl http://localhost:8093/query/service -u user:pword -d 'statement=select * 
 <em>Optional</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><span class="edition"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></span></p>
-</div>
-<div class="paragraph">
 <p>The level of durability for mutations produced by the request.</p>
 </div>
 <div class="paragraph">
@@ -5488,6 +5479,62 @@ $ curl http://localhost:8093/query/service -u user:pword -d 'statement=select * 
 </div></div></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div id="kvtimeout" class="paragraph">
+<p><strong>kvtimeout</strong><br>
+<em>Optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>The maximum time to wait for a KV operation before timing out.
+Only applies to statements within a transaction.</p>
+</div>
+<div class="paragraph">
+<p>The value for this parameter is a string.
+Its format includes an amount and a mandatory unit, e.g. <code>10ms</code> (10 milliseconds) or <code>0.5s</code> (half a second).
+Valid units are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ns</code> (nanoseconds)</p>
+</li>
+<li>
+<p><code>us</code> (microseconds)</p>
+</li>
+<li>
+<p><code>ms</code> (milliseconds)</p>
+</li>
+<li>
+<p><code>s</code> (seconds)</p>
+</li>
+<li>
+<p><code>m</code> (minutes)</p>
+</li>
+<li>
+<p><code>h</code> (hours)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Specify a duration of <code>0</code> or a negative duration to disable.
+When disabled, no timeout is applied and the KV operation runs for however long it takes.</p>
+</div>
+<div class="paragraph">
+<div class="title">Default</div>
+<p><code>"2.5s"</code></p>
+</div>
+<div class="listingblock">
+<div class="title">Example</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-shell hljs" data-lang="shell">cbq&gt; \set -kvtimeout "10ms";
+
+$ curl http://localhost:8093/query/service -u user:pword -d 'statement=select * from default&amp;kvtimeout=10ms'</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-middle"><div class="content"><div id="metrics" class="paragraph">
 <p><strong>metrics</strong><br>
 <em>Optional</em></p>
@@ -5535,9 +5582,6 @@ $ curl http://localhost:8093/query/service -u user:pword -d 'statement=select * 
 <em>Optional</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><span class="edition"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></span></p>
-</div>
-<div class="paragraph">
 <p>Specifies the total number of <a href="../learn/data/transactions.html#understanding-transactions" class="page">active transaction records</a>.
 Must be a positive integer.</p>
 </div>
@@ -6216,9 +6260,6 @@ $ curl http://localhost:8093/query/service -u user:pword -d 'statement=select * 
 <em>Optional</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><span class="edition"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></span></p>
-</div>
-<div class="paragraph">
 <p>Transaction data.
 For internal use only.</p>
 </div></div></td>
@@ -6232,9 +6273,6 @@ For internal use only.</p>
 <em>Required</em> for statements within a transaction</p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><span class="edition"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></span></p>
-</div>
-<div class="paragraph">
 <p>Transaction ID.
 Specifies the transaction to which a statement belongs.
 For use with DML statements within a transaction, rollbacks, and commits.</p>
@@ -6267,9 +6305,6 @@ $ curl http://localhost:8093/query/service \
 <em>Optional</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><span class="edition"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></span></p>
-</div>
-<div class="paragraph">
 <p>Specifies that a DML statement is a singleton transaction.</p>
 </div>
 <div class="paragraph">
@@ -6308,9 +6343,6 @@ $ curl http://localhost:8093/query/service \
 <em>Optional</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><span class="edition"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></span></p>
-</div>
-<div class="paragraph">
 <p>Transaction statement number.
 The transaction statement number must be a positive integer, and must be higher than any previous transaction statement numbers in the transaction.
 If the transaction statement number is lower than the transaction statement number for any previous statement, an error is generated.</p>
@@ -6340,9 +6372,6 @@ $ curl http://localhost:8093/query/service \
 <em>Optional</em></p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><span class="edition"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></span></p>
-</div>
-<div class="paragraph">
 <p>Maximum time to spend on a transaction before timing out.
 Only applies to <code>BEGIN TRANSACTION</code> statements, or DML statements for which <a href="#tximplicit">tximplicit</a> is set.
 For other statements, it is ignored.</p>
