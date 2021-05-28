@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/stage/stage300/server/6.6/eventing/eventing-advanced-bucket-accessors.html">
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="The &lt;em&gt;Advanced Bucket Accessors&lt;/em&gt; make it possible to access advanced KV functionality using the following built-in operators.">
+<meta name="description" content="&lt;em&gt;Advanced Bucket Accessors&lt;/em&gt; make it possible to access advanced KV functionality using the following built-in operators.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="server">
 <meta name="dcterms.identifier" content="6.6">
@@ -2463,6 +2463,12 @@ Couchbase Server
 <a class="nav-link" href="eventing-handler-convertXMLtoJSON.html">convertXMLtoJSON</a>
 </span>
 </li>
+<li class="nav-item " data-depth="4">
+
+<span class="nav-line "  data-depth="4">
+<a class="nav-link" href="eventing-handler-convertAdvXMLtoJSON.html">convertAdvXMLtoJSON</a>
+</span>
+</li>
 </ul>
 </li>
 <li class="nav-item " data-depth="3">
@@ -4365,8 +4371,8 @@ Couchbase Server
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
 </div><div class="paragraph">
-<p>The <em>Advanced Bucket Accessors</em> make it possible to access advanced KV functionality using the following built-in operators.
-They utilize the same bucket bindings defined in the handler as the <em>Basic Bucket Accessors</em>, but expose a richer set of options and operators that can be used to 1) set or retrieve expirations, 2) solve race conditions via CAS and 3) manipulate hot KV items under high contention.</p>
+<p><em>Advanced Bucket Accessors</em> make it possible to access advanced KV functionality using the following built-in operators.
+They utilize the same bucket bindings defined in the handler as <em>Basic Bucket Accessors</em>, but expose a richer set of options and operators that can be used to 1) set or retrieve expirations, 2) solve race conditions via CAS and 3) manipulate hot KV items under high contention.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -4413,18 +4419,30 @@ The following Advanced Bucket Accessors have been added:</p>
 <p>These seven (7) new Bucket Accessors make it possible to utilize and leverage CAS directly and/or set a document expiration (or TTL) in the Data Service (or KV) via Eventing plus perform distributed atomic counter operations.</p>
 </div>
 <div class="paragraph">
-<p>For complete examples including JavaScript, input mutations, output mutations and/or log messages for each Advanced Bucket Accessor refer to
+<p>For example rather than blindly relying on he Basic Bucket Accessors for an upsert like operation ‘src_bkt[id_str] = some_doc’ the Advanced Accessors allow you to resolve contention (or possible contention) with JavaScript driven logic in your Eventing Function.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If the document doesn&#8217;t exist you can use ‘couchbase.insert(src_bkt, {"id: id_str}, some_doc)’ and check the return value for success</p>
+</li>
+<li>
+<p>If the document exists you can use ‘couchbase.replace(src_bkt, {"id: id_str, "cas": current_cas}, some_doc)’ and check the return value for success or a CAS mismatch.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To view complete examples including JavaScript, input mutations, output mutations and/or log messages for each Advanced Bucket Accessor refer to
 <a href="eventing-examples.html#examples-scriptlets-advanced-accessors" class="page">Scriptlets: Advanced Accessor Handlers</a> in the examples section of the documentation.</p>
 </div>
 <div id="advanced-get-op" class="paragraph">
 <p><strong>The Advanced GET operation</strong>: <em>result = couchbase.get(binding, meta)</em></p>
 </div>
 <div class="paragraph">
-<p>This operation allows reading a document along with metadata from the bucket this allows subsequent operations to utilize CAS or check/modify the expiry_date.</p>
+<p>This operation allows reading a document along with metadata from the bucket and  subsequent operations to utilize CAS or check/modify the expiry_date.</p>
 </div>
 <div class="paragraph">
-<p>Contrast this to the <em>Basic Bucket Accessor GET operation</em> which merely exposes a JavaScript binding or map, "<em>var adoc = src_bkt[meta.id]</em>",
-where the return value is just the document without any metadata.</p>
+<p>Contrast this to the <em>Basic Bucket Accessor</em> GET operation which merely exposes a JavaScript binding or map, "<em>var adoc = src_bkt[meta.id]</em>", where the return value is just the document without any metadata.</p>
 </div>
 <div class="paragraph">
 <p>Below is an example of the <em>Advanced GET operation</em>.</p>
@@ -4618,7 +4636,7 @@ where the return value is just the document without any metadata.</p>
 It allows specifying an expiration time (or TTL) to be set on the document.</p>
 </div>
 <div class="paragraph">
-<p>There is no analogous Basic Bucket Accessor operation to the <em>Advanced INSERT operation</em> (as "<em>src_bkt[meta.id] = adoc</em>" is more like an upsert).</p>
+<p>There is no analogous <em>Basic Bucket Accessor</em> operation to the Advanced INSERT operation (as "<em>src_bkt[meta.id] = adoc</em>" is more like an upsert).</p>
 </div>
 <div class="paragraph">
 <p>Below is an example of the <em>Advanced INSERT operation</em>.</p>
@@ -4804,11 +4822,11 @@ The operation does not allow specifying CAS (it will be silently ignored).
 It also allows specifying an expiration time (or TTL) to be set on the document.</p>
 </div>
 <div class="paragraph">
-<p>Contrast this to the <em>Basic Bucket Accessor SET operation</em> which merely uses an exposed a JavaScript binding or map, "<em>src_bkt[meta.id] = adoc</em>",
-where there is no return value (no status and no metadata).</p>
+<p>Contrast this to the <em>Basic Bucket Accessor</em> SET operation which merely uses an exposed JavaScript map defined via a bucket binding alias "src_bkt[meta.id] = adoc".
+For the basic SET operation there is no return value (no status and no metadata) thus no way to check the CAS value.</p>
 </div>
 <div class="paragraph">
-<p>Below is an example of the <em>Advanced UPSERT operation</em>.</p>
+<p>Below is an example of the <em>Advanced UPSERT operation</em>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4969,10 +4987,10 @@ This operation allows specifying a CAS value that must be matched as a pre-condi
 It also allows specifying an expiration time (or TTL) to be set on the document.</p>
 </div>
 <div class="paragraph">
-<p>There is no analogous Basic Bucket Accessor operation to the <em>Advanced REPLACE operation</em> (as "<em>src_bkt[meta.id] = adoc</em>" is more like an upsert).</p>
+<p>There is no analogous <em>Basic Bucket Accessor</em> operation to the <em>Advanced REPLACE operation</em> (as "<em>src_bkt[meta.id] = adoc</em>" is more like an upsert).</p>
 </div>
 <div class="paragraph">
-<p>Below is an example of the <em>Advanced REPLACE operation</em>.</p>
+<p>Below is an example of the <em>Advanced REPLACE operation</em>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5183,11 +5201,10 @@ It also allows specifying an expiration time (or TTL) to be set on the document.
 <p>This operation allows deleting a document in the bucket specified by key. Optionally, a CAS value may be specified which will be matched as a pre-condition to proceed with the operation.</p>
 </div>
 <div class="paragraph">
-<p>Contrast this to the B_Basic Bucket Accessor DEL operation which merely uses an exposed a JavaScript binding or map, "delete _src_bkt[meta.id]",
-where there is no return value (no status and no metadata).</p>
+<p>Contrast this to the <em>Basic Bucket Accessor</em> DEL operation which merely uses an exposed a JavaScript binding or map, "<em>delete src_bkt[meta.id]</em>", where there is no return value (no status and no metadata).</p>
 </div>
 <div class="paragraph">
-<p>Below is an example of the <em>Advanced DELETE operation</em>.</p>
+<p>Below is an example of the <em>Advanced DELETE operation</em>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5401,7 +5418,7 @@ where there is no return value (no status and no metadata).</p>
 <p>Due to limitations in KV engine API, this operation cannot currently manipulate full document counters.</p>
 </div>
 <div class="paragraph">
-<p>There is no analogous Basic Bucket Accessor operation to the <em>Advanced INCREMENT operation</em>.</p>
+<p>There is no analogous <em>Basic Bucket Accessor</em> operation to the <em>Advanced INCREMENT operation</em>.</p>
 </div>
 <div class="paragraph">
 <p>Below is an example of the <em>Advanced INCREMENT operation</em>.</p>
@@ -5424,7 +5441,8 @@ where there is no return value (no status and no metadata).</p>
 </div>
 </div>
 <div class="paragraph">
-<p>An example return value, assumes this exists KEY "my_atomic_counter:1" DOC {"count": 23} :</p>
+<p>An example return value, assume you create this KEY "my_atomic_counter:1" DOC {"count": 23}
+if the Eventing function above is deployed the count will be immediately incremented :</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -5556,7 +5574,7 @@ where there is no return value (no status and no metadata).</p>
 <p>Due to limitations in KV engine API, this operation cannot currently manipulate full document counters.</p>
 </div>
 <div class="paragraph">
-<p>There is no analogous Basic Bucket Accessor operation to the <em>Advanced DECREMENT operation</em>.</p>
+<p>There is no analogous <em>Basic Bucket Accessor</em> operation to the <em>Advanced DECREMENT operation</em>.</p>
 </div>
 <div class="paragraph">
 <p>Below is an example of the <em>Advanced DECREMENT operation</em>.</p>
@@ -5579,7 +5597,8 @@ where there is no return value (no status and no metadata).</p>
 </div>
 </div>
 <div class="paragraph">
-<p>An example return value, assumes this exists KEY "my_atomic_counter:1" DOC {"count": 23} :</p>
+<p>An example return value, assume you create this KEY "my_atomic_counter:1" DOC {"count": 23}
+if the Eventing function above is deployed the count will be immediately decremented :</p>
 </div>
 <div class="listingblock">
 <div class="content">

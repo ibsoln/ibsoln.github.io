@@ -324,6 +324,12 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
+<a class="nav-link" href="access-control-overview.html">Access Control Overview</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
 <a class="nav-link" href="access-grants.html">Access Grants</a>
 </span>
 </li>
@@ -354,7 +360,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="user-extended-attribute-key.html">User Extended Attribute Key</a>
+<a class="nav-link" href="using-xattr-access-grants.html">Using XATTR Access Grants</a>
 </span>
 </li>
 </ul>
@@ -854,16 +860,19 @@ It makes the switching of the runtime behavior&#8201;&#8212;&#8201;for example d
 <h2 id="syntax"><a class="anchor" href="#syntax"></a>Syntax</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To use an environment variable, simply insert its name as a token using <code>$var</code> or <code>${var}</code> where you would normally put the configuration value you are substituting for.</p>
+<p>To use environment variables in your configuration file, insert the variable name&#8201;&#8212;&#8201;prefixed by a <code>$</code> symbol&#8201;&#8212;&#8201;wherever you would normally put the configuration value you are substituting for&#8201;&#8212;&#8201;see <a href="#ex-syntax">Example 1</a>.</p>
 </div>
 <div class="paragraph">
-<p>You can define inline default values using the notation<br>
-<code>${var:-default}</code>.
+<p>You can define inline default values using the notation <code>${var:-default}</code>.
 The default value is used if the referenced environment variable is empty or undefined.</p>
 </div>
 <div class="paragraph">
-<p>If you need to include a configuration file value that contains a literal <code>$</code> symbol, you must use <code>$$</code> instead.
+<p>If you need to include a string containing one or more literal <code>$</code> symbols, use <code>$$</code> instead of <code>$</code>.
 This enables the parser to differentiate between a literal <code>$</code> and the start of a variable name; so <code>pa$$$$</code> resolves to the value <code>pa$$</code>.</p>
+</div>
+<div class="paragraph">
+<p>Variable names are case-sensitive in this context.
+So <code>${username}</code> and <code>${USERNAME}</code> are not the same variable</p>
 </div>
 <div id="ex-syntax" class="exampleblock">
 <div class="title">Example 1. Configuring with Environment Variables</div>
@@ -875,13 +884,13 @@ This enables the parser to differentiate between a literal <code>$</code> and th
     "db1": {
       "bucket": "bucket1",
       "server": "couchbase://localhost",
-      "username": "$USERNAME", <i class="conum" data-value="1"></i><b>(1)</b>
-      "password": "$PASSWORD"
+      "username": "${USERNAME}", <i class="conum" data-value="1"></i><b>(1)</b>
+      "password": "${PASSWORD}"
     }
     "db2": {
       "bucket": "${var_bucket:-this_bucket}", <i class="conum" data-value="2"></i><b>(2)</b>
       "server": "couchbase://localhost",
-      "username": "$USERNAME",
+      "username": "${USERNAME}",
       "password": "pa$$$$word" <i class="conum" data-value="3"></i><b>(3)</b>
     }
   }
@@ -892,7 +901,7 @@ This enables the parser to differentiate between a literal <code>$</code> and th
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we provide a reference to the environment variables <code>$USERNAME</code> <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> and <code>$PASSWORD</code>.
+<td>Here we provide a reference to the environment variables <code>USERNAME</code> <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> and <code>PASSWORD</code>.
 The values of those variable are substituted here immediately prior to the parsing of the configuration file.</td>
 </tr>
 <tr>
@@ -901,8 +910,9 @@ The values of those variable are substituted here immediately prior to the parsi
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>This password value contains dollar symbols, so we need to use the <code>$$</code> notation.
-The value is interpreted as <code>pa$$word</code>.</td>
+<td>The password value itself contains dollar symbols.
+We can use the <code>$$</code> notation.
+So, the value is interpreted as <code>pa$$word</code>.</td>
 </tr>
 </table>
 </div>
@@ -914,16 +924,15 @@ The value is interpreted as <code>pa$$word</code>.</td>
 <h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Each variable is replaced immediately prior to the parsing of the configuration file at each Sync Gateway startup.</p>
+<p>Insert the required environment variable references in a <a href="configuration-schema-bootstrap.html" class="page">Bootstrap Configuration Schema</a>, or in a <a href="configuration-schema-static.html" class="page">Static Configuration Schema</a> with <code>disable_persistent_config=true</code>.</p>
+</div>
+<div class="paragraph">
+<p>Sync Gateway will replace each variable occurrence immediately prior to the parsing of the configuration file at each startup.</p>
 </div>
 <div class="paragraph">
 <p>The variables are immutable.
 This means changes to the values of the environment variables are not detected by Sync Gateway whilst it is running.
 Such changes only become effective after a restart of Sync Gateway.</p>
-</div>
-<div class="paragraph">
-<p>All environment variable names are case-sensitive in this context.
-So <code>$username</code> and <code>$USERNAME</code> are not the same variable</p>
 </div>
 <div class="paragraph">
 <p>Any references to undefined variables are replaced by an empty string.
@@ -935,13 +944,31 @@ This can result in an invalid configuration, which will cause the start-up to ab
 <h2 id="variable-definition"><a class="anchor" href="#variable-definition"></a>Variable Definition</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>How you define the environment variables will depend on the platform used to host Sync Gateway.</p>
+<p>How you define the environment variables in your runtime environment will depend on the platform used to host Sync Gateway.</p>
+</div>
+<div class="paragraph">
+<p>As with the configuration file, you may need to define strings containing meta-characters (for example, symbols such as <code>$\*/</code>).</p>
+</div>
+<div class="paragraph">
+<p>Depending on the shell environment you can use a number of options:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enclose the string in single-quotes, which will remove the special meaning of every character between the quotes.
+Everything inside single quotes becomes a literal string.</p>
+</li>
+<li>
+<p>Precede the meta-character with an escape character, typically a reverse solidus (<code>\</code>) (a backtick (<code>`</code>) in Powershell).
+Note&#8201;&#8212;&#8201;This works in double-quote enclosed strings or in strings with no enclosing quotes, but not in single-quotes since as stated above, the remove the special meaning of the enclosed characters including any escape characters.</p>
+</li>
+</ul>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_linux-or-mac-os-terminal"></a>Linux or Mac OS Terminal</p>
+<p><a id="tabset1_linux-mac-os"></a>Linux/Mac OS</p>
 </li>
 <li>
 <p><a id="tabset1_windows-cli"></a>Windows CLI</p>
@@ -955,19 +982,27 @@ This can result in an invalid configuration, which will cause the start-up to ab
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_linux-or-mac-os-terminal">
+<div class="tab-pane" aria-labelledby="tabset1_linux-mac-os">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">export USERNAME=Administrator
-export PASSWORD=pa$$word</code></pre>
+export PASSWORD='pa$$word' <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use quotes to prevent interpolation of the literal string&#8217;s <code>$</code> symbols, alternatively use "pa\$\$word"</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_windows-cli">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-dos hljs" data-lang="dos">setx USERNAME Administrator <i class="conum" data-value="1"></i><b>(1)</b>
-set PASSWORD=pa$$word <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+set PASSWORD='pa$$word' <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -980,7 +1015,8 @@ Note <code>setx</code> does not require the <code>=</code> symbol</td>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Sets the <code>PASSWORD</code> variable, but only for the duration of the current 'Command Line' session.
-This may not be what you want.</td>
+This may not be what you want.
+Note we use single-quotes because of the password value&#8217;s $$ symbols, alternatively use "pa\$\$word"</td>
 </tr>
 </table>
 </div>
@@ -1005,8 +1041,16 @@ This displays the <em>Environment Variables</em> panel</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-powershell hljs" data-lang="powershell">$ENV:USERNAME=Administrator
-$ENV:PASSWORD=pa$$word</code></pre>
+$ENV:PASSWORD='pa$$word' <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Note we use single-quotes because of the password value&#8217;s $$ symbols, alternatively use "pa`$`$word"</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
