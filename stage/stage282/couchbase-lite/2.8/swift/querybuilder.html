@@ -324,7 +324,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{cbl&#8212;&#8203;pfx}release-notes.adoc[Release Notes]</span>
+<span class="nav-text ">xref:couchbase-lite:android:release-notes.adoc</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -543,7 +543,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{cbl&#8212;&#8203;pfx}release-notes.adoc[Release Notes]</span>
+<span class="nav-text ">xref:couchbase-lite:csharp:release-notes.adoc</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -762,7 +762,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{cbl&#8212;&#8203;pfx}release-notes.adoc[Release Notes]</span>
+<span class="nav-text ">xref:couchbase-lite:java:release-notes.adoc</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -987,7 +987,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{cbl&#8212;&#8203;pfx}release-notes.adoc[Release Notes]</span>
+<span class="nav-text ">xref:couchbase-lite:objc:release-notes.adoc</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1212,7 +1212,7 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{cbl&#8212;&#8203;pfx}release-notes.adoc[Release Notes]</span>
+<span class="nav-text ">xref:couchbase-lite:swift:release-notes.adoc</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1256,19 +1256,19 @@
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
-<a class="nav-link" href="../../../sync-gateway/3.0/introduction.html">Sync&#160;Gateway</a>
+<a class="nav-link" href="../../../sync-gateway/2.8/introduction.html">Sync&#160;Gateway</a>
 </span>
 <ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../../sync-gateway/3.0/configuration-schema-static.html">Configure</a>
+<a class="nav-link" href="../../../sync-gateway/2.8/configuration-properties.html">Configure</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../../sync-gateway/3.0/rest-api-admin.html">REST API</a>
+<a class="nav-link" href="../../../sync-gateway/2.8/rest-api-admin.html">REST API</a>
 </span>
 </li>
 </ul>
@@ -2264,8 +2264,7 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">let listQuery = QueryBuilder.select(SelectResult.all)
-            .from(DataSource.database(dbName)) <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift"></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2339,24 +2338,40 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">do {
-    for (_,result) in try listQuery.execute().enumerated() {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        do {
 
-        if let match = row.dictionary(forKey: dbName) {
-            matches.append(match.toDictionary())
-        } <i class="conum" data-value="1"></i><b>(1)</b>
+            for (row) in try! listQuery.execute() {
 
-        if let thisDocsProperties = match.toDictionary()] as? [String:Any] {
-          let docid = thisDocsProperties["id"]
-          let name = thisDocsProperties["name"]
-          let type = thisDocsProperties["type"]
-          let city = thisDocsProperties["city"]
-        } <i class="conum" data-value="2"></i><b>(2)</b>
+                print(row.toDictionary())
 
-    } // end for
-    catch {
-        // ... handle errors as required
-    }</code></pre>
+                if let hotel = row.dictionary(forKey: "_doc") {
+
+                    let hotelid = hotel["id"].string!
+
+                    hotels[hotelid] = hotel.toDictionary()
+
+
+                    if let thisDocsProperties = hotel.toDictionary() as? [String:Any] {
+
+                        let docid = thisDocsProperties["id"] as! String
+
+                        let name = thisDocsProperties["name"] as! String
+
+                        let type = thisDocsProperties["type"] as! String
+
+                        let city = thisDocsProperties["city"] as! String
+
+                        print("thisDocsProperties are: ", docid,name,type,city)
+
+                    } // end if <i class="conum" data-value="1"></i><b>(1)</b>
+
+                } // end if
+
+            } // end for
+        } catch let err {
+            print(err.localizedDescription)
+            // ... handle errors as required
+        } //end do-block</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2386,12 +2401,13 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">let listQuery = QueryBuilder
-            .select(SelectResult.expression(Meta.id),
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        let listQuery = QueryBuilder
+            .select(SelectResult.expression(Meta.id).as("metaId"),
+                    SelectResult.expression(Expression.property("id")),
                     SelectResult.expression(Expression.property("name")),
                     SelectResult.expression(Expression.property("city")),
                     SelectResult.expression(Expression.property("type")))
-            .from(DataSource.database(dbName))</code></pre>
+                    .from(DataSource.database(db))</code></pre>
 </div>
 </div>
 </div>
@@ -2445,15 +2461,25 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">for (_,result) in try! listQuery.execute().enumerated() {
-  if let thisDoc = result.toDictionary()] as? [String:Any] {
-      let docid = thisDoc["id"]
-      let name = thisDoc["name"]
-      let city = thisDoc["city"]
-      let type = thisDoc["type"]
-      //
-      // ... process document properties as required
-  }
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        for (_, result) in try! listQuery.execute().enumerated() {
+
+            print(result.toDictionary())
+
+            if let thisDoc = result.toDictionary() as? [String:Any] {
+
+                let docid = thisDoc["metaId"] as! String
+
+                let hotelId = thisDoc["id"] as! String
+
+                let name = thisDoc["name"] as! String
+
+                let city = thisDoc["city"] as! String
+
+                let type = thisDoc["type"] as! String
+
+                // ... process document properties as required
+                print("Result properties are: ", docid, hotelId,name, city, type)
+          }
 }</code></pre>
 </div>
 </div>
@@ -2471,8 +2497,8 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">let listQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(dbName))</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">        let listQuery = QueryBuilder.select(SelectResult.expression(Meta.id).as("metaId"))
+                    .from(DataSource.database(db))</code></pre>
 </div>
 </div>
 </div>
@@ -2508,13 +2534,29 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">for result in try listQuery.execute() {
-  if let thisResult = result.toDictionary()? as [String:Any],
-  let thisDocsID = thisResult["id"] as? String { <i class="conum" data-value="1"></i><b>(1)</b>
-    // Now you can get the document using the ID
-    let thisDoc = try yourDb.document(withID: thisDocsId)
-  }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        for (_, result) in try! listQuery.execute().enumerated() {
+
+            print(result.toDictionary())
+            print("Document Id is -- ", result["metaId"].string!)
+
+            let thisDocsId = result["metaId"].string! <i class="conum" data-value="1"></i><b>(1)</b>
+
+            // Now you can get the document using the ID
+            var thisDoc = db.document(withID: thisDocsId)!.toDictionary()
+
+            let hotelId = thisDoc["id"] as! String
+
+            let name = thisDoc["name"] as! String
+
+            let city = thisDoc["city"] as! String
+
+            let type = thisDoc["type"] as! String
+
+            // ... process document properties as required
+            print("Result properties are: ", hotelId,name, city, type)
+
+
+        } // end for</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2535,9 +2577,10 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">listQuery = QueryBuilder
-    .select(SelectResult.expression(Function.count(Expression.all())).as("mycount"))
-    .from (DataSource.database(dbName)).groupBy(Expression.property("type"))</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        do {
+            let listQuery = QueryBuilder
+                .select(SelectResult.expression(Function.count(Expression.all())).as("mycount"))
+                .from (DataSource.database(db)).groupBy(Expression.property("type"))</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2584,12 +2627,14 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">for result in try! listQuery.execute() {
-    if let dict = result.toDictionary() as? [String: Int] {
-        let thiscount = dict["mycount"]! <i class="conum" data-value="1"></i><b>(1)</b>
-        print("There are ", thiscount, " rows")
-    }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">            for result in try! listQuery.execute() {
+                if let dict = result.toDictionary() as? [String: Int] {
+                    let thiscount = dict["mycount"]! <i class="conum" data-value="1"></i><b>(1)</b>
+                    print("There are ", thiscount, " rows")
+                }
+            }
+        } // end do
+    } // end function</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2614,14 +2659,14 @@ Use the <code>limit</code> and <code>offset</code> feature, to return a defined 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">let thisOffset = 0;
-let thisLimit = 20;
-
-let listQuery = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.database(dbName))
-        .limit(Expression.int(thisLimit),
-          offset: Expression.int(thisOffset))</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">        let thisOffset = 0;
+        let thisLimit = 20;
+        //
+        let listQuery = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(db))
+                .limit(Expression.int(thisLimit),
+                  offset: Expression.int(thisOffset))</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2641,10 +2686,61 @@ let listQuery = QueryBuilder
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-For more on using the querybuilder API, see our blog: <a href="https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/" target="_blank" rel="noopener">Introducing the Query Interface in Couchbase Mobile</a>
+For more on using the QueryBuilder API, see our blog: <a href="https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/" target="_blank" rel="noopener">Introducing the Query Interface in Couchbase Mobile</a>
 </td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="json-result-sets"><a class="anchor" href="#json-result-sets"></a>JSON Result Sets</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Lite for Swift provides a convenience API to convert query results to JSON strings.</p>
+</div>
+<div class="paragraph">
+<p>Use <a href="http://docs.couchbase.com/mobile/3.0.0/couchbase-lite-swift/Classes/Result.htmls:18CouchbaseLiteSwift6ResultC6toJSONSSyF">result.toJSON()</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <a href="#ex-json">Example 26</a> for a working example.</p>
+</div>
+<div id="ex-json" class="exampleblock">
+<div class="title">Example 26. Using JSON Results</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        do {
+
+            for (_, row) in
+                try! listQuery.execute().allResults().enumerated() {
+
+                let jsonString = row.dictionary(forKey: "_doc")!.toJSON()
+
+                let thisJsonObj =
+                        try! JSONSerialization.jsonObject(
+                                with: jsonString.data(using: .utf8)! , options:[])
+                                    as? [String: Any]
+
+                let docid = thisJsonObj!["id"] as! String
+
+                let name = thisJsonObj!["name"] as! String
+
+                let type = thisJsonObj!["type"] as! String
+
+                let city = thisJsonObj!["city"] as! String
+
+                print("the JSON Object's propertiess are: ", docid,name,type,city)
+
+            } // end for
+
+        } catch let err {
+            print(err.localizedDescription)
+
+        } // end do
+
+
+    } // end func dontTestQueryAll</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>

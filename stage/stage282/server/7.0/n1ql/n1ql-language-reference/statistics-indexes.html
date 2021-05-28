@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Updating Statistics for Multiple Indexes | Couchbase Docs</title>
+<title>Update Statistics for Multiple Indexes | Couchbase Docs</title>
 <link rel="stylesheet" href="../../../../_/css/site.css">
 <script src="../../../../_/js/vendor/jquery.js"></script>
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
@@ -2072,25 +2072,25 @@ Couchbase Server
 <li class="nav-item " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-expressions.html">Updating Statistics for Index Expressions</a>
+<a class="nav-link" href="statistics-expressions.html">Update Statistics for Index Expressions</a>
 </span>
 </li>
 <li class="nav-item " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-index.html">Updating Statistics for a Single Index</a>
+<a class="nav-link" href="statistics-index.html">Update Statistics for a Single Index</a>
 </span>
 </li>
 <li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-indexes.html">Updating Statistics for Multiple Indexes</a>
+<a class="nav-link" href="statistics-indexes.html">Update Statistics for Multiple Indexes</a>
 </span>
 </li>
 <li class="nav-item " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-delete.html">Deleting Statistics</a>
+<a class="nav-link" href="statistics-delete.html">Delete Statistics</a>
 </span>
 </li>
 </ul>
@@ -4386,13 +4386,13 @@ Couchbase Server
 <li class="crumb"><a href="index.html">N1QL Language Reference</a></li>
 <li class="crumb">Statements</li>
 <li class="crumb"><a href="updatestatistics.html">UPDATE STATISTICS</a></li>
-<li class="crumb"><a href="statistics-indexes.html">Updating Statistics for Multiple Indexes</a></li>
+<li class="crumb"><a href="statistics-indexes.html">Update Statistics for Multiple Indexes</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Updating Statistics for Multiple Indexes</h1>
+<h1 class="page">Update Statistics for Multiple Indexes</h1>
 <div class="labels">
 <ul>
 <li class="status"><span>Couchbase Server 7.0</span></li>
@@ -4493,22 +4493,22 @@ Refer to the <a href="createindex.html#keyspace-ref" class="page">CREATE INDEX</
 <h3 id="indexes-clause"><a class="anchor" href="#indexes-clause"></a>INDEX Clause</h3>
 <div class="listingblock">
 <div class="content">
-<pre>indexes-clause ::= INDEX '(' <em>index-name</em> [ ',' <em>index-name</em> ]* | <a href="#subquery-expr">subquery-expr</a> ')'</pre>
+<pre>indexes-clause ::= INDEX ( '(' <em>index-name</em> [ ',' <em>index-name</em> ]* | <a href="#subquery-expr">subquery-expr</a> ')' | ALL )</pre>
 </div>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../_images/n1ql-language-reference/indexes-clause.png" alt="'INDEX' '(' ( index-name ( ',' index-name )* | subquery-expr ) ')'">
+<img src="../_images/n1ql-language-reference/indexes-clause.png" alt="'INDEX' ( '(' ( index-name ( ',' index-name )* | subquery-expr ) ')' | 'ALL')">
 </div>
 </div>
 <div class="paragraph">
-<p>For this syntax, the <code>INDEX</code> clause enables you to specify a comma-separated list of index names, or a subquery which returns an array of index names.</p>
+<p>For this syntax, the <code>INDEX</code> clause enables you to specify a comma-separated list of index names, a subquery which returns an array of index names, or all the indexes in the specified keyspace.</p>
 </div>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">index-name</dt>
 <dd>
-<p>(Required) A unique name that identifies the index.</p>
+<p>(Required) A unique name that identifies an index.</p>
 </dd>
 </dl>
 </div>
@@ -4531,6 +4531,13 @@ Refer to the <a href="createindex.html#keyspace-ref" class="page">CREATE INDEX</
 <p>The subquery must return an array of strings, each string representing the name of an index.
 The subquery should look for GSI indexes that are in the online state.
 Refer to <a href="#ex-3">Example 3</a> and <a href="#ex-4">Example 4</a> for details.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="index-all"><a class="anchor" href="#index-all"></a>INDEX ALL</h4>
+<div class="paragraph">
+<p>The <code>INDEX ALL</code> keywords enable you to analyze all the indexes in the specified keyspace, without having to use a subquery.
+Refer to <a href="#ex-5">Example 5</a> and <a href="#ex-6">Example 6</a> for details.</p>
 </div>
 </div>
 </div>
@@ -4590,6 +4597,15 @@ The minimum resolution is <code>0.02</code> (5000 distribution bins) and the max
 <p>[Optional] A number representing a duration in seconds.
 The command times out when this timeout period is reached.
 If omitted, a default timeout value is calculated based on the number of samples used.</p>
+</dd>
+<dt class="hdlist1">batch_size</dt>
+<dd>
+<p>[Optional] Only applies when processing multiple index expressions at once.
+If there is a large number of index expressions to process, the cost-based optimizer deals with them in batches.
+This option is an integer specifying the maximum number of index expressions in each batch.
+If omitted, the default value is <code>10</code>.
+You can specify a different value based on the memory availability of the system.
+Note that when index expressions are processed in batches, the <code>update_statistics_timeout</code> value (above) applies to each batch.</p>
 </dd>
 </dl>
 </div>
@@ -4688,6 +4704,29 @@ INDEX (def_inventory_airport_faa, def_inventory_airport_city);</code></pre>
 </div>
 <div class="paragraph">
 <p>This query is equivalent to the query in <a href="#ex-4">Example 4</a>.</p>
+</div>
+</div>
+</div>
+<div id="ex-5" class="exampleblock">
+<div class="title">Example 5. UPDATE STATISTICS with all indexes</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">UPDATE STATISTICS FOR `travel-sample`.inventory.airport INDEX ALL;</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="ex-6" class="exampleblock">
+<div class="title">Example 6. ANALYZE with all indexes</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">ANALYZE KEYSPACE `travel-sample`.inventory.airport INDEX ALL;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This query is equivalent to the query in <a href="#ex-5">Example 5</a>.</p>
 </div>
 </div>
 </div>
