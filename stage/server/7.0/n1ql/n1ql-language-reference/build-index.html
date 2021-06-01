@@ -2073,25 +2073,25 @@ Couchbase Server
 <li class="nav-item " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-expressions.html">Updating Statistics for Index Expressions</a>
+<a class="nav-link" href="statistics-expressions.html">Update Statistics for Index Expressions</a>
 </span>
 </li>
 <li class="nav-item " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-index.html">Updating Statistics for a Single Index</a>
+<a class="nav-link" href="statistics-index.html">Update Statistics for a Single Index</a>
 </span>
 </li>
 <li class="nav-item " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-indexes.html">Updating Statistics for Multiple Indexes</a>
+<a class="nav-link" href="statistics-indexes.html">Update Statistics for Multiple Indexes</a>
 </span>
 </li>
 <li class="nav-item " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-delete.html">Deleting Statistics</a>
+<a class="nav-link" href="statistics-delete.html">Delete Statistics</a>
 </span>
 </li>
 </ul>
@@ -2521,12 +2521,6 @@ Couchbase Server
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../../install/install-swap-space.html">Configure Kernel Swappiness</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../../install/install-client-server.html">Client Deployment Strategies</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -4413,16 +4407,51 @@ The BUILD INDEX statement enables you to build one or more GSI indexes that are 
 </blockquote>
 </div>
 <div class="paragraph">
-<p>By default, CREATE INDEX statement starts building the created index.
-However for more efficient building of multiple indexes, CREATE INDEX command can mark indexes for deferred building using the <code>defer_build:true</code> option.
-BUILD INDEX is capable of building multiple indexes at once, and can utilize a single scan of documents in the bucket to feed many index build operations.</p>
+<p>By default, CREATE INDEX starts building the created index after the creation stage is complete.
+However for more efficient building of multiple indexes, CREATE INDEX can mark indexes for deferred building using the <code>defer_build:true</code> option.
+BUILD INDEX is capable of building multiple indexes at once, and can utilize a single scan of documents in the keyspace to feed many index build operations.</p>
 </div>
 <div class="paragraph">
 <p>BUILD INDEX is an asynchronous operation.
 BUILD INDEX creates a task to build the primary or secondary GSI indexes and returns as soon as the task is queued for execution.
-The full index creation operation happens in the background.
-Indexes of type GSI provide a status field and mark index status pending while the index build operation is in progress.
-This status field and other index metadata can be queried using <code>system:indexes</code>.</p>
+The full index build operation happens in the background.</p>
+</div>
+<div class="paragraph">
+<p>Index metadata provides a state field.
+The index state may be <code>scheduled for creation</code>, <code>deferred</code>, <code>building</code>, <code>pending</code>, <code>online</code>, <code>offline</code>, or <code>abridged</code>.
+This state field and other index metadata can be queried using <a href="../n1ql-intro/sysinfo.html#querying-indexes" class="page">system:indexes</a>.
+You can also monitor the index state using the Couchbase Web Console.</p>
+</div>
+<div class="paragraph">
+<p>If you attempt to build an index which is still scheduled for background creation, the request fails.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you kick off multiple index build operations concurrently, then you may sometimes see transient errors similar to the following.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/06bffc048811fa7bcb508e9657a0d31bcfc761b0/modules/n1ql/examples/n1ql-language-reference/build-idx-error.jsonc">[
+  {
+    "code": 5000,
+    "msg": "GSI CreateIndex() - cause: Encountered transient error.  Index creation will be retried in background.  Error: Index ... will retry building in the background for reason: Build Already In Progress. Keyspace ...",
+    "query": "..."
+  }
+]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To work around this issue, wait for index building to complete (that is, for all indexes to get to the online state), then issue the BUILD INDEX command again.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>BUILD INDEX is also idempotent.
@@ -4439,39 +4468,9 @@ If any of the indexes specified by BUILD INDEX have already been built, BUILD IN
 <div class="sectionbody">
 <h5 id="rbac-privileges" class="discrete">RBAC Privileges</h5>
 <div class="paragraph">
-<p>User executing the BUILD INDEX statement must have the <em>Query Manage Index</em> privilege granted on the keyspace/bucket.
+<p>User executing the BUILD INDEX statement must have the <em>Query Manage Index</em> privilege granted on the keyspace.
 For more details about user roles, see
 <a href="../../learn/security/authorization-overview.html" class="page">Authorization</a>.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-<div class="title">Known Issue</div>
-<div class="paragraph">
-<p>If multiple index building operations are kicked off without waiting for all indexes to get to the online state, index building for some indexes might fail.
-In this case, <code>system:indexes</code> output might report an error similar to the following:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/c7ab820702e119771eca8077c2e7705192dd9a01/modules/n1ql/examples/n1ql-language-reference/build-idx-error.jsonc">[
-  {
-    "code": 5000,
-    "msg": "BuildIndexes - cause: Build index fails.  Some index will be retried building in the background.  For more details, please check index status.\n",
-    "query_from_user": "BUILD INDEX ON ..."
-  }
-]</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To work around this issue, wait for index building to complete (that is, for all indexes to get to the online state), then issue the BUILD INDEX command again.</p>
-</div>
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -4651,7 +4650,7 @@ The <code>USING GSI</code> keywords are optional and may be omitted.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/c7ab820702e119771eca8077c2e7705192dd9a01/modules/n1ql/examples/n1ql-language-reference/create-idx-defer-1.n1ql">CREATE INDEX idx_landmark_country
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/06bffc048811fa7bcb508e9657a0d31bcfc761b0/modules/n1ql/examples/n1ql-language-reference/create-idx-defer-1.n1ql">CREATE INDEX idx_landmark_country
   ON `travel-sample`.inventory.landmark(country)
   USING GSI
   WITH {"defer_build":true};</code></pre>
@@ -4659,7 +4658,7 @@ The <code>USING GSI</code> keywords are optional and may be omitted.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/c7ab820702e119771eca8077c2e7705192dd9a01/modules/n1ql/examples/n1ql-language-reference/create-idx-defer-2.n1ql">CREATE INDEX idx_landmark_name
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/06bffc048811fa7bcb508e9657a0d31bcfc761b0/modules/n1ql/examples/n1ql-language-reference/create-idx-defer-2.n1ql">CREATE INDEX idx_landmark_name
   ON `travel-sample`.inventory.landmark(name)
   USING GSI
   WITH {"defer_build":true};</code></pre>
@@ -4667,7 +4666,7 @@ The <code>USING GSI</code> keywords are optional and may be omitted.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/c7ab820702e119771eca8077c2e7705192dd9a01/modules/n1ql/examples/n1ql-language-reference/create-idx-defer-3.n1ql">CREATE PRIMARY INDEX idx_landmark_primary
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/06bffc048811fa7bcb508e9657a0d31bcfc761b0/modules/n1ql/examples/n1ql-language-reference/create-idx-defer-3.n1ql">CREATE PRIMARY INDEX idx_landmark_primary
   ON `travel-sample`.inventory.landmark
   USING GSI
   WITH {"defer_build":true};</code></pre>
@@ -4683,13 +4682,13 @@ The <code>USING GSI</code> keywords are optional and may be omitted.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/c7ab820702e119771eca8077c2e7705192dd9a01/modules/n1ql/examples/n1ql-language-reference/check-idx-defer.n1ql">SELECT * FROM system:indexes WHERE name="idx_landmark_country";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/06bffc048811fa7bcb508e9657a0d31bcfc761b0/modules/n1ql/examples/n1ql-language-reference/check-idx-defer.n1ql">SELECT * FROM system:indexes WHERE name="idx_landmark_country";</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Results</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/c7ab820702e119771eca8077c2e7705192dd9a01/modules/n1ql/examples/n1ql-language-reference/check-idx-defer.jsonc">[
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/06bffc048811fa7bcb508e9657a0d31bcfc761b0/modules/n1ql/examples/n1ql-language-reference/check-idx-defer.jsonc">[
   {
     "indexes": {
       "bucket_id": "travel-sample",
@@ -4715,7 +4714,7 @@ The <code>USING GSI</code> keywords are optional and may be omitted.</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The index is in the pending state (deferred).</td>
+<td>The index is in the deferred state.</td>
 </tr>
 </table>
 </div>
@@ -4727,7 +4726,7 @@ The <code>USING GSI</code> keywords are optional and may be omitted.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/c7ab820702e119771eca8077c2e7705192dd9a01/modules/n1ql/examples/n1ql-language-reference/build-idx-single.n1ql">BUILD INDEX ON `travel-sample`.inventory.landmark(idx_landmark_country) USING GSI;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/06bffc048811fa7bcb508e9657a0d31bcfc761b0/modules/n1ql/examples/n1ql-language-reference/build-idx-single.n1ql">BUILD INDEX ON `travel-sample`.inventory.landmark(idx_landmark_country) USING GSI;</code></pre>
 </div>
 </div>
 </div>
@@ -4740,7 +4739,7 @@ The <code>USING GSI</code> keywords are optional and may be omitted.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/c7ab820702e119771eca8077c2e7705192dd9a01/modules/n1ql/examples/n1ql-language-reference/build-idx-all.n1ql">BUILD INDEX ON `travel-sample`.inventory.landmark (( <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/06bffc048811fa7bcb508e9657a0d31bcfc761b0/modules/n1ql/examples/n1ql-language-reference/build-idx-all.n1ql">BUILD INDEX ON `travel-sample`.inventory.landmark (( <i class="conum" data-value="1"></i><b>(1)</b>
   SELECT RAW name <i class="conum" data-value="2"></i><b>(2)</b>
   FROM system:indexes
   WHERE keyspace_id = 'landmark'
@@ -4748,6 +4747,9 @@ The <code>USING GSI</code> keywords are optional and may be omitted.</p>
     AND bucket_id = 'travel-sample'
     AND state = 'deferred' ));</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Note that it is only possible to kick off all deferred builds in a single collection&#8201;&#8212;&#8201;it is not possible to kick off all deferred builds in all collections in all scopes within a bucket.</p>
 </div>
 </div>
 </div>
@@ -4772,13 +4774,13 @@ In this case there is a double set of parentheses, as the subquery is the only i
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/c7ab820702e119771eca8077c2e7705192dd9a01/modules/n1ql/examples/n1ql-language-reference/check-idx-online.n1ql">SELECT * FROM system:indexes WHERE name="idx_landmark_country";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/06bffc048811fa7bcb508e9657a0d31bcfc761b0/modules/n1ql/examples/n1ql-language-reference/check-idx-online.n1ql">SELECT * FROM system:indexes WHERE name="idx_landmark_country";</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Results</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/c7ab820702e119771eca8077c2e7705192dd9a01/modules/n1ql/examples/n1ql-language-reference/check-idx-online.jsonc">[
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/06bffc048811fa7bcb508e9657a0d31bcfc761b0/modules/n1ql/examples/n1ql-language-reference/check-idx-online.jsonc">[
   {
     "indexes": {
       "bucket_id": "travel-sample",

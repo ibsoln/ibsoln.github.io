@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Updating Statistics for Index Expressions | Couchbase Docs</title>
+<title>Update Statistics for Index Expressions | Couchbase Docs</title>
 <link rel="stylesheet" href="../../../../_/css/site.css">
 <script src="../../../../_/js/vendor/jquery.js"></script>
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
@@ -2072,25 +2072,25 @@ Couchbase Server
 <li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-expressions.html">Updating Statistics for Index Expressions</a>
+<a class="nav-link" href="statistics-expressions.html">Update Statistics for Index Expressions</a>
 </span>
 </li>
 <li class="nav-item " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-index.html">Updating Statistics for a Single Index</a>
+<a class="nav-link" href="statistics-index.html">Update Statistics for a Single Index</a>
 </span>
 </li>
 <li class="nav-item " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-indexes.html">Updating Statistics for Multiple Indexes</a>
+<a class="nav-link" href="statistics-indexes.html">Update Statistics for Multiple Indexes</a>
 </span>
 </li>
 <li class="nav-item " data-depth="5">
 
 <span class="nav-line "  data-depth="5">
-<a class="nav-link" href="statistics-delete.html">Deleting Statistics</a>
+<a class="nav-link" href="statistics-delete.html">Delete Statistics</a>
 </span>
 </li>
 </ul>
@@ -2520,12 +2520,6 @@ Couchbase Server
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../../install/install-swap-space.html">Configure Kernel Swappiness</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../../install/install-client-server.html">Client Deployment Strategies</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -4392,13 +4386,13 @@ Couchbase Server
 <li class="crumb"><a href="index.html">N1QL Language Reference</a></li>
 <li class="crumb">Statements</li>
 <li class="crumb"><a href="updatestatistics.html">UPDATE STATISTICS</a></li>
-<li class="crumb"><a href="statistics-expressions.html">Updating Statistics for Index Expressions</a></li>
+<li class="crumb"><a href="statistics-expressions.html">Update Statistics for Index Expressions</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Updating Statistics for Index Expressions</h1>
+<h1 class="page">Update Statistics for Index Expressions</h1>
 <div class="labels">
 <ul>
 <li class="status"><span>Couchbase Server 7.0</span></li>
@@ -4560,6 +4554,15 @@ The minimum resolution is <code>0.02</code> (5000 distribution bins) and the max
 The command times out when this timeout period is reached.
 If omitted, a default timeout value is calculated based on the number of samples used.</p>
 </dd>
+<dt class="hdlist1">batch_size</dt>
+<dd>
+<p>[Optional] Only applies when processing multiple index expressions at once.
+If there is a large number of index expressions to process, the cost-based optimizer deals with them in batches.
+This option is an integer specifying the maximum number of index expressions in each batch.
+If omitted, the default value is <code>10</code>.
+You can specify a different value based on the memory availability of the system.
+Note that when index expressions are processed in batches, the <code>update_statistics_timeout</code> value (above) applies to each batch.</p>
+</dd>
 </dl>
 </div>
 </dd>
@@ -4601,7 +4604,7 @@ CREATE INDEX idx_city_country ON `travel-sample`.inventory.hotel(city, country);
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-N1QL hljs" data-lang="N1QL">EXPLAIN SELECT COUNT(*) FROM `travel-sample` WHERE country = 'France';</code></pre>
+<pre class="highlightjs highlight"><code class="language-N1QL hljs" data-lang="N1QL">EXPLAIN SELECT COUNT(*) FROM `travel-sample`.inventory.hotel WHERE country = 'France';</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -4610,15 +4613,13 @@ CREATE INDEX idx_city_country ON `travel-sample`.inventory.hotel(city, country);
 <pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">[
   {
     "cardinality": 1, <i class="conum" data-value="1"></i><b>(1)</b>
-    "cost": 29.362844982943358, <i class="conum" data-value="2"></i><b>(2)</b>
+    "cost": 36.39093947963759, <i class="conum" data-value="2"></i><b>(2)</b>
     "plan": {
       "#operator": "Sequence",
       "~children": [
         {
           "#operator": "IndexScan3",
           "bucket": "travel-sample",
-          "cardinality": 1, <i class="conum" data-value="3"></i><b>(3)</b>
-          "cost": 29.29658036191524,
           "covers": [
             "cover ((`hotel`.`country`))",
             "cover ((`hotel`.`city`))",
@@ -4636,7 +4637,7 @@ CREATE INDEX idx_city_country ON `travel-sample`.inventory.hotel(city, country);
               }
             ]
           },
-          "index_id": "7cba9563eb478906",
+          "index_id": "9071bf247db9d656",
           "index_projection": {
             "entry_keys": [
               3
@@ -4644,6 +4645,12 @@ CREATE INDEX idx_city_country ON `travel-sample`.inventory.hotel(city, country);
           },
           "keyspace": "hotel",
           "namespace": "default",
+          "optimizer_estimates": { <i class="conum" data-value="3"></i><b>(3)</b>
+            "cardinality": 1,
+            "cost": 36.386580580694044,
+            "fr_cost": 12.314601064983428,
+            "size": 19
+          },
           "scope": "inventory",
           "spans": [
             {
@@ -4666,8 +4673,12 @@ CREATE INDEX idx_city_country ON `travel-sample`.inventory.hotel(city, country);
             "~children": [
               {
                 "#operator": "InitialProject",
-                "cardinality": 1, <i class="conum" data-value="4"></i><b>(4)</b>
-                "cost": 29.362844982943358,
+                "optimizer_estimates": { <i class="conum" data-value="4"></i><b>(4)</b>
+                  "cardinality": 1,
+                  "cost": 36.39093947963759,
+                  "fr_cost": 12.318959963926968,
+                  "size": 19
+                },
                 "result_terms": [
                   {
                     "expr": "cover (count(*))"
@@ -4735,22 +4746,26 @@ WHERE country = 'United States' AND free_breakfast = true;</code></pre>
 <pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">[
   {
     "cardinality": 1, <i class="conum" data-value="1"></i><b>(1)</b>
-    "cost": 1294.4644872408794,
+    "cost": 1319.7883498503274,
     "plan": {
       "#operator": "Sequence",
       "~children": [
         {
           "#operator": "IndexScan3",
           "bucket": "travel-sample",
-          "cardinality": 361.00000000000006, <i class="conum" data-value="2"></i><b>(2)</b>
-          "cost": 65.70723143606952,
           "index": "idx_country_city",
-          "index_id": "7cba9563eb478906",
+          "index_id": "9071bf247db9d656",
           "index_projection": {
             "primary_key": true
           },
           "keyspace": "hotel",
           "namespace": "default",
+          "optimizer_estimates": { <i class="conum" data-value="2"></i><b>(2)</b>
+            "cardinality": 361.00000000000006,
+            "cost": 74.51787485734917,
+            "fr_cost": 12.173179708746119,
+            "size": 11
+          },
           "scope": "inventory",
           "spans": [
             {
@@ -4769,10 +4784,14 @@ WHERE country = 'United States' AND free_breakfast = true;</code></pre>
         {
           "#operator": "Fetch",
           "bucket": "travel-sample",
-          "cardinality": 361.00000000000006, <i class="conum" data-value="3"></i><b>(3)</b>
-          "cost": 1267.7836409935865,
           "keyspace": "hotel",
           "namespace": "default",
+          "optimizer_estimates": { <i class="conum" data-value="3"></i><b>(3)</b>
+            "cardinality": 361.00000000000006,
+            "cost": 1292.900802248151,
+            "fr_cost": 27.514960671047508,
+            "size": 4467
+          },
           "scope": "inventory"
         },
         {
@@ -4782,18 +4801,26 @@ WHERE country = 'United States' AND free_breakfast = true;</code></pre>
             "~children": [
               {
                 "#operator": "Filter",
-                "cardinality": 267.3053435114504, <i class="conum" data-value="4"></i><b>(4)</b>
                 "condition": "(((`hotel`.`country`) = \"United States\") and ((`hotel`.`free_breakfast`) = true))",
-                "cost": 1291.7051691847369
+                "optimizer_estimates": { <i class="conum" data-value="4"></i><b>(4)</b>
+                  "cardinality": 267.3053435114504,
+                  "cost": 1317.028460795967,
+                  "fr_cost": 27.605223208379773,
+                  "size": 4467
+                }
               },
               {
                 "#operator": "InitialGroup",
                 "aggregates": [
                   "count(*)"
                 ],
-                "cardinality": 1, <i class="conum" data-value="5"></i><b>(5)</b>
-                "cost": 1294.3782226198514,
-                "group_keys": []
+                "group_keys": [],
+                "optimizer_estimates": { <i class="conum" data-value="5"></i><b>(5)</b>
+                  "cardinality": 1,
+                  "cost": 1319.7015142310815,
+                  "fr_cost": 1319.7015142310815,
+                  "size": 4467
+                }
               }
             ]
           }
@@ -4803,18 +4830,26 @@ WHERE country = 'United States' AND free_breakfast = true;</code></pre>
           "aggregates": [
             "count(*)"
           ],
-          "cardinality": 1, <i class="conum" data-value="6"></i><b>(6)</b>
-          "cost": 1294.3882226198514,
-          "group_keys": []
+          "group_keys": [],
+          "optimizer_estimates": { <i class="conum" data-value="6"></i><b>(6)</b>
+            "cardinality": 1,
+            "cost": 1319.7115142310815,
+            "fr_cost": 1319.7115142310815,
+            "size": 4467
+          }
         },
         {
           "#operator": "FinalGroup",
           "aggregates": [
             "count(*)"
           ],
-          "cardinality": 1, <i class="conum" data-value="7"></i><b>(7)</b>
-          "cost": 1294.3982226198514,
-          "group_keys": []
+          "group_keys": [],
+          "optimizer_estimates": { <i class="conum" data-value="7"></i><b>(7)</b>
+            "cardinality": 1,
+            "cost": 1319.7215142310815,
+            "fr_cost": 1319.7215142310815,
+            "size": 4467
+          }
         },
         {
           "#operator": "Parallel",
@@ -4823,8 +4858,12 @@ WHERE country = 'United States' AND free_breakfast = true;</code></pre>
             "~children": [
               {
                 "#operator": "InitialProject",
-                "cardinality": 1, <i class="conum" data-value="8"></i><b>(8)</b>
-                "cost": 1294.4644872408794,
+                "optimizer_estimates": { <i class="conum" data-value="8"></i><b>(8)</b>
+                  "cardinality": 1,
+                  "cost": 1319.7883498503274,
+                  "fr_cost": 1319.7883498503274,
+                  "size": 4467
+                },
                 "result_terms": [
                   {
                     "expr": "count(*)"
@@ -4836,7 +4875,7 @@ WHERE country = 'United States' AND free_breakfast = true;</code></pre>
         }
       ]
     },
-    "text": "SELECT COUNT(*) FROM `travel-sample`.inventory.hotel WHERE country = 'United States' AND free_breakfast = true;"
+    "text": "SELECT COUNT(*) FROM `travel-sample`.inventory.hotel\nWHERE country = 'United States' AND free_breakfast = true;"
   }
 ]</code></pre>
 </div>
@@ -4909,24 +4948,26 @@ WHERE ANY p IN public_likes SATISFIES p LIKE 'A%' END;</code></pre>
 <pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">[
   {
     "cardinality": 1,
-    "cost": 109.7611716607931,
+    "cost": 39.80787755862344,
     "plan": {
       "#operator": "Sequence",
       "~children": [
         {
           "#operator": "DistinctScan",
-          "cardinality": 277.5315701314658,
-          "cost": 106.89959133845032,
+          "optimizer_estimates": {
+            "cardinality": 105.64354562889939,
+            "cost": 39.44754768187852,
+            "fr_cost": 39.44754768187852,
+            "size": 11
+          },
           "scan": {
             "#operator": "IndexScan3",
             "bucket": "travel-sample",
-            "cardinality": 339.4999999999998,
-            "cost": 84.40275249940453,
             "covers": [
               "cover ((distinct ((`hotel`.`public_likes`))))",
               "cover ((meta(`hotel`).`id`))"
             ],
-            "filter": "cover (any `p` in (`hotel`.`public_likes`) satisfies ((\"A\" &lt;= `p`) and (`p` &lt; \"B\")) end)",
+            "filter": "cover (any `p` in (`hotel`.`public_likes`) satisfies (`p` like \"A%\") end)",
             "filter_covers": {
               "cover (any `p` in (`hotel`.`public_likes`) satisfies ((\"A\" &lt;= `p`) and (`p` &lt; \"B\")) end)": true,
               "cover (any `p` in (`hotel`.`public_likes`) satisfies (`p` like \"A%\") end)": true
@@ -4945,9 +4986,13 @@ WHERE ANY p IN public_likes SATISFIES p LIKE 'A%' END;</code></pre>
                 "aggregates": [
                   "count(1)"
                 ],
-                "cardinality": 1,
-                "cost": 109.67490703976497,
-                "group_keys": []
+                "group_keys": [],
+                "optimizer_estimates": {
+                  "cardinality": 1,
+                  "cost": 39.797927684252365,
+                  "fr_cost": 39.797927684252365,
+                  "size": 11
+                }
               }
             ]
           }
@@ -4995,15 +5040,13 @@ WHERE ANY r IN reviews SATISFIES r.ratings.Overall = 4 END;</code></pre>
 <pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">[
   {
     "cardinality": 1,
-    "cost": 107.30834694637392,
+    "cost": 118.0080501905589,
     "plan": {
       "#operator": "Sequence",
       "~children": [
         {
           "#operator": "IndexScan3",
           "bucket": "travel-sample",
-          "cardinality": 1,
-          "cost": 107.2420823253458,
           "covers": [
             "cover ((distinct (array ((`r`.`ratings`).`Overall`) for `r` in (`hotel`.`reviews`) end)))",
             "cover ((meta(`hotel`).`id`))",
@@ -5013,6 +5056,13 @@ WHERE ANY r IN reviews SATISFIES r.ratings.Overall = 4 END;</code></pre>
             "cover (any `r` in (`hotel`.`reviews`) satisfies (((`r`.`ratings`).`Overall`) = 4) end)": true
           },
           "index": "idx_reviews_ratings_overall",
+          ...
+          "optimizer_estimates": {
+            "cardinality": 1,
+            "cost": 118.00369129161537,
+            "fr_cost": 12.312997158401616,
+            "size": 19
+          },
           ...
         },
         ...
