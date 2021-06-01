@@ -198,6 +198,12 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#couchbase-lite:android:querybuilder-n1ql.adoc">N1QL Queries</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../android/query-live.html">Live Query</a>
 </span>
 </li>
@@ -412,6 +418,12 @@
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../csharp/querybuilder.html">QueryBuilder</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#couchbase-lite:csharp:querybuilder-n1ql.adoc">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -636,6 +648,12 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
+<span class="nav-text ">{querybuilder-n1ql&#8212;&#8203;xref}</span>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
 <span class="nav-text ">{xref-cbl-pg-query-live}</span>
 </span>
 </li>
@@ -855,6 +873,12 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#couchbase-lite:java:querybuilder-n1ql.adoc">N1QL Queries</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../java/query-live.html">Live Query</a>
 </span>
 </li>
@@ -1069,6 +1093,12 @@
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../objc/querybuilder.html">QueryBuilder</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#couchbase-lite:objc:querybuilder-n1ql.adoc">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1299,6 +1329,12 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
+<a class="nav-link" href="#couchbase-lite:swift:querybuilder-n1ql.adoc">N1QL Queries</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
 <a class="nav-link" href="query-live.html">Live Query</a>
 </span>
 </li>
@@ -1475,19 +1511,19 @@
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
-<a class="nav-link" href="../../../sync-gateway/2.8/introduction.html">Sync&#160;Gateway</a>
+<a class="nav-link" href="../../../sync-gateway/3.0/introduction.html">Sync&#160;Gateway</a>
 </span>
 <ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../../sync-gateway/2.8/configuration-properties.html">Configure</a>
+<a class="nav-link" href="../../../sync-gateway/3.0/configuration-schema-static.html">Configure</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../../sync-gateway/2.8/rest-api-admin.html">REST API</a>
+<a class="nav-link" href="../../../sync-gateway/3.0/rest-api-admin.html">REST API</a>
 </span>
 </li>
 </ul>
@@ -2483,8 +2519,7 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        let listQuery = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.database( db))</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift"></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2562,23 +2597,28 @@ To unpack these result sets you need to iterate this array.</p>
 
             for (row) in try! listQuery.execute() {
 
-                let thisDocsProps =
-                    row.dictionary(forKey: "_doc")?.toDictionary() <i class="conum" data-value="1"></i><b>(1)</b>
+                print(row.toDictionary())
 
-                let docid = thisDocsProps!["id"] as! String
+                if let hotel = row.dictionary(forKey: "_doc") {
 
-                let name = thisDocsProps!["name"] as! String
+                    let hotelid = hotel["id"].string!
 
-                let type = thisDocsProps!["type"] as! String
+                    hotels[hotelid] = hotel.toDictionary()
 
-                let city = thisDocsProps!["city"] as! String
 
-                if let hotel =
-                        row.dictionary(forKey: "_doc")?.toDictionary() { <i class="conum" data-value="2"></i><b>(2)</b>
+                    if let thisDocsProperties = hotel.toDictionary() as? [String:Any] {
 
-                    var hotelId = hotel["id"] as! String
+                        let docid = thisDocsProperties["id"] as! String
 
-                    hotels[hotelId] = hotel
+                        let name = thisDocsProperties["name"] as! String
+
+                        let type = thisDocsProperties["type"] as! String
+
+                        let city = thisDocsProperties["city"] as! String
+
+                        print("thisDocsProperties are: ", docid,name,type,city)
+
+                    } // end if <i class="conum" data-value="1"></i><b>(1)</b>
 
                 } // end if
 
@@ -2928,24 +2968,22 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
             for (_, row) in
                 try! listQuery.execute().allResults().enumerated() {
 
-                let jsonString = row.dictionary(forKey: "_doc")!.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
+                let jsonString = row.dictionary(forKey: "_doc")!.toJSON()
 
                 let thisJsonObj =
                         try! JSONSerialization.jsonObject(
                                 with: jsonString.data(using: .utf8)! , options:[])
-                                    as? [String: Any] <i class="conum" data-value="2"></i><b>(2)</b>
+                                    as? [String: Any]
 
-                // Use Json Object to populate Native object <i class="conum" data-value="3"></i><b>(3)</b>
-                this_hotel.id = thisJsonObj!["id"] as! String
+                let docid = thisJsonObj!["id"] as! String
 
-                this_hotel.name = thisJsonObj!["name"] as! String
+                let name = thisJsonObj!["name"] as! String
 
-                this_hotel.type = thisJsonObj!["type"] as! String
+                let type = thisJsonObj!["type"] as! String
 
-                this_hotel.city = thisJsonObj!["city"] as! String
+                let city = thisJsonObj!["city"] as! String
 
-                hotels[this_hotel.id] = this_hotel
-
+                print("the JSON Object's propertiess are: ", docid,name,type,city)
 
             } // end for
 
@@ -2957,22 +2995,6 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 
     } // end func dontTestQueryAll</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Get the Query result as a JSON string</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Convert the JSON string to a JSON Object</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Convert the JSON string back to a native object</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
