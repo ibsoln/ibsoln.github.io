@@ -4,7 +4,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Manage Connections and Disks | Couchbase Docs</title>
-<link rel="canonical" href="https://ibsoln.github.io/stage/stage300/server/6.6/manage/manage-security/manage-connections-and-disks.html">
 <link rel="stylesheet" href="../../../../_/css/site.css">
 <script src="../../../../_/js/vendor/jquery.js"></script>
 <meta name="description" content="Couchbase-Server security can be enhanced by proper management of connections and disks.">
@@ -102,27 +101,13 @@
 <nav class="nav">
 <div class="left-sidebar-menu">
 <div class="version-control-box">
-<div class="component-frame has-dropdown">
+<div class="component-frame">
 <div class="frame-icon">
 <img src="../../../../_/img/server-icon.png" alt="">
 </div>
 <div class="frame-body">
-<h4 class="title">
-<span class="">
-Couchbase Server
-</span>
-<div class="frame-link-dropdowns">
-<a class="frame-link component clickable" href="../../introduction/intro.html"><span class="version">7.0 BETA</span> <i class="fas fa-chevron-down"></i></a>
-<div class="frame-dropdown versions">
-<div class="column">
-<ul class="frame-dropdown-list">
-<li><a class="frame-item" href="../../../6.6/manage/manage-security/manage-connections-and-disks.html">6.6</a></li>
-</ul>
-</div>
-</div>
-</div>
-</h4>
-
+<h4 class="title"><span class="">Couchbase Server</span></h4>
+<a class="frame-link component" href="../../introduction/intro.html"> <span class="version">7.0 BETA</span></a>
 </div>
 </div>
 </div>
@@ -602,6 +587,12 @@ Couchbase Server
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../../learn/clusters-and-availability/cluster-manager.html">Cluster Manager</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../../learn/clusters-and-availability/metadata-management.html">Metadata Management</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -4376,10 +4367,6 @@ Couchbase Server
 </div>
 
 <main class="article" data-ceiling="topbar">
-<div class="article-banner">
-<i class="fas fa-file-alt"></i> <p>You are viewing the documentation for a prerelease version.</p>
-<a class="btn" href="../../../6.6/manage/manage-security/manage-connections-and-disks.html">View Latest</a>
-</div>
 <div class="article-header">
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
@@ -4646,6 +4633,104 @@ If <em>file-level</em> is chosen, the following Couchbase directories and files 
 <div class="paragraph">
 <p>For more information, see the webinar provided at
 <a href="http://www.couchbase.com/nosql-resources/webinar/recorded" target="_blank" rel="noopener">Understanding Database Encryption with Couchbase and Vormetric</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="luks-encryption-procedure"><a class="anchor" href="#luks-encryption-procedure"></a>LUKS Encryption Procedure</h3>
+<div class="paragraph">
+<p>The following command sequence can be used on Linux systems to deploy a LUKS-encrypted partition, and mount it as a data directory.
+The sequence makes use of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/dev/sdb1</code>, which is the partition to be encrypted.</p>
+</li>
+<li>
+<p><code>luks_keyfile.key</code>, which is a file containing the key to be used to unlock and to access the encrypted partition.</p>
+</li>
+<li>
+<p><code>cbefs</code> (<em>Couchbase Encrypted Filesystem</em>), which is the name of the new filesystem on the encrypted partition.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Proceed as follows.
+(Note that <code>sudo</code> may be required for some commands.)</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Ensure that <code>cryptsetup</code> is installed:</p>
+<div class="listingblock">
+<div class="content">
+<pre>apt-get install cryptsetup</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Format the partition:</p>
+<div class="listingblock">
+<div class="content">
+<pre>cryptsetup luksFormat -d luks_keyfile.key --batch-mode /dev/sdb1</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Unlock the partition, and make it accessible as a device named <code>cbefs</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>cryptsetup luksOpen -d luks_keyfile.key /dev/sdb1 cbefs</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a new filesystem:</p>
+<div class="listingblock">
+<div class="content">
+<pre>mkfs.xfs /dev/mapper/cbefs</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Mount <code>/data</code> on the created filesystem:</p>
+<div class="listingblock">
+<div class="content">
+<pre>mount /dev/mapper/cbefs /data</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Give user <code>couchbase</code> permission to access <code>/data</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>chown couchbase:couchbase /data</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add entries to <code>fstab</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>sed -i '/data/c\/dev/mapper/cbefs /data xfs defaults 0 2' /etc/fstab</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add entries to <code>crypttab</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>echo "cbefs /dev/sdb1 /root/luks_keyfile.key luks" &gt; /etc/crypttab</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This concludes the sequence.</p>
+</div>
+<div class="paragraph">
+<p>Note that this procedure can also be performed by means of the script <a href="https://github.com/couchbase/perfrunner/blob/master/scripts/create_luks_fs.sh" target="_blank" rel="noopener">create_luks_fs.sh</a>.</p>
 </div>
 </div>
 </div>
