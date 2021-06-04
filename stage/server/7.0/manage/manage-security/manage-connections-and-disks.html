@@ -607,6 +607,12 @@ Couchbase Server
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../../learn/clusters-and-availability/metadata-management.html">Metadata Management</a>
+</span>
+</li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../../learn/clusters-and-availability/connectivity.html">Connectivity</a>
 </span>
 </li>
@@ -4646,6 +4652,104 @@ If <em>file-level</em> is chosen, the following Couchbase directories and files 
 <div class="paragraph">
 <p>For more information, see the webinar provided at
 <a href="http://www.couchbase.com/nosql-resources/webinar/recorded" target="_blank" rel="noopener">Understanding Database Encryption with Couchbase and Vormetric</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="luks-encryption-procedure"><a class="anchor" href="#luks-encryption-procedure"></a>LUKS Encryption Procedure</h3>
+<div class="paragraph">
+<p>The following command sequence can be used on Linux systems to deploy a LUKS-encrypted partition, and mount it as a data directory.
+The sequence makes use of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>/dev/sdb1</code>, which is the partition to be encrypted.</p>
+</li>
+<li>
+<p><code>luks_keyfile.key</code>, which is a file containing the key to be used to unlock and to access the encrypted partition.</p>
+</li>
+<li>
+<p><code>cbefs</code> (<em>Couchbase Encrypted Filesystem</em>), which is the name of the new filesystem on the encrypted partition.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Proceed as follows.
+(Note that <code>sudo</code> may be required for some commands.)</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Ensure that <code>cryptsetup</code> is installed:</p>
+<div class="listingblock">
+<div class="content">
+<pre>apt-get install cryptsetup</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Format the partition:</p>
+<div class="listingblock">
+<div class="content">
+<pre>cryptsetup luksFormat -d luks_keyfile.key --batch-mode /dev/sdb1</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Unlock the partition, and make it accessible as a device named <code>cbefs</code>.</p>
+<div class="listingblock">
+<div class="content">
+<pre>cryptsetup luksOpen -d luks_keyfile.key /dev/sdb1 cbefs</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Create a new filesystem:</p>
+<div class="listingblock">
+<div class="content">
+<pre>mkfs.xfs /dev/mapper/cbefs</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Mount <code>/data</code> on the created filesystem:</p>
+<div class="listingblock">
+<div class="content">
+<pre>mount /dev/mapper/cbefs /data</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Give user <code>couchbase</code> permission to access <code>/data</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>chown couchbase:couchbase /data</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add entries to <code>fstab</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>sed -i '/data/c\/dev/mapper/cbefs /data xfs defaults 0 2' /etc/fstab</pre>
+</div>
+</div>
+</li>
+<li>
+<p>Add entries to <code>crypttab</code>:</p>
+<div class="listingblock">
+<div class="content">
+<pre>echo "cbefs /dev/sdb1 /root/luks_keyfile.key luks" &gt; /etc/crypttab</pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>This concludes the sequence.</p>
+</div>
+<div class="paragraph">
+<p>Note that this procedure can also be performed by means of the script <a href="https://github.com/couchbase/perfrunner/blob/master/scripts/create_luks_fs.sh" target="_blank" rel="noopener">create_luks_fs.sh</a>.</p>
 </div>
 </div>
 </div>

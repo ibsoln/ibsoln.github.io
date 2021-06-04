@@ -1256,19 +1256,19 @@
 
 <span class="nav-line "  data-depth="0">
 <span class="in-toggle" data-depth="0"></span>
-<a class="nav-link" href="../../../sync-gateway/2.8/introduction.html">Sync&#160;Gateway</a>
+<a class="nav-link" href="../../../sync-gateway/3.0/introduction.html">Sync&#160;Gateway</a>
 </span>
 <ul class="nav-list">
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../../sync-gateway/2.8/configuration-properties.html">Configure</a>
+<a class="nav-link" href="../../../sync-gateway/3.0/configuration-schema-static.html">Configure</a>
 </span>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
 
 <span class="nav-line "  data-depth="1">
-<a class="nav-link" href="../../../sync-gateway/2.8/rest-api-admin.html">REST API</a>
+<a class="nav-link" href="../../../sync-gateway/3.0/rest-api-admin.html">REST API</a>
 </span>
 </li>
 </ul>
@@ -2264,17 +2264,13 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        let listQuery = QueryBuilder.select(SelectResult.all())
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        let db = try! Database(name: "hotel")
+        var hotels = [String:Any]()
+        var hotel:Hotel = Hotel.init()
+
+        let listQuery = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database( db))</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Assumes <code>dbname</code> has been previously defined as the name of your database.</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -2341,38 +2337,27 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        do {
 
-            for (row) in try! listQuery.execute() {
+            for row in try! listQuery.execute() {
 
-                print(row.toDictionary())
+                let thisDocsProps =
+                    row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="1"></i><b>(1)</b>
 
-                if let hotel = row.dictionary(forKey: "_doc") { <i class="conum" data-value="1"></i><b>(1)</b>
+                let docid = thisDocsProps!["id"] as! String
 
-                    let hotelid = hotel["id"].string!
+                let name = thisDocsProps!["name"] as! String
 
-                    hotels[hotelid] = hotel.toDictionary()
+                let type = thisDocsProps!["type"] as! String
 
+                let city = thisDocsProps!["city"] as! String
 
-                    if let thisDocsProperties =
-                             hotel.toDictionary() as? [String:Any] { <i class="conum" data-value="2"></i><b>(2)</b>
+                let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="2"></i><b>(2)</b>
 
-                        let docid = thisDocsProperties["id"] as! String
+                let hotelId = hotel!["id"] as! String
 
-                        let name = thisDocsProperties["name"] as! String
-
-                        let type = thisDocsProperties["type"] as! String
-
-                        let city = thisDocsProperties["city"] as! String
-
-                        print("thisDocsProperties are: ", docid,name,type,city)
-
-                    } // end if
-
-                } // end if
+                hotels[hotelId] = hotel
 
             } // end for
-        } catch let err {
-            print(err.localizedDescription)
-            // ... handle errors as required
+
         } //end do-block</code></pre>
 </div>
 </div>
@@ -2403,7 +2388,11 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        let listQuery = QueryBuilder
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        let db = try! Database(name: "hotel")
+        var hotels = [String:Any]()
+        var hotel:Hotel = Hotel.init()
+
+        let listQuery = QueryBuilder
             .select(SelectResult.expression(Meta.id).as("metaId"),
                     SelectResult.expression(Expression.property("id")),
                     SelectResult.expression(Expression.property("name")),
@@ -2465,24 +2454,25 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        for (_, result) in try! listQuery.execute().enumerated() {
 
-            print(result.toDictionary())
 
-            if let thisDoc = result.toDictionary() as? [String:Any] {
+            let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="1"></i><b>(1)</b>
+                // Store dictionary data in hotel object and save in array
+            hotel.id = thisDoc!["id"] as! String
+            hotel.name = thisDoc!["name"] as! String
+            hotel.city = thisDoc!["city"] as! String
+            hotel.type = thisDoc!["type"] as! String
+            hotels[hotel.id] = hotel
 
-                let docid = thisDoc["metaId"] as! String
+            // Use result content directly
+            let docid = result.string(forKey: "metaId")
+            let hotelId = result.string(forKey: "id")
+            let name = result.string(forKey: "name")
+            let city = result.string(forKey: "city")
+            let type = result.string(forKey: "type")
 
-                let hotelId = thisDoc["id"] as! String
-
-                let name = thisDoc["name"] as! String
-
-                let city = thisDoc["city"] as! String
-
-                let type = thisDoc["type"] as! String
-
-                // ... process document properties as required
-                print("Result properties are: ", docid, hotelId,name, city, type)
-          }
-}</code></pre>
+            // ... process document properties as required
+            print("Result properties are: ", docid, hotelId,name, city, type)
+          } // end for</code></pre>
 </div>
 </div>
 </div>
@@ -2499,7 +2489,8 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">        let listQuery = QueryBuilder.select(SelectResult.expression(Meta.id).as("metaId"))
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">        let db = try! Database(name: "hotel")
+        let listQuery = QueryBuilder.select(SelectResult.expression(Meta.id).as("metaId"))
                     .from(DataSource.database(db))</code></pre>
 </div>
 </div>
@@ -2579,7 +2570,8 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        do {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        let db = try! Database(name: "hotel")
+        do {
             let listQuery = QueryBuilder
                 .select(SelectResult.expression(Function.count(Expression.all())).as("mycount"))
                 .from (DataSource.database(db)).groupBy(Expression.property("type"))</code></pre>
@@ -2630,12 +2622,13 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">            for result in try! listQuery.execute() {
-                if let dict = result.toDictionary() as? [String: Int] {
-                    let thiscount = dict["mycount"]! <i class="conum" data-value="1"></i><b>(1)</b>
-                    print("There are ", thiscount, " rows")
-                }
-            }
+                let dict = result.toDictionary() as? [String: Int]
+                let thiscount = dict!["mycount"]! <i class="conum" data-value="1"></i><b>(1)</b>
+                print("There are ", thiscount, " rows")
+            } // end for
+
         } // end do
+
     } // end function</code></pre>
 </div>
 </div>
