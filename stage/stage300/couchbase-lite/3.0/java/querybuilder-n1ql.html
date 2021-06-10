@@ -2486,8 +2486,14 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">            Query listQuery = QueryBuilder.select(SelectResult.all())
-                    .from(DataSource.database(this_Db)); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">        try {
+          this_Db = new Database("hotels");
+        } catch (CouchbaseLiteException e) {
+          e.printStackTrace();
+        }
+
+      Query listQuery = QueryBuilder.select(SelectResult.all())
+              .from(DataSource.database(this_Db));</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2561,30 +2567,29 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">            try {
-                for (Result result : listQuery.execute().allResults()) {
-                    int x = result.count();
-                    // get the k-v pairs from the 'hotel' key's value into a dictionary
-                    thisDocsProps = result.getDictionary(dbName); <i class="conum" data-value="1"></i><b>(1)</b>
-                    thisDocsId = thisDocsProps.getString("id");
-                    thisDocsName = thisDocsProps.getString("Name");
-                    thisDocsType = thisDocsProps.getString("Type");
-                    thisDocsCity = thisDocsProps.getString("City");
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">        try {
+            for (Result result : listQuery.execute().allResults()) {
+                             // get the k-v pairs from the 'hotel' key's value into a dictionary
+                thisDocsProps = result.getDictionary(0)); <i class="conum" data-value="1"></i><b>(1)</b>
+                thisDocsId = thisDocsProps.getString("id");
+                thisDocsName = thisDocsProps.getString("Name");
+                thisDocsType = thisDocsProps.getString("Type");
+                thisDocsCity = thisDocsProps.getString("City");
 
-                    // Alternatively, access results value dictionary directly
-                    final Hotel hotel = new Hotel();
-                    hotel.Id = result.getDictionary(dbName).getString("id"); <i class="conum" data-value="2"></i><b>(2)</b>
-                    hotel.Type = result.getDictionary(dbName).getString("Type");
-                    hotel.Name = result.getDictionary(dbName).getString("Name");
-                    hotel.City = result.getDictionary(dbName).getString("City");
-                    hotel.Country= result.getDictionary(dbName).getString("Country");
-                    hotel.Description = result.getDictionary(dbName).getString("Description");
-                    hotels.put(hotel.Id, hotel);
+                // Alternatively, access results value dictionary directly
+                final Hotel hotel = new Hotel();
+                hotel.Id = result.getDictionary(0).getString("id"); <i class="conum" data-value="2"></i><b>(2)</b>
+                hotel.Type = result.getDictionary(0).getString("Type");
+                hotel.Name = result.getDictionary(0).getString("Name");
+                hotel.City = result.getDictionary(0).getString("City");
+                hotel.Country= result.getDictionary(0).getString("Country");
+                hotel.Description = result.getDictionary(0).getString("Description");
+                hotels.put(hotel.Id, hotel);
 
-                }
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
-            }</code></pre>
+            }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2614,13 +2619,19 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">            Query listQuery =
-                    QueryBuilder.select(SelectResult.expression(Meta.id),
-                            SelectResult.property("name"),
-                            SelectResult.property("Name"),
-                            SelectResult.property("Type"),
-                            SelectResult.property("City"))
-                            .from(DataSource.database(this_Db));</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">        try {
+          this_Db = new Database("hotels");
+        } catch (CouchbaseLiteException e) {
+          e.printStackTrace();
+        }
+
+        Query listQuery =
+                QueryBuilder.select(SelectResult.expression(Meta.id),
+                        SelectResult.property("name"),
+                        SelectResult.property("Name"),
+                        SelectResult.property("Type"),
+                        SelectResult.property("City"))
+                        .from(DataSource.database(this_Db));</code></pre>
 </div>
 </div>
 </div>
@@ -2674,34 +2685,34 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">            try {
-                for (Result result : listQuery.execute().allResults()) {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">        try {
+            for (Result result : listQuery.execute().allResults()) {
 
-                    // get data direct from result k-v pairs
-                    final Hotel hotel = new Hotel();
-                    hotel.Id = result.getString("id");
-                    hotel.Type = result.getString("Type");
-                    hotel.Name = result.getString("Name");
-                    hotel.City = result.getString("City");
+                // get data direct from result k-v pairs
+                final Hotel hotel = new Hotel();
+                hotel.Id = result.getString("id");
+                hotel.Type = result.getString("Type");
+                hotel.Name = result.getString("Name");
+                hotel.City = result.getString("City");
 
-                    // Store created hotel object in a hashmap of hotels
-                    hotels.put(hotel.Id, hotel);
+                // Store created hotel object in a hashmap of hotels
+                hotels.put(hotel.Id, hotel);
 
-                    // Get result k-v pairs into a 'dictionary' object
-                    Map&lt;String, Object&gt; thisDocsProps = result.toMap();
-                    thisDocsId =
-                            thisDocsProps.getOrDefault("id",null).toString();
-                    thisDocsName =
-                            thisDocsProps.getOrDefault("Name",null).toString();
-                    thisDocsType =
-                            thisDocsProps.getOrDefault("Type",null).toString();
-                    thisDocsCity =
-                            thisDocsProps.getOrDefault("City",null).toString();
+                // Get result k-v pairs into a 'dictionary' object
+                Map &lt;String, Object&gt; thisDocsProps = result.toMap();
+                thisDocsId =
+                        thisDocsProps.getOrDefault("id",null).toString();
+                thisDocsName =
+                        thisDocsProps.getOrDefault("Name",null).toString();
+                thisDocsType =
+                        thisDocsProps.getOrDefault("Type",null).toString();
+                thisDocsCity =
+                        thisDocsProps.getOrDefault("City",null).toString();
 
-                }
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
-            }</code></pre>
+            }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }</code></pre>
 </div>
 </div>
 </div>
@@ -2718,9 +2729,15 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java">            Query listQuery =
-                    QueryBuilder.select(SelectResult.expression(Meta.id).as("metaID"))
-                            .from(DataSource.database(this_Db));</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java">      try {
+        this_Db = new Database("hotels");
+      } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+      }
+
+      Query listQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id).as("metaID"))
+                      .from(DataSource.database(this_Db));</code></pre>
 </div>
 </div>
 </div>
@@ -2756,22 +2773,22 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">            try {
-                for (Result result : listQuery.execute().allResults()) {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">        try {
+            for (Result result : listQuery.execute().allResults()) {
 
-                    // get the ID form the result's k-v pair array
-                    thisDocsId = result.getString("metaID"); <i class="conum" data-value="1"></i><b>(1)</b>
+                // get the ID form the result's k-v pair array
+                thisDocsId = result.getString("metaID"); <i class="conum" data-value="1"></i><b>(1)</b>
 
-                    // Get document from DB using retrieved ID
-                    Document thisDoc = this_Db.getDocument(thisDocsId);
+                // Get document from DB using retrieved ID
+                Document thisDoc = this_Db.getDocument(thisDocsId);
 
-                    // Process document as required
-                    thisDocsName = thisDoc.getString("Name");
+                // Process document as required
+                thisDocsName = thisDoc.getString("Name");
 
-                }
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
-            }</code></pre>
+            }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2792,9 +2809,9 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">            Query listQuery = QueryBuilder.select(
-                    SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) <i class="conum" data-value="1"></i><b>(1)</b>
-                    .from(DataSource.database(this_Db));</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">      Query listQuery = QueryBuilder.select(
+              SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) <i class="conum" data-value="1"></i><b>(1)</b>
+              .from(DataSource.database(this_Db));</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2841,21 +2858,21 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">            try {
-                for (Result result : listQuery.execute()) {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">        try {
+            for (Result result : listQuery.execute()) {
 
-                    // Retrieve count using key 'mycount'
-                    Integer altDocId = result.getInt("mycount");
+                // Retrieve count using key 'mycount'
+                Integer altDocId = result.getInt("mycount");
 
-                    // Alternatively, use the index
-                    Integer orDocId = result.getInt(0);
-                }
-                // Or even
-                Integer resultCount = listQuery.execute().next().getInt("mycount");
+                // Alternatively, use the index
+                Integer orDocId = result.getInt(0);
+            }
+            // Or even miss out the for-loop altogether
+            Integer resultCount = listQuery.execute().next().getInt("mycount");
 
-            } catch (CouchbaseLiteException e) {
-                e.printStackTrace();
-            }</code></pre>
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2880,14 +2897,21 @@ Use the <code>limit</code> and <code>offset</code> feature, to return a defined 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java">            int thisOffset = 0;
-            int thisLimit = 20;
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java">        try {
+          this_Db = new Database("hotels");
+        } catch (CouchbaseLiteException e) {
+          e.printStackTrace();
+        }
 
-            Query listQuery =
-                    QueryBuilder
-                            .select(SelectResult.all())
-                            .from(DataSource.database(this_Db))
-                            .limit(Expression.intValue(thisLimit), Expression.intValue(thisOffset)); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+        int thisOffset = 0;
+        int thisLimit = 20;
+
+        Query listQuery =
+                QueryBuilder
+                        .select(SelectResult.all())
+                        .from(DataSource.database(this_Db))
+                        .limit(Expression.intValue(thisLimit),
+                                  Expression.intValue(thisOffset)); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2929,7 +2953,44 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">    ArrayList&lt;Hotel&gt; hotels = new ArrayList&lt;Hotel&gt;();
+
+    // Run query
+    for (Result result : listQuery.execute()) {
+
+      // Get result as JSON string
+      String thisJsonString =
+                result.getDictionary(0).toJSON(); <i class="conum" data-value="1"></i><b>(1)</b>
+      Log.d("Convert", "JSON string: " + thisJsonString );
+
+      // Get JSON object from JSON string
+      JSONObject thisJSONobject = new JSONObject(thisJsonString); <i class="conum" data-value="2"></i><b>(2)</b>
+      Log.d("Convert", "JSON object: " + thisJSONobject.get("name"));
+
+      // Get native object from JSON object <i class="conum" data-value="3"></i><b>(3)</b>
+      JSONObject jsonObject = new JSONObject(thisJsonString.trim());
+      Iterator&lt;String&gt; keys = jsonObject.keys();
+      HashMap&lt;String,Object&gt; jsonDict  = new HashMap&lt;String,Object&gt;();
+
+      while(keys.hasNext()) {
+          String key = keys.next();
+          jsonDict.put(key,jsonObject.get(key));
+          // do something with jsonObject here
+          Log.d("Convert", "Native object: " + jsonDict.get(key));
+      }
+
+      // Get custom object from Native 'dictionary' object
+      Hotel thisHotel = new Hotel();
+      thisHotel.id = jsonDict.get("id").toString();
+      thisHotel.type = jsonDict.get("type").toString();
+      thisHotel.name = jsonDict.get("name").toString();
+      thisHotel.city = jsonDict.get("city").toString();
+      thisHotel.country = jsonDict.get("country").toString();
+      thisHotel.description = jsonDict.get("description").toString();
+      hotels.add(thisHotel);
+      Log.d("Convert", "MutableArray of Hotels: " + hotels.get(hotels.size()-1).name);
+
+  }</code></pre>
 </div>
 </div>
 </div>

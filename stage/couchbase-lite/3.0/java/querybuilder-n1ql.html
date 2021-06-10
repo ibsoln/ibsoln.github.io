@@ -2953,7 +2953,44 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">    ArrayList&lt;Hotel&gt; hotels = new ArrayList&lt;Hotel&gt;();
+
+    // Run query
+    for (Result result : listQuery.execute()) {
+
+      // Get result as JSON string
+      String thisJsonString =
+                result.getDictionary(0).toJSON(); <i class="conum" data-value="1"></i><b>(1)</b>
+      Log.d("Convert", "JSON string: " + thisJsonString );
+
+      // Get JSON object from JSON string
+      JSONObject thisJSONobject = new JSONObject(thisJsonString); <i class="conum" data-value="2"></i><b>(2)</b>
+      Log.d("Convert", "JSON object: " + thisJSONobject.get("name"));
+
+      // Get native object from JSON object <i class="conum" data-value="3"></i><b>(3)</b>
+      JSONObject jsonObject = new JSONObject(thisJsonString.trim());
+      Iterator&lt;String&gt; keys = jsonObject.keys();
+      HashMap&lt;String,Object&gt; jsonDict  = new HashMap&lt;String,Object&gt;();
+
+      while(keys.hasNext()) {
+          String key = keys.next();
+          jsonDict.put(key,jsonObject.get(key));
+          // do something with jsonObject here
+          Log.d("Convert", "Native object: " + jsonDict.get(key));
+      }
+
+      // Get custom object from Native 'dictionary' object
+      Hotel thisHotel = new Hotel();
+      thisHotel.id = jsonDict.get("id").toString();
+      thisHotel.type = jsonDict.get("type").toString();
+      thisHotel.name = jsonDict.get("name").toString();
+      thisHotel.city = jsonDict.get("city").toString();
+      thisHotel.country = jsonDict.get("country").toString();
+      thisHotel.description = jsonDict.get("description").toString();
+      hotels.add(thisHotel);
+      Log.d("Convert", "MutableArray of Hotels: " + hotels.get(hotels.size()-1).name);
+
+  }</code></pre>
 </div>
 </div>
 </div>

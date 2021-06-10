@@ -1841,16 +1841,21 @@ Statistics on delta-sync usage are available, including the total number of revi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">val thisConfig =
-    URLEndpointListenerConfiguration(thisDB) /* &lt;.&gt; */
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">final URLEndpointListenerConfiguration thisConfig =
+  new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="1"></i><b>(1)</b>
+
 thisConfig.setAuthenticator(
-    ListenerPasswordAuthenticator { username, password -&gt;
-        username.equals("valid.User") &amp;&amp;
-                Arrays.equals(password, valid.password.string)
-    }
-) /* &lt;.&gt; */
-val thisListener = URLEndpointListener(thisConfig) /* &lt;.&gt; */
-thisListener.start() /* &lt;.&gt; */</code></pre>
+  new ListenerPasswordAuthenticator(
+    (username, password) -&gt;
+      username.equals("valid.User") &amp;&amp;
+      Arrays.equals(password, valid.password.string)
+    )
+  ); <i class="conum" data-value="2"></i><b>(2)</b>
+
+final URLEndpointListener thisListener =
+  new URLEndpointListener(thisConfig); <i class="conum" data-value="3"></i><b>(3)</b>
+
+thisListener.start(); <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1880,23 +1885,27 @@ thisListener.start() /* &lt;.&gt; */</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">var uri: URI? = null
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">URI uri = null;
 try {
-    uri = URI("wss://10.0.2.2:4984/db")
-} catch (e: URISyntaxException) {
-    e.printStackTrace()
+    uri = new URI("wss://10.0.2.2:4984/db");
+} catch (URISyntaxException e) {
+    e.printStackTrace();
 }
-val theListenerEndpoint: Endpoint = URLEndpoint(uri) /* &lt;.&gt; */
-val thisConfig =
-    ReplicatorConfiguration(database, theListenerEndpoint) /* &lt;.&gt; */
-thisConfig.setAcceptOnlySelfSignedServerCertificate(true) /* &lt;.&gt; */
-val thisAuth = BasicAuthenticator(
+Endpoint theListenerEndpoint = new URLEndpoint(uri); <i class="conum" data-value="1"></i><b>(1)</b>
+
+ReplicatorConfiguration thisConfig =
+  new ReplicatorConfiguration(database, theListenerEndpoint); <i class="conum" data-value="2"></i><b>(2)</b>
+
+thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="3"></i><b>(3)</b>
+
+final BasicAuthenticator thisAuth
+= new BasicAuthenticator(
     "valid.user",
-    "valid.password.string"
-)
-thisConfig.setAuthenticator(thisAuth) /* &lt;.&gt; */
-replicator = Replicator(config) /* &lt;.&gt; */
-replicator.start() /* &lt;.&gt; */</code></pre>
+    "valid.password.string");
+thisConfig.setAuthenticator(thisAuth) <i class="conum" data-value="4"></i><b>(4)</b>
+
+this.replicator = new Replicator(config); <i class="conum" data-value="5"></i><b>(5)</b>
+this.replicator.start(); <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">

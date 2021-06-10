@@ -1746,7 +1746,7 @@ Couchbase Lite API calls which are processed by an executor are listed below.</p
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Query.addChangeListener
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Query.addChangeListener
 MessageEndpointListerner.addChangeListener
 LiveQuery.addChangeListener
 AbstractReplicator.addDocumentReplicationListener
@@ -1802,7 +1802,7 @@ public class InOrderExample {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">/**
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">/**
  * This version maximizes throughput.  It will deliver change notifications as quickly
  * as CPU availability allows. It may deliver change notifications out of order.
  * Listeners must be thread safe because they may be called from multiple threads.
@@ -1835,7 +1835,7 @@ public class MaxThroughputExample {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">/**
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">/**
  * This version demonstrates the extreme configurability of the CouchBase Lite replicator callback system.
  * It may deliver updates out of order and does require thread-safe and re-entrant listeners
  * (though it does correctly synchronizes tasks passed to it using a SynchronousQueue).
@@ -1903,51 +1903,52 @@ public class PolicyExample {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// initialize the replicator configuration
-val thisConfig = ReplicatorConfiguration(
-    thisDB,
-    URLEndpoint(URI("wss://listener.com:8954"))
-) /* &lt;.&gt; */
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// initialize the replicator configuration
+final ReplicatorConfiguration thisConfig
+   = new ReplicatorConfiguration(
+      thisDB,
+      URLEndpoint(URI("wss://listener.com:8954"))); <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Set replicator type
 thisConfig.setReplicatorType(
-    ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL
-)
+  ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
 // Configure Sync Mode
-thisConfig.setContinuous(false) // default value
+thisConfig.setContinuous(false); // default value
 
 // Configure Server Authentication --
 // only accept self-signed certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(true) /* &lt;.&gt; */
+thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="2"></i><b>(2)</b>
 
 // Configure the credentials the
 // client will provide if prompted
-val thisAuth: BasicAuthenticator /* &lt;.&gt; */
-thisAuth = BasicAuthenticator("Our Username", "Our PasswordValue")
+final BasicAuthenticator thisAuth
+  = new BasicAuthenticator(
+      "Our Username",
+      "Our PasswordValue")); <i class="conum" data-value="3"></i><b>(3)</b>
+
 thisConfig.setAuthenticator(thisAuth)
 
-/* Optionally set custom conflict resolver call back */thisConfig.setConflictResolver() /* &lt;.&gt; */
+/* Optionally set custom conflict resolver call back */
+thisConfig.setConflictResolver( /* define resolver function */); <i class="conum" data-value="4"></i><b>(4)</b>
 
 // Create replicator
 // Consider holding a reference somewhere
 // to prevent the Replicator from being GCed
-val thisReplicator = Replicator(thisConfig) /* &lt;.&gt; */
+final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="5"></i><b>(5)</b>
 
-// Optionally add a change listener <i class="conum" data-value="1"></i><b>(1)</b>
-val thisListener: ListenerToken = addChangeListener { change -&gt;
-    val err: CouchbaseLiteException = change.getStatus().getError()
-    if (err != null) {
-        Log.i(
-            TAG,
-            "Error code ::  " + err.getCode(),
-            e
-        )
-    }
-}
+// Optionally add a change listener <i class="conum" data-value="6"></i><b>(6)</b>
+ListenerToken thisListener =
+  new thisReplicator.addChangeListener(change -&gt; {
+    final CouchbaseLiteException err =
+     change.getStatus().getError();
+     if (err != null) {
+       Log.i(TAG, "Error code ::  " + err.getCode(), e);
+     }
+  });
 
 // Start replicator
-thisReplicator.start(false) /* &lt;.&gt; */</code></pre>
+thisReplicator.start(false); <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -2054,10 +2055,11 @@ To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <co
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt">// initialize the replicator configuration
-val thisConfig: ReplicatorConfiguration = ReplicatorConfiguration(
-    thisDB,
-    URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample"))</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// initialize the replicator configuration
+final ReplicatorConfiguration thisConfig
+   = new ReplicatorConfiguration(
+      thisDB,
+      URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample"))); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2109,13 +2111,12 @@ val thisConfig: ReplicatorConfiguration = ReplicatorConfiguration(
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Set replicator type
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Set replicator type
 thisConfig.setReplicatorType(
-    ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL
-)
+  ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
 // Configure Sync Mode
-thisConfig.setContinuous(false) // default value</code></pre>
+thisConfig.setContinuous(false); // default value</code></pre>
 </div>
 </div>
 </div>
@@ -2233,14 +2234,18 @@ thisConfig.setContinuous(false) // default value</code></pre>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
-val config = ReplicatorConfiguration(database, target)
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">URLEndpoint target =
+new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+ReplicatorConfiguration config =
+new ReplicatorConfiguration(database, target);
 
 //  other config as required . . .
-config.setHeartbeat(150L) <i class="conum" data-value="1"></i><b>(1)</b>
-config.setMaxRetries(20L) <i class="conum" data-value="2"></i><b>(2)</b>
-config.setMaxRetryWaitTime(600L) <i class="conum" data-value="3"></i><b>(3)</b>
-val repl = Replicator(config)</code></pre>
+config.setHeartbeat(150L); <i class="conum" data-value="1"></i><b>(1)</b>
+config.setMaxRetries(20L); <i class="conum" data-value="2"></i><b>(2)</b>
+config.setMaxRetryWaitTime(600L); <i class="conum" data-value="3"></i><b>(3)</b>
+
+Replicator repl = new Replicator(config);</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2312,9 +2317,9 @@ If the server cannot provide acceptable credentials then the connection will fai
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Configure Server Security
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Configure Server Security
 // -- only accept CA attested certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(false) /* &lt;.&gt; */</code></pre>
+thisConfig.setAcceptOnlySelfSignedServerCertificate(false); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2337,9 +2342,9 @@ Self signed certificates are not allowed.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Configure Server Authentication --
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Configure Server Authentication --
 // only accept self-signed certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(true) /* &lt;.&gt; */</code></pre>
+thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2361,8 +2366,8 @@ Any certificates that are not self-signed are rejected.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Use the pinned certificate from the byte array (cert)
-thisConfig.setPinnedServerCertificate(cert.getEncoded()) /* &lt;.&gt; */</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Use the pinned certificate from the byte array (cert)
+thisConfig.setPinnedServerCertificate(cert.getEncoded()); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2417,13 +2422,14 @@ The following example initiates a one-shot replication as the user <strong>usern
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L998-L1004">val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
-val config = ReplicatorConfiguration(database, target)
-config.setAuthenticator(BasicAuthenticator("username", "password"))
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L870-L877">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+config.setAuthenticator(new BasicAuthenticator("username", "password"));
 
 // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-replicator = Replicator(config)
-replicator.start()</code></pre>
+replicator = new Replicator(config);
+replicator.start();</code></pre>
 </div>
 </div>
 </div>
@@ -2437,13 +2443,14 @@ The following example initiates a one-shot replication with the session ID that 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1011-L1017">val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
-val config = ReplicatorConfiguration(database, target)
-config.setAuthenticator(SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447"))
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L883-L890">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+config.setAuthenticator(new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447"));
 
 // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-replicator = Replicator(config)
-replicator.start()</code></pre>
+replicator = new Replicator(config);
+replicator.start();</code></pre>
 </div>
 </div>
 </div>
@@ -2460,11 +2467,10 @@ As an example, this feature can be useful to pass additional credentials when th
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1179-L1183">val config = ReplicatorConfiguration(database, endpoint)
-val headers: MutableMap&lt;String, String&gt; =
-    HashMap()
-headers["CustomHeaderName"] = "Value"
-config.setHeaders(headers)</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1050-L1053">ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();
+headers.put("CustomHeaderName", "Value");
+config.setHeaders(headers);</code></pre>
 </div>
 </div>
 </div>
@@ -2486,13 +2492,14 @@ For instance, high-priority documents could be pushed first, or documents in a "
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1228-L1234">val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
-val config = ReplicatorConfiguration(database, target)
-config.setPushFilter({ document, flags -&gt; flags.contains(DocumentFlag.DocumentFlagsDeleted) }) <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1096-L1103">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+config.setPushFilter((document, flags) -&gt; flags.contains(DocumentFlag.DocumentFlagsDeleted)); <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-replicator = Replicator(config)
-replicator.start()</code></pre>
+replicator = new Replicator(config);
+replicator.start();</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2527,13 +2534,14 @@ Sync Gateway <a href="../../../sync-gateway/3.0/channels.html" class="page">chan
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1241-L1247">val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
-val config = ReplicatorConfiguration(database, target)
-config.setPullFilter({ document, flags -&gt; "draft" == document.getString("type") }) <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1109-L1116">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
+config.setPullFilter((document, flags) -&gt; "draft".equals(document.getString("type"))); <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
-replicator = Replicator(config)
-replicator.start()</code></pre>
+replicator = new Replicator(config);
+replicator.start();</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2623,13 +2631,13 @@ You can, optionally, add a change listener (see <a href="#lbl-repl-mon">Monitor<
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Create replicator
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Create replicator
 // Consider holding a reference somewhere
 // to prevent the Replicator from being GCed
-val thisReplicator = Replicator(thisConfig) /* &lt;.&gt; */
+final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Start replicator
-thisReplicator.start(false) /* &lt;.&gt; */</code></pre>
+thisReplicator.start(false); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2665,8 +2673,8 @@ However, if you do want to force the replication to start again from zero, use t
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1219-L1220">replicator.resetCheckpoint()
-replicator.start()</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1087-L1088">replicator.resetCheckpoint();
+replicator.start();</code></pre>
 </div>
 </div>
 </div>
@@ -2768,43 +2776,32 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <div class="tab-pane" aria-labelledby="tabset2_adding-a-change-listener">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">val thisListener: ListenerToken = addChangeListener { change -&gt;
-    val err: CouchbaseLiteException = change.getStatus().getError()
-    if (err != null) {
-        Log.i(
-            TAG,
-            "Error code ::  " + err.getCode(),
-            e
-        )
-    }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">ListenerToken thisListener =
+  new thisReplicator.addChangeListener(change -&gt; {
+    final CouchbaseLiteException err =
+     change.getStatus().getError();
+     if (err != null) {
+       Log.i(TAG, "Error code ::  " + err.getCode(), e);
+     }
+  });</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_using-replicator-status">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Log.i(
-    TAG, "The Replicator is currently " +
-            thisReplicator.getStatus().getActivityLevel()
-)
-Log.i(
-    TAG,
-    "The Replicator has processed $t"
-)
-if (thisReplicator.getStatus().getActivityLevel() ===
-    Replicator.ActivityLevel.BUSY
-) {
-    Log.i(
-        TAG,
-        "Replication Processing"
-    )
-    Log.i(
-        TAG, "It has completed " +
-                thisReplicator.getStatus().getProgess().getTotal().toString() +
-                " changes"
-    )
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Log.i(TAG, "The Replicator is currently " +
+  thisReplicator.getStatus().getActivityLevel());
+
+Log.i(TAG, "The Replicator has processed " + t);
+
+if (thisReplicator.getStatus().getActivityLevel() ==
+  Replicator.ActivityLevel.BUSY) {
+    Log.i(TAG, "Replication Processing");
+    Log.i(TAG, "It has completed " +
+      thisReplicator.getStatus().getProgess().getTotal() +
+      " changes");
+  }</code></pre>
 </div>
 </div>
 </div>
@@ -2912,28 +2909,26 @@ Stop the listener as shown in <a href="#ex-stop-doc-listener">Example 11</a>.</p
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1144-L1165">val token: ListenerToken = replicator.addDocumentReplicationListener({ replication -&gt;
-    if (replication.isPush()) Log.i(
-        TAG,
-        "Replication type: " + "Push"
-    ) else Log.i(TAG, "Replication type: " + "Pull")
-    for (document in replication.getDocuments()) {
-        Log.i(TAG, "Doc ID: " + document.getID())
-        val err: CouchbaseLiteException = document.getError()
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1018-L1037">ListenerToken token = replicator.addDocumentReplicationListener(replication -&gt; {
+
+    Log.i(TAG, "Replication type: " + ((replication.isPush()) ? "Push" : "Pull"));
+    for (ReplicatedDocument document : replication.getDocuments()) {
+        Log.i(TAG, "Doc ID: " + document.getID());
+
+        CouchbaseLiteException err = document.getError();
         if (err != null) {
             // There was an error
-            Log.e(TAG, "Error replicating document: ", err)
-            return@addDocumentReplicationListener
+            Log.e(TAG, "Error replicating document: ", err);
+            return;
         }
+
         if (document.flags().contains(DocumentFlag.DocumentFlagsDeleted)) {
-            Log.i(
-                TAG,
-                "Successfully replicated a deleted document"
-            )
+            Log.i(TAG, "Successfully replicated a deleted document");
         }
     }
-})
-replicator.start()</code></pre>
+});
+
+replicator.start();</code></pre>
 </div>
 </div>
 </div>
@@ -2946,7 +2941,7 @@ replicator.start()</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">replicator.removeChangeListener(token)</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">replicator.removeChangeListener(token);</code></pre>
 </div>
 </div>
 </div>
@@ -2994,57 +2989,49 @@ Use it in preference to returning a list of pending document IDs, where possible
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">    // ... include other code as required
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">    // ... include other code as required
     //
-    val endpoint: Endpoint = URLEndpoint(URI("ws://localhost:4984/db"))
-    val config: ReplicatorConfiguration = ReplicatorConfiguration(database, endpoint)
-        .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH)
-    replicator = Replicator(config)
-    val pendingDocs: Set&lt;String&gt; = replicator.getPendingDocumentIds() <i class="conum" data-value="1"></i><b>(1)</b>
+    final Endpoint endpoint =
+      new URLEndpoint(new URI("ws://localhost:4984/db"));
 
-    replicator.addChangeListener({ change -&gt;
-        onStatusChanged(
-            pendingDocs,
-            change.getStatus()
-        )
-    })
-    replicator.start()
+    final ReplicatorConfiguration config =
+      new ReplicatorConfiguration(database, endpoint)
+    .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH);
+
+    replicator = new Replicator(config);
+    final Set&lt;String&gt; pendingDocs =
+      replicator.getPendingDocumentIds(); <i class="conum" data-value="1"></i><b>(1)</b>
+
+
+    replicator.addChangeListener(change -&gt; {
+      onStatusChanged(pendingDocs, change.getStatus()); });
+
+    replicator.start();
 
     // ... include other code as required
 //
-private fun onStatusChanged(
-    @NonNull pendingDocs: Set&lt;String&gt;,
-    @NonNull status: Replicator.Status
-) {
-    // ... sample onStatusChanged function
-    //
-    Log.i(
-        Companion.TAG,
-        "Replicator activity level is " + status.getActivityLevel().toString()
-    )
+private void onStatusChanged(
+  @NonNull final Set&lt;String&gt; pendingDocs,
+  @NonNull final Replicator.Status status) {
+  // ... sample onStatusChanged function
+  //
+  Log.i(TAG,
+    "Replicator activity level is " + status.getActivityLevel().toString());
 
-    // iterate and report-on previously
-    // retrieved pending docids 'list'
-    val itr = pendingDocs.iterator()
-    while (itr.hasNext()) {
-        val docId = itr.next()
-        try {
-            if (!replicator.isDocumentPending(docId)) {
-                continue
-            } <i class="conum" data-value="2"></i><b>(2)</b>
-            itr.remove()
-            Log.i(
-                Companion.TAG,
-                "Doc ID $docId has been pushed"
-            )
-        } catch (e: CouchbaseLiteException) {
-            Log.w(
-                Companion.TAG,
-                "isDocumentPending failed",
-                e
-            )
-        }
-    }</code></pre>
+  // iterate and report-on previously
+  // retrieved pending docids 'list'
+  for (Iterator&lt;String&gt; itr = pendingDocs.iterator(); itr.hasNext(); ) {
+    final String docId = itr.next();
+    try {
+      if (!replicator.isDocumentPending(docId)) { continue; } <i class="conum" data-value="2"></i><b>(2)</b>
+
+      itr.remove();
+      Log.i(TAG, "Doc ID " + docId + " has been pushed");
+    }
+    catch (CouchbaseLiteException e) {
+      Log.w(TAG, "isDocumentPending failed", e); }
+  }
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -3107,8 +3094,8 @@ Your app should account for this potential delay before attempting any subsequen
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Stop replication.
-thisReplicator.stop() /* &lt;.&gt; */</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Stop replication.
+thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -3142,13 +3129,11 @@ Remove any active <a href="#lbl-repl-chng">change listener</a> before stopping t
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt">replicator.addChangeListener({ change -&gt;
-    val error: CouchbaseLiteException = change.getStatus().getError()
-    if (error != null) {
-        Log.w(TAG, "Error code:: %d", error)
-    }
-})
-replicator.start()</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">replicator.addChangeListener(change -&gt; {
+    CouchbaseLiteException error = change.getStatus().getError();
+    if (error != null) { Log.w(TAG, "Error code:: %d", error); }
+});
+replicator.start();</code></pre>
 </div>
 </div>
 </div>
@@ -3247,15 +3232,14 @@ After completing this step, Sync Gateway is reachable over <code>https</code>/<c
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1195-L1203">val `is`: InputStream = getAsset("cert.cer")
-val cert: ByteArray = IOUtils.toByteArray(`is`)
-if (`is` != null) {
-    try {
-        `is`.close()
-    } catch (ignore: IOException) {
-    }
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1065-L1072">InputStream is = getAsset("cert.cer");
+byte[] cert = IOUtils.toByteArray(is);
+if (is != null) {
+    try { is.close(); }
+    catch (IOException ignore) {}
 }
-config.setPinnedServerCertificate(cert)</code></pre>
+
+config.setPinnedServerCertificate(cert);</code></pre>
 </div>
 </div>
 </div>
@@ -3286,7 +3270,7 @@ You can increase the log output for activity related to replication with Sync Ga
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L991">Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE)</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L864">Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);</code></pre>
 </div>
 </div>
 </div>

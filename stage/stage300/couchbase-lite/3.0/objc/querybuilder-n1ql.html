@@ -2488,10 +2488,12 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">CBLQuery *listQuery;
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">    NSError *error;
 
-*listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-             from:[CBLQueryDataSource database:dbName] <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+    CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
+
+    CBLQuery *listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
+                                             from:[CBLQueryDataSource database:db]]; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2565,24 +2567,26 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">CBLMutableArray* matches = [[CBLMutableArray alloc] init];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">        NSMutableArray* matches =
+          [[NSMutableArray alloc] init];
 
-CBLQueryResultSet* resultset = [listQuery execute:&amp;error];
+        CBLQueryResultSet* resultset = [listQuery execute:&amp;error];
 
-for (CBLQueryResult *result in resultset) {
+        for (CBLQueryResult *result in resultset.allResults) { // access the resultSet.allResults
 
-    CBLDictionary *match = [result valueForKey:@dbName];
+            NSDictionary *match = [result valueAtIndex: 0] ;
+//             toDictionary];
 
-    [matches addDictionary: *match] <i class="conum" data-value="1"></i><b>(1)</b>
-    // NSLog(@"document name :: %@", [match stringForKey:@"name"]);
+            // Store dictionary in array
+            [matches addObject: match];
 
-<i class="conum" data-value="2"></i><b>(2)</b>
-    *docid = [match stringForKey:@"id"]
-    *name =  [match stringForKey:@"name"]
-    *type =  [match stringForKey:@"type"]
-    *city =  [match stringForKey:@"city"]
+            // Use dictionary values
+            NSLog(@"id = %@", [match valueForKey:@"id"]);
+            NSLog(@"name = %@", [match valueForKey:@"name"]);
+            NSLog(@"type = %@", [match valueForKey:@"type"]);
+            NSLog(@"city = %@", [match valueForKey:@"city"]);
 
-} // end for</code></pre>
+        } // end for</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2612,7 +2616,9 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">CBLQuery *listQuery;
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
+
+CBLQuery *listQuery;
 
 CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
 
@@ -2623,7 +2629,7 @@ CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
 CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
 
 *listQuery = [CBLQueryBuilder select:@[id, type, name, city]
-             from:[CBLQueryDataSource database:dbName]] <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2677,25 +2683,20 @@ CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">CBLDictionary *match;
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">    NSMutableArray* matches = [[NSMutableArray alloc] init]; // save to native array
 
-CBLMutableArray* matches = [[CBLMutableArray alloc] init];
+    CBLQueryResultSet* resultset = [listQuery execute:&amp;error];
 
-CBLQueryResultSet* resultset = [listQuery execute:&amp;error];
+    for (CBLQueryResult *result in resultset.allResults) { // all results
 
-for (CBLQueryResult *result in resultset) {
+        [matches addObject: [result toDictionary]];
 
-  *match = [result toDictionary];
+        NSLog(@"id = %@", [result stringForKey:@"id"]);
+        NSLog(@"name = %@", [result stringForKey:@"name"]);
+        NSLog(@"type = %@", [result stringForKey:@"type"]);
+        NSLog(@"city = %@", [result stringForKey:@"city"]);
 
-  [matches addDictionary: *match] <i class="conum" data-value="1"></i><b>(1)</b>
-
-<i class="conum" data-value="2"></i><b>(2)</b>
-  *docid = [match stringForKey:@"id"]
-  *name =  [match stringForKey:@"name"]
-  *type =  [match stringForKey:@"type"]
-  *city =  [match stringForKey:@"city"]
-
-} // end for</code></pre>
+    } // end for</code></pre>
 </div>
 </div>
 </div>
@@ -2712,12 +2713,14 @@ for (CBLQueryResult *result in resultset) {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQuery *listQuery;
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
+
+CBLQuery *listQuery;
 
 CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
 
 *listQuery = [CBLQueryBuilder select:@[id]
-             from:[CBLQueryDataSource database:dbName]]</code></pre>
+             from:[CBLQueryDataSource database:db]]</code></pre>
 </div>
 </div>
 </div>
@@ -2791,11 +2794,13 @@ for (CBLQueryResult *result in resultset) {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">CBLQuerySelectResult *count =
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
+
+CBLQuerySelectResult *count =
   [CBLQuerySelectResult expression:[CBLQueryFunction count:   [CBLQueryExpression all]]];
 
 *listQuery = [CBLQueryBuilder select:@[count]
-             from:[CBLQueryDataSource database:dbName]] <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2881,11 +2886,12 @@ Use the <code>limit</code> and <code>offset</code> feature, to return a defined 
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">int thisOffset = 0;
 int thisLimit = 20;
+CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
 
 CBLQuery* listQuery =
             [CBLQueryBuilder
                 select: @[[CBLQuerySelectResult all]]
-                from: [CBLQueryDataSource database: this_Db]
+                from: [CBLQueryDataSource database: db]
                 limit: [CBLQueryLimit
                             limit: [CBLQueryExpression integer: thisLimit]
                             offset: [CBLQueryExpression integer: thisOffset]]
@@ -2931,7 +2937,46 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">    for (CBLQueryResult *result in [listQuery execute:&amp;error]) {
+
+        // Get result as a JSON string
+        NSString *thisJsonString =
+                    [[result valueAtIndex:0 ] toJSON]; <i class="conum" data-value="1"></i><b>(1)</b>
+
+        // Get a Json Object from the Json String
+        NSArray *thisJsonObject =
+                [NSJSONSerialization JSONObjectWithData:
+                 [thisJsonString dataUsingEncoding: NSUTF8StringEncoding]
+                       options: NSJSONReadingAllowFragments
+                       error: &amp;error]; <i class="conum" data-value="2"></i><b>(2)</b>
+        if (error) {
+            NSLog(@"Error in serialization: %@",error);
+            return;
+        }
+
+        // Get an native Obj-C object from the Json Object
+        NSDictionary *hotelJson
+                        = [thisJsonObject mutableCopy]; <i class="conum" data-value="3"></i><b>(3)</b>
+
+        // Populate a custom object from native dictionary
+        Hotel *hotelFromJson = Hotel.new;
+        NSMutableArray&lt;Hotel *&gt; *hotels = NSMutableArray.new;
+
+        hotelFromJson.id = hotelJson[@"id"];
+        hotelFromJson.name = hotelJson[@"name"];
+        hotelFromJson.city = hotelJson[@"city"];
+        hotelFromJson.country = hotelJson[@"country"];
+        hotelFromJson.descriptive = hotelJson[@"description"];
+
+        [hotels addObject:hotelFromJson];
+
+        // Log generated Json and Native objects
+        // For demo/example purposes
+        NSLog(@"Json Object %@", thisJsonObject);
+        NSLog(@"Json String %@", thisJsonString);
+        NSLog(@"Native Object: id: %@ name: %@ city: %@ country: %@ descriptive: %@", hotelFromJson.id, hotelFromJson.name, hotelFromJson.city, hotelFromJson.country, hotelFromJson.descriptive);
+
+       }; // end for</code></pre>
 </div>
 </div>
 </div>

@@ -1723,51 +1723,52 @@ The implementation of this storage differs from platform to platform&#8201;&#821
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// initialize the replicator configuration
-val thisConfig = ReplicatorConfiguration(
-    thisDB,
-    URLEndpoint(URI("wss://listener.com:8954"))
-) /* &lt;.&gt; */
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// initialize the replicator configuration
+final ReplicatorConfiguration thisConfig
+   = new ReplicatorConfiguration(
+      thisDB,
+      URLEndpoint(URI("wss://listener.com:8954"))); <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Set replicator type
 thisConfig.setReplicatorType(
-    ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL
-)
+  ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
 // Configure Sync Mode
-thisConfig.setContinuous(false) // default value
+thisConfig.setContinuous(false); // default value
 
 // Configure Server Authentication --
 // only accept self-signed certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(true) /* &lt;.&gt; */
+thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="2"></i><b>(2)</b>
 
 // Configure the credentials the
 // client will provide if prompted
-val thisAuth: BasicAuthenticator /* &lt;.&gt; */
-thisAuth = BasicAuthenticator("Our Username", "Our PasswordValue")
+final BasicAuthenticator thisAuth
+  = new BasicAuthenticator(
+      "Our Username",
+      "Our PasswordValue")); <i class="conum" data-value="3"></i><b>(3)</b>
+
 thisConfig.setAuthenticator(thisAuth)
 
-/* Optionally set custom conflict resolver call back */thisConfig.setConflictResolver() /* &lt;.&gt; */
+/* Optionally set custom conflict resolver call back */
+thisConfig.setConflictResolver( /* define resolver function */); <i class="conum" data-value="4"></i><b>(4)</b>
 
 // Create replicator
 // Consider holding a reference somewhere
 // to prevent the Replicator from being GCed
-val thisReplicator = Replicator(thisConfig) /* &lt;.&gt; */
+final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="5"></i><b>(5)</b>
 
-// Optionally add a change listener <i class="conum" data-value="1"></i><b>(1)</b>
-val thisListener: ListenerToken = addChangeListener { change -&gt;
-    val err: CouchbaseLiteException = change.getStatus().getError()
-    if (err != null) {
-        Log.i(
-            TAG,
-            "Error code ::  " + err.getCode(),
-            e
-        )
-    }
-}
+// Optionally add a change listener <i class="conum" data-value="6"></i><b>(6)</b>
+ListenerToken thisListener =
+  new thisReplicator.addChangeListener(change -&gt; {
+    final CouchbaseLiteException err =
+     change.getStatus().getError();
+     if (err != null) {
+       Log.i(TAG, "Error code ::  " + err.getCode(), e);
+     }
+  });
 
 // Start replicator
-thisReplicator.start(false) /* &lt;.&gt; */</code></pre>
+thisReplicator.start(false); <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1896,10 +1897,11 @@ To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <co
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt">// initialize the replicator configuration
-val thisConfig: ReplicatorConfiguration = ReplicatorConfiguration(
-    thisDB,
-    URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample"))</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// initialize the replicator configuration
+final ReplicatorConfiguration thisConfig
+   = new ReplicatorConfiguration(
+      thisDB,
+      URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample"))); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1951,13 +1953,12 @@ val thisConfig: ReplicatorConfiguration = ReplicatorConfiguration(
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Set replicator type
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Set replicator type
 thisConfig.setReplicatorType(
-    ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL
-)
+  ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
 // Configure Sync Mode
-thisConfig.setContinuous(false) // default value</code></pre>
+thisConfig.setContinuous(false); // default value</code></pre>
 </div>
 </div>
 </div>
@@ -2075,14 +2076,18 @@ thisConfig.setContinuous(false) // default value</code></pre>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
-val config = ReplicatorConfiguration(database, target)
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">URLEndpoint target =
+new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+
+ReplicatorConfiguration config =
+new ReplicatorConfiguration(database, target);
 
 //  other config as required . . .
-config.setHeartbeat(150L) <i class="conum" data-value="1"></i><b>(1)</b>
-config.setMaxRetries(20L) <i class="conum" data-value="2"></i><b>(2)</b>
-config.setMaxRetryWaitTime(600L) <i class="conum" data-value="3"></i><b>(3)</b>
-val repl = Replicator(config)</code></pre>
+config.setHeartbeat(150L); <i class="conum" data-value="1"></i><b>(1)</b>
+config.setMaxRetries(20L); <i class="conum" data-value="2"></i><b>(2)</b>
+config.setMaxRetryWaitTime(600L); <i class="conum" data-value="3"></i><b>(3)</b>
+
+Replicator repl = new Replicator(config);</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2154,9 +2159,9 @@ If the server cannot provide acceptable credentials then the connection will fai
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Configure Server Security
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Configure Server Security
 // -- only accept CA attested certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(false) /* &lt;.&gt; */</code></pre>
+thisConfig.setAcceptOnlySelfSignedServerCertificate(false); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2179,9 +2184,9 @@ Self signed certificates are not allowed.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Configure Server Authentication --
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Configure Server Authentication --
 // only accept self-signed certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(true) /* &lt;.&gt; */</code></pre>
+thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2203,8 +2208,8 @@ Any certificates that are not self-signed are rejected.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Use the pinned certificate from the byte array (cert)
-thisConfig.setPinnedServerCertificate(cert.getEncoded()) /* &lt;.&gt; */</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Use the pinned certificate from the byte array (cert)
+thisConfig.setPinnedServerCertificate(cert.getEncoded()); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2242,10 +2247,13 @@ thisConfig.setPinnedServerCertificate(cert.getEncoded()) /* &lt;.&gt; */</code><
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Configure the credentials the
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Configure the credentials the
 // client will provide if prompted
-val thisAuth: BasicAuthenticator /* &lt;.&gt; */
-thisAuth = BasicAuthenticator("Our Username", "Our PasswordValue")
+final BasicAuthenticator thisAuth
+  = new BasicAuthenticator(
+      "Our Username",
+      "Our PasswordValue")); <i class="conum" data-value="1"></i><b>(1)</b>
+
 thisConfig.setAuthenticator(thisAuth)</code></pre>
 </div>
 </div>
@@ -2284,11 +2292,10 @@ The <strong>server</strong> (listener) must have <code>disableTLS</code> set <co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">/**
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">/**
  * Snippet 4: Create a ClientCertificateAuthenticator and use it in a replicator
  * Snippet 5: Specify a pinned certificate as a byte array
- *
- *
+ * &lt;p&gt;
  * Configure Client (active) side certificates
  *
  * @param config         The replicator configuration
@@ -2296,26 +2303,27 @@ The <strong>server</strong> (listener) must have <code>disableTLS</code> set <co
  * @param clientIdentity the identity offered to the server as authentication
  * @throws CertificateEncodingException on certifcate encoding error
  */
-@Throws(CertificateEncodingException::class)
-private fun configureClientCerts(
-    config: ReplicatorConfiguration,
-    @NonNull cert: Certificate,
-    @NonNull clientIdentity: TLSIdentity
-) {
+private void configureClientCerts(
+  ReplicatorConfiguration config,
+  @NonNull Certificate cert,
+  @NonNull TLSIdentity clientIdentity)
+  throws CertificateEncodingException {
 
     // Snippet 4: create an authenticator that provides the client identity
-    config.setAuthenticator(ClientCertificateAuthenticator(clientIdentity))
+    config.setAuthenticator(new ClientCertificateAuthenticator(clientIdentity));
 
     // Configure the pinned certificate passing a byte array.
-    config.setPinnedServerCertificate(cert.getEncoded())
-}
-    // ... other replicator configuration
-    // Provide a client certificate to the server for authentication
-    val thisClientId: TLSIdentity = TLSIdentity.getIdentity("clientId")
-        ?: throw IllegalStateException("Cannot find client id") /* &lt;.&gt; */
-    thisConfig.setAuthenticator(ClientCertificateAuthenticator(thisClientId)) /* &lt;.&gt; */
-    // ... other replicator configuration
-    val thisReplicator = Replicator(thisConfig)</code></pre>
+    config.setPinnedServerCertificate(cert.getEncoded());
+  }
+// ... other replicator configuration
+// Provide a client certificate to the server for authentication
+final TLSIdentity thisClientId = TLSIdentity.getIdentity("clientId"); <i class="conum" data-value="1"></i><b>(1)</b>
+
+if (thisClientId == null) { throw new IllegalStateException("Cannot find client id"); }
+
+thisConfig.setAuthenticator(new ClientCertificateAuthenticator(thisClientId)); <i class="conum" data-value="2"></i><b>(2)</b>
+// ... other replicator configuration
+final thisReplicator= new Replicator(thisConfig);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2351,13 +2359,13 @@ You can, optionally, add a change listener (see <a href="#lbl-repl-mon">Monitor 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Create replicator
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Create replicator
 // Consider holding a reference somewhere
 // to prevent the Replicator from being GCed
-val thisReplicator = Replicator(thisConfig) /* &lt;.&gt; */
+final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Start replicator
-thisReplicator.start(false) /* &lt;.&gt; */</code></pre>
+thisReplicator.start(false); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -2481,43 +2489,32 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <div class="tab-pane" aria-labelledby="tabset2_adding-a-change-listener">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">val thisListener: ListenerToken = addChangeListener { change -&gt;
-    val err: CouchbaseLiteException = change.getStatus().getError()
-    if (err != null) {
-        Log.i(
-            TAG,
-            "Error code ::  " + err.getCode(),
-            e
-        )
-    }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">ListenerToken thisListener =
+  new thisReplicator.addChangeListener(change -&gt; {
+    final CouchbaseLiteException err =
+     change.getStatus().getError();
+     if (err != null) {
+       Log.i(TAG, "Error code ::  " + err.getCode(), e);
+     }
+  });</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_using-replicator-status">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Log.i(
-    TAG, "The Replicator is currently " +
-            thisReplicator.getStatus().getActivityLevel()
-)
-Log.i(
-    TAG,
-    "The Replicator has processed $t"
-)
-if (thisReplicator.getStatus().getActivityLevel() ===
-    Replicator.ActivityLevel.BUSY
-) {
-    Log.i(
-        TAG,
-        "Replication Processing"
-    )
-    Log.i(
-        TAG, "It has completed " +
-                thisReplicator.getStatus().getProgess().getTotal().toString() +
-                " changes"
-    )
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Log.i(TAG, "The Replicator is currently " +
+  thisReplicator.getStatus().getActivityLevel());
+
+Log.i(TAG, "The Replicator has processed " + t);
+
+if (thisReplicator.getStatus().getActivityLevel() ==
+  Replicator.ActivityLevel.BUSY) {
+    Log.i(TAG, "Replication Processing");
+    Log.i(TAG, "It has completed " +
+      thisReplicator.getStatus().getProgess().getTotal() +
+      " changes");
+  }</code></pre>
 </div>
 </div>
 </div>
@@ -2634,57 +2631,49 @@ Use it in preference to returning a list of pending document IDs, where possible
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">    // ... include other code as required
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">    // ... include other code as required
     //
-    val endpoint: Endpoint = URLEndpoint(URI("ws://localhost:4984/db"))
-    val config: ReplicatorConfiguration = ReplicatorConfiguration(database, endpoint)
-        .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH)
-    replicator = Replicator(config)
-    val pendingDocs: Set&lt;String&gt; = replicator.getPendingDocumentIds() <i class="conum" data-value="1"></i><b>(1)</b>
+    final Endpoint endpoint =
+      new URLEndpoint(new URI("ws://localhost:4984/db"));
 
-    replicator.addChangeListener({ change -&gt;
-        onStatusChanged(
-            pendingDocs,
-            change.getStatus()
-        )
-    })
-    replicator.start()
+    final ReplicatorConfiguration config =
+      new ReplicatorConfiguration(database, endpoint)
+    .setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH);
+
+    replicator = new Replicator(config);
+    final Set&lt;String&gt; pendingDocs =
+      replicator.getPendingDocumentIds(); <i class="conum" data-value="1"></i><b>(1)</b>
+
+
+    replicator.addChangeListener(change -&gt; {
+      onStatusChanged(pendingDocs, change.getStatus()); });
+
+    replicator.start();
 
     // ... include other code as required
 //
-private fun onStatusChanged(
-    @NonNull pendingDocs: Set&lt;String&gt;,
-    @NonNull status: Replicator.Status
-) {
-    // ... sample onStatusChanged function
-    //
-    Log.i(
-        Companion.TAG,
-        "Replicator activity level is " + status.getActivityLevel().toString()
-    )
+private void onStatusChanged(
+  @NonNull final Set&lt;String&gt; pendingDocs,
+  @NonNull final Replicator.Status status) {
+  // ... sample onStatusChanged function
+  //
+  Log.i(TAG,
+    "Replicator activity level is " + status.getActivityLevel().toString());
 
-    // iterate and report-on previously
-    // retrieved pending docids 'list'
-    val itr = pendingDocs.iterator()
-    while (itr.hasNext()) {
-        val docId = itr.next()
-        try {
-            if (!replicator.isDocumentPending(docId)) {
-                continue
-            } <i class="conum" data-value="2"></i><b>(2)</b>
-            itr.remove()
-            Log.i(
-                Companion.TAG,
-                "Doc ID $docId has been pushed"
-            )
-        } catch (e: CouchbaseLiteException) {
-            Log.w(
-                Companion.TAG,
-                "isDocumentPending failed",
-                e
-            )
-        }
-    }</code></pre>
+  // iterate and report-on previously
+  // retrieved pending docids 'list'
+  for (Iterator&lt;String&gt; itr = pendingDocs.iterator(); itr.hasNext(); ) {
+    final String docId = itr.next();
+    try {
+      if (!replicator.isDocumentPending(docId)) { continue; } <i class="conum" data-value="2"></i><b>(2)</b>
+
+      itr.remove();
+      Log.i(TAG, "Doc ID " + docId + " has been pushed");
+    }
+    catch (CouchbaseLiteException e) {
+      Log.w(TAG, "isDocumentPending failed", e); }
+  }
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2747,8 +2736,8 @@ Your app should account for this potential delay before attempting any subsequen
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Stop replication.
-thisReplicator.stop() /* &lt;.&gt; */</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Stop replication.
+thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2801,36 +2790,38 @@ Remove any active <a href="#lbl-repl-chng">change listener</a> before stopping t
 <div class="tab-pane" aria-labelledby="tabset3_local-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new LocalWinConflictResolver());
-internal class LocalWinConflictResolver : ConflictResolver {
-    fun resolve(conflict: Conflict): Document {
-        return conflict.getLocalDocument()
-    }</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Using replConfig.setConflictResolver(new LocalWinConflictResolver());
+class LocalWinConflictResolver implements ConflictResolver {
+    public Document resolve(Conflict conflict) {
+        return conflict.getLocalDocument();
+    }
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset3_remote-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
-internal class RemoteWinConflictResolver : ConflictResolver {
-    fun resolve(conflict: Conflict): Document {
-        return conflict.getRemoteDocument()
-    }</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
+class RemoteWinConflictResolver implements ConflictResolver {
+    public Document resolve(Conflict conflict) {
+        return conflict.getRemoteDocument();
+    }
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset3_merge">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new MergeConflictResolver());
-internal class MergeConflictResolver : ConflictResolver {
-    fun resolve(conflict: Conflict): Document {
-        val merge: MutableMap&lt;String, Any&gt; =
-            conflict.getLocalDocument().toMap()
-        merge.putAll(conflict.getRemoteDocument().toMap())
-        return MutableDocument(conflict.getDocumentId(), merge)
-    }</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">// Using replConfig.setConflictResolver(new MergeConflictResolver());
+class MergeConflictResolver implements ConflictResolver {
+    public Document resolve(Conflict conflict) {
+        Map&lt;String, Object&gt; merge = conflict.getLocalDocument().toMap();
+        merge.putAll(conflict.getRemoteDocument().toMap());
+        return new MutableDocument(conflict.getDocumentId(), merge);
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2850,22 +2841,46 @@ In the event of conflicting keys, it will pick the key value from <code>new</cod
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1371-L1385">val doc: Document = database.getDocument("xyz") ?: return
-val mutableDocument: MutableDocument = doc.toMutable()
-mutableDocument.setString("name", "apples")
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1236-L1249">Document doc = database.getDocument("xyz");
+if (doc == null) { return; }
+MutableDocument mutableDocument = doc.toMutable();
+mutableDocument.setString("name", "apples");
+
 database.save(
     mutableDocument,
-    { newDoc, curDoc -&gt;  <i class="conum" data-value="1"></i><b>(1)</b>
-        if (curDoc == null) {
-            return@save false
-        } <i class="conum" data-value="2"></i><b>(2)</b>
-        val dataMap: MutableMap&lt;String, Any&gt; =
-            curDoc.toMap()
-        dataMap.putAll(newDoc.toMap()) <i class="conum" data-value="3"></i><b>(3)</b>
-        newDoc.setData(dataMap)
-        true <i class="conum" data-value="4"></i><b>(4)</b>
-    }) <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+    (newDoc, curDoc) -&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
+        if (curDoc == null) { return false; } <i class="conum" data-value="2"></i><b>(2)</b>
+        Map&lt;String, Object&gt; dataMap = curDoc.toMap();
+        dataMap.putAll(newDoc.toMap()); <i class="conum" data-value="3"></i><b>(3)</b>
+        newDoc.setData(dataMap);
+        return true; <i class="conum" data-value="4"></i><b>(4)</b>
+    }); <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The conflict handler code is provided as a lambda.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If the handler cannot resolve a conflict, it can return false.
+In this case, the save method will cancel the save operation and return false the same way as using the save() method with the failOnConflict concurrency control.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Within the conflict handler, you can modify the document parameter which is the same instance of Document that is passed to the save() method. So in effect, you will be directly modifying the document that is being saved.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>When handling is done, the method must return true (for  successful resolution) or false (if it was unable to resolve the conflict).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>If there is an exception thrown in the handle() method, the exception will be caught and re-thrown in the save() method</td>
+</tr>
+</table>
 </div>
 </div>
 </div>

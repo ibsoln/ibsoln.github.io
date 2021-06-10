@@ -1684,23 +1684,25 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1591-L1607">
-// `tensorFlowModel` is a fake implementation
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1471-L1489">// `tensorFlowModel` is a fake implementation
 // this would be the implementation of the ml model you have chosen
-internal class ImageClassifierModel : PredictiveModel {
-    fun predict(@NonNull input: Dictionary): Dictionary? {
-        val blob: Blob = input.getBlob("photo") ?: return null
+class ImageClassifierModel implements PredictiveModel {
+    @Override
+    public Dictionary predict(@NonNull Dictionary input) {
+        Blob blob = input.getBlob("photo");
+        if (blob == null) { return null; }
 
         // `tensorFlowModel` is a fake implementation
         // this would be the implementation of the ml model you have chosen
-        return MutableDictionary(TensorFlowModel.predictImage(blob.getContent())) <i class="conum" data-value="1"></i><b>(1)</b>
+        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); <i class="conum" data-value="1"></i><b>(1)</b>
     }
 }
 
-internal object TensorFlowModel {
-    fun predictImage(data: ByteArray?): Map&lt;String, Any&gt;? {
-        return null
-    }</code></pre>
+class TensorFlowModel {
+    public static Map&lt;String, Object&gt; predictImage(byte[] data) {
+        return null;
+    }
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1723,7 +1725,7 @@ Therefore, the supported data type will be constrained by the data type that the
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1299">Database.prediction.registerModel("ImageClassifier", ImageClassifierModel())</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1173">Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());</code></pre>
 </div>
 </div>
 </div>
@@ -1756,9 +1758,8 @@ When documents are added or updated, the index will call the prediction function
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1303-L1305">val index: ValueIndex =
-    IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")))
-database.createIndex("value-index-image-classifier", index)</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1177-L1178">ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
+database.createIndex("value-index-image-classifier", index);</code></pre>
 </div>
 </div>
 </div>
@@ -1773,12 +1774,12 @@ The Predictive Index is different from the value index in that the Predictive In
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1319-L1324">val inputMap: MutableMap&lt;String, Any&gt; =
-    HashMap()
-inputMap["numbers"] = Expression.property("photo")
-val input: Expression = Expression.map(inputMap)
-val index: PredictiveIndex = IndexBuilder.predictiveIndex("ImageClassifier", input, null)
-database.createIndex("predictive-index-image-classifier", index)</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1191-L1196">Map&lt;String, Object&gt; inputMap = new HashMap&lt;&gt;();
+inputMap.put("numbers", Expression.property("photo"));
+Expression input = Expression.map(inputMap);
+
+PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
+database.createIndex("predictive-index-image-classifier", index);</code></pre>
 </div>
 </div>
 </div>
@@ -1792,26 +1793,20 @@ database.createIndex("predictive-index-image-classifier", index)</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1334-L1353">val inputProperties: MutableMap&lt;String, Any&gt; =
-    HashMap()
-inputProperties["photo"] = Expression.property("photo")
-val input: Expression = Expression.map(inputProperties)
-val prediction: PredictionFunction =
-    PredictiveModel.predict("ImageClassifier", input) <i class="conum" data-value="1"></i><b>(1)</b>
-val query: Query = QueryBuilder
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1205-L1218">Map&lt;String, Object&gt; inputProperties = new HashMap&lt;&gt;();
+inputProperties.put("photo", Expression.property("photo"));
+Expression input = Expression.map(inputProperties);
+PredictionFunction prediction = PredictiveModel.predict("ImageClassifier", input); <i class="conum" data-value="1"></i><b>(1)</b>
+
+Query query = QueryBuilder
     .select(SelectResult.all())
     .from(DataSource.database(database))
-    .where(
-        Expression.property("label").equalTo(Expression.string("car"))
-            .and(
-                Expression.property("probability")
-                    .greaterThanOrEqualTo(Expression.doubleValue(0.8))
-            )
-    )
+    .where(Expression.property("label").equalTo(Expression.string("car"))
+        .and(Expression.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
 
 // Run the query.
-val result: ResultSet = query.execute()
-Log.d(TAG, "Number of rows: " + result.allResults().size())</code></pre>
+ResultSet result = query.execute();
+Log.d(TAG, "Number of rows: " + result.allResults().size());</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1844,7 +1839,7 @@ The null value returned by the prediction method will be interpreted as MISSING 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1309">Database.prediction.unregisterModel("ImageClassifier")</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1182">Database.prediction.unregisterModel("ImageClassifier");</code></pre>
 </div>
 </div>
 </div>

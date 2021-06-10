@@ -2605,14 +2605,11 @@ To unpack these result sets you need to iterate this array.</p>
 
                 let city = thisDocsProps!["city"] as! String
 
-                if let hotel =
-                        row.dictionary(forKey: "_doc")?.toDictionary() { <i class="conum" data-value="2"></i><b>(2)</b>
+                let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="2"></i><b>(2)</b>
 
-                    var hotelId = hotel["id"] as! String
+                let hotelId = hotel!["id"] as! String
 
-                    hotels[hotelId] = hotel
-
-                } // end if
+                hotels[hotelId] = hotel
 
             } // end for
 
@@ -2961,39 +2958,39 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        do {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">    do {
 
-            for (_, row) in
-                try! listQuery.execute().allResults().enumerated() {
+        for (_, row) in
+            try! listQuery.execute().allResults().enumerated() {
 
-                let jsonString = row.dictionary(forKey: "_doc")!.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
+            let jsonString = row.dictionary(forKey: "_doc")!.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
 
-                let thisJsonObj =
-                        try! JSONSerialization.jsonObject(
-                                with: jsonString.data(using: .utf8)! , options:[])
-                                    as? [String: Any] <i class="conum" data-value="2"></i><b>(2)</b>
+            let thisJsonObj =
+                    try! JSONSerialization.jsonObject(
+                            with: jsonString.data(using: .utf8)! , options:[])
+                                as? [String: Any] <i class="conum" data-value="2"></i><b>(2)</b>
 
-                // Use Json Object to populate Native object <i class="conum" data-value="3"></i><b>(3)</b>
-                this_hotel.id = thisJsonObj!["id"] as! String
+            // Use Json Object to populate Native object <i class="conum" data-value="3"></i><b>(3)</b>
+            this_hotel.id = thisJsonObj!["id"] as! String
 
-                this_hotel.name = thisJsonObj!["name"] as! String
+            this_hotel.name = thisJsonObj!["name"] as! String
 
-                this_hotel.type = thisJsonObj!["type"] as! String
+            this_hotel.type = thisJsonObj!["type"] as! String
 
-                this_hotel.city = thisJsonObj!["city"] as! String
+            this_hotel.city = thisJsonObj!["city"] as! String
 
-                hotels[this_hotel.id] = this_hotel
-
-
-            } // end for
-
-        } catch let err {
-            print(err.localizedDescription)
-
-        } // end do
+            hotels[this_hotel.id] = this_hotel
 
 
-    } // end func dontTestQueryAll</code></pre>
+        } // end for
+
+    } catch let err {
+        print(err.localizedDescription)
+
+    } // end do
+
+
+} // end func dontTestQueryAll</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -3004,11 +3001,11 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Convert the JSON string to a JSON Object</td>
+<td>Get a JSON object from the JSON string</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Convert the JSON string back to a native object</td>
+<td>Get a native object from the JSON object</td>
 </tr>
 </table>
 </div>

@@ -2488,12 +2488,12 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">    NSError *error;
 
-CBLQuery *listQuery;
+    CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
 
-*listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+    CBLQuery *listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
+                                             from:[CBLQueryDataSource database:db]]; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2559,20 +2559,26 @@ CBLQuery *listQuery;
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">NSMutableArray* matches = [[NSMutableArray alloc] init]; // add to native dictionary
-    CBLQueryResultSet* resultset = [listQuery execute:&amp;error];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">        NSMutableArray* matches =
+          [[NSMutableArray alloc] init];
 
-    for (CBLQueryResult *result in resultset.allResults) { // access the resultSet.allResults
+        CBLQueryResultSet* resultset = [listQuery execute:&amp;error];
 
-        CBLDictionary *match = [result valueAtIndex: 0];
+        for (CBLQueryResult *result in resultset.allResults) { // access the resultSet.allResults
 
-        [matches addObject: [match toDictionary]];
+            NSDictionary *match = [result valueAtIndex: 0] ;
+//             toDictionary];
 
-        NSLog(@"id = %@", [match stringForKey:@"id"]);
-        NSLog(@"name = %@", [match stringForKey:@"name"]);
-        NSLog(@"type = %@", [match stringForKey:@"type"]);
-        NSLog(@"city = %@", [match stringForKey:@"city"]);
-    } // end for</code></pre>
+            // Store dictionary in array
+            [matches addObject: match];
+
+            // Use dictionary values
+            NSLog(@"id = %@", [match valueForKey:@"id"]);
+            NSLog(@"name = %@", [match valueForKey:@"name"]);
+            NSLog(@"type = %@", [match valueForKey:@"type"]);
+            NSLog(@"city = %@", [match valueForKey:@"city"]);
+
+        } // end for</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2916,14 +2922,53 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <p>Couchbase Lite for Objective-C provides a convenience API to convert query results to JSON strings.</p>
 </div>
 <div class="paragraph">
-<p>Use {url-api-class-result-toJSON} to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <a href="#ex-json">Example 26</a> for a working example.</p>
+<p>Use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON">CBLResult.toJSON</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <a href="#ex-json">Example 26</a> for a working example.</p>
 </div>
 <div id="ex-json" class="exampleblock">
 <div class="title">Example 26. Using JSON Results</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">for (CBLQueryResult *result in [listQuery execute:&amp;error]) {
+
+    // Get result as a JSON string
+    NSString *thisJsonString =
+                [[result valueAtIndex:0 ] toJSON]; <i class="conum" data-value="1"></i><b>(1)</b>
+
+    // Get a Json Object from the Json String
+    NSArray *thisJsonObject =
+            [NSJSONSerialization JSONObjectWithData:
+             [thisJsonString dataUsingEncoding: NSUTF8StringEncoding]
+                   options: NSJSONReadingAllowFragments
+                   error: &amp;error]; <i class="conum" data-value="2"></i><b>(2)</b>
+    if (error) {
+        NSLog(@"Error in serialization: %@",error);
+        return;
+    }
+
+    // Get an native Obj-C object from the Json Object
+    NSDictionary *hotelJson
+                    = [thisJsonObject mutableCopy]; <i class="conum" data-value="3"></i><b>(3)</b>
+
+    // Populate a custom object from native dictionary
+    Hotel *hotelFromJson = Hotel.new;
+    NSMutableArray&lt;Hotel *&gt; *hotels = NSMutableArray.new;
+
+    hotelFromJson.id = hotelJson[@"id"];
+    hotelFromJson.name = hotelJson[@"name"];
+    hotelFromJson.city = hotelJson[@"city"];
+    hotelFromJson.country = hotelJson[@"country"];
+    hotelFromJson.descriptive = hotelJson[@"description"];
+
+    [hotels addObject:hotelFromJson];
+
+    // Log generated Json and Native objects
+    // For demo/example purposes
+    NSLog(@"Json Object %@", thisJsonObject);
+    NSLog(@"Json String %@", thisJsonString);
+    NSLog(@"Native Object: id: %@ name: %@ city: %@ country: %@ descriptive: %@", hotelFromJson.id, hotelFromJson.name, hotelFromJson.city, hotelFromJson.country, hotelFromJson.descriptive);
+
+   }; // end for</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2934,11 +2979,11 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Convert the JSON string to a JSON Object</td>
+<td>Get a JSON object from the JSON string</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Convert the JSON string back to a native object</td>
+<td>Get a native object from the JSON object</td>
 </tr>
 </table>
 </div>
