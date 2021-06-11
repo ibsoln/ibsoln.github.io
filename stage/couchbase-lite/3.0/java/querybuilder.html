@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>QueryBuilder | Couchbase Docs</title>
-<link rel="canonical" href="localhost::/5000/couchbase-lite/3.0/java/querybuilder.html">
+<link rel="canonical" href="https://ibsoln.github.io/stage/couchbase-lite/3.0/java/querybuilder.html">
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
 <meta name="description" content="How to use QueryBuilder to build effective queries with Couchbase Lite on Java">
@@ -49,7 +49,7 @@
               <div class="navbar-collapse collapse" id="navbar2">
                 <ul class="navbar-nav w-100 justify-content-start">
                   <li class="nav-item">
-                    <a href="localhost::/5000/home/index.html" class="nav-link">
+                    <a href="https://ibsoln.github.io/stage/home/index.html" class="nav-link">
                       <i class="fas fa-home"></i>
                     </a>
                   </li>
@@ -193,12 +193,6 @@
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../android/querybuilder.html">QueryBuilder</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../android/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -423,12 +417,6 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../csharp/querybuilder-n1ql.html">N1QL Queries</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../csharp/query-live.html">Live Query</a>
 </span>
 </li>
@@ -643,12 +631,6 @@
 
 <span class="nav-line "  data-depth="2">
 <span class="nav-text ">{querybuilder&#8212;&#8203;xref}</span>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<span class="nav-text ">{querybuilder-n1ql&#8212;&#8203;xref}</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -873,12 +855,6 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="querybuilder-n1ql.html">N1QL Queries</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
 <a class="nav-link" href="query-live.html">Live Query</a>
 </span>
 </li>
@@ -1093,12 +1069,6 @@
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../objc/querybuilder.html">QueryBuilder</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../objc/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1324,12 +1294,6 @@
 
 <span class="nav-line "  data-depth="2">
 <a class="nav-link" href="../swift/querybuilder.html">QueryBuilder</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../swift/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1639,7 +1603,7 @@ The examples used in this topic are based on the <em>Travel Sample</em> app and 
 <div class="paragraph">
 <p>Couchbase Lite for Java&#8217;s database queries are defined using the QueryBuilder API.
 This uses query statements of the form shown in <a href="#ex-query-form">Example 1</a>.
-The structure and semantics of the query format are based on that of Couchbase&#8217;s <a href="#server:learn:data/n1ql-versus-sql.adoc" class="page unresolved">N1QL query language</a>.</p>
+The structure and semantics of the query format are based on that of Couchbase&#8217;s <a href="../../../server/6.6/learn/data/n1ql-versus-sql.html" class="page">N1QL query language</a>.</p>
 </div>
 <div id="ex-query-form" class="exampleblock">
 <div class="title">Example 1. Query Format</div>
@@ -2945,44 +2909,7 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">  ArrayList&lt;Hotel&gt; hotels = new ArrayList&lt;Hotel&gt;();
-
-  // Run query
-  for (Result result : listQuery.execute()) {
-
-    // Get result as JSON string
-    String thisJsonString =
-              result.getDictionary(0).toJSON(); <i class="conum" data-value="1"></i><b>(1)</b>
-    Log.d("Convert", "JSON string: " + thisJsonString );
-
-    // Get JSON object from JSON string
-    JSONObject thisJSONobject = new JSONObject(thisJsonString); <i class="conum" data-value="2"></i><b>(2)</b>
-    Log.d("Convert", "JSON object: " + thisJSONobject.get("name"));
-
-    // Get native object from JSON object <i class="conum" data-value="3"></i><b>(3)</b>
-    JSONObject jsonObject = new JSONObject(thisJsonString.trim());
-    Iterator&lt;String&gt; keys = jsonObject.keys();
-    HashMap&lt;String,Object&gt; jsonDict  = new HashMap&lt;String,Object&gt;();
-
-    while(keys.hasNext()) {
-        String key = keys.next();
-        jsonDict.put(key,jsonObject.get(key));
-        // do something with jsonObject here
-        Log.d("Convert", "Native object: " + jsonDict.get(key));
-    }
-
-    // Get custom object from Native 'dictionary' object
-    Hotel thisHotel = new Hotel();
-    thisHotel.id = jsonDict.get("id").toString();
-    thisHotel.type = jsonDict.get("type").toString();
-    thisHotel.name = jsonDict.get("name").toString();
-    thisHotel.city = jsonDict.get("city").toString();
-    thisHotel.country = jsonDict.get("country").toString();
-    thisHotel.description = jsonDict.get("description").toString();
-    hotels.add(thisHotel);
-    Log.d("Convert", "MutableArray of Hotels: " + hotels.get(hotels.size()-1).name);
-
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
 </div>
 </div>
 <div class="colist arabic">

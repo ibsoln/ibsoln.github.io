@@ -4588,6 +4588,19 @@ For an overview, see <a href="../../learn/clusters-and-availability/xdcr-overvie
 </div>
 </div>
 <div class="sect1">
+<h2 id="applying-filters"><a class="anchor" href="#applying-filters"></a>Applying Filters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data replicated between collections can be <em>filtered</em>.
+An overview is provided in <a href="../../learn/clusters-and-availability/xdcr-filtering.html" class="page">XDCR Advanced Filtering</a>; and examples of filtering are provided in <a href="filter-xdcr-replication.html" class="page">Filter a Replication</a>.</p>
+</div>
+<div class="paragraph">
+<p>Note in particular that settings for <em>deletion filters</em> must be appropriately determined before replication or migration is performed: failure to establish the correct settings for deletion filters may, in certain circumstances, lead to data loss.
+For information, see <a href="../../learn/clusters-and-availability/xdcr-filtering.html#using-deletion-filters" class="page">Using Deletion Filters</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="examples-on-this-page"><a class="anchor" href="#examples-on-this-page"></a>Examples on this Page</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -4923,6 +4936,11 @@ Continue in this way until the overall migration is complete.</p>
 </ul>
 </div>
 <div class="paragraph">
+<p>Note that prior to attempting migration, appropriate settings for <em>deletion filters</em> should be determined.
+These are individually described in <a href="filter-xdcr-replication.html#deletion-filters" class="page">Deletion Filters</a>.
+However, the significance of deletion-filter settings for replication and migration is explained in detail in <a href="../../learn/clusters-and-availability/xdcr-filtering.html#using-deletion-filters" class="page">Using Deletion Filters</a>: this information should be fully understood before migration is performed.</p>
+</div>
+<div class="paragraph">
 <p>Migration can now be exemplified as follows.
 Note that this example assumes the existence of the clusters already used to demonstrate implicit and explicit mapping, which are <code>10.144.210.101</code> and <code>10.144.210.102</code>.
 The source cluster, <code>101.144.210.101</code>, is assumed to contain the sample bucket <code>beer-sample</code>: note that <code>beer-sample</code> features only the <code>&#95;default</code> scope and collection: therefore, all documents are within the <code>&#95;default</code> collection.
@@ -4974,6 +4992,30 @@ The <strong>XDCR Add Replication</strong> screen is now displayed:</p>
 <p>Note the confirmatory notification that appears underneath the replication-definition.
 As this indicates, if a replication is defined to include any destination-entity &#8212; bucket, scope, or collection &#8212; that does not exist, the entity will be ignored, and no attempt will be made to replicate data to it.
 However, if other specified entities are valid, replication to them will proceed.</p>
+</div>
+</li>
+<li>
+<p>Establish appropriate settings for <em>deletion filters</em>.
+These filters are individually described in <a href="filter-xdcr-replication.html#deletion-filters" class="page">Deletion Filters</a>.
+Detailed information on their significance for migration is provided in <a href="../../learn/clusters-and-availability/xdcr-filtering.html#using-deletion-filters" class="page">Using Deletion Filters</a>.</p>
+<div class="paragraph">
+<p>Left-click on the <strong>Filter Replication</strong> toggle:</p>
+</div>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-xdcr/filter-replication-toggle.png" alt="filter replication toggle" width="180">
+</div>
+</div>
+<div class="paragraph">
+<p>When the <strong>Filter Replication</strong> panel opens, access the <strong>Deletion Filters</strong>:</p>
+</div>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-xdcr/filter-xdcr-deletion-filters.png" alt="filter xdcr deletion filters" width="320">
+</div>
+</div>
+<div class="paragraph">
+<p>For each filter, to ensure that deletions, expirations, and/or TTLs are replicated, leave the settings at their defaults (in each case, with the checkbox unchecked); and to ensure that deletions, expirations, and/or TTLs are <em>not</em> replicated, modify the settings, by checking each checkbox.</p>
 </div>
 </li>
 <li>
@@ -5062,6 +5104,30 @@ The fields now appear as follows:</p>
 </div>
 <div class="paragraph">
 <p>This indicates that those documents from <code>beer-sample</code> whose <code>city</code> value is <code>"San Francisco"</code> have been successfully filtered and replicated to the <code>California</code> collection, within the remote bucket <code>beerSampleByLocation</code>.</p>
+</div>
+</li>
+<li>
+<p>Having determined that migration has been successfully completed, delete the migration.
+Return to the <strong>XDCR Replications</strong> screen, and inspect the row for the replication:</p>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-xdcr/xdcr-outgoing-replication-migration-complete.png" alt="xdcr outgoing replication migration complete" width="680">
+</div>
+</div>
+<div class="paragraph">
+<p>Left-click on the row, in order to display the controls:</p>
+</div>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-xdcr/replication-controls.png" alt="replication controls" width="280">
+</div>
+</div>
+<div class="paragraph">
+<p>Left-click on the <strong>Delete</strong> button, to delete the migration.</p>
+</div>
+<div class="paragraph">
+<p>Note that in cases where, following migration, source data is to be deleted, it is essential to delete the migration <em>prior</em> to deletion of the source data, if all data is intended to continue to exist on the targets, and <em>deletion filters</em> have been left at their default values.
+For detailed information, see <a href="../../learn/clusters-and-availability/xdcr-filtering.html#using-deletion-filters" class="page">Using Deletion Filters</a></p>
 </div>
 </li>
 <li>
@@ -5255,6 +5321,9 @@ Note also that, in cases where <em>all</em> data from the source bucket is to be
 <div class="paragraph">
 <p>Documents are now replicated as specified by the explicit mapping and filter.</p>
 </div>
+<div class="paragraph">
+<p>See <a href="#cli:cbcli/couchbase-cli-xdcr-replicate.adoc" class="page unresolved">xdcr-replicate</a> for information on setting <em>deletion filters</em> with the CLI; and see <a href="../../learn/clusters-and-availability/xdcr-filtering.html#using-deletion-filters" class="page">Using Deletion Filters</a> for information on how to use deletion filters, in the context of migrating data.</p>
+</div>
 </div>
 </div>
 </div>
@@ -5427,6 +5496,9 @@ Note the format required for the specifying of <code>collection-mapping-rules</c
 </div>
 <div class="paragraph">
 <p>Documents are now migrated as specified by the explicit mapping and filter.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="../../rest-api/rest-xdcr-create-replication.html" class="page">Creating XDCR Replications</a> for information on setting <em>deletion filters</em> with the REST API; and see <a href="../../learn/clusters-and-availability/xdcr-filtering.html#using-deletion-filters" class="page">Using Deletion Filters</a> for information on how to use deletion filters, in the context of migrating data.</p>
 </div>
 </div>
 </div>

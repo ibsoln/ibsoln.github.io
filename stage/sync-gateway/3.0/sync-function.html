@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Sync Function | Couchbase Docs</title>
-<link rel="canonical" href="localhost::/5000/sync-gateway/3.0/sync-function.html">
+<title>Sync Function Reference Guide | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/sync-gateway/3.0/sync-function.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Defining sync functions for effective data routing and access control in the cloud-to-edge synchronization of enterprise data.">
+<meta name="description" content="Implement effective data routing and access control in the cloud-to-edge synchronization of enterprise data.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="3.0">
@@ -48,7 +48,7 @@
               <div class="navbar-collapse collapse" id="navbar2">
                 <ul class="navbar-nav w-100 justify-content-start">
                   <li class="nav-item">
-                    <a href="localhost::/5000/home/index.html" class="nav-link">
+                    <a href="https://ibsoln.github.io/stage/home/index.html" class="nav-link">
                       <i class="fas fa-home"></i>
                     </a>
                   </li>
@@ -323,43 +323,25 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="access-control-overview.html">Access Control Overview</a>
+<a class="nav-link" href="access-control-concepts.html">Concepts</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="access-grants.html">Access Grants</a>
+<a class="nav-link" href="access-control-how.html">How-To</a>
 </span>
 </li>
 <li class="nav-item is-current-page is-active is-active-depth-2  " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="sync-function.html">Sync Function</a>
+<a class="nav-link" href="sync-function.html">Helper Functions</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="users.html">Users</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="roles.html">Roles</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="channels.html">Channels</a>
-</span>
-</li>
-<li class="nav-item " data-depth="2">
-
-<span class="nav-line "  data-depth="2">
-<a class="nav-link" href="using-xattr-access-grants.html">Using XATTR Access Grants</a>
+<a class="nav-link" href="using-xattr-access-grants.html">XATTRS</a>
 </span>
 </li>
 </ul>
@@ -806,13 +788,13 @@
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
 <li class="crumb">Access Control</li>
-<li class="crumb"><a href="sync-function.html">Sync Function</a></li>
+<li class="crumb"><a href="sync-function.html">Helper Functions</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Sync Function</h1>
+<h1 class="page">Sync Function Reference Guide</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -823,30 +805,22 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Defining sync functions for effective data routing and access control in the cloud-to-edge synchronization of enterprise data.<br>
-The sync function is crucial to the security of an app. It is in charge of data validation, access control and routing.</p>
+<p>Implement effective data routing and access control in the cloud-to-edge synchronization of enterprise data.<br>
+The Sync Function is crucial to the security of data sync and replication. It is in charge of data validation, access control and routing. This topic provides a reference resource on Sync and its helper functions.</p>
 </div>
 </blockquote>
 </div>
 <div class="paragraph">
-<p><em>Related access-control topics</em>:  <a href="access-control-overview.html" class="page">Overview</a>  |
-<a href="access-grants.html" class="page">Access Grants</a>  |
-Sync Function  |
-<a href="channels.html" class="page">Channels</a>  |
-<a href="roles.html" class="page">Roles</a>  |
-<a href="using-xattr-access-grants.html" class="page">Extended Attributes Key</a>  |
-{topic-7&#8212;&#8203;xref}</p>
+<p><em>Related access-control topics</em>:  <a href="access-control-concepts.html" class="page">Concepts</a>  |
+<a href="access-control-how.html" class="page">How-to</a>  |
+Helper Functions  |
+<a href="using-xattr-access-grants.html" class="page">XATTRS</a></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="sync-function-basics"><a class="anchor" href="#sync-function-basics"></a>Sync Function Basics</h2>
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p><a href="#introduction">Introduction</a> | <a href="#operation">Operation</a> | <a href="#provision">Provision</a> | <a href="#arguments">Arguments</a></p>
-</div>
-<div class="sect2">
-<h3 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h3>
 <div class="paragraph">
 <p><strong>The sync function is crucial to the security of your application.</strong>
 It is in charge of data validation, and of authorizing both read and write access to documents.</p>
@@ -869,8 +843,10 @@ However, you do need to remain vigilant.
 Review the function carefully to ensure it detects threats and prevents any illegal access.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="operation"><a class="anchor" href="#operation"></a>Operation</h3>
+</div>
+<div class="sect1">
+<h2 id="operation"><a class="anchor" href="#operation"></a>Operation</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The Sync Function is executed every time a new revision/update is made to a document.
 The changes to channels and access made by the sync function are <em>tied to that revision</em>.
@@ -900,229 +876,20 @@ If the document is later updated, the sync function will be called again on the 
 For more complex applications it is still a primary touchpoint for managing data routing and access control.</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="provision"><a class="anchor" href="#provision"></a>Provision</h3>
-<div class="paragraph">
-<p>Sync Gateway supports the use of Javascript functions to customize the sync process.
-These functions are referenced from within the Sync Gateway Configuration and may be provided either as:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>An inline Javascript function</p>
-</li>
-<li>
-<p>An external Javascript file</p>
-</li>
-<li>
-<p>An external HTTP/HTTPS endpoint serving a JS function
-<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>You can learn more about this property ($db.sync) in the <a href="configuration-schema-database.html" class="page">Database Configuration Schema</a> or in the  <a href="configuration-schema-static.html#databases-this_db-sync" class="page">sync</a>.</p>
-</div>
-<div class="paragraph">
-<p>Configuration of Javascript functions, whether inline or external, is done within the database configuration&#8201;&#8212;&#8201;see: <a href="#ex-jsfunc-opts">Example 1</a></p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Inline Javascript functions provided within the database configuration must be enclosed by a backtick pair (``).</p>
-</li>
-<li>
-<p></p>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>To use an external Javascript function for any of the eligible options, you need to specify the absolute path to the Javascript.
-The format and content of the external Javascript is the same as that provided inline.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-You must register a CA certificate for the appropriate server if external Javascript functions are hosted on HTTPS endpoints.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-For testing purposes you may use the unsupported configuration option <code><a href="configuration-schema-static.html#databases-this_db-unsupported-remote_config_tls_skip_verify" class="page">unsupported.remote_config_tls_skip_verify</a></code>.
-Setting this <code>true</code> will side-step essential security checks.
-Do not use in Production deployments.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</li>
-</ul>
-</div>
-<div id="ex-jsfunc-opts" class="exampleblock">
-<div class="title">Example 1. Configuring a Javascript Sync Function</div>
-<div class="content">
-<div class="paragraph">
-<p>This example shows the different ways you might provide a Javascript Sync Function.
-Although the example uses the Sync Function, the same approach applies wherever a Javascript function is valid (including with Import Filter, Webhook and Custom Conflict Resolver).</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl -X PUT 'http://localhost:4985/db1/_config' \
---header 'Accept: application/json' \
---header 'Content-Type: application/json' \
---data-raw '{
-         "sync": "/opt/couchbase-sync-gateway/sync.js" <i class="conum" data-value="1"></i><b>(1)</b>
-      },
-    }
-}'
-
-
-  curl -X PUT 'http://localhost:4985/db2/_config' \
---header 'Accept: application/json' \
---header 'Content-Type: application/json' \
---data-raw '{
-         "sync": "https://localhost/sync/func2" <i class="conum" data-value="2"></i><b>(2)</b>
-      }
-   }
-}
-
-
-curl -X PUT 'http://localhost:4985/db3/_config' \
---header 'Accept: application/json' \
---header 'Content-Type: application/json' \
---data-raw '{
-         "sync": `function(doc,oldDoc, meta){ if (doc.published) { channel("public");} }`
-      } <i class="conum" data-value="3"></i><b>(3)</b>
-   }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we specify an external file <code>sync.js</code> as containing the external function to be provisioned</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we specify a HTTPS endpoint as resolving to a Javascript function to be provisioned</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Here we specify inline Javascript (surrounded by a pair of backticks (``) as the function to be provisioned</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h3>
-<div class="paragraph">
-<p>The sync function arguments are:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>doc</code></dt>
-<dd>
-<p>This object references the content of the document that is being saved.
-It matches the JSON saved by the Couchbase Lite and replicated to Sync Gateway.</p>
-<div class="ulist">
-<ul>
-<li>
-<p>The <code>_id</code> property contains the document ID</p>
-</li>
-<li>
-<p>The <code>_rev</code> property is the new revision ID.</p>
-</li>
-<li>
-<p>If the document is being deleted, there will be a <code>_deleted</code> property with the value true.</p>
-</li>
-</ul>
-</div>
-</dd>
-<dt class="hdlist1"><code>oldDoc</code></dt>
-<dd>
-<p>If the document has been saved before, the revision that is being replaced is available in this argument.
-Otherwise it&#8217;s <code>null</code>.
-(In the case of a document with conflicts, the current provisional winning revision is passed in <code>oldDoc</code>.)<br>
-Your implementation of the sync function can omit the <code>oldDoc</code> parameter if you do not need it (JavaScript ignores extra parameters passed to a function).</p>
-</dd>
-</dl>
-</div>
-<div class="paragraph">
-<p>If you don&#8217;t supply a sync function, Sync Gateway uses the {configuration-schema-static-pfx}#databases-this_db-sync[default Sync Function].</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>meta</code></dt>
-<dd>
-<p>This object references the user extended attribute key designated as identifying access granta ad-or routing information.
-You can see a simple example of its use in <a href="#ex-xattr-access-grant">Example 2</a>.</p>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This is only available if the following configuration settings are in place: <a href="configuration-schema-database.html#databases-this_db-enable_shared_bucket_access" class="page">enable_shared_bucket_access</a> is <code>true</code> and <a href="configuration-schema-database.html#databases-this_db-user_xattr_key" class="page">user_xattr_key</a> is set to a valid, and existing, extended attribute.
-</td>
-</tr>
-</table>
-</div>
-</dd>
-</dl>
-</div>
-<div id="ex-xattr-access-grant" class="exampleblock">
-<div class="title">Example 2. Access Grants using Xattr</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) {
-  // Additional processing as required
-
-  // Route the document
-    channel(meta.xattrs.channelXattr.channels); <i class="conum" data-value="1"></i><b>(1)</b>
-
-  // Additional processing as required
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we reference 'channelXattr', the extended attribute defined in the database configuration as being the user extended attribute key.
-We use it to set the channel(s) we need to route this document to.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div class="sect1">
-<h2 id="an-example-sync-function"><a class="anchor" href="#an-example-sync-function"></a>An Example Sync Function</h2>
+<h2 id="provision"><a class="anchor" href="#provision"></a>Provision</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This section shows a simple Sync Function definitions which could be included in your <code>sync-gateway-config.json</code>&#8201;&#8212;&#8201;see <a href="#sync-example">Example 3</a></p>
+<p>How you provision the Sync Function depends on whether you are using static, or dynamic configuration.</p>
+</div>
+<div class="sect2">
+<h3 id="static-configuration"><a class="anchor" href="#static-configuration"></a>Static Configuration</h3>
+<div class="paragraph">
+<p>If you are using the Static configuration approach, which was the norm prior to release 3.0, then you will provision the Sync Function inside the configuration file (<code>sync-gateway-config.json</code>)&#8201;&#8212;&#8201;see <a href="#sync-example">Example 1</a></p>
 </div>
 <div id="sync-example" class="exampleblock">
-<div class="title">Example 3. A Simple Sync Function</div>
+<div class="title">Example 1. A Simple Sync Function</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -1188,17 +955,254 @@ If you&#8217;re running a single Couchbase Server node for development purposes 
 <p>If you don&#8217;t supply a sync function, Sync Gateway uses the <a href="configuration-schema-static.html#databases-this_db-sync" class="page">default Sync Function</a>.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="dynamic-configuration"><a class="anchor" href="#dynamic-configuration"></a>Dynamic Configuration</h3>
+<div class="paragraph">
+<p>Sync Gateway supports the use of Javascript functions to customize the sync process.
+These functions are referenced from within the Sync Gateway Configuration and may be provided either as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An inline Javascript function</p>
+</li>
+<li>
+<p>An external Javascript file</p>
+</li>
+<li>
+<p>An external HTTP/HTTPS endpoint serving a JS function
+<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You can learn more about this property ($db.sync) in the <a href="configuration-schema-database.html" class="page">Database Configuration Schema</a> or in the  <a href="configuration-schema-static.html#databases-this_db-sync" class="page">sync</a>.</p>
+</div>
+<div class="paragraph">
+<p>Configuration of Javascript functions, whether inline or external, is done within the database configuration&#8201;&#8212;&#8201;see: <a href="#ex-jsfunc-opts">Example 2</a></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Inline Javascript functions provided within the database configuration must be enclosed by a backtick pair (``).</p>
+</li>
+<li>
+<p></p>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>To use an external Javascript function for any of the eligible options, you need to specify the absolute path to the Javascript.
+The format and content of the external Javascript is the same as that provided inline.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You must register a CA certificate for the appropriate server if external Javascript functions are hosted on HTTPS endpoints.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+For testing purposes you may use the unsupported configuration option <code><a href="configuration-schema-static.html#databases-this_db-unsupported-remote_config_tls_skip_verify" class="page">unsupported.remote_config_tls_skip_verify</a></code>.
+Setting this <code>true</code> will side-step essential security checks.
+Do not use in Production deployments.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div id="ex-jsfunc-opts" class="exampleblock">
+<div class="title">Example 2. Configuring a Javascript Sync Function</div>
+<div class="content">
+<div class="paragraph">
+<p>This example shows the different ways you might provide a Javascript Sync Function.
+Although the example uses the Sync Function, the same approach applies wherever a Javascript function is valid (including with Import Filter, Webhook and Custom Conflict Resolver).</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl -X PUT 'http://localhost:4985/db1/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+         "sync": "/opt/couchbase-sync-gateway/sync.js" <i class="conum" data-value="1"></i><b>(1)</b>
+      },
+    }
+}'
+
+
+  curl -X PUT 'http://localhost:4985/db2/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+         "sync": "https://localhost/sync/func2" <i class="conum" data-value="2"></i><b>(2)</b>
+      }
+   }
+}
+
+
+curl -X PUT 'http://localhost:4985/db3/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+         "sync": `function(doc,oldDoc, meta){ if (doc.published) { channel("public");} }`
+      } <i class="conum" data-value="3"></i><b>(3)</b>
+   }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we specify an external file <code>sync.js</code> as containing the external function to be provisioned</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Here we specify a HTTPS endpoint as resolving to a Javascript function to be provisioned</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Here we specify inline Javascript (surrounded by a pair of backticks (``) as the function to be provisioned</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The sync function arguments are:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>doc</code></dt>
+<dd>
+<p>This object references the content of the document that is being saved.
+It matches the JSON saved by the Couchbase Lite and replicated to Sync Gateway.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The <code>_id</code> property contains the document ID</p>
+</li>
+<li>
+<p>The <code>_rev</code> property is the new revision ID.</p>
+</li>
+<li>
+<p>If the document is being deleted, there will be a <code>_deleted</code> property with the value true.</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1"><code>oldDoc</code></dt>
+<dd>
+<p>If the document has been saved before, the revision that is being replaced is available in this argument.
+Otherwise it&#8217;s <code>null</code>.
+(In the case of a document with conflicts, the current provisional winning revision is passed in <code>oldDoc</code>.)<br>
+Your implementation of the sync function can omit the <code>oldDoc</code> parameter if you do not need it (JavaScript ignores extra parameters passed to a function).</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>If you don&#8217;t supply a sync function, Sync Gateway uses the {configuration-schema-static-pfx}#databases-this_db-sync[default Sync Function].</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>meta</code></dt>
+<dd>
+<p>This object references the user extended attribute key designated as identifying access granta ad-or routing information.
+You can see a simple example of its use in <a href="#ex-xattr-access-grant">Example 3</a>.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This is only available if the following configuration settings are in place: <a href="configuration-schema-database.html#databases-this_db-enable_shared_bucket_access" class="page">enable_shared_bucket_access</a> is <code>true</code> and <a href="configuration-schema-database.html#databases-this_db-user_xattr_key" class="page">user_xattr_key</a> is set to a valid, and existing, extended attribute.
+</td>
+</tr>
+</table>
+</div>
+</dd>
+</dl>
+</div>
+<div id="ex-xattr-access-grant" class="exampleblock">
+<div class="title">Example 3. Access Grants using Xattr</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) {
+  // Additional processing as required
+
+  // Route the document
+    channel(meta.xattrs.channelXattr.channels); <i class="conum" data-value="1"></i><b>(1)</b>
+
+  // Additional processing as required
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we reference 'channelXattr', the extended attribute defined in the database configuration as being the user extended attribute key.
+We use it to set the channel(s) we need to route this document to.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="sect1">
 <h2 id="lbl-channel"><a class="anchor" href="#lbl-channel"></a>channel(channelname)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Sync Function provides the <code>channel()</code> function to route the document to the named channel(s).
-It accepts one or more arguments, each of which must be a channel name string, or an array of strings.
-The channel function can be called zero or more times from the sync function, for any document.</p>
+<p>Use the <code>channel()</code> function to route the document to the named channel(s).
+It accepts one or more arguments, each of which must be a channel name string, or an array of strings.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Channels don&#8217;t have to be predefined.<br>
+A channel implicitly comes into existence when a document is routed to it.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Here is an example that routes all "published" documents to the "public" channel:</p>
+<p>The channel function can be called zero or more times from the sync function, for any document.</p>
+</div>
+<div class="paragraph">
+<p>Routing changes have no effect until the document is actually saved in the database, so if the sync function first calls <code>channel()</code> or <code>access()</code>, but then rejects the update, the channel and access changes will not occur.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 4. channel(channelname)</div>
+<div class="content">
+<div class="paragraph">
+<p>This example routes all "published" documents to the "public" channel:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1209,8 +1213,7 @@ The channel function can be called zero or more times from the sync function, fo
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Routing changes has no effect until the document is actually saved in the database, so if the sync function first calls <code>channel()</code> or <code>access()</code>, but then rejects the update, the channel and access changes will not occur.</p>
+</div>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1225,27 +1228,16 @@ This allows you to do something like <code>channel(doc.channels)</code> without 
 </tr>
 </table>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Channels don&#8217;t have to be predefined.
-A channel implicitly comes into existence when a document is routed to it.
-</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="lbl-access"><a class="anchor" href="#lbl-access"></a>access(username, channelname)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Documents can grant users access to channels.
-The <code>access()</code> function grants access to a channel to a specified user.
+<p>Documents can grant users access to channels.</p>
+</div>
+<div class="paragraph">
+<p>The <code>access()</code> function grants access to a channel to a specified user.
 It can be called multiple times from a sync function.</p>
 </div>
 <div class="paragraph">
@@ -1253,12 +1245,24 @@ It can be called multiple times from a sync function.</p>
 The second argument can also be an array of strings, in which case the user(s) are given access to each channel in the array.
 As a convenience, either argument may be <code>null</code> or <code>undefined</code>, in which case nothing happens.</p>
 </div>
-<div class="paragraph">
-<p>If a user name begins with the prefix <code>role:</code>, the rest of the name is interpreted as a role rather than a user.
-The call then grants access to the specified channels for all users with that role.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If a user name begins with the prefix <code>role:</code>, the rest of the name is interpreted as a role rather than a user.
+The call then grants access to the specified channels for all users with that role.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>You can use the <em>all channels</em> wildcard ('<strong>*</strong>') to grant the user access to all documents in all channels.</p>
+</div>
+<div class="paragraph">
+<p>The effects of all access calls by all active documents are effectively combined in a union, so if <em>any</em> document grants a user access to a channel, that user has access to the channel.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1267,23 +1271,51 @@ The call then grants access to the specified channels for all users with that ro
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The effects of all access calls by all active documents are effectively unioned together, so if <em>any</em> document grants a user access to a channel, that user has access to the channel.
 Calling <code>access(username, channelname)</code> multiple times to grant the same user access to the same channel will result in negative performance implications.
 </td>
 </tr>
 </table>
 </div>
+<div class="exampleblock">
+<div class="title">Example 5. access(username, channel)</div>
+<div class="content">
 <div class="paragraph">
-<p>The following code snippets shows some valid ways to call <code>access()</code>:</p>
+<p>This example shows some valid ways to call <code>access()</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">access ("jchris", "mtv");
-access ("jchris", ["mtv", "mtv2", "vh1"]);
-access (["snej", "jchris", "role:admin"], "vh1");
-access (["snej", "jchris"], ["mtv", "mtv2", "vh1"]);
-access (null, "hbo");  // no-op
-access ("snej", null);  // no-op</code></pre>
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">access ("jchris", "mtv"); <i class="conum" data-value="1"></i><b>(1)</b>
+access ("jchris", ["mtv", "mtv2", "vh1"]); <i class="conum" data-value="2"></i><b>(2)</b>
+access (["snej", "jchris", "role:admin"], "vh1"); <i class="conum" data-value="3"></i><b>(3)</b>
+access (["snej", "jchris"], ["mtv", "mtv2", "vh1"]); <i class="conum" data-value="4"></i><b>(4)</b>
+access (null, "hbo");  <i class="conum" data-value="5"></i><b>(5)</b>
+access ("snej", null);</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Allow access of single channel to single user</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Allow access of multiple channels to single user</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Allow access of single channel to multiple users</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Allow access of multiple channels to multiple users</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>These are no-ops</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
@@ -1292,23 +1324,8 @@ access ("snej", null);  // no-op</code></pre>
 <h2 id="lbl-role"><a class="anchor" href="#lbl-role"></a>role(username, rolename)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>role()</code> function grants a user a role, indirectly giving them access to all channels granted to that role.
-It can also affect the user&#8217;s ability to revise documents, if the access function requires role membership to validate certain types of changes.
-Its use is similar to <code>access</code>&#8201;&#8212;&#8201;the value of either parameter can be a string, an array of strings, or null.
-If the value is null, the call is a no-op.</p>
-</div>
-<div class="paragraph">
-<p>For consistency with the <code>access</code> call, role names must always be prefixed with <code>role:</code>.
-An exception is thrown if a role name doesn&#8217;t match this.
-Some examples:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">role ("jchris", "role:admin");
-role ("jchris", ["role:portlandians", "role:portlandians-owners"]);
-role (["snej", "jchris", "traun"], "role:mobile");
-role ("ed", null);  // no-op</code></pre>
-</div>
+<p>Use the <code>role()</code> function to add a role to a user.
+This indirectly gives them access to any channels assigned to that role.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1323,8 +1340,27 @@ Roles, like users, have to be explicitly created by an administrator.
 </table>
 </div>
 <div class="paragraph">
-<p>Unlike channels, which come into existence simply by being named, you can&#8217;t create new roles with a <code>role()</code> call.
-Like <em>users</em>, they must be defined in the configuration or by API.</p>
+<p>This function affects the user&#8217;s ability to revise documents, if the access function requires role membership to validate certain types of changes.
+Its use is similar to <code>access</code>&#8201;&#8212;&#8201;the value of either parameter can be a string, an array of strings, or null.
+If the value is null, the call is a no-op.</p>
+</div>
+<div class="paragraph">
+<p>For consistency with the <code>access</code> call, role names must always be prefixed with <code>role:</code>.
+An exception is thrown if a role name doesn&#8217;t match this.
+Some examples:</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 6. role(username, rolename)</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">role ("jchris", "role:admin");
+role ("jchris", ["role:portlandians", "role:portlandians-owners"]);
+role (["snej", "jchris", "traun"], "role:mobile");
+role ("ed", null);  // no-op</code></pre>
+</div>
+</div>
+</div>
 </div>
 <div class="paragraph">
 <p>Nonexistent roles don&#8217;t cause an error, but have no effect on the user&#8217;s access privileges.</p>
@@ -1348,8 +1384,11 @@ As soon as a role is created, any pre-existing references to it take effect.
 <h2 id="lbl-require-user"><a class="anchor" href="#lbl-require-user"></a>requireUser(username)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>requireUser()</code> function authorizes a document update by rejecting it unless it&#8217;s made by a specific user or users, as shown in the following example:</p>
+<p>Use the <code>requireUser()</code> function to reject document updates that are not made by the specified user or users, as shown in the <a href="#ex-requireuser">Example 7</a>.</p>
 </div>
+<div id="ex-requireuser" class="exampleblock">
+<div class="title">Example 7. requireUser(username)</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// Throw an error if username is not "snej":
@@ -1359,9 +1398,13 @@ requireUser("snej");
 requireUser(["snej", "jchris", "tleyden"]);</code></pre>
 </div>
 </div>
+</div>
+</div>
 <div class="paragraph">
-<p>The function signals rejection by throwing an exception, so the rest of the sync function will not be run.
-All properties of the <code>doc</code> parameter should be considered <em>untrusted</em>, since this is after all the object that you&#8217;re validating.
+<p>The function signals rejection by throwing an exception, so the rest of the sync function will not be run.</p>
+</div>
+<div class="paragraph">
+<p>Treat all properties of the <code>doc</code> parameter as <em>untrusted</em>; this <strong>is</strong> the object that you&#8217;re validating.
 This may sound obvious, but it can be easy to make mistakes, like calling <code>requireUser(doc.owners)</code> instead of <code>requireUser(oldDoc.owners)</code>.
 When using one document property to validate another, look up that property in <code>oldDoc</code>, not <code>doc</code>!</p>
 </div>
@@ -1371,8 +1414,11 @@ When using one document property to validate another, look up that property in <
 <h2 id="lbl-require-role"><a class="anchor" href="#lbl-require-role"></a>requireRole(rolename)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>requireRole()</code> function authorizes a document update by rejecting it unless the user making it has a specific role or roles, as shown in the following example:</p>
+<p>Use the <code>requireRole()</code> function to reject document updates that are not made by user with the specified role or roles, as shown in <a href="#ex-requirerole">Example 8</a>.</p>
 </div>
+<div id="ex-requirerole" class="exampleblock">
+<div class="title">Example 8. requireRole(rolename)</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// Throw an error unless the user has the "admin" role:
@@ -1380,6 +1426,8 @@ requireRole("admin");
 
 // Throw an error unless the user has one or more of those roles:
 requireRole(["admin", "old-timer"]);</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -1395,8 +1443,18 @@ In the latter case, the user making the change must have one or more of the give
 <h2 id="lbl-require-access"><a class="anchor" href="#lbl-require-access"></a>requireAccess(channels)</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>requireAccess()</code> function authorizes a document update by rejecting it unless the user making it has access to at least one of the given channels, as shown in the following example:</p>
+<p>Use the <code>requireAccess()</code> function to reject document updates that are not made by the a user with access to at least one of the given channels, as shown in <a href="#ex-requirechannel">Example 9</a></p>
 </div>
+<div class="paragraph">
+<p>The function signals rejection by throwing an exception, so the rest of the sync function will not be run.</p>
+</div>
+<div class="paragraph">
+<p>You can specify multiple channel names, for example:<br>
+<code>requireAccess('any channel name', '*')'</code></p>
+</div>
+<div id="ex-requirechannel" class="exampleblock">
+<div class="title">Example 9. requireRole(rolename)</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// Throw an exception unless the user has access to read the "events" channel:
@@ -1409,27 +1467,11 @@ if (oldDoc) {
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>The function signals rejection by throwing an exception, so the rest of the sync function will not be run.</p>
+</div>
 </div>
 <div class="paragraph">
-<p>You can specify multiple channel names, for example:<br>
-<code>requireAccess('any channel name', '*')'</code></p>
-</div>
-<div class="paragraph">
-<p>If a user was granted access using only the <a href="channels.html#lbl-all-channels" class="page">all channels wildcard</a>] (<code>*</code>), then <code>requireAccess('any channel name')'</code> will fail because the user wasn&#8217;t granted access to that channel (only to the <code>*</code> channel).</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-requireAccess() will only recognize grants made explicitly using a channel name (not by wildcard).
-</td>
-</tr>
-</table>
+<p>NOTE&#8201;&#8212;&#8201;requireAccess() will only recognize grants made explicitly using a channel name (not by wildcard).
+So, if a user was granted access using only the <a href="channels.html#lbl-all-channels" class="page">all channels wildcard</a>] (<code>*</code>), then <code>requireAccess('any channel name')'</code> will fail because the user wasn&#8217;t granted access to that channel (only to the <code>*</code> channel).</p>
 </div>
 </div>
 </div>
@@ -1437,8 +1479,11 @@ requireAccess() will only recognize grants made explicitly using a channel name 
 <h2 id="lbl-require-admin"><a class="anchor" href="#lbl-require-admin"></a>requireAdmin()</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>requireAdmin()</code> function authorizes a document update by rejecting it unless it is being sent to the Sync Gateway Admin REST API.</p>
+<p>Use the <code>requireAdmin()</code> function to reject document updates that are not made by the Sync Gateway Admin REST API.</p>
 </div>
+<div class="exampleblock">
+<div class="title">Example 10. requireadmin</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// Throw an exception unless the request is sent to the Admin REST API
@@ -1447,26 +1492,37 @@ requireAdmin();</code></pre>
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="lbl-throw"><a class="anchor" href="#lbl-throw"></a>throw()</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>At the most basic level, the sync function can prevent a document from persisting or syncing to any other users by calling <code>throw()</code> with an error object containing a <code>forbidden</code>: property.
-You enforce the validity of document structure by checking the necessary constraints and throwing an exception if they&#8217;re not met.</p>
+<p>You enforce the validity of document structure by checking the necessary constraints and throwing an exception if they&#8217;re not met.</p>
 </div>
 <div class="paragraph">
-<p>Here is an example sync function that disallows all writes to the database it is in.</p>
+<p>Use <code>throw()</code> to prevent a document from persisting or syncing to any other users by including an error object containing the <code>forbidden</code>: property&#8201;&#8212;&#8201;see &lt;&lt;&gt;&gt;</p>
+</div>
+<div id="ex-throw" class="exampleblock">
+<div class="title">Example 11. throw(forbidden:)</div>
+<div class="content">
+<div class="paragraph">
+<p>In this example the sync function disallows all writes to the database it is in.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function(doc) {
-   throw({forbidden: "read only!"})
+
+   throw({forbidden: "read only!"}) <i class="conum" data-value="1"></i><b>(1)</b>
+
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>The document update will be rejected with an HTTP 403 "Forbidden" error code, with the value of the <code>forbidden:</code> property being the HTTP status message.
 This is the preferred way to reject an update.</p>
+</div>
+</div>
 </div>
 <div class="paragraph">
 <p>In validating a document, you&#8217;ll often need to compare the new revision to the old one, to check for illegal changes in state.
@@ -1486,9 +1542,14 @@ The server-side sync function validation should be seen as a fail-safe and a gua
 <div class="paragraph">
 <p>Calling <code>expiry(value)</code> from within the sync function will set the expiry value (TTL) on the document.</p>
 </div>
+<div class="exampleblock">
+<div class="title">Example 12. expiry(value)</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">expiry("2018-07-06T17:00:00+01:00")</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="paragraph">
@@ -1530,7 +1591,7 @@ The purge of the document does not cause it to be deleted on any other database.
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-document-conflicts"><a class="anchor" href="#lbl-document-conflicts"></a>Document Conflicts</h2>
+<h2 id="lbl-document-conflicts"><a class="anchor" href="#lbl-document-conflicts"></a>Conflicts</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>If a document is in conflict there will be multiple current revisions.
@@ -1539,7 +1600,7 @@ The default, "winning" one is the one whose channel assignments and access grant
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-handling-deletions"><a class="anchor" href="#lbl-handling-deletions"></a>Handling deletions</h2>
+<h2 id="lbl-handling-deletions"><a class="anchor" href="#lbl-handling-deletions"></a>Deletions</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Validation checks often need to treat deletions specially, because a deletion is just a revision with a <code>"_deleted": true</code> property and usually nothing else.
@@ -1549,7 +1610,7 @@ You&#8217;ll need to skip such checks if <code>doc._deleted</code> is true.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-practical-example"><a class="anchor" href="#lbl-practical-example"></a>A Practical Example</h2>
+<h2 id="lbl-practical-example"><a class="anchor" href="#lbl-practical-example"></a>Example</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Here&#8217;s an example of a complete, useful sync function that properly validates and authorizes both new and updated documents.

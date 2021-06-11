@@ -2884,6 +2884,12 @@ Couchbase Server
 </li>
 </ul>
 </li>
+<li class="nav-item " data-depth="2">
+
+<span class="nav-line "  data-depth="2">
+<a class="nav-link" href="../../cloud/couchbase-containers-faq.html">Couchbase Containers FAQ</a>
+</span>
+</li>
 </ul>
 </li>
 <li class="nav-item  is-inactive " data-depth="1">
@@ -4618,13 +4624,21 @@ If the fields or values of a given document are changed after a replication has 
 In consequence, a single document would be maintained with a different value on each cluster.</p>
 </div>
 <div class="paragraph">
-<p>One filter can be applied per replication: this filter therefore affects all mappings between scopes and collections, whether implicit or explicit.
-(For more information, see <a href="xdcr-with-scopes-and-collections.html" class="page">XDCR with Scopes and Collections</a>.)</p>
-</div>
-<div class="paragraph">
 <p>This page explains XDCR Advanced Filtering at a conceptual level.
 For the practical steps involved, see <a href="../../manage/manage-xdcr/filter-xdcr-replication.html" class="page">Filter a Replication</a>.
 See also the information provided in the <a href="../../xdcr-reference/xdcr-filtering-reference-intro.html" class="page">XDCR Advanced Filtering Reference</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="xdcr-advanced-filtering-with-scopes-and-collections"><a class="anchor" href="#xdcr-advanced-filtering-with-scopes-and-collections"></a>XDCR Advanced Filtering with Scopes and Collections</h3>
+<div class="paragraph">
+<p>One filter can be applied per replication: this filter therefore affects all mappings between scopes and collections, whether implicit or explicit.
+The examples on this page show replications as extending from source bucket to target bucket: all mappings between source and target collections within these buckets should be understood to have the single filter applied to them.
+For more information, see <a href="xdcr-with-scopes-and-collections.html" class="page">XDCR with Scopes and Collections</a>.</p>
+</div>
+<div class="paragraph">
+<p>Note that in the special case of <em>migration</em>, multiple filters <em>can</em> be applied, each to one of multiple mappings: however, migration is intended only for the special case where data is initially established in newly created scopes and collections.
+See <a href="xdcr-with-scopes-and-collections.html#migration" class="page">Migration</a>, for more information.</p>
+</div>
 </div>
 </div>
 </div>
@@ -4680,7 +4694,7 @@ The document <code>airport_8835</code> does have a <code>type</code> field, but 
 <h2 id="multiple-filters-applied"><a class="anchor" href="#multiple-filters-applied"></a>Multiple Filters Applied</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Multiple Filters</em> can be applied in either of two ways:</p>
+<p>To support replication, <em>multiple filters</em> can be applied in either of two ways:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -4814,6 +4828,223 @@ This is illustrated as follows:</p>
 <div class="paragraph">
 <p>The new document <code>airline_8838</code> is added the source bucket, and is examined by <em>R1a</em>.
 A successful match is made, and <code>airline_8838</code> is duly replicated to the target bucket.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-deletion-filters"><a class="anchor" href="#using-deletion-filters"></a>Using Deletion Filters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Deletion filters</em> control whether the deletion of a document at source causes deletion of a replica document that exists on the replication-target.
+For the <a href="../../manage/manage-xdcr/filter-xdcr-replication.html#deletion-filters" class="page">UI</a> each filter is selected by means of a checkbox.
+For the <a href="#cli:cbcli/couchbase-cli-xdcr-replicate.adoc" class="page unresolved">CLI</a> and <a href="../../rest-api/rest-xdcr-create-replication.html" class="page">REST API</a>, parameter-values must be specified.</p>
+</div>
+<div class="paragraph">
+<p>Examples of filtering are provided in <a href="../../manage/manage-xdcr/filter-xdcr-replication.html" class="page">Filter a Replication</a>.</p>
+</div>
+<div class="sect2">
+<h3 id="deletion-filter-types"><a class="anchor" href="#deletion-filter-types"></a>Deletion-Filter Types</h3>
+<div class="paragraph">
+<p>Deletion filters are of three types, and control the following.</p>
+</div>
+<div class="sect3">
+<h4 id="replication-of-expirations"><a class="anchor" href="#replication-of-expirations"></a>Replication of Expirations</h4>
+<div class="paragraph">
+<p>Configured through the <a href="../../manage/manage-xdcr/filter-xdcr-replication.html#deletion-filters" class="page">UI</a> with the <strong>Do not replicate document expirations</strong> checkbox; through the <a href="#cli:cbcli/couchbase-cli-xdcr-replicate.adoc" class="page unresolved">CLI</a> with the <code>filter-expiration</code> flag; and through the <a href="../../rest-api/rest-xdcr-create-replication.html" class="page">REST API</a> with the <code>filterExpiration</code> flag.
+Selecting this option means that if, having been replicated, the document at source expires and is deleted, the replicated copy of the document will <em>not</em> be deleted.
+Conversely, if this option is not selected or left <code>false</code> (which are the defaults), expirations at source are replicated; meaning that the replicated copy of the document <em>will</em> be deleted.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="replication-of-deletions"><a class="anchor" href="#replication-of-deletions"></a>Replication of Deletions</h4>
+<div class="paragraph">
+<p>Configured through the <a href="../../manage/manage-xdcr/filter-xdcr-replication.html#deletion-filters" class="page">UI</a> with the <strong>Do not replicate DELETE operations</strong> checkbox; through the <a href="#cli:cbcli/couchbase-cli-xdcr-replicate.adoc" class="page unresolved">CLI</a> with the <code>filter-deletion</code> flag; and through the <a href="../../rest-api/rest-xdcr-create-replication.html" class="page">REST API</a> with the <code>filterDeletion</code> flag.
+Selecting this option determines that if, having been replicated, the document at source is deleted, the replicated copy of the document will <em>not</em> be deleted.
+Conversely, leaving this option unselected or <code>false</code> (which are the defaults) replicates deletions that occur at source, meaning that the replicated copy of the document <em>will</em> be deleted.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="replication-of-ttl"><a class="anchor" href="#replication-of-ttl"></a>Replication of TTL</h4>
+<div class="paragraph">
+<p>Configured through the <a href="../../manage/manage-xdcr/filter-xdcr-replication.html#deletion-filters" class="page">UI</a> with the <strong>Remove TTL from replicated items</strong> checkbox; through the <a href="#cli:cbcli/couchbase-cli-xdcr-replicate.adoc" class="page unresolved">CLI</a> with the <code>reset-expiry</code> flag; and with the <a href="../../rest-api/rest-xdcr-create-replication.html" class="page">REST API</a> with the <code>filterBypassExpiry</code> flag.
+Selecting this option determines that the TTL that a document bears at source is <em>not</em> made part of the replicated copy of the document: instead, the TTL of the replicated copy is set to 0.
+Conversely, if this option is not selected or left <code>false</code> (which are the defaults), the TTL is made part of the replicated copy of the document, and may thereby determine when the replicated copy of the document expires.
+Note, however, that the TTL applied to the replicated document at the target may be that of either the collection or the bucket in which it resides: for information, see <a href="../buckets-memory-and-storage/expiration.html" class="page">Expiration</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deletion-filters-versus-filter-expressions"><a class="anchor" href="#deletion-filters-versus-filter-expressions"></a>Deletion Filters versus Filter Expressions</h3>
+<div class="paragraph">
+<p>By default, any source-document deletion (or expiration) <em>is</em> replicated to the target; resulting in a corresponding target-document deletion.
+Note that such replication is <em>not</em> prevented by the specifying of a filter that is formed with regular and other filtering expressions: such expressions only determine which non-deleted documents are to be replicated.
+Therefore, to ensure that document-deletions (and expirations) are <em>not</em> replicated, <em>deletion filters</em> must specifically be configured.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="tombstones-dcp-events-and-replication"><a class="anchor" href="#tombstones-dcp-events-and-replication"></a>Tombstones, DCP Events, and Replication</h3>
+<div class="paragraph">
+<p>When a document is deleted or is expired, a tombstone is created.
+Tombstones and their management are described in <a href="../buckets-memory-and-storage/storage.html#tombstones" class="page">Tombstones</a>.
+In order to replicate a deletion or an expiration, XDCR must be able to receive, on the source, a DCP event that corresponds to the creation of a tombstone for the deleted or expired document.
+On receipt of the DCP event, XDCR generates its own, corresponding deletion or expiration event; and replicates this to the target.</p>
+</div>
+<div class="paragraph">
+<p>However, in some instances, even if a tombstone has been created, XDCR may not receive the DCP event.
+For example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A document is deleted and then immediately recreated, such that DCP interprets the tombstone to have been at once superseded by the recreated document; and so does not send an event.</p>
+</li>
+<li>
+<p>A replication is deleted; then, source documents are deleted or expired.
+Tombstones are created; but no DCP event is sent to XDCR, since no replication exists.
+Subsequently, the replication is recreated: the replication will from this point only receive DCP events that correspond to future deletions and expirations.</p>
+<div class="paragraph">
+<p>Note, however, that conversely, creation of a new replication in this way, if performed with greater immediacy, may indeed result in DCP sending events; and allow XDCR, in turn, to replicate deletion and expiration events to the target.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="expiration-ttl-and-replication"><a class="anchor" href="#expiration-ttl-and-replication"></a>Expiration, TTL, and Replication</h3>
+<div class="paragraph">
+<p>TTL can be established on individual documents, on collections, and on buckets.
+The relationship between these settings, and the way the setting on an individual document is resolved when replicated to the target, is fully described in <a href="../buckets-memory-and-storage/expiration.html" class="page">Expiration</a>.</p>
+</div>
+<div class="paragraph">
+<p>When a deletion or expiration event is replicated to the target, the replica-document at the target is deleted or expired irrespective of its current TTL.
+Thus, the replica-document&#8217;s TTL may have been modified on the target, such that it specifies expiration at a later point in time than that specified by the TTL of the source document: nevertheless, when the source document expires, an expiration event is replicated, and the replica-document on the target is immediately expired.</p>
+</div>
+<div class="paragraph">
+<p>For more information, see <a href="#configuring-deletion-filters-to-prevent-data-loss">Configuring Deletion Filters to Prevent Data-Loss</a>, immediately below.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuring-deletion-filters-to-prevent-data-loss"><a class="anchor" href="#configuring-deletion-filters-to-prevent-data-loss"></a>Configuring Deletion Filters to Prevent Data-Loss</h3>
+<div class="paragraph">
+<p>Appropriate deletion-filter settings protect data.
+However, in certain circumstances, inappropriate deletion-filter settings may cause <em>loss</em> of data.
+For example:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>By means of replication <em>1</em>, documents of type <em>A</em> and type <em>B</em> are replicated to the target.</p>
+</li>
+<li>
+<p>Replication <em>1</em> is deleted.</p>
+</li>
+<li>
+<p>Documents of type <em>A</em> are deleted on the source; with the expectation that they will continue to exist on the target.</p>
+</li>
+<li>
+<p>Replication <em>2</em> is created, with the default deletion-filter settings, so as to replicate to the target all future changes on the source to documents of type <em>B</em>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Here, the (incorrectly) expected outcome has been that documents of both type <em>A</em> and type <em>B</em> continue to exist on the target.
+However, since document-deletions are replicated by default, replication <em>2</em> has deleted documents of type <em>A</em> from the target; and the actual outcome is therefore that only documents of type <em>B</em> exist on the target; with documents of type <em>A</em> existing on neither source nor target.</p>
+</div>
+<div class="paragraph">
+<p>To avoid this outcome, replication <em>2</em> could be created with deletion filters configured to prevent the replication of deletions: the prior deletions of documents of type <em>A</em> from the source would thereby <em>not</em> be replicated to the target.
+Note, however, that this would also prevent the replication of future source-deletions of type <em>B</em> documents.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuring-deletion-filters-to-prevent-replication-of-stale-data"><a class="anchor" href="#configuring-deletion-filters-to-prevent-replication-of-stale-data"></a>Configuring Deletion-Filters to Prevent Replication of Stale Data</h3>
+<div class="paragraph">
+<p>In certain circumstances, inappropriate deletion-filter settings may allow <em>stale</em> data to be inadvertently replicated to the target.
+For example:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A replication is established to replicate documents of type <em>A</em> and type <em>B</em> to the target.
+Deletion-filter settings are configured to <em>prevent</em> replication of deletions that occur on the source.</p>
+</li>
+<li>
+<p>After the replication has commenced, for reasons of security, documents of type <em>A</em> are deleted from the source.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Here, the (incorrectly) expected outcome has been that security requirements have been complied with, since documents of type <em>A</em> have been deleted from the source.
+However, since deletion-filters have been configured <em>not</em> to replicate deletions, documents of type <em>A</em>, subsequent to their replication, continue to exist on the target as <em>stale</em> data; and do so in contravention of security requirements.</p>
+</div>
+<div class="paragraph">
+<p>To avoid this outcome, the replication should be created with the default deletion-settings, so as to <em>permit</em> the replication of deletions.
+This ensures that deletions made on the source also occur on the target.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deletion-filters-and-migration"><a class="anchor" href="#deletion-filters-and-migration"></a>Deletion Filters and Migration</h3>
+<div class="paragraph">
+<p>The appropriate configuring of deletion filters is critically important in cases of <em>migration</em> where documents are being assigned to newly created collections, with their source collection (often the default collection of a legacy bucket) intended subsequently to be dropped.
+For example, the following sequence results in loss of data:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The default collection of a legacy bucket is determined to contain only documents that are either of type <em>A</em> or of type <em>B</em>.</p>
+</li>
+<li>
+<p>Migration is configured to replicate documents of type <em>A</em> from the source, default collection to a new, target collection, named <em>A</em>; and documents of type <em>B</em> to another new, target collection, named <em>B</em>.
+Deletion filters are left at their default settings.</p>
+</li>
+<li>
+<p>Migration proceeds.
+Eventually, all type <em>A</em> documents exist both in the source collection, and in the new, target collection <em>A</em>; and all type <em>B</em> documents exist both in the source collection, and in the new, target collection <em>B</em>.</p>
+</li>
+<li>
+<p>The source, default collection is dropped; and all its data thereby deleted.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Here, the (incorrectly) expected result has been that all documents will continue to exist; in the new, target collections, <em>A</em> and <em>B</em>.
+However, since the migration was not deleted prior to the deletion of the source data, and since the default settings of the deletion filters specified that document-deletions should be replicated; the actual result is that all documents from the target collections <em>A</em> and <em>B</em> have been deleted, along with the source, default collection, and all its data.</p>
+</div>
+<div class="sect3">
+<h4 id="guarding-against-accidental-data-loss-during-migration"><a class="anchor" href="#guarding-against-accidental-data-loss-during-migration"></a>Guarding Against Accidental Data-Loss during Migration</h4>
+<div class="paragraph">
+<p>Either of the following approaches can be used to ensure that no migrated data is lost:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Configure deletion filters to prohibit the replication of deletions and/or expirations.
+This ensures that only documents and their mutations are replicated to their new collection.</p>
+<div class="paragraph">
+<p>Note, however, that if read-write application-access continues to be granted to the source collection during the life of the migration, application-deletions and/or expirations that occur on the source are not replicated to the target collection; eventually rendering source and target collections inconsistent.</p>
+</div>
+</li>
+<li>
+<p>Keep deletion filters at their default setting, to permit the replication of deletions and/or expirations.
+When the migration is judged to have completed, delete the migration <em>prior to</em> the deletion of any source data.
+Then, once the migration is deleted, delete source data as appropriate.</p>
+<div class="paragraph">
+<p>Note that if a new replication is subsequently created between the same source and target collections, with deletion filters configured to permit the replication of deletions and/or expirations, the deletions and/or expirations will be replicated to the target if the tombstones produced by the source-data deletions and/or expirations have not yet been purged.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that before and during migration, both the <a href="../services-and-indexes/services/backup-service.html" class="page">Backup Service</a> and <a href="../../backup-restore/enterprise-backup-restore.html" class="page">cbbackupmgr</a> can be used to protect data.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configuring-deletion-filters"><a class="anchor" href="#configuring-deletion-filters"></a>Configuring Deletion Filters</h3>
+<div class="paragraph">
+<p>For information on configuring deletion filters with the UI, see <a href="../../manage/manage-xdcr/filter-xdcr-replication.html#deletion-filters" class="page">Deletion Filters</a>;
+with the CLI, see <a href="#cli:cbcli/couchbase-cli-xdcr-replicate.adoc" class="page unresolved">xdcr-replicate</a>;
+with the REST API, see <a href="../../rest-api/rest-xdcr-create-replication.html" class="page">Creating XDCR Replications</a>.</p>
 </div>
 </div>
 </div>
