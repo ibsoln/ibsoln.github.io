@@ -197,13 +197,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../android/query-live.html">Live Query</a>
+<a class="nav-link" href="../android/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../android/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../android/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -416,13 +416,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../csharp/query-live.html">Live Query</a>
+<a class="nav-link" href="../csharp/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../csharp/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../csharp/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -635,13 +635,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{xref-cbl-pg-query-live}</span>
+<span class="nav-text ">{querybuilder-n1ql&#8212;&#8203;xref}</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{xref-cbl-pg-query-predictive}</span>
+<span class="nav-text ">{xref-cbl-pg-query-live}</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -854,13 +854,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../java/query-live.html">Live Query</a>
+<a class="nav-link" href="../java/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../java/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../java/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1073,13 +1073,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../objc/query-live.html">Live Query</a>
+<a class="nav-link" href="../objc/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../objc/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../objc/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1298,13 +1298,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="query-live.html">Live Query</a>
+<a class="nav-link" href="querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -2070,22 +2070,24 @@ name Hotel Ted</code></pre>
         for (_, row) in
             try! listQuery.execute().allResults().enumerated() {
 
-            let jsonString = row.dictionary(forKey: "_doc")!.toJSON()
+            let jsonString = row.dictionary(forKey: "_doc")!.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
 
             let thisJsonObj =
                     try! JSONSerialization.jsonObject(
                             with: jsonString.data(using: .utf8)! , options:[])
-                                as? [String: Any]
+                                as? [String: Any] <i class="conum" data-value="2"></i><b>(2)</b>
 
-            let docid = thisJsonObj!["id"] as! String
+            // Use Json Object to populate Native object <i class="conum" data-value="3"></i><b>(3)</b>
+            this_hotel.id = thisJsonObj!["id"] as! String
 
-            let name = thisJsonObj!["name"] as! String
+            this_hotel.name = thisJsonObj!["name"] as! String
 
-            let type = thisJsonObj!["type"] as! String
+            this_hotel.type = thisJsonObj!["type"] as! String
 
-            let city = thisJsonObj!["city"] as! String
+            this_hotel.city = thisJsonObj!["city"] as! String
 
-            print("the JSON Object's propertiess are: ", docid,name,type,city)
+            hotels[this_hotel.id] = this_hotel
+
 
         } // end for
 

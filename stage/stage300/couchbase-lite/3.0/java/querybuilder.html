@@ -198,13 +198,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../android/query-live.html">Live Query</a>
+<a class="nav-link" href="../android/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../android/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../android/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -417,13 +417,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../csharp/query-live.html">Live Query</a>
+<a class="nav-link" href="../csharp/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../csharp/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../csharp/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -636,13 +636,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{xref-cbl-pg-query-live}</span>
+<span class="nav-text ">{querybuilder-n1ql&#8212;&#8203;xref}</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{xref-cbl-pg-query-predictive}</span>
+<span class="nav-text ">{xref-cbl-pg-query-live}</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -855,13 +855,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="query-live.html">Live Query</a>
+<a class="nav-link" href="querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1074,13 +1074,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../objc/query-live.html">Live Query</a>
+<a class="nav-link" href="../objc/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../objc/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../objc/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1299,13 +1299,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../swift/query-live.html">Live Query</a>
+<a class="nav-link" href="../swift/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../swift/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../swift/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1601,8 +1601,10 @@ The examples used in this topic are based on the <em>Travel Sample</em> app and 
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Couchbase Lite for Java&#8217;s database queries are defined using the QueryBuilder API.
-This uses query statements of the form shown in <a href="#ex-query-form">Example 1</a>.
+<p>Couchbase Lite for Java provides two ways to build and run database queries; the QueryBuilder API described in this topic and the <a href="querybuilder-n1ql.html" class="page">N1QL Queries</a>.</p>
+</div>
+<div class="paragraph">
+<p>Database queries defined with the QueryBuilder API use query statements of the form shown in <a href="#ex-query-form">Example 1</a>.
 The structure and semantics of the query format are based on that of Couchbase&#8217;s <a href="../../../server/6.6/learn/data/n1ql-versus-sql.html" class="page">N1QL query language</a>.</p>
 </div>
 <div id="ex-query-form" class="exampleblock">
@@ -2909,7 +2911,44 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">  ArrayList&lt;Hotel&gt; hotels = new ArrayList&lt;Hotel&gt;();
+
+  // Run query
+  for (Result result : listQuery.execute()) {
+
+    // Get result as JSON string
+    String thisJsonString =
+              result.getDictionary(0).toJSON(); <i class="conum" data-value="1"></i><b>(1)</b>
+    Log.d("Convert", "JSON string: " + thisJsonString );
+
+    // Get JSON object from JSON string
+    JSONObject thisJSONobject = new JSONObject(thisJsonString); <i class="conum" data-value="2"></i><b>(2)</b>
+    Log.d("Convert", "JSON object: " + thisJSONobject.get("name"));
+
+    // Get native object from JSON object <i class="conum" data-value="3"></i><b>(3)</b>
+    JSONObject jsonObject = new JSONObject(thisJsonString.trim());
+    Iterator&lt;String&gt; keys = jsonObject.keys();
+    HashMap&lt;String,Object&gt; jsonDict  = new HashMap&lt;String,Object&gt;();
+
+    while(keys.hasNext()) {
+        String key = keys.next();
+        jsonDict.put(key,jsonObject.get(key));
+        // do something with jsonObject here
+        Log.d("Convert", "Native object: " + jsonDict.get(key));
+    }
+
+    // Get custom object from Native 'dictionary' object
+    Hotel thisHotel = new Hotel();
+    thisHotel.id = jsonDict.get("id").toString();
+    thisHotel.type = jsonDict.get("type").toString();
+    thisHotel.name = jsonDict.get("name").toString();
+    thisHotel.city = jsonDict.get("city").toString();
+    thisHotel.country = jsonDict.get("country").toString();
+    thisHotel.description = jsonDict.get("description").toString();
+    hotels.add(thisHotel);
+    Log.d("Convert", "MutableArray of Hotels: " + hotels.get(hotels.size()-1).name);
+
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2927,6 +2966,215 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <td>Get a native object from the JSON object</td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-predquery"><a class="anchor" href="#lbl-predquery"></a>Predictive Query</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Enterprise Edition only</div>
+Predictive Query is an <a href="https://www.couchbase.com/products/editions">Enterprise Edition</a> feature.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Predictive Query enables Couchbase Lite queries to use machine learning, by providing query functions that can process document data (properties or blobs) via trained ML models.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s consider an image classifier model that takes a picture as input and outputs a label and probability.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/predictive-diagram.png" alt="predictive diagram">
+</div>
+</div>
+<div class="paragraph">
+<p>To run a predictive query with a model as the one shown above, you must implement the following steps.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><a href="#integrate-the-model">Integrate the Model</a></p>
+</li>
+<li>
+<p><a href="#register-the-model">Register the Model</a></p>
+</li>
+<li>
+<p><a href="#create-an-index">Create an Index (Optional)</a></p>
+</li>
+<li>
+<p><a href="#run-a-prediction-query">Run a Prediction Query</a></p>
+</li>
+<li>
+<p><a href="#unregister-the-model">Unregister the Model</a></p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="integrate-the-model"><a class="anchor" href="#integrate-the-model"></a>Integrate the Model</h3>
+<div class="paragraph">
+<p>To integrate a model with Couchbase Lite, you must implement the <code>PredictiveModel</code> interface which has only one function called <code>predict()</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java#L1954-L1972">// `tensorFlowModel` is a fake implementation
+// this would be the implementation of the ml model you have chosen
+class ImageClassifierModel implements PredictiveModel {
+    @Override
+    public Dictionary predict(@NonNull Dictionary input) {
+        Blob blob = input.getBlob("photo");
+        if (blob == null) { return null; }
+
+        // `tensorFlowModel` is a fake implementation
+        // this would be the implementation of the ml model you have chosen
+        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+}
+
+class TensorFlowModel {
+    public static Map&lt;String, Object&gt; predictImage(byte[] data) {
+        return null;
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>predict(input) -&gt; output</code> method provides the input and expects the result of using the machine learning model.
+The input and output of the predictive model is a <code>DictionaryObject</code>.
+Therefore, the supported data type will be constrained by the data type that the <code>DictionaryObject</code> supports.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="register-the-model"><a class="anchor" href="#register-the-model"></a>Register the Model</h3>
+<div class="paragraph">
+<p>To register the model you must create a new instance and pass it to the <code>Database.prediction.registerModel</code> static method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java#L1671">Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="create-an-index"><a class="anchor" href="#create-an-index"></a>Create an Index</h3>
+<div class="paragraph">
+<p>Creating an index for a predictive query is highly recommended.
+By computing the predictions during writes and building a prediction index, you can significantly improve the speed of prediction queries (which would otherwise have to be computed during reads).</p>
+</div>
+<div class="paragraph">
+<p>There are two types of indexes for predictive queries:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="#value-index">Value Index</a></p>
+</li>
+<li>
+<p><a href="#predictive-index">Predictive Index</a></p>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<h4 id="value-index"><a class="anchor" href="#value-index"></a>Value Index</h4>
+<div class="paragraph">
+<p>The code below creates a value index from the "label" value of the prediction result.
+When documents are added or updated, the index will call the prediction function to update the city value in the index.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java#L1675-L1676">ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
+database.createIndex("value-index-image-classifier", index);</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="predictive-index"><a class="anchor" href="#predictive-index"></a>Predictive Index</h4>
+<div class="paragraph">
+<p>Predictive Index is a new index type used for predictive query.
+The Predictive Index is different from the value index in that the Predictive Index caches the predictive result and creates the value index from the cached predictive result when the predictive results values are specified.</p>
+</div>
+<div class="paragraph">
+<p>The code below creates a predictive index from the "label" value of the prediction result.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java#L1689-L1694">Map&lt;String, Object&gt; inputMap = new HashMap&lt;&gt;();
+inputMap.put("numbers", Expression.property("photo"));
+Expression input = Expression.map(inputMap);
+
+PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
+database.createIndex("predictive-index-image-classifier", index);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="run-a-prediction-query"><a class="anchor" href="#run-a-prediction-query"></a>Run a Prediction Query</h3>
+<div class="paragraph">
+<p>The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java#L1703-L1716">Map&lt;String, Object&gt; inputProperties = new HashMap&lt;&gt;();
+inputProperties.put("photo", Expression.property("photo"));
+Expression input = Expression.map(inputProperties);
+PredictionFunction prediction = PredictiveModel.predict("ImageClassifier", input); <i class="conum" data-value="1"></i><b>(1)</b>
+
+Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.database(database))
+    .where(Expression.property("label").equalTo(Expression.string("car"))
+        .and(Expression.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
+
+// Run the query.
+ResultSet result = query.execute();
+Log.d(TAG, "Number of rows: " + result.allResults().size());</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The <code>PredictiveModel.predict()</code> method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the <code>PredictiveModel.predict()</code> function.
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The null value returned by the prediction method will be interpreted as MISSING value in queries.
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="unregister-the-model"><a class="anchor" href="#unregister-the-model"></a>Unregister the Model</h3>
+<div class="paragraph">
+<p>To unregister the model you must call the <code>Database.prediction.unregisterModel</code> static method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java#L1680">Database.prediction.unregisterModel("ImageClassifier");</code></pre>
 </div>
 </div>
 </div>

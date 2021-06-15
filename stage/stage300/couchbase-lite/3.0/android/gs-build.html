@@ -198,13 +198,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="query-live.html">Live Query</a>
+<a class="nav-link" href="querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -417,13 +417,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../csharp/query-live.html">Live Query</a>
+<a class="nav-link" href="../csharp/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../csharp/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../csharp/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -636,13 +636,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{xref-cbl-pg-query-live}</span>
+<span class="nav-text ">{querybuilder-n1ql&#8212;&#8203;xref}</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<span class="nav-text ">{xref-cbl-pg-query-predictive}</span>
+<span class="nav-text ">{xref-cbl-pg-query-live}</span>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -855,13 +855,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../java/query-live.html">Live Query</a>
+<a class="nav-link" href="../java/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../java/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../java/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1074,13 +1074,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../objc/query-live.html">Live Query</a>
+<a class="nav-link" href="../objc/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../objc/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../objc/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1299,13 +1299,13 @@
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../swift/query-live.html">Live Query</a>
+<a class="nav-link" href="../swift/querybuilder-n1ql.html">N1QL Queries</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
 
 <span class="nav-line "  data-depth="2">
-<a class="nav-link" href="../swift/query-predictive.html">Predictive Query</a>
+<a class="nav-link" href="../swift/query-live.html">Live Query</a>
 </span>
 </li>
 <li class="nav-item " data-depth="2">
@@ -1946,7 +1946,49 @@ public class TestQueries {
             e.printStackTrace();
         }
 
-    }
+      }
+
+    // Uses simple JSON -- e.g. import org.json.JSONObject
+    // Relies on Hotel class object defined out-of-scope
+    ArrayList&lt;Hotel&gt; hotels = new ArrayList&lt;Hotel&gt;();
+
+    // Run query
+    for (Result result : listQuery.execute()) {
+
+      // Get result as JSON string
+      String thisJsonString =
+                result.getDictionary(0).toJSON(); <i class="conum" data-value="23"></i><b>(23)</b>
+      Log.d("Convert", "JSON string: " + thisJsonString );
+
+      // Get JSON object from JSON string
+      JSONObject thisJSONobject = new JSONObject(thisJsonString); <i class="conum" data-value="24"></i><b>(24)</b>
+      Log.d("Convert", "JSON object: " + thisJSONobject.get("name"));
+
+      // Get native object from JSON object <i class="conum" data-value="25"></i><b>(25)</b>
+      JSONObject jsonObject = new JSONObject(thisJsonString.trim());
+      Iterator&lt;String&gt; keys = jsonObject.keys();
+      HashMap&lt;String,Object&gt; jsonDict  = new HashMap&lt;String,Object&gt;();
+
+      while(keys.hasNext()) {
+          String key = keys.next();
+          jsonDict.put(key,jsonObject.get(key));
+          Log.d("Convert", "Native object: " + jsonDict.get(key));
+      }
+
+      // Get custom object from Native 'dictionary' object
+      Hotel thisHotel = new Hotel();
+      thisHotel.id = jsonDict.get("id").toString();
+      thisHotel.type = jsonDict.get("type").toString();
+      thisHotel.name = jsonDict.get("name").toString();
+      thisHotel.city = jsonDict.get("city").toString();
+      thisHotel.country = jsonDict.get("country").toString();
+      thisHotel.description = jsonDict.get("description").toString();
+      hotels.add(thisHotel);
+      Log.d("Convert", "MutableArray of Hotels: " + hotels.get(hotels.size()-1).name);
+
+  }
+
+
 
     public void testQuerySyntaxProps() throws CouchbaseLiteException {
 
@@ -2006,7 +2048,7 @@ public class TestQueries {
       }
 
       Query listQuery = QueryBuilder.select(
-              SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) <i class="conum" data-value="23"></i><b>(23)</b>
+              SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) <i class="conum" data-value="26"></i><b>(26)</b>
               .from(DataSource.database(this_Db));
 
 
@@ -2047,7 +2089,7 @@ public class TestQueries {
             for (Result result : listQuery.execute().allResults()) {
 
                 // get the ID form the result's k-v pair array
-                thisDocsId = result.getString("metaID"); <i class="conum" data-value="24"></i><b>(24)</b>
+                thisDocsId = result.getString("metaID"); <i class="conum" data-value="27"></i><b>(27)</b>
 
                 // Get document from DB using retrieved ID
                 Document thisDoc = this_Db.getDocument(thisDocsId);
@@ -2081,7 +2123,7 @@ public class TestQueries {
                         .select(SelectResult.all())
                         .from(DataSource.database(this_Db))
                         .limit(Expression.intValue(thisLimit),
-                                  Expression.intValue(thisOffset)); <i class="conum" data-value="25"></i><b>(25)</b>
+                                  Expression.intValue(thisOffset)); <i class="conum" data-value="28"></i><b>(28)</b>
 
 
     }
