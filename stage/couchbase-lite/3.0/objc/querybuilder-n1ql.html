@@ -1757,7 +1757,21 @@ columnAlias = IDENTIFIER</code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The select clause begins with the SELECT keyword. The optional <code>ALL | DISTINCT</code> argument is used to specify whether the query should return ALL results (the default), or (DISTINCT) whether the query should remove duplicated results.</td>
+<td>The select clause begins with the SELECT keyword.
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>The optional <code>ALL</code> argument is used to specify tha the query should return ALL results (the default)</p>
+</li>
+<li>
+<p>The optional <code>DISTINCT</code> argument specifies that the query should remove duplicated results.</p>
+</li>
+</ul>
+</div>
+</div>
+</div></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -1765,35 +1779,52 @@ columnAlias = IDENTIFIER</code></pre>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The optional <code>AS</code> argument provides an alias name for a column. Each column can be aliased by putting the alias name after the column name with an optional AS keyword.</td>
+<td>Use the optional <code>AS</code> argument to provides an alias name for a property. Each property can be aliased by putting the <code>AS &lt;alias name&gt;</code> after the column name.</td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect2">
-<h3 id="all-properties"><a class="anchor" href="#all-properties"></a>All Properties</h3>
-<div class="paragraph">
-<p>Use the wild card character <code>*</code> to select all properties in the data source.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="lbl-return-properties"><a class="anchor" href="#lbl-return-properties"></a>Return Selected Properties</h3>
-<div class="paragraph">
-<p>To return only specific properties, specify a comma separated list of property names in the select statement of your query &#8201;&#8212;&#8201;see: <a href="#ex-select-properties">Example 4</a></p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="examples"><a class="anchor" href="#examples"></a>Examples</h3>
-<div id="ex-select-properties" class="exampleblock">
-<div class="title">Example 4. Using SELECT to Retrieve Specific Properties</div>
+<h3 id="example"><a class="anchor" href="#example"></a>Example</h3>
+<div class="exampleblock">
+<div class="title">Example 4. SELECT properties</div>
 <div class="content">
-<div class="paragraph">
-<p>In this query we retrieve and then print the <code>_id</code>, <code>type</code> and <code>name</code> properties of each document.</p>
-</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m]</code></pre>
+<pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT * <i class="conum" data-value="1"></i><b>(1)</b>
+
+SELECT db.* AS data <i class="conum" data-value="2"></i><b>(2)</b>
+
+SELECT name fullName <i class="conum" data-value="3"></i><b>(3)</b>
+
+SELECT db.name fullName <i class="conum" data-value="4"></i><b>(4)</b>
+
+SELECT DISTINCT address.city <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use the <code>*</code> wildcard to select all properties</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Select all properties from the <code>db</code> data source. Give the object an alias name of <code>data</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Select  pair of properties</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Select a specific property from the <code>db</code> data source.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Select the property item <code>city</code> from its parent property <code>address</code>.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1839,7 +1870,7 @@ Use <code>AS</code> to give the database an alias you can use within the query.<
 </div>
 </div>
 <div class="sect2">
-<h3 id="example"><a class="anchor" href="#example"></a>Example</h3>
+<h3 id="example-2"><a class="anchor" href="#example-2"></a>Example</h3>
 <div class="exampleblock">
 <div class="title">Example 5. FROM clause</div>
 <div class="content">
@@ -1906,7 +1937,7 @@ Note: JOIN and INNER JOIN are the same, LEFT JOIN and LEFT OUTER JOIN are the sa
 </div>
 </div>
 <div class="sect2">
-<h3 id="example-2"><a class="anchor" href="#example-2"></a>Example</h3>
+<h3 id="example-3"><a class="anchor" href="#example-3"></a>Example</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT db.prop1, other.prop2 FROM db JOIN db AS other ON db.key = other.key
@@ -1968,7 +1999,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 </div>
 </div>
 <div class="sect2">
-<h3 id="examples-2"><a class="anchor" href="#examples-2"></a>Examples</h3>
+<h3 id="examples"><a class="anchor" href="#examples"></a>Examples</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT name FROM db WHERE department = ‘engineer’ AND group = ‘mobile</code></pre>
@@ -2021,7 +2052,7 @@ having = HAVING expression <i class="conum" data-value="3"></i><b>(3)</b></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="examples-3"><a class="anchor" href="#examples-3"></a>Examples</h3>
+<h3 id="examples-2"><a class="anchor" href="#examples-2"></a>Examples</h3>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT COUNT(empno), city FROM db GROUP BY city
@@ -2075,7 +2106,7 @@ order = ( ASC / DESC ) <i class="conum" data-value="3"></i><b>(3)</b></code></pr
 </div>
 </div>
 <div class="sect2">
-<h3 id="examples-4"><a class="anchor" href="#examples-4"></a>Examples</h3>
+<h3 id="examples-3"><a class="anchor" href="#examples-3"></a>Examples</h3>
 <div class="exampleblock">
 <div class="title">Example 7. Simple usage</div>
 <div class="content">
@@ -2122,7 +2153,7 @@ SELECT name, score FROM db  ORDER BY name ASC, score DESC</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="examples-5"><a class="anchor" href="#examples-5"></a>Examples</h3>
+<h3 id="examples-4"><a class="anchor" href="#examples-4"></a>Examples</h3>
 <div class="exampleblock">
 <div class="title">Example 8. Simple usage</div>
 <div class="content">
@@ -2173,7 +2204,7 @@ SELECT name, score FROM db  ORDER BY name ASC, score DESC</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="examples-6"><a class="anchor" href="#examples-6"></a>Examples</h3>
+<h3 id="examples-5"><a class="anchor" href="#examples-5"></a>Examples</h3>
 <div class="exampleblock">
 <div class="title">Example 9. Simple usage</div>
 <div class="content">
@@ -2247,7 +2278,7 @@ Categories of expression comprise the elements covered in this section (see abov
 </div>
 </div>
 <div class="sect4">
-<h5 id="example-3"><a class="anchor" href="#example-3"></a>Example</h5>
+<h5 id="example-4"><a class="anchor" href="#example-4"></a>Example</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT value FROM db  WHERE value = true
@@ -2277,7 +2308,7 @@ DIGIT = [0-9]</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="example-4"><a class="anchor" href="#example-4"></a>Example</h5>
+<h5 id="example-5"><a class="anchor" href="#example-5"></a>Example</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT value FROM db  WHERE value = 10
@@ -2317,7 +2348,7 @@ SELECT value FROM db WHERE value = 10.25E-2</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="example-5"><a class="anchor" href="#example-5"></a>Example</h5>
+<h5 id="example-6"><a class="anchor" href="#example-6"></a>Example</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT firstName, lastName FROM db WHERE middleName = “middle”
@@ -2343,7 +2374,7 @@ SELECT firstName, lastName FROM db WHERE middleName = ‘middle’</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="example-6"><a class="anchor" href="#example-6"></a>Example</h5>
+<h5 id="example-7"><a class="anchor" href="#example-7"></a>Example</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT firstName, lastName FROM db WHERE middleName IS NULL</code></pre>
@@ -2366,7 +2397,7 @@ SELECT firstName, lastName FROM db WHERE middleName = ‘middle’</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="example-7"><a class="anchor" href="#example-7"></a>Example</h5>
+<h5 id="example-8"><a class="anchor" href="#example-8"></a>Example</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT firstName, lastName FROM db WHERE middleName IS MISSING</code></pre>
@@ -2391,7 +2422,7 @@ SELECT firstName, lastName FROM db WHERE middleName = ‘middle’</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="example-8"><a class="anchor" href="#example-8"></a>Example</h5>
+<h5 id="example-9"><a class="anchor" href="#example-9"></a>Example</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT [“a”, “b”, “c”] FROM db
@@ -2420,7 +2451,7 @@ SELECT * FROM db WHERE name IN [“James”, “John”, “Jack”</code></pre>
 </div>
 </div>
 <div class="sect4">
-<h5 id="example-9"><a class="anchor" href="#example-9"></a>Example</h5>
+<h5 id="example-10"><a class="anchor" href="#example-10"></a>Example</h5>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT { ‘name’: ‘James’, ‘department’: 10 } FROM db
@@ -2470,7 +2501,7 @@ To use other characters in the identifier, surround the identifier with the back
 </div>
 </div>
 <div class="sect3">
-<h4 id="example-10"><a class="anchor" href="#example-10"></a>Example</h4>
+<h4 id="example-11"><a class="anchor" href="#example-11"></a>Example</h4>
 <div class="exampleblock">
 <div class="title">Example 10. Identifiers</div>
 <div class="content">
@@ -2543,7 +2574,7 @@ propertyName = IDENTIFIER</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="example-11"><a class="anchor" href="#example-11"></a>Example</h4>
+<h4 id="example-12"><a class="anchor" href="#example-12"></a>Example</h4>
 <div class="exampleblock">
 <div class="title">Example 11. Property Expressions</div>
 <div class="content">
@@ -2637,7 +2668,7 @@ NOTE: <code>ANY</code> and <code>SOME</code> are interchangeable</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="example-12"><a class="anchor" href="#example-12"></a>Example</h4>
+<h4 id="example-13"><a class="anchor" href="#example-13"></a>Example</h4>
 <div class="exampleblock">
 <div class="title">Example 12. ALL and Every Expressions</div>
 <div class="content">
@@ -2684,7 +2715,7 @@ If parameters are specified in the query string, but the parameter and value map
 </div>
 </div>
 <div class="sect3">
-<h4 id="examples-7"><a class="anchor" href="#examples-7"></a>Examples</h4>
+<h4 id="examples-6"><a class="anchor" href="#examples-6"></a>Examples</h4>
 <div class="exampleblock">
 <div class="title">Example 13. Parameter Expression</div>
 <div class="content">
@@ -2737,7 +2768,7 @@ let result = try q.execute();</code></pre>
 </div>
 </div>
 <div class="sect3">
-<h4 id="example-13"><a class="anchor" href="#example-13"></a>Example</h4>
+<h4 id="example-14"><a class="anchor" href="#example-14"></a>Example</h4>
 <div class="exampleblock">
 <div class="title">Example 15. Parenthesis Expression</div>
 <div class="content">
@@ -3456,7 +3487,7 @@ collation = NO? (UNICODE | CASE | DIACRITICS) WB <i class="conum" data-value="1"
 </div>
 </div>
 <div class="sect3">
-<h4 id="example-14"><a class="anchor" href="#example-14"></a>Example</h4>
+<h4 id="example-15"><a class="anchor" href="#example-15"></a>Example</h4>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-sql hljs" data-lang="sql">SELECT department FROM db WHERE (name = "fred") COLLATE UNICODE</code></pre>
@@ -3548,7 +3579,7 @@ If no WHEN clause evaluate to TRUE, then the result of the expression is the ELS
 </div>
 </div>
 <div class="sect3">
-<h4 id="example-15"><a class="anchor" href="#example-15"></a>Example</h4>
+<h4 id="example-16"><a class="anchor" href="#example-16"></a>Example</h4>
 <div class="exampleblock">
 <div class="title">Example 16. Simple Case</div>
 <div class="content">
