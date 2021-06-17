@@ -4612,31 +4612,29 @@ For non-covered queries, it is just <code>META().id</code>.</p>
 <div class="title">Example 1. Index Projection</div>
 <div class="content">
 <div class="paragraph">
-<p>This example uses the <code>def_route_src_dst_day</code> index that comes pre-installed and can be made by the statement:</p>
+<p>This example uses the <code>def_inventory_route_route_src_dst_day</code> index that comes pre-installed and can be made by the statement:</p>
 </div>
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX `def_route_src_dst_day`
-ON `travel-sample`(`sourceairport`,`destinationairport`,
-   (distinct (array (`v`.`day`) for `v` in `schedule` end)))
-WHERE (`type` = "route") ;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX def_inventory_route_route_src_dst_day
+ON `travel-sample`.inventory.route(sourceairport, destinationairport,
+   (DISTINCT (ARRAY (v.day) FOR v IN schedule END)));</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT sourceairport FROM `travel-sample`
-USE INDEX (def_route_src_dst_day)
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT sourceairport FROM `travel-sample`.inventory.route
+USE INDEX (def_inventory_route_route_src_dst_day)
 WHERE sourceairport = "SFO"
-AND type = "route"
 LIMIT 1;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-simple.json#L2-L30">{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "plan": {
     "#operator": "Sequence",
     "~children": [
@@ -4648,26 +4646,23 @@ LIMIT 1;</code></pre>
             "limit": "1",
             "scan": {
               "#operator": "IndexScan3",
+              "bucket": "travel-sample",
               "covers": [
-                "cover ((`travel-sample`.`sourceairport`))",
-                "cover ((`travel-sample`.`destinationairport`))",
-                "cover ((distinct (array (`v`.`day`) for `v` in (`travel-sample`.`schedule`) end)))",
-                "cover ((meta(`travel-sample`).`id`))"
+                "cover ((`route`.`sourceairport`))",
+                "cover ((`route`.`destinationairport`))",
+                "cover ((distinct (array (`v`.`day`) for `v` in (`route`.`schedule`) end)))",
+                "cover ((meta(`route`).`id`))"
               ],
-              "filter_covers": {
-                "cover ((`travel-sample`.`type`))": "route"
-              },
-              "index": "def_route_src_dst_day",
-              "index_id": "9191325cd5eda22e",
+              "filter": "(cover ((`route`.`sourceairport`)) = \"SFO\")",
+              "index": "def_inventory_route_route_src_dst_day",
+              "index_id": "e7eb4b4555f90179",
               "index_projection": {
                 "entry_keys": [ <i class="conum" data-value="1"></i><b>(1)</b>
                   0
                 ],
                 "primary_key": true <i class="conum" data-value="2"></i><b>(2)</b>
               },
-...</code></pre>
-</div>
-</div>
+// ...</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4699,6 +4694,8 @@ If the <code>index_projection</code> field is missing in the EXPLAIN output, the
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="predicate-pushdown"><a class="anchor" href="#predicate-pushdown"></a>Predicate Pushdown</h2>
 <div class="sectionbody">
@@ -4707,7 +4704,7 @@ If the <code>index_projection</code> field is missing in the EXPLAIN output, the
 In general, this performance optimization is leveraged when the Query engine decides to use an Index-scan for processing a query, and whole or partial predicates can be pushed to the indexer to filter documents of interest to the query.</p>
 </div>
 <div class="paragraph">
-<p>For example, in the above query <a href="#example-simple">Example 1</a> with a simple WHERE clause, the predicate (<code>sourceairport = "SFO"</code>) is pushed to the index <code>def_route_src_dst_day</code> with the following single <code>span</code> and <code>range</code>.
+<p>For example, in the above query <a href="#example-simple">Example 1</a> with a simple WHERE clause, the predicate (<code>sourceairport = "SFO"</code>) is pushed to the index <code>def_inventory_route_route_src_dst_day</code> with the following single <code>span</code> and <code>range</code>.
 These attributes exactly define different characteristics of the index scan:</p>
 </div>
 <div class="exampleblock">
@@ -4719,9 +4716,7 @@ These attributes exactly define different characteristics of the index scan:</p>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
-[data-source-url=https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-simple.json#L35-L45]
-              "spans": [
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">              "spans": [
                 {
                   "exact": true,
                   "range": [
@@ -4732,9 +4727,8 @@ These attributes exactly define different characteristics of the index scan:</p>
                     }
                   ]
                 }
-...</code></pre>
-</div>
-</div>
+              ],
+// ...</code></pre>
 </div>
 </div>
 <div class="ulist">
@@ -4744,10 +4738,11 @@ These attributes exactly define different characteristics of the index scan:</p>
 In this example, the predicate condition (<code>sourceairport = "SFO"</code>) translates to one span with one range that specifies both <code>low</code> and <code>high</code> values of "SFO" (to imply equals condition).</p>
 </li>
 <li>
-<p>Refer to section
-<a href="index-scans.html" class="page">Scans</a> for more information.</p>
+<p>Refer to section <a href="index-scans.html" class="page">Scans</a> for more information.</p>
 </li>
 </ul>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4765,7 +4760,7 @@ for more details and examples on how predicate pushdown works for various types 
 <h3 id="index-key-order-and-structure"><a class="anchor" href="#index-key-order-and-structure"></a>Index Key Order and Structure</h3>
 <div class="paragraph">
 <p>Composite indexes have more than one index key, and the order of the index keys is important for any lookup or scan of the index, because the indexes structure all the indexed entries in linearized default collation sorted order of all the index-keys.
-For example, consider the following index:</p>
+For example, consider the following hypothetical index:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4854,41 +4849,38 @@ In Couchbase Server 4.x, the indexer would return such extraneous unwanted resul
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX `def_route_src_dst_dist`
-ON `travel-sample`(`distance`,`sourceairport`,`destinationairport`)
-WHERE (`type` = "route");</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX idx_route_src_dst_dist
+ON `travel-sample`.inventory.route(distance, sourceairport, destinationairport);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT destinationairport
-FROM `travel-sample`
-USE INDEX (def_route_src_dst_dist)
-WHERE type = "route"
-AND distance &lt; 2000 AND sourceairport = "LAX"; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+FROM `travel-sample`.inventory.route
+USE INDEX (idx_route_src_dst_dist)
+WHERE distance &lt; 2000 AND sourceairport = "LAX"; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Results</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-comp-explain.json#L2-L46">{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "plan": {
     "#operator": "Sequence",
     "~children": [
       {
         "#operator": "IndexScan3",
+        "bucket": "travel-sample",
         "covers": [
-          "cover ((`travel-sample`.`distance`))",
-          "cover ((`travel-sample`.`sourceairport`))",
-          "cover ((`travel-sample`.`destinationairport`))",
-          "cover ((meta(`travel-sample`).`id`))"
+          "cover ((`route`.`distance`))",
+          "cover ((`route`.`sourceairport`))",
+          "cover ((`route`.`destinationairport`))",
+          "cover ((meta(`route`).`id`))"
         ],
-        "filter_covers": {
-          "cover ((`travel-sample`.`type`))": "route"
-        },
-        "index": "def_route_src_dst_dist",
-        "index_id": "5f58baa4c3b564d2",
+        "filter": "((cover ((`route`.`distance`)) &lt; 2000) and (cover ((`route`.`sourceairport`)) = \"LAX\"))",
+        "index": "idx_route_src_dst_dist",
+        "index_id": "6a502445eefe20b5",
         "index_projection": {
           "entry_keys": [
             0,
@@ -4896,8 +4888,9 @@ AND distance &lt; 2000 AND sourceairport = "LAX"; <i class="conum" data-value="1
             2
           ]
         },
-        "keyspace": "travel-sample",
+        "keyspace": "route",
         "namespace": "default",
+        "scope": "inventory",
         "spans": [ <i class="conum" data-value="2"></i><b>(2)</b>
           {
             "exact": true,
@@ -4917,9 +4910,7 @@ AND distance &lt; 2000 AND sourceairport = "LAX"; <i class="conum" data-value="1
         ],
         "using": "gsi"
       },
-...</code></pre>
-</div>
-</div>
+// ...</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4955,29 +4946,31 @@ For example, when you <a href="../../../manage/monitor/monitoring-n1ql-query.htm
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
-        "~children": [
-          {
-            "#operator": "IndexScan3",
-            "#stats": {
-              "#itemsOut": 165,
-              "#phaseSwitches": 663,
-              "execTime": "973µs",
-              "kernTime": "229µs",
-              "servTime": "100.721ms"
-            },
-...
-[data-source-url=https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-comp-plan.json#L120-L128]
-              {
-                "#operator": "FinalProject",
-                "#stats": {
-                  "#itemsIn": 165,
-                  "#itemsOut": 165,
-                  "#phaseSwitches": 496,
-                  "execTime": "607µs",
-                  "kernTime": "2.236ms"
-                },
-...</code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
+    "~children": [
+      {
+        "#operator": "IndexScan3",
+        "#stats": {
+          "#heartbeatYields": 54,
+          "#itemsOut": 165,
+          "#phaseSwitches": 663,
+          "execTime": "462.968µs",
+          "kernTime": "638.333µs",
+          "servTime": "38.110289ms"
+        },
+// ...
+      {
+        "#operator": "Stream",
+        "#stats": {
+          "#itemsIn": 165,
+          "#itemsOut": 165,
+          "#phaseSwitches": 166,
+          "execTime": "354.652µs"
+        }
+      }
+// ...</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4998,33 +4991,31 @@ There must be a predicate on the first key in the index definition, and then on 
 <div class="title">Query</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT sourceairport
-FROM `travel-sample`
-USE INDEX (def_route_src_dst_dist)
-WHERE type = "route"
-AND distance &lt; 2000 AND destinationairport = "LAX"; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+FROM `travel-sample`.inventory.route
+USE INDEX (idx_route_src_dst_dist)
+WHERE distance &lt; 2000 AND destinationairport = "LAX"; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Results</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-skip.json#L2-L50">[
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
   {
     "plan": {
       "#operator": "Sequence",
       "~children": [
         {
           "#operator": "IndexScan3",
+          "bucket": "travel-sample",
           "covers": [
-            "cover ((`travel-sample`.`distance`))",
-            "cover ((`travel-sample`.`sourceairport`))",
-            "cover ((`travel-sample`.`destinationairport`))",
-            "cover ((meta(`travel-sample`).`id`))"
+            "cover ((`route`.`distance`))",
+            "cover ((`route`.`sourceairport`))",
+            "cover ((`route`.`destinationairport`))",
+            "cover ((meta(`route`).`id`))"
           ],
-          "filter_covers": {
-            "cover ((`travel-sample`.`type`))": "route"
-          },
-          "index": "def_route_src_dst_dist",
-          "index_id": "da3c95191f817e67",
+          "filter": "((cover ((`route`.`distance`)) &lt; 2000) and (cover ((`route`.`destinationairport`)) = \"LAX\"))",
+          "index": "idx_route_src_dst_dist",
+          "index_id": "6a502445eefe20b5",
           "index_projection": {
             "entry_keys": [
               0,
@@ -5032,8 +5023,9 @@ AND distance &lt; 2000 AND destinationairport = "LAX"; <i class="conum" data-val
               2
             ]
           },
-          "keyspace": "travel-sample",
+          "keyspace": "route",
           "namespace": "default",
+          "scope": "inventory",
           "spans": [ <i class="conum" data-value="2"></i><b>(2)</b>
             {
               "exact": true,
@@ -5056,9 +5048,7 @@ AND distance &lt; 2000 AND destinationairport = "LAX"; <i class="conum" data-val
           ],
           "using": "gsi"
         },
-...</code></pre>
-</div>
-</div>
+// ...</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5092,6 +5082,8 @@ There is no predicate on the 2nd index-key <code>sourceairport</code>.</td>
 <div class="paragraph">
 <p>By skipping the index-key that does not have a predicate, and including all the non-continuous index-keys that do have predicates, the query uses the index more effectively and reduces the number of documents that need to be fetched.
 This increases query preparation time a little, but vastly speeds up the execution of the query.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -5135,18 +5127,18 @@ Hence, the pagination operators cannot be pushed when a query has JOIN clauses.<
 <div class="content">
 <div class="paragraph">
 <p>When using a secondary index, both LIMIT and OFFSET operators are pushed to the index.
-This example uses the <code>def_city</code> index that comes pre-installed and can be made by the statement:</p>
+This example uses the <code>def_inventory_landmark_city</code> index that comes pre-installed and can be made by the statement:</p>
 </div>
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_city ON `travel-sample`(city ASC);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/1d92794281b6751ab5f56571937126ac27bccba9/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_inventory_landmark_city ON `travel-sample`.inventory.landmark(city);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT * FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT * FROM `travel-sample`.inventory.landmark
 WHERE city = "San Francisco"
 OFFSET  4000  LIMIT 10000;</code></pre>
 </div>
@@ -5154,7 +5146,7 @@ OFFSET  4000  LIMIT 10000;</code></pre>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-page-1.json#L2-L33">{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "plan": {
     "#operator": "Sequence",
     "~children": [
@@ -5163,15 +5155,17 @@ OFFSET  4000  LIMIT 10000;</code></pre>
         "~children": [
           {
             "#operator": "IndexScan3",
-            "index": "def_city",
-            "index_id": "796a0018ff906a1a",
+            "bucket": "travel-sample",
+            "index": "def_inventory_landmark_city",
+            "index_id": "39eb8e83720948f",
             "index_projection": {
               "primary_key": true
             },
-            "keyspace": "travel-sample",
+            "keyspace": "landmark",
             "limit": "10000", <i class="conum" data-value="1"></i><b>(1)</b>
             "namespace": "default",
             "offset": "4000", <i class="conum" data-value="2"></i><b>(2)</b>
+            "scope": "inventory",
             "spans": [
               {
                 "exact": true,
@@ -5186,9 +5180,7 @@ OFFSET  4000  LIMIT 10000;</code></pre>
             ],
             "using": "gsi"
           },
-...</code></pre>
-</div>
-</div>
+// ...</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -5203,30 +5195,33 @@ OFFSET  4000  LIMIT 10000;</code></pre>
 </tr>
 </table>
 </div>
+</div>
+</div>
 <div id="example-page-2" class="exampleblock">
 <div class="title">Example 6. Pagination with Primary Index</div>
 <div class="content">
 <div class="paragraph">
 <p>When using a primary index, both LIMIT and OFFSET operators are pushed to the Indexer.
-This example uses the <code>def_primary</code> index that comes pre-installed and can be made by the statement:</p>
+This example uses the <code>def_inventory_landmark_primary</code> index that comes pre-installed and can be made by the statement:</p>
 </div>
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE PRIMARY INDEX `def_primary` ON `travel-sample`;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE PRIMARY INDEX `def_inventory_landmark_primary`
+  ON `travel-sample`.inventory.landmark;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT * FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT * FROM `travel-sample`.inventory.landmark
 OFFSET  4000  LIMIT 10000;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-page-2.json#L2-L20">{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "plan": {
     "#operator": "Sequence",
     "~children": [
@@ -5235,19 +5230,19 @@ OFFSET  4000  LIMIT 10000;</code></pre>
         "~children": [
           {
             "#operator": "PrimaryScan3",
-            "index": "def_primary",
+            "bucket": "travel-sample",
+            "index": "def_inventory_landmark_primary",
             "index_projection": {
               "primary_key": true
             },
-            "keyspace": "travel-sample",
+            "keyspace": "landmark",
             "limit": "10000", <i class="conum" data-value="1"></i><b>(1)</b>
             "namespace": "default",
             "offset": "4000", <i class="conum" data-value="2"></i><b>(2)</b>
+            "scope": "inventory",
             "using": "gsi"
           },
-...</code></pre>
-</div>
-</div>
+// ...</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -5262,24 +5257,26 @@ OFFSET  4000  LIMIT 10000;</code></pre>
 </tr>
 </table>
 </div>
+</div>
+</div>
 <div id="example-page-3" class="exampleblock">
 <div class="title">Example 7. Pagination with Different Index Order</div>
 <div class="content">
 <div class="paragraph">
 <p>LIMIT and OFFSET operators are not pushed to the Indexer when the index order is different from that specified in the ORDER BY.
-This example uses the <code>def_city</code> index that comes pre-installed and can be made by the statement:</p>
+This example uses the <code>def_inventory_landmark_city</code> index that comes pre-installed and can be made by the statement:</p>
 </div>
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_city ON `travel-sample`(city ASC);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/1d92794281b6751ab5f56571937126ac27bccba9/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_inventory_landmark_city ON `travel-sample`.inventory.landmark(city);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT * FROM `travel-sample`
-USE INDEX(def_city)
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT * FROM `travel-sample`.inventory.landmark
+USE INDEX(def_inventory_landmark_city)
 WHERE city = "San Francisco"
 ORDER BY name
 OFFSET  4000  LIMIT 10000;</code></pre>
@@ -5297,13 +5294,15 @@ OFFSET  4000  LIMIT 10000;</code></pre>
         "~children": [
           {
             "#operator": "IndexScan3", <i class="conum" data-value="1"></i><b>(1)</b>
-            "index": "def_city",
-            "index_id": "796a0018ff906a1a",
+            "bucket": "travel-sample",
+            "index": "def_inventory_landmark_city",
+            "index_id": "39eb8e83720948f",
             "index_projection": {
               "primary_key": true
             },
-            "keyspace": "travel-sample",
+            "keyspace": "landmark",
             "namespace": "default",
+            "scope": "inventory",
             "spans": [
               {
                 "exact": true,
@@ -5318,15 +5317,14 @@ OFFSET  4000  LIMIT 10000;</code></pre>
             ],
             "using": "gsi"
           },
-...
-[data-source-url=https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-page-3.json#L62-L82]
+// ...
       {
         "#operator": "Order",
         "limit": "10000",
         "offset": "4000",
         "sort_terms": [
           {
-            "expr": "(`travel-sample`.`name`)"
+            "expr": "(`landmark`.`name`)"
           }
         ]
       },
@@ -5337,13 +5335,8 @@ OFFSET  4000  LIMIT 10000;</code></pre>
       {
         "#operator": "Limit", <i class="conum" data-value="3"></i><b>(3)</b>
         "expr": "10000"
-      },
-      {
-        "#operator": "FinalProject"
       }
-...</code></pre>
-</div>
-</div>
+// ...</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -5364,6 +5357,8 @@ OFFSET  4000  LIMIT 10000;</code></pre>
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="using-index-order"><a class="anchor" href="#using-index-order"></a>Using Index Order</h2>
 <div class="sectionbody">
@@ -5377,18 +5372,18 @@ For example, ORDER BY may not be pushed down when the ORDER BY fields are not al
 <div class="content">
 <div class="paragraph">
 <p>Find all cities that start with "San", and sort the results by the city name in ascending order.
-This example uses the <code>def_city</code> index that comes pre-installed and can be made by the statement:</p>
+This example uses the <code>def_inventory_landmark_city</code> index that comes pre-installed and can be made by the statement:</p>
 </div>
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_city ON `travel-sample`(city ASC);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/1d92794281b6751ab5f56571937126ac27bccba9/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_inventory_landmark_city ON `travel-sample`.inventory.landmark(city);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT city FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT city FROM `travel-sample`.inventory.landmark
 WHERE city LIKE "San%"
 ORDER BY city;</code></pre>
 </div>
@@ -5405,30 +5400,23 @@ ORDER BY city;</code></pre>
         "~children": [
           {
             "#operator": "IndexScan3",
+            "bucket": "travel-sample",
             "covers": [
-              "cover ((`travel-sample`.`city`))",
-              "cover ((meta(`travel-sample`).`id`))"
+              "cover ((`landmark`.`city`))",
+              "cover ((meta(`landmark`).`id`))"
             ],
-            "index": "def_city",
-...
-[data-source-url=https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-idx-1.json#L55-L68]
+            "filter": "(cover ((`landmark`.`city`)) like \"San%\")",
+            "index": "def_inventory_landmark_city",
+// ...
                 {
                   "#operator": "InitialProject",
                   "result_terms": [
                     {
-                      "expr": "cover ((`travel-sample`.`city`))"
+                      "expr": "cover ((`landmark`.`city`))"
                     }
                   ]
-                },
-                {
-                  "#operator": "FinalProject" <i class="conum" data-value="1"></i><b>(1)</b>
-                }
-              ]
-            }
-          }
-...</code></pre>
-</div>
-</div>
+                } <i class="conum" data-value="1"></i><b>(1)</b>
+// ...</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -5440,23 +5428,25 @@ That means order pushdown is being leveraged, and the query is relying on the in
 </tr>
 </table>
 </div>
+</div>
+</div>
 <div id="example-idx-2" class="exampleblock">
 <div class="title">Example 9. Ascending Sort by Primary Key</div>
 <div class="content">
 <div class="paragraph">
 <p>Find all cities that start with "San", and sort the results by the document primary key in ascending order.
-This example uses the <code>def_city</code> index that comes pre-installed and can be made by the statement:</p>
+This example uses the <code>def_inventory_landmark_city</code> index that comes pre-installed and can be made by the statement:</p>
 </div>
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_city ON `travel-sample`(city ASC);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/1d92794281b6751ab5f56571937126ac27bccba9/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_inventory_landmark_city ON `travel-sample`.inventory.landmark(city);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT city FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT city FROM `travel-sample`.inventory.landmark
 WHERE city LIKE "San%"
 ORDER BY meta().id;</code></pre>
 </div>
@@ -5473,18 +5463,19 @@ ORDER BY meta().id;</code></pre>
         "~children": [
           {
             "#operator": "IndexScan3",
+            "bucket": "travel-sample",
             "covers": [
-              "cover ((`travel-sample`.`city`))",
-              "cover ((meta(`travel-sample`).`id`))"
+              "cover ((`landmark`.`city`))",
+              "cover ((meta(`landmark`).`id`))"
             ],
-            "index": "def_city",
-...
-[data-source-url=https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-idx-2.json#L44-L67]
+            "filter": "(cover ((`landmark`.`city`)) like \"San%\")",
+            "index": "def_inventory_landmark_city",
+// ...
                 {
                   "#operator": "InitialProject",
                   "result_terms": [
                     {
-                      "expr": "cover ((`travel-sample`.`city`))"
+                      "expr": "cover ((`landmark`.`city`))"
                     }
                   ]
                 }
@@ -5497,16 +5488,11 @@ ORDER BY meta().id;</code></pre>
         "#operator": "Order", <i class="conum" data-value="1"></i><b>(1)</b>
         "sort_terms": [
           {
-            "expr": "cover ((meta(`travel-sample`).`id`))"
+            "expr": "cover ((meta(`landmark`).`id`))"
           }
         ]
-      },
-      {
-        "#operator": "FinalProject"
       }
-...</code></pre>
-</div>
-</div>
+// ...</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -5517,6 +5503,8 @@ ORDER BY meta().id;</code></pre>
 </tr>
 </table>
 </div>
+</div>
+</div>
 <h3 id="limitation" class="discrete">Limitation</h3>
 <div class="paragraph">
 <p>Currently the Query engine supports order pushdown only when the ORDER BY keys are aligned with the Index order.
@@ -5524,10 +5512,10 @@ But reverse-scan of the index is not supported.</p>
 </div>
 <div class="paragraph">
 <p>For example, in <a href="#example-idx-1">Example 8</a> above, you can see that the query plan does not have an ORDER operator before the final projection, because the index order is the same as the ascending order specified in the query.
-Similarly, in the following example <a href="#example-idx-3">Example 10</a>, the ORDER BY clause has DESC, and that matches with the index order defined by the index <code>def_city_desc</code>.</p>
+Similarly, in the following example <a href="#example-idx-3">Example 10</a>, the ORDER BY clause has DESC, and that matches with the index order defined by the index <code>idx_landmark_city_desc</code>.</p>
 </div>
 <div class="paragraph">
-<p>However, the ASC order in <a href="#example-idx-1">Example 8</a> will not be able to leverage the index order in the index <code>def_city_desc</code>, nor will the DESC order in <a href="#example-idx-3">Example 10</a> be able to leverage the index order in the index <code>def_city</code>.</p>
+<p>However, the ASC order in <a href="#example-idx-1">Example 8</a> will not be able to leverage the index order in the index <code>idx_landmark_city_desc</code>, nor will the DESC order in <a href="#example-idx-3">Example 10</a> be able to leverage the index order in the index <code>def_inventory_landmark_city</code>.</p>
 </div>
 <div id="example-idx-3" class="exampleblock">
 <div class="title">Example 10. Descending Sort by String Field</div>
@@ -5538,13 +5526,13 @@ Similarly, in the following example <a href="#example-idx-3">Example 10</a>, the
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX def_city_desc ON `travel-sample`(`city` DESC);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX idx_landmark_city_desc ON `travel-sample`.inventory.landmark(city DESC);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT city FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT city FROM `travel-sample`.inventory.landmark
 WHERE city LIKE "San%"
 ORDER BY city DESC;</code></pre>
 </div>
@@ -5561,34 +5549,29 @@ ORDER BY city DESC;</code></pre>
         "~children": [
           {
             "#operator": "IndexScan3",
+            "bucket": "travel-sample",
             "covers": [
-              "cover ((`travel-sample`.`city`))",
-              "cover ((meta(`travel-sample`).`id`))"
+              "cover ((`landmark`.`city`))",
+              "cover ((meta(`landmark`).`id`))"
             ],
-            "index": "def_city_desc",
-            "index_id": "eec274a0f271479c",
+            "filter": "(cover ((`landmark`.`city`)) like \"San%\")",
+            "index": "idx_landmark_city_desc",
+            "index_id": "efc36547ec1c0f00",
             "index_order": [
               {
                 "desc": true,
                 "keypos": 0
               }
-...
-[data-source-url=https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-idx-3.json#L56-L69]
+// ...
                 {
                   "#operator": "InitialProject",
                   "result_terms": [
                     {
-                      "expr": "cover ((`travel-sample`.`city`))"
+                      "expr": "cover ((`landmark`.`city`))"
                     }
                   ]
-                },
-                {
-                  "#operator": "FinalProject"
                 }
-              ]
-            }
-          }
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5618,39 +5601,40 @@ This limitation has been removed in Couchbase Server 5.5 and later.</p>
 <div class="title">Example 11. MAX of a String Field</div>
 <div class="content">
 <div class="paragraph">
-<p>Find the alphabetically highest city name in <code>travel-sample</code>.
-This example uses the <code>def_city</code> index that comes pre-installed and can be made by the statement:</p>
+<p>Find the alphabetically highest city name in the <code>landmark</code> collection.
+This example uses the <code>def_inventory_landmark_city</code> index that comes pre-installed and can be made by the statement:</p>
 </div>
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_city ON `travel-sample`(city ASC);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/1d92794281b6751ab5f56571937126ac27bccba9/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_inventory_landmark_city ON `travel-sample`.inventory.landmark(city);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT MAX(city)
-FROM `travel-sample`
-USE INDEX (def_city)
-WHERE city is not null;</code></pre>
+FROM `travel-sample`.inventory.landmark
+USE INDEX (def_inventory_landmark_city)
+WHERE city IS NOT NULL;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-max.json#L2-L24">{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "plan": {
     "#operator": "Sequence",
     "~children": [
       {
         "#operator": "IndexScan3",
+        "bucket": "travel-sample",
         "covers": [
-          "cover ((`travel-sample`.`city`))",
-          "cover ((meta(`travel-sample`).`id`))",
-          "cover (max(cover ((`travel-sample`.`city`))))"
+          "cover ((`landmark`.`city`))",
+          "cover ((meta(`landmark`).`id`))",
+          "cover (max(cover ((`landmark`.`city`))))"
         ],
-        "index": "def_city",
+        "index": "def_inventory_landmark_city",
         "index_group_aggs": {
           "aggregates": [
             {
@@ -5658,11 +5642,11 @@ WHERE city is not null;</code></pre>
               "depends": [
                 0
               ],
-              "expr": "cover ((`travel-sample`.`city`))",
+              "expr": "cover ((`landmark`.`city`))",
               "id": 2,
               "keypos": 0
             }
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5683,39 +5667,40 @@ This limitation has been removed in Couchbase Server 5.5 and later.</p>
 <div class="title">Example 12. MIN of a String Field</div>
 <div class="content">
 <div class="paragraph">
-<p>Find the alphabetically lowest city name in <code>travel-sample</code>.
-This example uses the <code>def_city</code> index that comes pre-installed and can be made by the statement:</p>
+<p>Find the alphabetically lowest city name in the <code>landmark</code> collection.
+This example uses the <code>def_inventory_landmark_city</code> index that comes pre-installed and can be made by the statement:</p>
 </div>
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_city ON `travel-sample`(city ASC);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/1d92794281b6751ab5f56571937126ac27bccba9/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_inventory_landmark_city ON `travel-sample`.inventory.landmark(city);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT MIN(city)
-FROM `travel-sample`
-USE INDEX (def_city)
-WHERE city is not null;</code></pre>
+FROM `travel-sample`.inventory.landmark
+USE INDEX (def_inventory_landmark_city)
+WHERE city IS NOT NULL;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-min.json#L2-L24">{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "plan": {
     "#operator": "Sequence",
     "~children": [
       {
         "#operator": "IndexScan3",
+        "bucket": "travel-sample",
         "covers": [
-          "cover ((`travel-sample`.`city`))",
-          "cover ((meta(`travel-sample`).`id`))",
-          "cover (min(cover ((`travel-sample`.`city`))))"
+          "cover ((`landmark`.`city`))",
+          "cover ((meta(`landmark`).`id`))",
+          "cover (min(cover ((`landmark`.`city`))))"
         ],
-        "index": "def_city",
+        "index": "def_inventory_landmark_city",
         "index_group_aggs": {
           "aggregates": [
             {
@@ -5723,11 +5708,11 @@ WHERE city is not null;</code></pre>
               "depends": [
                 0
               ],
-              "expr": "cover ((`travel-sample`.`city`))",
+              "expr": "cover ((`landmark`.`city`))",
               "id": 2,
               "keypos": 0
             }
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5744,22 +5729,22 @@ WHERE city is not null;</code></pre>
 <div class="title">Example 13. Count of a String Field</div>
 <div class="content">
 <div class="paragraph">
-<p>Find the number of cities entered in <code>travel-sample</code>.
-This example uses the <code>def_city</code> index that comes pre-installed and can be made by the statement:</p>
+<p>Find the number of cities entered in the <code>landmark</code> collection.
+This example uses the <code>def_inventory_landmark_city</code> index that comes pre-installed and can be made by the statement:</p>
 </div>
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_city ON `travel-sample`(city ASC);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/1d92794281b6751ab5f56571937126ac27bccba9/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_inventory_landmark_city ON `travel-sample`.inventory.landmark(city);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT COUNT(city) AS NumberOfCities
-FROM `travel-sample`
-use index (def_city)
-WHERE city is not null;</code></pre>
+FROM `travel-sample`.inventory.landmark
+USE INDEX (def_inventory_landmark_city)
+WHERE city IS NOT NULL;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5767,7 +5752,7 @@ WHERE city is not null;</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
   {
-    "NumberOfCities": 7341
+    "NumberOfCities": 4479
   }
 ]</code></pre>
 </div>
@@ -5784,26 +5769,27 @@ WHERE city is not null;</code></pre>
 <div class="title">Query</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT COUNT(city) AS NumberOfCities
-FROM `travel-sample`
-use index (def_city)
-WHERE city is not null;</code></pre>
+FROM `travel-sample`.inventory.landmark
+USE INDEX (def_inventory_landmark_city)
+WHERE city IS NOT NULL;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-count.json#L2-L24">{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "plan": {
     "#operator": "Sequence",
     "~children": [
       {
         "#operator": "IndexScan3", <i class="conum" data-value="1"></i><b>(1)</b>
+        "bucket": "travel-sample",
         "covers": [
-          "cover ((`travel-sample`.`city`))",
-          "cover ((meta(`travel-sample`).`id`))",
-          "cover (count(cover ((`travel-sample`.`city`))))"
+          "cover ((`landmark`.`city`))",
+          "cover ((meta(`landmark`).`id`))",
+          "cover (count(cover ((`landmark`.`city`))))"
         ],
-        "index": "def_city",
+        "index": "def_inventory_landmark_city",
         "index_group_aggs": {
           "aggregates": [
             {
@@ -5811,13 +5797,11 @@ WHERE city is not null;</code></pre>
               "depends": [
                 0
               ],
-              "expr": "cover ((`travel-sample`.`city`))",
+              "expr": "cover ((`landmark`.`city`))",
               "id": 2,
               "keypos": 0
             }
-...</code></pre>
-</div>
-</div>
+// ...</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -5827,6 +5811,8 @@ WHERE city is not null;</code></pre>
 <td>In Couchbase Server 5.5 and later, the index operator <code>IndexCountScan3</code> counts values so the Query Service does not need to do additional processing.</td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -5840,22 +5826,22 @@ WHERE city is not null;</code></pre>
 <div class="title">Example 15. Count Distinct of a String Field</div>
 <div class="content">
 <div class="paragraph">
-<p>Find the number of unique city names in <code>travel-sample</code>.
-This example uses the <code>def_city</code> index that comes pre-installed and can be made by the statement:</p>
+<p>Find the number of unique city names in the <code>landmark</code> collection.
+This example uses the <code>def_inventory_landmark_city</code> index that comes pre-installed and can be made by the statement:</p>
 </div>
 <div class="listingblock">
 <div class="title">Index</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_city ON `travel-sample`(city ASC);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/1d92794281b6751ab5f56571937126ac27bccba9/modules/learn/examples/services-and-indexes/indexes/pushdown-def-city.n1ql">CREATE INDEX def_inventory_landmark_city ON `travel-sample`.inventory.landmark(city);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Query</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT COUNT (DISTINCT city) AS NumberOfDistinctCities
-FROM `travel-sample`
-USE index (def_city)
-WHERE city is not null;</code></pre>
+FROM `travel-sample`.inventory.landmark
+USE index (def_inventory_landmark_city)
+WHERE city IS NOT NULL;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -5863,7 +5849,7 @@ WHERE city is not null;</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
   {
-    "NumberOfDistinctCities": 2301
+    "NumberOfDistinctCities": 625
   }
 ]</code></pre>
 </div>
@@ -5880,25 +5866,27 @@ WHERE city is not null;</code></pre>
 <div class="title">Query</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT COUNT (DISTINCT city) AS NumberOfDistinctCities
-FROM `travel-sample`
-use index (def_city)</code></pre>
+FROM `travel-sample`.inventory.landmark
+USE index (def_inventory_landmark_city)
+WHERE city IS NOT NULL;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/57e94bef9f17cf340e6b0977dcef03539968d2c1/modules/learn/examples/services-and-indexes/indexes/pushdown-distinct.json#L2-L25">{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "plan": {
     "#operator": "Sequence",
     "~children": [
       {
         "#operator": "IndexScan3", <i class="conum" data-value="1"></i><b>(1)</b>
+        "bucket": "travel-sample",
         "covers": [
-          "cover ((`travel-sample`.`city`))",
-          "cover ((meta(`travel-sample`).`id`))",
-          "cover (count(distinct cover ((`travel-sample`.`city`))))"
+          "cover ((`landmark`.`city`))",
+          "cover ((meta(`landmark`).`id`))",
+          "cover (count(DISTINCT cover ((`landmark`.`city`))))"
         ],
-        "index": "def_city",
+        "index": "def_inventory_landmark_city",
         "index_group_aggs": {
           "aggregates": [
             {
@@ -5907,13 +5895,11 @@ use index (def_city)</code></pre>
                 0
               ],
               "distinct": true,
-              "expr": "cover ((`travel-sample`.`city`))",
+              "expr": "cover ((`landmark`.`city`))",
               "id": 2,
               "keypos": 0
             }
-...</code></pre>
-</div>
-</div>
+// ...</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -5923,6 +5909,8 @@ use index (def_city)</code></pre>
 <td>In Couchbase Server 5.5 and later, the index operator <code>IndexCountScan3</code> counts distinct values so the Query Service does not need to do additional processing.</td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>

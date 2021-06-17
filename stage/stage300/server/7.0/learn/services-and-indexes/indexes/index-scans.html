@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/stage/stage300/server/6.6/learn/services-and-indexes/indexes/index-scans.html">
 <link rel="stylesheet" href="../../../../../_/css/site.css">
 <script src="../../../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="During query execution, when the index path is chosen, the query engine requests the scan by providing a range of values to return.">
+<meta name="description" content="This section discusses how index spans are generated from query predicates and provides a number of examples.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="server">
 <meta name="dcterms.identifier" content="7.0">
@@ -4572,8 +4572,7 @@ Couchbase Server
 <div class="sectionbody">
 <div class="quoteblock abstract">
 <blockquote>
-During query execution, when the index path is chosen, the query engine requests the scan by providing a range of values to return.
-This range is represented as a <em>span</em> in the query plan.
+During query execution, when the index path is chosen, the query engine requests the scan by providing a range of values to return.This range is represented as a <em>span</em> in the query plan.
 Index scans play a major role in optimizing the query plan generation and execution.
 This section discusses how index spans are generated from query predicates and provides a number of examples.
 </blockquote>
@@ -4606,9 +4605,8 @@ Because Couchbase is a modular clustered database, you scale out data, index, an
 Not all queries need to go through every phase, some go through many of these phases multiple times.
 For example, the Sort phase can be skipped when there is no ORDER BY clause in the query; and the Scan-Fetch-Join phases will execute multiple times for correlated subqueries.</p>
 </div>
-<div class="paragraph">
-<p><strong>Inside a Query Node</strong></p>
-</div>
+<div class="sect2">
+<h3 id="inside-a-query-node"><a class="anchor" href="#inside-a-query-node"></a>Inside a Query Node</h3>
 <div id="inside_a_query_node" class="imageblock">
 <div class="content">
 <img src="../../_images/services-and-indexes/indexes/query_service.svg" alt="query service" width="570">
@@ -4620,6 +4618,7 @@ When the Index path is chosen, query engine requests the scan by providing the r
 This range is represented as a SPAN in the query plan.
 The index spans will play major roles in optimal plan generation and execution.
 Here, we discuss how the Index spans are generated from the query predicates (filters).</p>
+</div>
 </div>
 </div>
 </div>
@@ -4651,13 +4650,15 @@ Spans simply express the predicates in terms of data ranges.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX idx_id ON `travel-sample`(`id`);
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX idx_airline_id ON `travel-sample`.inventory.airline(`id`);
 
-CREATE INDEX idx_name ON `travel-sample`(`name`);
+CREATE INDEX idx_airline_name ON `travel-sample`.inventory.airline(`name`);
 
-CREATE INDEX idx_s_d_airport_stops ON `travel-sample`(`sourceairport`, `destinationairport`, `stops`);
+CREATE INDEX idx_route_src_dst_stops
+ON `travel-sample`.inventory.route(sourceairport, destinationairport, stops);
 
-CREATE INDEX idx_sched ON `travel-sample`(DISTINCT ARRAY v.day FOR v IN schedule END) WHERE type = "route";</code></pre>
+CREATE INDEX idx_route_sched
+ON `travel-sample`.inventory.route(DISTINCT ARRAY v.day FOR v IN schedule END);</code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -4706,11 +4707,11 @@ CREATE INDEX idx_sched ON `travel-sample`(DISTINCT ARRAY v.day FOR v IN schedule
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN select meta().id from `travel-sample` where id = 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id = 10;</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>You can see the spans in the <code>IndexScan2</code> section of the Explain for the query:</p>
+<p>You can see the spans in the <code>IndexScan3</code> section of the Explain for the query:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4720,16 +4721,18 @@ CREATE INDEX idx_sched ON `travel-sample`(DISTINCT ARRAY v.day FOR v IN schedule
       "#operator": "Sequence",
       "~children": [
         {
-          "#operator": "IndexScan2",
+          "#operator": "IndexScan3",
+          "bucket": "travel-sample",
           "covers": [
-            "cover ((`travel-sample`.`id`))",
-            "cover ((meta(`travel-sample`).`id`))"
+            "cover ((`airline`.`id`))",
+            "cover ((meta(`airline`).`id`))"
           ],
-          "index": "idx_id",
-          "index_id": "82d78c149171c640",
-          "keyspace": "travel-sample",
+          "filter": "(cover ((`airline`.`id`)) = 10)",
+          "index": "idx_airline_id",
+          "index_id": "39cf9192429a6581",
+          "keyspace": "airline",
           "namespace": "default",
-
+          "scope": "inventory",
           "spans": [
             {
               "exact": true,
@@ -4742,8 +4745,7 @@ CREATE INDEX idx_sched ON `travel-sample`(DISTINCT ARRAY v.day FOR v IN schedule
               ]
             }
           ],
-
-           "using": "gsi"
+          "using": "gsi"
         },
         {
           "#operator": "Parallel",
@@ -4751,26 +4753,19 @@ CREATE INDEX idx_sched ON `travel-sample`(DISTINCT ARRAY v.day FOR v IN schedule
             "#operator": "Sequence",
             "~children": [
               {
-                "#operator": "Filter",
-                "condition": "(cover ((`travel-sample`.`id`)) = 10)"
-              },
-              {
                 "#operator": "InitialProject",
                 "result_terms": [
                   {
-                    "expr": "cover ((meta(`travel-sample`).`id`))"
+                    "expr": "cover ((meta(`airline`).`id`))"
                   }
                 ]
-              },
-              {
-                "#operator": "FinalProject"
               }
             ]
           }
         }
       ]
     },
-    "text": "select meta().id from `travel-sample` where id = 10;"
+    "text": "SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id = 10;"
   }
 ]</code></pre>
 </div>
@@ -4841,7 +4836,7 @@ If "Low" is missing, the scan starts with <code>MISSING</code>.</p>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id = 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id = 10;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4873,12 +4868,12 @@ If "Low" is missing, the scan starts with <code>MISSING</code>.</p>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id = 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id = 10;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -4891,7 +4886,7 @@ If "Low" is missing, the scan starts with <code>MISSING</code>.</p>
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -4901,7 +4896,7 @@ If "Low" is missing, the scan starts with <code>MISSING</code>.</p>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id &gt;= 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &gt;= 10;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4933,12 +4928,12 @@ If "Low" is missing, the scan starts with <code>MISSING</code>.</p>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id &gt;= 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &gt;= 10;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -4950,7 +4945,7 @@ If "Low" is missing, the scan starts with <code>MISSING</code>.</p>
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -4960,7 +4955,7 @@ If "Low" is missing, the scan starts with <code>MISSING</code>.</p>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id &gt; 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &gt; 10;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4992,12 +4987,12 @@ If "Low" is missing, the scan starts with <code>MISSING</code>.</p>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id &gt; 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &gt; 10;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -5009,7 +5004,7 @@ If "Low" is missing, the scan starts with <code>MISSING</code>.</p>
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5019,7 +5014,7 @@ If "Low" is missing, the scan starts with <code>MISSING</code>.</p>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id &lt;= 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &lt;= 10;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5052,12 +5047,12 @@ This query predicate doesn’t contain an explicit start value, so the start val
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id &lt;= 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &lt;= 10;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -5070,7 +5065,7 @@ This query predicate doesn’t contain an explicit start value, so the start val
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5080,7 +5075,7 @@ This query predicate doesn’t contain an explicit start value, so the start val
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id &lt; 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &lt; 10;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5113,12 +5108,12 @@ The query predicate doesn’t contain an explicit start value, so the start valu
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id &lt; 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &lt; 10;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -5131,7 +5126,7 @@ The query predicate doesn’t contain an explicit start value, so the start valu
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5141,7 +5136,7 @@ The query predicate doesn’t contain an explicit start value, so the start valu
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id &gt;= 10 AND id &lt; 25;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &gt;= 10 AND id &lt; 25;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5173,12 +5168,12 @@ The query predicate doesn’t contain an explicit start value, so the start valu
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id &gt;=10 AND id &lt; 25;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &gt;=10 AND id &lt; 25;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -5191,7 +5186,7 @@ The query predicate doesn’t contain an explicit start value, so the start valu
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5201,7 +5196,8 @@ The query predicate doesn’t contain an explicit start value, so the start valu
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id &gt;= 10 AND id &lt; 25 AND id &lt;= 20;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE id &gt;= 10 AND id &lt; 25 AND id &lt;= 20;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5233,12 +5229,13 @@ The query predicate doesn’t contain an explicit start value, so the start valu
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id &gt;=10 AND id &lt; 25 AND id &lt;= 20;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE id &gt;=10 AND id &lt; 25 AND id &lt;= 20;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -5251,7 +5248,7 @@ The query predicate doesn’t contain an explicit start value, so the start valu
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5333,7 +5330,7 @@ If this is too detailed for now, you can skip over to <a href="#ex8-and-makes-em
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id &gt; 10 AND id &lt; 5;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &gt; 10 AND id &lt; 5;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5369,12 +5366,12 @@ In this case, the start value is higher than the end value and will not produce 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id &gt; 10 AND id &lt; 5;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &gt; 10 AND id &lt; 5;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -5387,7 +5384,7 @@ In this case, the start value is higher than the end value and will not produce 
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5397,7 +5394,7 @@ In this case, the start value is higher than the end value and will not produce 
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id BETWEEN 10 AND 25;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id BETWEEN 10 AND 25;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5429,12 +5426,12 @@ In this case, the start value is higher than the end value and will not produce 
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id BETWEEN 10 AND 25;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id BETWEEN 10 AND 25;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -5447,7 +5444,7 @@ In this case, the start value is higher than the end value and will not produce 
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5457,7 +5454,7 @@ In this case, the start value is higher than the end value and will not produce 
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id = 10 OR id = 20;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id = 10 OR id = 20;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5496,12 +5493,12 @@ Duplicate ranges are eliminated, but overlaps are not eliminated.</p>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id = 10 OR id = 20;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id = 10 OR id = 20;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
             "spans": [
               {
                 "exact": true,
@@ -5524,7 +5521,7 @@ Duplicate ranges are eliminated, but overlaps are not eliminated.</p>
                 ]
               }
             ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5534,7 +5531,7 @@ Duplicate ranges are eliminated, but overlaps are not eliminated.</p>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id IN [10, 20];</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id IN [10, 20];</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5586,12 +5583,12 @@ If the number of elements exceed 8192, then the index service performs a full sc
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id IN [10, 20];</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id IN [10, 20];</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -5614,7 +5611,7 @@ If the number of elements exceed 8192, then the index service performs a full sc
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5624,7 +5621,9 @@ If the number of elements exceed 8192, then the index service performs a full sc
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE (id BETWEEN 10 AND 25) OR (id &gt; 50 AND id &lt;= 60);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE (id BETWEEN 10 AND 25)
+   OR (id &gt; 50 AND id &lt;= 60);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5662,12 +5661,14 @@ If the number of elements exceed 8192, then the index service performs a full sc
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE (id BETWEEN 10 AND 25) OR (id &gt; 50 AND id &lt;= 60);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE (id BETWEEN 10 AND 25)
+   OR (id &gt; 50 AND id &lt;= 60);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
             "spans": [
               {
                 "exact": true,
@@ -5690,7 +5691,7 @@ If the number of elements exceed 8192, then the index service performs a full sc
                 ]
               }
             ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5700,7 +5701,7 @@ If the number of elements exceed 8192, then the index service performs a full sc
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id &lt;&gt; 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &lt;&gt; 10;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5738,12 +5739,12 @@ If the number of elements exceed 8192, then the index service performs a full sc
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id &lt;&gt; 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &lt;&gt; 10;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
             "spans": [
               {
                 "exact": true,
@@ -5765,7 +5766,7 @@ If the number of elements exceed 8192, then the index service performs a full sc
                 ]
               }
             ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5775,7 +5776,8 @@ If the number of elements exceed 8192, then the index service performs a full sc
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE NOT (id &gt;= 10 AND id &lt; 25);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE NOT (id &gt;= 10 AND id &lt; 25);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5813,12 +5815,13 @@ If the number of elements exceed 8192, then the index service performs a full sc
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE NOT (id &gt;= 10 AND id &lt; 25);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE NOT (id &gt;= 10 AND id &lt; 25);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
             "spans": [
               {
                 "exact": true,
@@ -5840,7 +5843,7 @@ If the number of elements exceed 8192, then the index service performs a full sc
                 ]
               }
             ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5850,7 +5853,8 @@ If the number of elements exceed 8192, then the index service performs a full sc
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE name = "American Airlines";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE name = "American Airlines";</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5882,12 +5886,13 @@ If the number of elements exceed 8192, then the index service performs a full sc
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE name = "American Airlines";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE name = "American Airlines";</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
          "spans": [
             {
               "exact": true,
@@ -5900,7 +5905,7 @@ If the number of elements exceed 8192, then the index service performs a full sc
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5910,7 +5915,9 @@ If the number of elements exceed 8192, then the index service performs a full sc
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE name &gt;= "American Airlines" AND name &lt;= "United Airlines";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE name &gt;= "American Airlines"
+  AND name &lt;= "United Airlines";</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5942,14 +5949,14 @@ If the number of elements exceed 8192, then the index service performs a full sc
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline
   WHERE name &gt;= "American Airlines"
     AND name &lt;= "United Airlines";</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -5962,7 +5969,7 @@ If the number of elements exceed 8192, then the index service performs a full sc
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -5972,7 +5979,8 @@ If the number of elements exceed 8192, then the index service performs a full sc
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE name LIKE "American%";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE name LIKE "American%";</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6005,12 +6013,13 @@ In the LIKE predicate, the % means match with any number of any characters.</p>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE name LIKE "American%";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE name LIKE "American%";</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -6023,7 +6032,7 @@ In the LIKE predicate, the % means match with any number of any characters.</p>
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6033,7 +6042,8 @@ In the LIKE predicate, the % means match with any number of any characters.</p>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE name LIKE "%American%";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE name LIKE "%American%";</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6068,12 +6078,13 @@ In this LIKE predicate '%' is the leading portion of the string, so we can&#8217
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE name LIKE "%American%";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE name LIKE "%American%";</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "range": [
@@ -6085,7 +6096,7 @@ In this LIKE predicate '%' is the leading portion of the string, so we can&#8217
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6095,7 +6106,7 @@ In this LIKE predicate '%' is the leading portion of the string, so we can&#8217
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.route
 WHERE sourceairport = "SFO"
   AND destinationairport = "JFK"
   AND stops BETWEEN 0 AND 2;</code></pre>
@@ -6142,7 +6153,7 @@ WHERE sourceairport = "SFO"
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.route
 WHERE sourceairport = "SFO"
   AND destinationairport = "JFK"
   AND stops BETWEEN 0 AND 2;</code></pre>
@@ -6150,7 +6161,7 @@ WHERE sourceairport = "SFO"
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -6173,7 +6184,7 @@ WHERE sourceairport = "SFO"
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6183,7 +6194,7 @@ WHERE sourceairport = "SFO"
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id from `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.route
 WHERE sourceairport IN ["SFO", "SJC"]
   AND destinationairport = "JFK"
   AND stops = 0;</code></pre>
@@ -6233,7 +6244,7 @@ WHERE sourceairport IN ["SFO", "SJC"]
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.route
 WHERE sourceairport IN ["SFO", "SJC"]
   AND destinationairport = "JFK"
   AND stops = 0;</code></pre>
@@ -6241,7 +6252,7 @@ WHERE sourceairport IN ["SFO", "SJC"]
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -6284,7 +6295,7 @@ WHERE sourceairport IN ["SFO", "SJC"]
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6294,7 +6305,9 @@ WHERE sourceairport IN ["SFO", "SJC"]
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE sourceairport = "SFO" AND destinationairport = "JFK";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.route
+WHERE sourceairport = "SFO"
+  AND destinationairport = "JFK";</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6332,14 +6345,14 @@ WHERE sourceairport IN ["SFO", "SJC"]
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.route
 WHERE sourceairport = "SFO"
   AND destinationairport = "JFK";</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -6357,7 +6370,7 @@ WHERE sourceairport = "SFO"
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6367,7 +6380,7 @@ WHERE sourceairport = "SFO"
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.route
 WHERE sourceairport = "SFO"
   AND destinationairport = "JFK"
   AND stops &gt;= 0;</code></pre>
@@ -6414,7 +6427,7 @@ WHERE sourceairport = "SFO"
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.route
 WHERE sourceairport = "SFO"
   AND destinationairport = "JFK"
   AND stops &gt;= 0;</code></pre>
@@ -6422,7 +6435,7 @@ WHERE sourceairport = "SFO"
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -6444,7 +6457,7 @@ WHERE sourceairport = "SFO"
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6454,7 +6467,7 @@ WHERE sourceairport = "SFO"
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id = $1;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id = $1;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6486,12 +6499,12 @@ WHERE sourceairport = "SFO"
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id = $1;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id = $1;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -6504,7 +6517,7 @@ WHERE sourceairport = "SFO"
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6514,7 +6527,7 @@ WHERE sourceairport = "SFO"
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id &gt;= $1 AND id &lt; $2;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &gt;= $1 AND id &lt; $2;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6546,12 +6559,12 @@ WHERE sourceairport = "SFO"
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id &gt;= $1 AND id &lt; $2;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id &gt;= $1 AND id &lt; $2;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -6564,7 +6577,7 @@ WHERE sourceairport = "SFO"
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6574,7 +6587,7 @@ WHERE sourceairport = "SFO"
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id = $1 OR id &lt; $2;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id = $1 OR id &lt; $2;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6612,12 +6625,12 @@ WHERE sourceairport = "SFO"
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id = $1 OR id &lt; $2;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id = $1 OR id &lt; $2;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
             "spans": [
               {
                 "exact": true,
@@ -6640,7 +6653,7 @@ WHERE sourceairport = "SFO"
                 ]
               }
             ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6650,7 +6663,7 @@ WHERE sourceairport = "SFO"
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id IN [ $1, 10, $2] ;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id IN [ $1, 10, $2] ;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6688,14 +6701,15 @@ WHERE sourceairport = "SFO"
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id IN [$1, 10, $2];</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE id IN [$1, 10, $2];</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
             "spans": [
               {
+                "exact": true,
                 "range": [
                   {
                     "high": "$1",
@@ -6715,6 +6729,7 @@ WHERE sourceairport = "SFO"
                 ]
               },
               {
+                "exact": true,
                 "range": [
                   {
                     "high": "$2",
@@ -6724,7 +6739,7 @@ WHERE sourceairport = "SFO"
                 ]
               }
             ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6734,9 +6749,8 @@ WHERE sourceairport = "SFO"
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`
-WHERE type = "route"
-  AND ANY v IN schedule SATISFIES v.day = 0
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.route
+WHERE ANY v IN schedule SATISFIES v.day = 0
 END;</code></pre>
 </div>
 </div>
@@ -6769,15 +6783,14 @@ END;</code></pre>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`
-WHERE type = "route"
-  AND ANY v IN schedule SATISFIES v.day = 0
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.route
+WHERE ANY v IN schedule SATISFIES v.day = 0
 END;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
             "spans": [
               {
                 "exact": true,
@@ -6790,7 +6803,7 @@ END;</code></pre>
                 ]
               }
             ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6800,9 +6813,8 @@ END;</code></pre>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`
-WHERE type = "route"
-  AND ANY v IN schedule SATISFIES v.day IN [1,2,3]
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.route
+WHERE ANY v IN schedule SATISFIES v.day IN [1,2,3]
 END;</code></pre>
 </div>
 </div>
@@ -6841,15 +6853,14 @@ END;</code></pre>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`
-WHERE type = "route"
-  AND ANY v IN schedule SATISFIES v.day IN [1,2,3]
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.route
+WHERE ANY v IN schedule SATISFIES v.day IN [1,2,3]
 END;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
             "spans": [
               {
                 "exact": true,
@@ -6882,7 +6893,7 @@ END;</code></pre>
                 ]
               }
             ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -6904,7 +6915,7 @@ The following examples don&#8217;t have the right indexes, or the queries need t
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE abs(id) = 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline WHERE abs(id) = 10;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6936,12 +6947,12 @@ The following examples don&#8217;t have the right indexes, or the queries need t
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE abs(id) = 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline WHERE abs(id) = 10;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "range": [
@@ -6952,7 +6963,7 @@ The following examples don&#8217;t have the right indexes, or the queries need t
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -6962,11 +6973,11 @@ For better performance, create a new index as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">CREATE INDEX `idx_absid` ON `travel-sample`(abs(`id`));</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX `idx_airline_absid` ON `travel-sample`.inventory.airline(abs(`id`));</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>When index <code>idx_absid</code> is used, the predicate <code>abs(id) = 10</code> is pushed to index scan.</p>
+<p>When index <code>idx_airline_absid</code> is used, the predicate <code>abs(id) = 10</code> is pushed to index scan.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -6994,12 +7005,14 @@ For better performance, create a new index as follows:</p>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` USE INDEX (idx_absid) WHERE abs(id) = 10;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline
+USE INDEX (idx_airline_absid)
+WHERE abs(id) = 10;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
           "spans": [
             {
               "exact": true,
@@ -7012,7 +7025,7 @@ For better performance, create a new index as follows:</p>
               ]
             }
           ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
@@ -7022,7 +7035,9 @@ For better performance, create a new index as follows:</p>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample` WHERE id &lt;= 100 OR (id BETWEEN 50 AND 150);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE id &lt;= 100
+  OR (id BETWEEN 50 AND 150);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7060,12 +7075,14 @@ For better performance, create a new index as follows:</p>
 </table>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample` WHERE id &lt;= 100 OR (id BETWEEN 50 AND 150);</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT meta().id FROM `travel-sample`.inventory.airline
+WHERE id &lt;= 100
+  OR (id BETWEEN 50 AND 150);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">...
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">// ...
             "spans": [
               {
                 "exact": true,
@@ -7088,7 +7105,7 @@ For better performance, create a new index as follows:</p>
                 ]
               }
             ],
-...</code></pre>
+// ...</code></pre>
 </div>
 </div>
 </div>
