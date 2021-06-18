@@ -420,37 +420,55 @@
 <li class="nav-item " data-depth="3">
 
 <span class="nav-line "  data-depth="3">
-<a class="nav-link" href="#lbl-access">access(user, channel)</a>
+<a class="nav-link" href="sync-function-api-access-cmd.html">access()</a>
 </span>
 </li>
 <li class="nav-item " data-depth="3">
 
 <span class="nav-line "  data-depth="3">
-<a class="nav-link" href="#lbl-channel">channel()</a>
+<a class="nav-link" href="sync-function-api-channel-cmd.html">channel()</a>
 </span>
 </li>
 <li class="nav-item " data-depth="3">
 
 <span class="nav-line "  data-depth="3">
-<a class="nav-link" href="#lbl-require-access">requireAccess()</a>
+<a class="nav-link" href="sync-function-api-expiry-cmd.html">expiry()</a>
 </span>
 </li>
 <li class="nav-item " data-depth="3">
 
 <span class="nav-line "  data-depth="3">
-<a class="nav-link" href="#lbl-require-user">requireUser()</a>
+<a class="nav-link" href="sync-function-api-require-access-cmd.html">requireAccess()</a>
 </span>
 </li>
 <li class="nav-item " data-depth="3">
 
 <span class="nav-line "  data-depth="3">
-<a class="nav-link" href="#lbl-require-role">requireRole()</a>
+<a class="nav-link" href="sync-function-api-require-admin-cmd.html">requireAdmin()</a>
 </span>
 </li>
 <li class="nav-item " data-depth="3">
 
 <span class="nav-line "  data-depth="3">
-<a class="nav-link" href="#lbl-require-channel">requireChannel()role</a>
+<a class="nav-link" href="sync-function-api-require-role-cmd.html">requireRole()</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-function-api-require-user-cmd.html">requireUser()</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-function-api-role-cmd.html">role()</a>
+</span>
+</li>
+<li class="nav-item " data-depth="3">
+
+<span class="nav-line "  data-depth="3">
+<a class="nav-link" href="sync-function-api-throw-cmd.html">throw()</a>
 </span>
 </li>
 </ul>
@@ -928,7 +946,7 @@ The Sync Function is crucial to the security of data sync and replication. It is
 </blockquote>
 </div>
 <div class="paragraph">
-<p><em>Related access-control topics</em>:  <a href="access-control-concepts.html" class="page">Concepts</a>  |
+<p><em>Related  Topics</em>:  <a href="access-control-concepts.html" class="page">Concepts</a>  |
 <a href="access-control-how.html" class="page">How-to</a>  |
 Sync Function API</p>
 </div>
@@ -954,23 +972,33 @@ The sync function should be a focus of any security review of your application.
 </tr>
 </table>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="context"><a class="anchor" href="#context"></a>Context</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="context"><a class="anchor" href="#context"></a>Context</h3>
 <div class="paragraph">
 <p>Any changes to <a href="channels.html" class="page">Channels</a> and <a href="access.html" class="page">Access</a> made by the sync function are <em>tied to that revision</em>.
 If the document is later updated, the sync function is called again on the new revision, and the new channel assignments and user/channel access <em>replace</em> those from the first call.</p>
 </div>
+<div class="sect3">
+<h4 id="lbl-document-conflicts"><a class="anchor" href="#lbl-document-conflicts"></a>Conflicts</h4>
+<div class="paragraph">
+<p>If a document is in conflict there will be multiple current revisions.
+The default, "winning" one is the one whose channel assignments and access grants take effect.</p>
 </div>
 </div>
-<div class="sect1">
-<h2 id="use"><a class="anchor" href="#use"></a>Use</h2>
-<div class="sectionbody">
+<div class="sect3">
+<h4 id="lbl-handling-deletions"><a class="anchor" href="#lbl-handling-deletions"></a>Deletions</h4>
+<div class="paragraph">
+<p>Validation checks often need to treat deletions specially, because a deletion is just a revision with a <code>"_deleted": true</code> property and usually nothing else.
+Many types of validations won&#8217;t work on a deletion because of the missing properties&#8201;&#8212;&#8201;for example, a check for a required property, or a check that a property value doesn&#8217;t change.
+You&#8217;ll need to skip such checks if <code>doc._deleted</code> is true.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use"><a class="anchor" href="#use"></a>Use</h3>
 <div class="paragraph">
 <p>The Sync Function exposes a number of helper functions to control access&#8201;&#8212;&#8201;see reference information in <a href="sync-function-api.html" class="page">Sync Function API</a>.
-For example, to grant a user access to a channel use the <a href="#lbl-access">access(user, channel)</a> helper function in the Sync Function.</p>
+For example, to grant a user access to a channel use the <a href="sync-function-api-access-cmd.html" class="page">access()</a> helper function in the Sync Function.</p>
 </div>
 <div class="paragraph">
 <p>The <code>access()</code> function can also operate on roles.
@@ -990,10 +1018,8 @@ Because anonymous requests are authenticated as the user "GUEST", you can make a
 </table>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="get-started"><a class="anchor" href="#get-started"></a>Get Started</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="get-started"><a class="anchor" href="#get-started"></a>Get Started</h3>
 <div class="paragraph">
 <p>When you come to build your Sync Function you will need to decide the access control and document distribution requirements:</p>
 </div>
@@ -1115,13 +1141,13 @@ Because anonymous requests are authenticated as the user "GUEST", you can make a
 <div class="ulist">
 <ul>
 <li>
-<p><a href="#lbl-channel">channel()</a></p>
+<p><a href="sync-function-api-channel-cmd.html" class="page">channel()</a></p>
 </li>
 <li>
-<p><a href="#lbl-require-user">requireUser()</a></p>
+<p><a href="sync-function-api-require-user-cmd.html" class="page">requireUser()</a></p>
 </li>
 <li>
-<p><a href="#lbl-require-role">requireRole()</a></p>
+<p><a href="sync-function-api-require-role-cmd.html" class="page">requireRole()</a></p>
 </li>
 </ul>
 </div>
@@ -1132,6 +1158,7 @@ Because anonymous requests are authenticated as the user "GUEST", you can make a
 </div>
 <div class="paragraph">
 <p>If you don&#8217;t supply a sync function, Sync Gateway uses the <a href="configuration-schema-static.html#databases-this_db-sync" class="page">default Sync Function</a>.</p>
+</div>
 </div>
 </div>
 </div>
@@ -1222,12 +1249,54 @@ We use it to set the channel(s) we need to route this document to.</td>
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-channel"><a class="anchor" href="#lbl-channel"></a>channel(channelname)</h2>
+<h2 id="lbl-access"><a class="anchor" href="#lbl-access"></a>access()</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Use the <code>channel()</code> function to route the document to the named channel(s).
-It accepts one or more arguments, each of which must be a channel name string, or an array of strings.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Function</dt>
+<dd>
+<p>access(username, channelname)</p>
+</dd>
+</dl>
 </div>
+<div class="sect2">
+<h3 id="purpose"><a class="anchor" href="#purpose"></a>Purpose</h3>
+<div class="paragraph">
+<p>Use the <code>access()</code> function to grant a user access to a channel.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="arguments-2"><a class="anchor" href="#arguments-2"></a>Arguments</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Argument</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>username</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a string identifying a user, or an array of strings identifying multiple users; the function is applied to each user in the array.</p>
+<p class="tableblock">If the value resolves to null the function result is a no-op.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>channels</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Must be a string identifying a channel name, or an array of strings to specify multiple channel names (for example: <code>(['channel1', 'channel2'])</code>; the function is applied to each element in the array.</p>
+</div>
+<div class="paragraph">
+<p>If the value resolves to null the function result is a no-op.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1235,34 +1304,17 @@ It accepts one or more arguments, each of which must be a channel name string, o
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Channels don&#8217;t have to be predefined.<br>
-A channel implicitly comes into existence when a document is routed to it.
+As a convenience, the resolved value of either argument may be <code>null</code> or <code>undefined</code>, in which case nothing happens.
 </td>
 </tr>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="context-2"><a class="anchor" href="#context-2"></a>Context</h3>
 <div class="paragraph">
-<p>The channel function can be called zero or more times from the sync function, for any document.</p>
-</div>
-<div class="paragraph">
-<p>Routing changes have no effect until the document is actually saved in the database, so if the sync function first calls <code>channel()</code> or <code>access()</code>, but then rejects the update, the channel and access changes will not occur.</p>
-</div>
-<div class="exampleblock">
-<div class="title">Example 2. channel(channelname)</div>
-<div class="content">
-<div class="paragraph">
-<p>This example routes all "published" documents to the "public" channel:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) {
-   if (doc.published) {
-      channel("public");
-   }
-}</code></pre>
-</div>
-</div>
-</div>
+<p>You can invoke this function multiple times from within your Sync Function.
+But note that, invoking it multiple times to grant the same user access to the same channel, will result in negative performance implications.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1271,62 +1323,23 @@ A channel implicitly comes into existence when a document is routed to it.
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-As a convenience, it is legal to call <code>channel</code> with a <code>null</code> or <code>undefined</code> argument; it simply does nothing.
-This allows you to do something like <code>channel(doc.channels)</code> without having to first check whether <code>doc.channels</code> exists.
+Prefix the <code>username</code> argument value with <code>role:</code> to apply this function to a role rather than a user.
+This grants access to the specified channel(s) for all users assigned that role.
 </td>
 </tr>
 </table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-access"><a class="anchor" href="#lbl-access"></a>access(username, channelname)</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Documents can grant users access to channels.</p>
-</div>
-<div class="paragraph">
-<p>The <code>access()</code> function grants access to a channel to a specified user.
-It can be called multiple times from a sync function.</p>
-</div>
-<div class="paragraph">
-<p>The first argument can be an array of strings, in which case each user in the array is given access.
-The second argument can also be an array of strings, in which case the user(s) are given access to each channel in the array.
-As a convenience, either argument may be <code>null</code> or <code>undefined</code>, in which case nothing happens.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-If a user name begins with the prefix <code>role:</code>, the rest of the name is interpreted as a role rather than a user.
-The call then grants access to the specified channels for all users with that role.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>You can use the <em>all channels</em> wildcard ('<strong>*</strong>') to grant the user access to all documents in all channels.</p>
 </div>
 <div class="paragraph">
 <p>The effects of all access calls by all active documents are effectively combined in a union, so if <em>any</em> document grants a user access to a channel, that user has access to the channel.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Calling <code>access(username, channelname)</code> multiple times to grant the same user access to the same channel will result in negative performance implications.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>You can use the <em>all channels</em> wildcard ('<strong>*</strong>') to grant the user access to all documents in all channels.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="use-2"><a class="anchor" href="#use-2"></a>Use</h3>
 <div class="exampleblock">
-<div class="title">Example 3. access(username, channel)</div>
+<div class="title">Example 2. access(username, channel)</div>
 <div class="content">
 <div class="paragraph">
 <p>This example shows some valid ways to call <code>access()</code>:</p>
@@ -1361,7 +1374,7 @@ access ("snej", null);</code></pre>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>These are no-ops</td>
+<td>The null arguments mean these are treated as no-ops</td>
 </tr>
 </table>
 </div>
@@ -1369,9 +1382,118 @@ access ("snej", null);</code></pre>
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="lbl-role"><a class="anchor" href="#lbl-role"></a>role(username, rolename)</h2>
+<h2 id="lbl-channel"><a class="anchor" href="#lbl-channel"></a>channel()</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="function-call"><a class="anchor" href="#function-call"></a>Function Call</h3>
+<div class="paragraph">
+<p>channel(channelname)</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="purpose-2"><a class="anchor" href="#purpose-2"></a>Purpose</h3>
+<div class="paragraph">
+<p>Use the <code>channel()</code> function to route the document to the named channel(s).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="arguments-3"><a class="anchor" href="#arguments-3"></a>Arguments</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Argument</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>channels</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Must be a string identifying a channel name, or an array of strings to specify multiple channel names (for example: <code>(['channel1', 'channel2'])</code>; the function is applied to each element in the array.</p>
+</div>
+<div class="paragraph">
+<p>If the value resolves to null the function result is a no-op.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="context-3"><a class="anchor" href="#context-3"></a>Context</h3>
+<div class="paragraph">
+<p>The channel function can be called zero or more times from the sync function, for any document.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Channels don&#8217;t have to be predefined.<br>
+A channel implicitly comes into existence when a document is routed to it.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Routing changes have no effect until the document is actually saved in the database, so if the sync function first calls <code>channel()</code> or <code>access()</code>, but then rejects the update, the channel and access changes will not occur.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+As a convenience, it is legal to call <code>channel</code> with a <code>null</code> or <code>undefined</code> argument; it simply does nothing.<br>
+This allows you to do something like <code>channel(doc.channels)</code> without having to first check whether <code>doc.channels</code> exists.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-3"><a class="anchor" href="#use-3"></a>Use</h3>
+<div class="exampleblock">
+<div class="title">Example 3. channel(channelname)</div>
+<div class="content">
+<div class="paragraph">
+<p>This example routes all "published" documents to the "public" channel:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) {
+   if (doc.published) {
+      channel("public");
+   }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-role"><a class="anchor" href="#lbl-role"></a>role()</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Function</dt>
+<dd>
+<p>role(username, rolename)</p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="lbl-role"><a class="anchor" href="#lbl-role"></a>Purpose</h3>
 <div class="paragraph">
 <p>Use the <code>role()</code> function to add a role to a user.
 This indirectly gives them access to any channels assigned to that role.</p>
@@ -1388,28 +1510,48 @@ Roles, like users, have to be explicitly created by an administrator.
 </tr>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="arguments-4"><a class="anchor" href="#arguments-4"></a>Arguments</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Argument</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rolename</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Must be a string identifying a role, or an array of strings identifying multiple roles; the function is applied to each role in the array.</p>
+</div>
+<div class="paragraph">
+<p>If the value resolves to null the function result is a no-op.</p>
+</div>
+<div class="paragraph">
+<p><strong>Note</strong>&#8201;&#8212;&#8201;Role names must always be prefixed with <code>role:</code>; an exception is thrown if a role name doesn&#8217;t conform with this rule..</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>username</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a string identifying a user, or an array of strings identifying multiple users; the function is applied to each user in the array.</p>
+<p class="tableblock">If the value resolves to null the function result is a no-op.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="context-4"><a class="anchor" href="#context-4"></a>Context</h3>
 <div class="paragraph">
 <p>This function affects the user&#8217;s ability to revise documents, if the access function requires role membership to validate certain types of changes.
-Its use is similar to <code>access</code>&#8201;&#8212;&#8201;the value of either parameter can be a string, an array of strings, or null.
-If the value is null, the call is a no-op.</p>
-</div>
-<div class="paragraph">
-<p>For consistency with the <code>access</code> call, role names must always be prefixed with <code>role:</code>.
-An exception is thrown if a role name doesn&#8217;t match this.
-Some examples:</p>
-</div>
-<div class="exampleblock">
-<div class="title">Example 4. role(username, rolename)</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">role ("jchris", "role:admin");
-role ("jchris", ["role:portlandians", "role:portlandians-owners"]);
-role (["snej", "jchris", "traun"], "role:mobile");
-role ("ed", null);  // no-op</code></pre>
-</div>
-</div>
-</div>
+Its use is similar to <code>access</code>.</p>
 </div>
 <div class="paragraph">
 <p>Nonexistent roles don&#8217;t cause an error, but have no effect on the user&#8217;s access privileges.</p>
@@ -1428,115 +1570,336 @@ As soon as a role is created, any pre-existing references to it take effect.
 </table>
 </div>
 </div>
+<div class="sect2">
+<h3 id="use-4"><a class="anchor" href="#use-4"></a>Use</h3>
+<div class="exampleblock">
+<div class="title">Example 4. role(username, rolename)</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">role ("jchris", "role:admin"); <i class="conum" data-value="1"></i><b>(1)</b>
+role ("jchris", ["role:portlandians", "role:portlandians-owners"]); <i class="conum" data-value="2"></i><b>(2)</b>
+role (["snej", "jchris", "traun"], "role:mobile"); <i class="conum" data-value="3"></i><b>(3)</b>
+role ("ed", null);  <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The role <code>admin</code> is assigned to the user</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Both the named roles are assigned to the user</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The role <code>mobile</code> is assigned to all the named users</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>No op</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="sect1">
-<h2 id="lbl-require-user"><a class="anchor" href="#lbl-require-user"></a>requireUser(username)</h2>
+<h2 id="lbl-require-user"><a class="anchor" href="#lbl-require-user"></a>requireUser()</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Use the <code>requireUser()</code> function to reject document updates that are not made by the specified user or users, as shown in the <a href="#ex-requireuser">Example 5</a>.</p>
+<div id="lbl-require-user" class="dlist">
+<dl>
+<dt class="hdlist1">Function</dt>
+<dd>
+<p>requireUser(username)</p>
+</dd>
+</dl>
 </div>
+<div class="sect2">
+<h3 id="purpose-3"><a class="anchor" href="#purpose-3"></a>Purpose</h3>
+<div class="paragraph">
+<p>Use the <code>requireUser()</code> function to reject document updates that are not made by the specified user or users.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="arguments-5"><a class="anchor" href="#arguments-5"></a>Arguments</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Argument</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>username</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a string identifying a user, or an array of strings identifying multiple users; the function is applied to each user in the array.</p>
+<p class="tableblock">If the value resolves to null the function result is a no-op.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="context-5"><a class="anchor" href="#context-5"></a>Context</h3>
+<div class="paragraph">
+<p>The function signals rejection by throwing an exception, so the rest of the sync function will not be run.</p>
+</div>
+<div class="paragraph">
+<p>When validating a document, you should treat all properties of the <code>doc</code> parameter as <em>untrusted</em>. That is because it <strong>is</strong> the object that you&#8217;re validating.
+This may sound obvious, but it can be easy to make mistakes, like calling <code>requireUser(doc.owners)</code> instead of <code>requireUser(oldDoc.owners)</code>.</p>
+</div>
+<div class="paragraph">
+<p>When using one document property to validate another, look up that property in <code>oldDoc</code>, not <code>doc</code>!</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-5"><a class="anchor" href="#use-5"></a>Use</h3>
 <div id="ex-requireuser" class="exampleblock">
 <div class="title">Example 5. requireUser(username)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// Throw an error if username is not "snej":
-requireUser("snej");
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">requireUser("snej"); <i class="conum" data-value="1"></i><b>(1)</b>
 
-// Throw an error if username is not in the list:
 requireUser(["snej", "jchris", "tleyden"]);</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Throw an error if the user is not "snej":</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Throw an error if user&#8217;s name is not in the list <code>username</code></td>
+</tr>
+</table>
 </div>
 </div>
-<div class="paragraph">
-<p>The function signals rejection by throwing an exception, so the rest of the sync function will not be run.</p>
 </div>
-<div class="paragraph">
-<p>Treat all properties of the <code>doc</code> parameter as <em>untrusted</em>; this <strong>is</strong> the object that you&#8217;re validating.
-This may sound obvious, but it can be easy to make mistakes, like calling <code>requireUser(doc.owners)</code> instead of <code>requireUser(oldDoc.owners)</code>.
-When using one document property to validate another, look up that property in <code>oldDoc</code>, not <code>doc</code>!</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-require-role"><a class="anchor" href="#lbl-require-role"></a>requireRole(rolename)</h2>
+<h2 id="lbl-require-role"><a class="anchor" href="#lbl-require-role"></a>requireRole()</h2>
 <div class="sectionbody">
+<div id="lbl-require-role" class="dlist">
+<dl>
+<dt class="hdlist1">Function</dt>
+<dd>
+<p>requireRole(rolename)</p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="purpose-4"><a class="anchor" href="#purpose-4"></a>Purpose</h3>
 <div class="paragraph">
 <p>Use the <code>requireRole()</code> function to reject document updates that are not made by user with the specified role or roles, as shown in <a href="#ex-requirerole">Example 6</a>.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="arguments-6"><a class="anchor" href="#arguments-6"></a>Arguments</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Argument</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rolename</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Must be a string identifying a role, or an array of strings identifying multiple roles; the function is applied to each role in the array.</p>
+</div>
+<div class="paragraph">
+<p>If the value resolves to null the function result is a no-op.</p>
+</div>
+<div class="paragraph">
+<p><strong>Note</strong>&#8201;&#8212;&#8201;Role names must always be prefixed with <code>role:</code>; an exception is thrown if a role name doesn&#8217;t conform with this rule..</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="context-6"><a class="anchor" href="#context-6"></a>Context</h3>
+<div class="paragraph">
+<p>The function requires that the user has at least one of the specified roles.
+If that is not the case it signals rejection by throwing an exception.
+The rest of the sync function will not be run.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-6"><a class="anchor" href="#use-6"></a>Use</h3>
 <div id="ex-requirerole" class="exampleblock">
 <div class="title">Example 6. requireRole(rolename)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// Throw an error unless the user has the "admin" role:
-requireRole("admin");
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">requireRole("admin"); <i class="conum" data-value="1"></i><b>(1)</b>
 
-// Throw an error unless the user has one or more of those roles:
-requireRole(["admin", "old-timer"]);</code></pre>
+requireRole(["admin", "old-timer"]); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Throw an error unless the user has the "admin" role:</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Throw an error unless the user has one or more of those roles:</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
-</div>
-<div class="paragraph">
-<p>The argument may be a single role name, or an array of role names.
-In the latter case, the user making the change must have one or more of the given roles.</p>
-</div>
-<div class="paragraph">
-<p>The function signals rejection by throwing an exception, so the rest of the sync function will not be run.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-require-access"><a class="anchor" href="#lbl-require-access"></a>requireAccess(channels)</h2>
+<h2 id="lbl-require-access"><a class="anchor" href="#lbl-require-access"></a>requireAccess()</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Use the <code>requireAccess()</code> function to reject document updates that are not made by the a user with access to at least one of the given channels, as shown in <a href="#ex-requirechannel">Example 7</a></p>
+<div id="lbl-require-access" class="dlist">
+<dl>
+<dt class="hdlist1">Function</dt>
+<dd>
+<p>requireAccess(channels)</p>
+</dd>
+</dl>
 </div>
+<div class="sect2">
+<h3 id="purpose-5"><a class="anchor" href="#purpose-5"></a>Purpose</h3>
+<div class="paragraph">
+<p>Use the <code>requireAccess()</code> function to reject document updates that are not made by the a user with access to at least one of the given channels, as shown in <a href="#ex-requireaccess">Example 7</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="arguments-7"><a class="anchor" href="#arguments-7"></a>Arguments</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Argument</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>channels</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Must be a string identifying a channel name, or an array of strings to specify multiple channel names (for example: <code>(['channel1', 'channel2'])</code>; the function is applied to each element in the array.</p>
+</div>
+<div class="paragraph">
+<p>If the value resolves to null the function result is a no-op.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="context-7"><a class="anchor" href="#context-7"></a>Context</h3>
 <div class="paragraph">
 <p>The function signals rejection by throwing an exception, so the rest of the sync function will not be run.</p>
 </div>
 <div class="paragraph">
-<p>You can specify multiple channel names, for example:<br>
-<code>requireAccess('any channel name', '*')'</code></p>
+<p>Note that <code>requireAccess()</code> will only recognize grants made explicitly using a channel name (not by a wildcard).</p>
 </div>
-<div id="ex-requirechannel" class="exampleblock">
-<div class="title">Example 7. requireRole(rolename)</div>
+<div class="paragraph">
+<p>So, if a user was granted access using only the <a href="channels.html#lbl-all-channels" class="page">all channels wildcard</a>] (<code>*</code>), then <code>requireAccess('anychannelname')'</code> will fail because the user wasn&#8217;t granted access to that channel (only to the <code>*</code> channel).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-7"><a class="anchor" href="#use-7"></a>Use</h3>
+<div id="ex-requireaccess" class="exampleblock">
+<div class="title">Example 7. requireAccess(channels)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// Throw an exception unless the user has access to read the "events" channel:
-requireAccess("events");
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">requireAccess("events"); <i class="conum" data-value="1"></i><b>(1)</b>
 
-// Throw an exception unless the user can read one of the channels in the
-// previous revision's "channels" property:
 if (oldDoc) {
-    requireAccess(oldDoc.channels);
+    requireAccess(oldDoc.channels); <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Throw an exception unless the user has access to read the "events" channel:</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Throw an exception unless the user can read one of the channels in the previous revision&#8217;s <code>channels</code> property:</td>
+</tr>
+</table>
 </div>
 </div>
-<div class="paragraph">
-<p>NOTE&#8201;&#8212;&#8201;requireAccess() will only recognize grants made explicitly using a channel name (not by wildcard).
-So, if a user was granted access using only the <a href="channels.html#lbl-all-channels" class="page">all channels wildcard</a>] (<code>*</code>), then <code>requireAccess('any channel name')'</code> will fail because the user wasn&#8217;t granted access to that channel (only to the <code>*</code> channel).</p>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="lbl-require-admin"><a class="anchor" href="#lbl-require-admin"></a>requireAdmin()</h2>
 <div class="sectionbody">
+<div id="lbl-require-admin" class="dlist">
+<dl>
+<dt class="hdlist1">Function</dt>
+<dd>
+<p>requireAdmin()</p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="purpose-6"><a class="anchor" href="#purpose-6"></a>Purpose</h3>
 <div class="paragraph">
 <p>Use the <code>requireAdmin()</code> function to reject document updates that are not made by the Sync Gateway Admin REST API.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="arguments-8"><a class="anchor" href="#arguments-8"></a>Arguments</h3>
+<div class="paragraph">
+<p>There are no arguments.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-8"><a class="anchor" href="#use-8"></a>Use</h3>
 <div class="exampleblock">
 <div class="title">Example 8. requireadmin</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// Throw an exception unless the request is sent to the Admin REST API
-requireAdmin();</code></pre>
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">requireAdmin(); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Throw an exception unless the request is sent to the Admin REST API</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -1546,12 +1909,44 @@ requireAdmin();</code></pre>
 <div class="sect1">
 <h2 id="lbl-throw"><a class="anchor" href="#lbl-throw"></a>throw()</h2>
 <div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Function</dt>
+<dd>
+<p>throw()</p>
+</dd>
+</dl>
+</div>
+<div class="sect2">
+<h3 id="purpose-7"><a class="anchor" href="#purpose-7"></a>Purpose</h3>
+<div class="paragraph">
+<p>Use <code>throw()</code> to prevent a document from persisting or syncing to any other users.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="arguments-9"><a class="anchor" href="#arguments-9"></a>Arguments</h3>
+<div class="paragraph">
+<p>No arguments</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="context-8"><a class="anchor" href="#context-8"></a>Context</h3>
 <div class="paragraph">
 <p>You enforce the validity of document structure by checking the necessary constraints and throwing an exception if they&#8217;re not met.</p>
 </div>
 <div class="paragraph">
-<p>Use <code>throw()</code> to prevent a document from persisting or syncing to any other users by including an error object containing the <code>forbidden</code>: property&#8201;&#8212;&#8201;see &lt;&lt;&gt;&gt;</p>
+<p>In validating a document, you&#8217;ll often need to compare the new revision to the old one, to check for illegal changes in state.
+For example, some properties may be immutable after the document is created, or may be changeable only by certain users, or may only be allowed to change in certain ways.
+That&#8217;s why the current document contents are given to the sync function, as the <code>oldDoc</code> parameter.</p>
 </div>
+<div class="paragraph">
+<p>We recommend that you not create invalid documents in the first place.
+As much as possible, your app logic and validation function should prevent invalid documents from being created locally.
+The server-side sync function validation should be seen as a fail-safe and a guard against malicious access.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-9"><a class="anchor" href="#use-9"></a>Use</h3>
 <div id="ex-throw" class="exampleblock">
 <div class="title">Example 9. throw(forbidden:)</div>
 <div class="content">
@@ -1573,88 +1968,144 @@ This is the preferred way to reject an update.</p>
 </div>
 </div>
 </div>
-<div class="paragraph">
-<p>In validating a document, you&#8217;ll often need to compare the new revision to the old one, to check for illegal changes in state.
-For example, some properties may be immutable after the document is created, or may be changeable only by certain users, or may only be allowed to change in certain ways.
-That&#8217;s why the current document contents are given to the sync function, as the <code>oldDoc</code> parameter.</p>
-</div>
-<div class="paragraph">
-<p>We recommend that you not create invalid documents in the first place.
-As much as possible, your app logic and validation function should prevent invalid documents from being created locally.
-The server-side sync function validation should be seen as a fail-safe and a guard against malicious access.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-expiry"><a class="anchor" href="#lbl-expiry"></a>expiry(value)</h2>
+<h2 id="lbl-expiry"><a class="anchor" href="#lbl-expiry"></a>expiry()</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Calling <code>expiry(value)</code> from within the sync function will set the expiry value (TTL) on the document.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Function</dt>
+<dd>
+<p>expiry(value)</p>
+</dd>
+</dl>
 </div>
+<div class="sect2">
+<h3 id="purpose-8"><a class="anchor" href="#purpose-8"></a>Purpose</h3>
+<div class="paragraph">
+<p>Use <code>expiry(value)</code> to set the expiry value (TTL) on the document.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="arguments-10"><a class="anchor" href="#arguments-10"></a>Arguments</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Argument</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>value</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>The <code>value</code> can be specified in two ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>As an <strong>ISO-8601 format:</strong> date string&#8201;&#8212;&#8201;or example the 6th of July 2016 at 17:00 in the BST timezone would be <code>2016-07-06T17:00:00+01:00</code>;</p>
+</li>
+<li>
+<p>As a numeric Couchbase Server expiry value <sup>1</sup></p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><sup>1</sup> Couchbase Server expiries are specified as Unix time, and if the desired TTL is below 30 days then it can also represent an interval in seconds from the current time (for example, a value of 5 will remove the document 5 seconds after it is written to Couchbase Server).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="context-9"><a class="anchor" href="#context-9"></a>Context</h3>
+<div class="paragraph">
+<p>Under the hood, the expiration time is set and managed on the Couchbase Server document (TTL is not supported for databases in walrus mode).</p>
+</div>
+<div class="sect3">
+<h4 id="impact"><a class="anchor" href="#impact"></a>Impact</h4>
+<div class="paragraph">
+<p>The impact on the resulting document when the expiry value is reached depends on the setting of shared-bucket-access:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Enabled</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The <strong>active</strong> revision of the document is tombstoned.</p>
+</div>
+<div class="paragraph">
+<p>If there is another non-tombstoned revision for this document (i.e a conflict) it will become the active revision.</p>
+</div>
+<div class="paragraph">
+<p>The tombstoned revision will be purged when the server&#8217;s metadata purge interval is reached.</p>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">Disabled</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The document will be purged from the database.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>As with the existing explicit purge mechanism, this applies only to the local database; it has nothing to do with replication.</p>
+</div>
+<div class="paragraph">
+<p>This expiration time is not propagated when the document is replicated.</p>
+</div>
+<div class="paragraph">
+<p>The purge of the document does not cause it to be deleted on any other database.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="inspect-a-document-expiry-value"><a class="anchor" href="#inspect-a-document-expiry-value"></a>Inspect a Document Expiry Value</h4>
+<div class="paragraph">
+<p>You can retrieve a document&#8217;s expiration time, as it is returned in the response of GET <a href="rest-api.html##/document/get<em>db</em><em>doc</em>" class="page">+/\{db/{doc}</a> use <code>show_exp=true</code> as the querystring.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X GET "http://localhost:4985/ourdb/ourdoc?show_exp=true" -H "accept: application/json"</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-10"><a class="anchor" href="#use-10"></a>Use</h3>
 <div class="exampleblock">
 <div class="title">Example 10. expiry(value)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">expiry("2018-07-06T17:00:00+01:00")</code></pre>
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">expiry("2022-06-23T05:00:00+01:00") <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Sets the expiry date to 5am on the 23rd June 2022.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
-</div>
-<div class="paragraph">
-<p>Under the hood, the expiration time is set and managed on the Couchbase Server document (TTL is not supported for databases in walrus mode). The value can be specified in two ways:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>ISO-8601 format:</strong> for example the 6th of July 2016 at 17:00 in the BST timezone would be <code>2016-07-06T17:00:00+01:00</code>;</p>
-</li>
-<li>
-<p><strong>as a numeric Couchbase Server expiry value:</strong> Couchbase Server expiries are specified as Unix time, and if the desired TTL is below 30 days then it can also represent an interval in seconds from the current time (for example, a value of 5 will remove the document 5 seconds after it is written to Couchbase Server).
-The document expiration time is returned in the response of GET <a href="rest-api.html#/document/get__db___doc_" class="page">/\{tkn-db}/\{doc}</a> when <code>show_exp=true</code> is included in the querystring.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The behavior on the resulting document when the expiry value is reached depends on the following:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">if <a href="sync-with-couchbase-server.html" class="page">Mobile-Web Data Sync</a> is enabled</dt>
-<dd>
-<p>The <strong>active</strong> revision of the document is tombstoned.
-If there is another non-tombstoned revision for this document (i.e a conflict) it will become the active revision.
-The tombstoned revision will be purged when the server&#8217;s metadata purge interval is reached.</p>
-</dd>
-<dt class="hdlist1">if <a href="sync-with-couchbase-server.html" class="page">Mobile-Web Data Sync</a> is disabled</dt>
-<dd>
-<p>The document will be purged from the database.</p>
-</dd>
-</dl>
-</div>
-<div class="paragraph">
-<p>As with the existing explicit purge mechanism, this applies only to the local database; it has nothing to do with replication.
-This expiration time is not propagated when the document is replicated.
-The purge of the document does not cause it to be deleted on any other database.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-document-conflicts"><a class="anchor" href="#lbl-document-conflicts"></a>Conflicts</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>If a document is in conflict there will be multiple current revisions.
-The default, "winning" one is the one whose channel assignments and access grants take effect.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-handling-deletions"><a class="anchor" href="#lbl-handling-deletions"></a>Deletions</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Validation checks often need to treat deletions specially, because a deletion is just a revision with a <code>"_deleted": true</code> property and usually nothing else.
-Many types of validations won&#8217;t work on a deletion because of the missing properties&#8201;&#8212;&#8201;for example, a check for a required property, or a check that a property value doesn&#8217;t change.
-You&#8217;ll need to skip such checks if <code>doc._deleted</code> is true.</p>
 </div>
 </div>
 </div>
