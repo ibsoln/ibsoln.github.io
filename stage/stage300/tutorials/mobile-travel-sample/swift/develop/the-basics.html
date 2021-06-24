@@ -10,7 +10,7 @@
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="tutorials">
 <meta name="dcterms.identifier" content="master">
-<meta name="generator" content="Antora 2.3.3">
+<meta name="generator" content="Antora 3.0.0-alpha.5">
 <link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
 </head>
 <body class="article">
@@ -749,7 +749,7 @@ We will review the <code>func openOrCreateDatabaseForGuest( handler:(_ error:Err
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>func openOrCreateDatabaseForGuest( handler:(_ error:Error?)-&gt;Void) {
+<pre class="highlightjs highlight"><code class="language-none hljs">func openOrCreateDatabaseForGuest( handler:(_ error:Error?)-&gt;Void) {
   ...
 }</code></pre>
 </div>
@@ -759,7 +759,7 @@ We will review the <code>func openOrCreateDatabaseForGuest( handler:(_ error:Err
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>var options = DatabaseConfiguration()
+<pre class="highlightjs highlight"><code class="language-none hljs">var options = DatabaseConfiguration()
 guard let defaultDBPath = _applicationSupportDirectory else {
     fatalError("Could not open Application Support Directory for app!")
   return
@@ -783,7 +783,7 @@ options.directory = guestFolderPath</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>// Gets handle to existing DB at specified path
+<pre class="highlightjs highlight"><code class="language-none hljs">// Gets handle to existing DB at specified path
 _db = try Database(name: kGuestDBName, config: options)</code></pre>
 </div>
 </div>
@@ -844,7 +844,7 @@ We will review the <code>func bookmarkHotels(_ hotels: Hotels, handler:@escaping
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>func bookmarkHotels(_ hotels: Hotels, handler:@escaping( _ error:Error?)-&gt;Void) {
+<pre class="highlightjs highlight"><code class="language-none hljs">func bookmarkHotels(_ hotels: Hotels, handler:@escaping( _ error:Error?)-&gt;Void) {
     ...
 }</code></pre>
 </div>
@@ -854,7 +854,7 @@ We will review the <code>func bookmarkHotels(_ hotels: Hotels, handler:@escaping
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>guard let db = dbMgr.db else {
+<pre class="highlightjs highlight"><code class="language-none hljs">guard let db = dbMgr.db else {
      handler(TravelSampleError.DatabaseNotInitialized)
   return
 }</code></pre>
@@ -870,7 +870,7 @@ We will examine the Query API in a future lesson.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>var document = try fetchGuestBookmarkDocumentFromDB(db)?.toMutable()
+<pre class="highlightjs highlight"><code class="language-none hljs">var document = try fetchGuestBookmarkDocumentFromDB(db)?.toMutable()
 
 if document == nil {
   // First time bookmark is created for guest account
@@ -885,7 +885,7 @@ if document == nil {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>// Get the Ids of all hotels that need to be bookmarked
+<pre class="highlightjs highlight"><code class="language-none hljs">// Get the Ids of all hotels that need to be bookmarked
 let ids:[String] = hotels.map({ (dict)  in
   if let idVal = dict["id"] as? String {
       return idVal
@@ -907,7 +907,7 @@ for newId in ids {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>// Update and save the "bookmarkedhotels" document
+<pre class="highlightjs highlight"><code class="language-none hljs">// Update and save the "bookmarkedhotels" document
 if let document = document?.toMutable() {
   // Update and save the bookmark document
   document.setArray(bookmarked, forKey: "hotels")
@@ -924,7 +924,7 @@ If not, create a new hotel document.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>// Add the hotel details documents
+<pre class="highlightjs highlight"><code class="language-none hljs">// Add the hotel details documents
 for hotelDoc in hotels {
   if let idVal = hotelDoc["id"] as? String {
       if let doc = db.document(withID: idVal)?.toMutable() {
@@ -1000,7 +1000,7 @@ We will review the <code>func unbookmarkHotels(_ hotels: Hotels, handler:@escapi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>func unbookmarkHotels(_ hotels: Hotels, handler:@escaping( _ error:Error?)-&gt;Void) {
+<pre class="highlightjs highlight"><code class="language-none hljs">func unbookmarkHotels(_ hotels: Hotels, handler:@escaping( _ error:Error?)-&gt;Void) {
   ...
 }</code></pre>
 </div>
@@ -1014,7 +1014,7 @@ That&#8217;s what the code below is doing.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>// Remove unbookmarked hotel documents
+<pre class="highlightjs highlight"><code class="language-none hljs">// Remove unbookmarked hotel documents
 for idOfDocToRemove in idsToRemove {
   if let doc = db.document(withID: idOfDocToRemove) {
       try db.deleteDocument(doc)

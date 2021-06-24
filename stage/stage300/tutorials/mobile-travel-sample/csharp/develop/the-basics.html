@@ -10,7 +10,7 @@
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="tutorials">
 <meta name="dcterms.identifier" content="master">
-<meta name="generator" content="Antora 2.3.3">
+<meta name="generator" content="Antora 3.0.0-alpha.5">
 <link rel="icon" href="../../../../_/img/favicon.ico" type="image/x-icon">
 </head>
 <body class="article">
@@ -749,7 +749,7 @@ We will review the <code>Task&lt;CouchbaseSession&gt; StartSessionAsync(string u
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>public async Task&lt;CouchbaseSession&gt; StartSessionAsync(string username, string password) {
+<pre class="highlightjs highlight"><code class="language-none hljs">public async Task&lt;CouchbaseSession&gt; StartSessionAsync(string username, string password) {
   ...
 }</code></pre>
 </div>
@@ -760,7 +760,7 @@ Note the use of the service provider to find the default directory for the platf
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>var options = new DatabaseConfiguration();
+<pre class="highlightjs highlight"><code class="language-none hljs">var options = new DatabaseConfiguration();
 
 // Borrow this functionality from Couchbase Lite
 var defaultDirectory = Service.Provider.GetService&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory();
@@ -777,7 +777,7 @@ options.Directory = userFolder;</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>db = new Database(DbName, options);</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">db = new Database(DbName, options);</code></pre>
 </div>
 </div>
 <div class="sect2">
@@ -838,7 +838,7 @@ We will review the <code>void ToggleBookmark(HotelListCellModel hotel)</code> me
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>public void ToggleBookmark(HotelListCellModel hotel) {
+<pre class="highlightjs highlight"><code class="language-none hljs">public void ToggleBookmark(HotelListCellModel hotel) {
     ...
 }</code></pre>
 </div>
@@ -853,7 +853,7 @@ We will examine <code>queries</code> in a future lesson.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>using (var document = UserSession.FetchGuestBookmarkDocument()?.ToMutable()) {
+<pre class="highlightjs highlight"><code class="language-none hljs">using (var document = UserSession.FetchGuestBookmarkDocument()?.ToMutable()) {
   var doc = document;
   if (document == null) {
       ...
@@ -867,7 +867,7 @@ We will examine <code>queries</code> in a future lesson.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>var bookmarked = doc.GetArray("hotels") ?? new MutableArrayObject();
+<pre class="highlightjs highlight"><code class="language-none hljs">var bookmarked = doc.GetArray("hotels") ?? new MutableArrayObject();
 if (hotel.IsBookmarked) {
     // Remove the bookmark
     for (int i = 0; i &lt; bookmarked.Count(); i++) {
@@ -891,7 +891,7 @@ If not, create a new hotel document.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>// Add the hotel details document
+<pre class="highlightjs highlight"><code class="language-none hljs">// Add the hotel details document
 if (hotel.Source["id"] is string id) {
     using (var detailDoc = UserSession.Database.GetDocument(id)?.ToMutable() ?? new MutableDocument(id)) {
         detailDoc.SetData(hotel.Source.ToDictionary(x =&gt; x.Key, x =&gt; x.Value));
@@ -966,7 +966,7 @@ We will review the <code>public void RemoveBookmark(HotelListCellModel bookmark)
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>public void RemoveBookmark(HotelListCellModel bookmark) {
+<pre class="highlightjs highlight"><code class="language-none hljs">public void RemoveBookmark(HotelListCellModel bookmark) {
   ...
 }</code></pre>
 </div>
@@ -977,7 +977,7 @@ Note that in addition to deleting the "hotels" document, the unbookmarking proce
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code>if (bookmark.Source["id"] is string idToRemove) {
+<pre class="highlightjs highlight"><code class="language-none hljs">if (bookmark.Source["id"] is string idToRemove) {
     var doc = UserSession.Database.GetDocument(idToRemove);
     if (doc != null) {
         UserSession.Database.Delete(doc);
