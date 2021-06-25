@@ -1293,7 +1293,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <ul class="menu_row">
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-model.html">Access Model</a>
+      <a class="menu_title menu_link" href="access-control-model.html">Access control Model</a>
     </span>
   </li>
   <li class="menu_list" data-depth="2">
@@ -1407,12 +1407,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </li>
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-how-inspect-access.html">Verify Access</a>
+      <a class="menu_title menu_link" href="access-control-how-verify-access.html">Verify Access</a>
     </span>
   </li>
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="#sync-gateway::access-control-how-use-xattrs.adoc">Use XATTRS for Access Grants</a>
+      <a class="menu_title menu_link" href="access-control-how-use-xattrs-for-access-grants.html">Use XATTRs for Access Grants</a>
     </span>
   </li>
 </ul>
@@ -1467,11 +1467,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </span>
   </li>
 </ul>
-  </li>
-  <li class="menu_list" data-depth="1">
-    <span class="menu_line">
-      <a class="menu_title menu_link" href="sync-function-from-sync-nav.html">Sync Function</a>
-    </span>
   </li>
   <li class="menu_list" data-depth="1">
     <span class="menu_line">
@@ -1811,7 +1806,8 @@ The sync function API provides several methods that you can use to validate and 
 <div class="paragraph">
 <p><em>Related  Topics</em>:  <a href="access-control-concepts.html" class="page">Concepts</a>  |
 How-to  |
-<a href="sync-function-api.html" class="page">Sync Function API</a></p>
+<a href="sync-function-overview.html" class="page">Sync Function</a>  |
+<a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a></p>
 </div>
 </div>
 </div>
@@ -1878,28 +1874,38 @@ How-to  |
 <h2 id="lbl-acc-ctl-users"><a class="anchor" href="#lbl-acc-ctl-users"></a>Create Users</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="provisioning"><a class="anchor" href="#provisioning"></a>Provisioning</h3>
+<h3 id="process"><a class="anchor" href="#process"></a>Process</h3>
 <div class="paragraph">
-<p>You can create and-or manage users by:</p>
+<p>A user must be created on Sync Gateway before it can be granted access to documents.</p>
+</div>
+<div class="paragraph">
+<p>You create and-or manage users using the following options&#8201;&#8212;&#8201;as shown in <a href="#ex-create-users">Example 2</a>:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Using Sync Gateway&#8217;s Admin REST API&#8201;&#8212;&#8201;<a href="rest-api-admin.html" class="page">Admin REST API</a>.</p>
+<p>Admin REST API<br>
+Users are created via the Sync Gateway <a href="rest-api-admin.html" class="page">Admin REST API</a>.</p>
 </li>
 <li>
-<p>Configuring OIDC to auto-register a user following successful validation of an ID Token&#8201;&#8212;&#8201;<a href="authentication-users.html" class="page">User Authentication</a>.</p>
+<p>OIDC<br>
+Configure <em>OIDC</em> authentication to auto-register a user following successful validation of an ID Token&#8201;&#8212;&#8201;<a href="authentication-users.html" class="page">User Authentication</a>.</p>
 </li>
 <li>
-<p>Pre 3.x users, or 3.x users running with <code>disable_persistent_config=true</code>, can use the Configuration File to add users&#8201;&#8212;&#8201;see  <a href="configuration-schema-static.html" class="page">Static Configuration Schema</a></p>
+<p>Static Configuration (Pre 3.0):<br>
+Users can be statically configured within the Sync Gateway Configuration File&#8201;&#8212;&#8201;see: <a href="configuration-schema-static.html" class="page">Static Configuration Schema</a>.<br>
+<strong>Note</strong>, to use this option in version 3.0+x users must run Sync Gateway with the <code>disable_persistent_config</code> flag set to <code>true</code>.</p>
 </li>
 </ul>
 </div>
+<div id="ex-create-users" class="exampleblock">
+<div class="title">Example 2. How to Create Users</div>
+<div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_admin-rest-api"></a>Admin Rest API</p>
+<p><a id="tabset1_admin-rest-api"></a>Admin REST API</p>
 </li>
 <li>
 <p><a id="tabset1_oidc"></a>OIDC</p>
@@ -1911,6 +1917,18 @@ How-to  |
 </div>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset1_admin-rest-api">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This is the default recommended option starting 3.0.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Create a new user by sending a POST request to the Admin Rest Api <code>_user</code> endpoint (<a href="rest-api-admin.html#/user/put__db___user__name_" class="page">{db}/_user/{name}</a>).
 Update existing users by sending a PUT instead; in this case include the user name at the end of the url.</p>
@@ -1971,8 +1989,33 @@ $ curl -vX PUT "http://localhost:4985/mydatabase/_user/Edge1User" -H
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_configuration-file">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This option is disabled by default starting 3.0.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Pre 3.x users, or 3.x users running with <code>disable_persistent_config=true</code> ONLY.</p>
+<p>Create users by hardcoding their credentials in the Static Configuration Schema. This method is convenient for testing and to get started.<br>
+Use the Admin REST API for production system changes.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+To use this method in 3.0+, run Sync Gateway with the`disable_persistent_config` flag set to <code>true</code>.
+</td>
+</tr>
+</table>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2007,6 +2050,8 @@ $ curl -vX PUT "http://localhost:4985/mydatabase/_user/Edge1User" -H
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="lbl-acc-ctl-roles-create"><a class="anchor" href="#lbl-acc-ctl-roles-create"></a>Create Roles</h2>
 <div class="sectionbody">
@@ -2029,21 +2074,35 @@ They enable the grouping together of <a href="users.html" class="page">Users</a>
 </dl>
 </div>
 <div class="sect2">
-<h3 id="provisioning-2"><a class="anchor" href="#provisioning-2"></a>Provisioning</h3>
+<h3 id="provisioning"><a class="anchor" href="#provisioning"></a>Provisioning</h3>
 <div class="paragraph">
-<p>Create and-or manage roles using the Sync Gateway Admin REST API&#8201;&#8212;&#8201;<a href="rest-api-admin.html" class="page">Admin REST API</a>.</p>
+<p>The creation of roles is optional.
+It depends on the use case whether there is a need to logically group users.</p>
 </div>
 <div class="paragraph">
-<p>If you are running Sync gateway in static mode then you can also configure roles within the Sync Gateway Static Configuration File&#8201;&#8212;&#8201;<a href="configuration-schema-static.html" class="page">Static Configuration Schema</a></p>
+<p>You can create and-or manage roles using the following options</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Admin REST API:<br>
+Roles are created via the Sync Gateway Admin REST API&#8201;&#8212;&#8201;see: <a href="rest-api-admin.html" class="page">Admin REST API</a>.</p>
+</li>
+<li>
+<p>Static Configuration ( PRE 3.0)<br>
+Roles can be statically configured within using the Sync Gateway Static Configuration File&#8201;&#8212;&#8201;see: {configuration-schema-static—​xref}.<br>
+<strong>Note</strong> To use this option in v3.0, you must set the <code>disable_persistent_config</code> flag to <code>true.</code></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Note that removing a role effectively revokes access to the channel that role is associated with and may mean users will lose access to required documents.</p>
+<p><strong>Note</strong> that removing a role effectively revokes access to the channel that role is associated with and may mean users will lose access to required documents.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset2_admin-rest-api"></a>Admin Rest API</p>
+<p><a id="tabset2_admin-rest-api"></a>Admin REST API</p>
 </li>
 <li>
 <p><a id="tabset2_configuration-file"></a>Configuration File</p>
@@ -2052,6 +2111,18 @@ They enable the grouping together of <a href="users.html" class="page">Users</a>
 </div>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset2_admin-rest-api">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This is the default recommended option starting 3.0..
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Create a new role using the <a href="rest-api-admin.html#/role/post__db___role" class="page">/{tkn-db}/_role/</a> endpoint.</p>
 </div>
@@ -2066,8 +2137,20 @@ They enable the grouping together of <a href="users.html" class="page">Users</a>
 <div class="tab-pane" aria-labelledby="tabset2_configuration-file">
 <div class="openblock">
 <div class="content">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This option is disabled by default starting 3.0
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Create users by hardcoding their credentials in the <a href="configuration-schema-static.html" class="page">Static Configuration Schema</a>.
+<p>Create roles by hardcoding them in the <a href="configuration-schema-static.html" class="page">Static Configuration Schema</a>.
 This method is convenient for testing and to get started.
 It is recommended to use the <strong>Admin REST API</strong> for production systems.</p>
 </div>
@@ -2111,7 +2194,7 @@ It is recommended to use the <strong>Admin REST API</strong> for production syst
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-acc-ctl-roles-add"><a class="anchor" href="#lbl-acc-ctl-roles-add"></a>Add Roles to Users</h2>
+<h2 id="lbl-acc-ctl-roles-add"><a class="anchor" href="#lbl-acc-ctl-roles-add"></a>Assign Users to Roles</h2>
 <div class="sectionbody">
 <div class="dlist">
 <dl>
@@ -2122,19 +2205,36 @@ It is recommended to use the <strong>Admin REST API</strong> for production syst
 </dl>
 </div>
 <div class="sect2">
-<h3 id="purpose"><a class="anchor" href="#purpose"></a>Purpose</h3>
+<h3 id="process-2"><a class="anchor" href="#process-2"></a>Process</h3>
 <div class="paragraph">
 <p>Unresolved include directive in modules/ROOT/pages/_partials/howto/how-to-add-roles-to-users.adoc - include::partial$concepts/user.adoc[]</p>
 </div>
 <div class="paragraph">
-<p>You can add and remove roles from users using either the <a href="rest-api-admin.html" class="page">Admin REST API</a> or <a href="configuration-schema-static.html" class="page">Static Configuration Schema</a>.</p>
+<p>You can assign (or remove) users to (or from) roles using either of the following mechansims:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Admin REST API<br>
+Assign a user to a role via the <a href="rest-api-admin.html" class="page">Admin REST API</a></p>
+</li>
+<li>
+<p>configuration File (Pre v3.0+)<br>
+Roles can be statically configured within using the Sync Gateway Static Configuration File&#8201;&#8212;&#8201;see: <a href="configuration-schema-static.html" class="page">Static Configuration Schema</a>.<br>
+To use this option in 3.0, you must set the <code>disable_persistent_config</code> flag to <code>true</code></p>
+</li>
+<li>
+<p>Sync Function<br>
+Programmatically assign users to roles.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>Note that removing a role effectively revokes access to the channel that role is associated with and may mean users will lose access to required documents.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="process"><a class="anchor" href="#process"></a>Process</h3>
+<div class="exampleblock">
+<div class="title">Example 3. Assign user to role</div>
+<div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
@@ -2151,8 +2251,20 @@ It is recommended to use the <strong>Admin REST API</strong> for production syst
 </div>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset3_admin-rest-api">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This is the recommended method from 3.0
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Add a role to an existing user by sending a PUT request to the Admin Rest API <code>_role</code> endpoint (<a href="rest-api-admin.html#/user/post\__db___user_name_" class="page">/{tkn-db}/_user/{name}</a> ).</p>
+<p>Assign a user to a role by sending a PUT request to the Admin REST API <code>_user</code> endpoint (<a href="rest-api-admin.html#/user/post\__db___user_name_" class="page">/{tkn-db}/_user/{name}</a> ).</p>
 </div>
 <div class="paragraph">
 <p>Specify the roles to be assigned in the <code>admin_roles</code> array.</p>
@@ -2170,6 +2282,10 @@ It is recommended to use the <strong>Admin REST API</strong> for production syst
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>{user} is the user name to be updated, e.g. "Edge1User"</td>
 </tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Include the role that the user is to be assigned to in <code>admin_roles</code></td>
+</tr>
 </table>
 </div>
 <div class="paragraph">
@@ -2177,8 +2293,20 @@ It is recommended to use the <strong>Admin REST API</strong> for production syst
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset3_configuration">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This option is disabled by default starting 3.0.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Add a role to a user in the configuration file.
+<p>Add the role the user is to be assigned to in the configuration file.
 This method is convenient for testing and to get started.
 Use the <strong>Admin REST API</strong> for production systems.</p>
 </div>
@@ -2189,7 +2317,7 @@ Use the <strong>Admin REST API</strong> for production systems.</p>
     "mydatabase": {
       "users": { <i class="conum" data-value="1"></i><b>(1)</b>
         "GUEST": {"disabled": true},
-        "Edge1User": {"password": "pass", "admin_roles": ["Edge1"],
+        "Edge1User": {"password": "pass", "admin_roles": ["Edge1"], <i class="conum" data-value="2"></i><b>(2)</b>
                       "admin_channels": ["RandomChannel"]},
         "Edge2User": {"password": "pass", "admin_roles": ["Edge2"]}
       }
@@ -2204,12 +2332,29 @@ Use the <strong>Admin REST API</strong> for production systems.</p>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td><a href="configuration-schema-static.html#databases-this_db-users-this_user-admin_roles" class="page">databases.$db.users.$user.admin_roles</a></td>
 </tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Add the role the user is to be assigned to in <code>admin_roles</code></td>
+</tr>
 </table>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset3_sync-function">
 <div class="paragraph">
-<p>You can also use the Sync Function&#8217;s <code>role(username, rolename)</code> function to assign roles to users programmatically.</p>
+<p>You can also use the Sync Function&#8217;s <a href="sync-function-api-role-cmd.html" class="page">role()</a> function to assign users to roles programmatically.</p>
+</div>
+<div class="paragraph">
+<p>In this use case, where role assignment is done dynamically via the sync function, the role(s) to which user is assigned can be identified in two ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>By document content&#8201;&#8212;&#8201;the role can be derived or specified as a property within the document body.</p>
+</li>
+<li>
+<p>By user defined XATTR (3.0+)&#8201;&#8212;&#8201;the role can be specified within a special user-defined XATTR associated with the document&#8201;&#8212;&#8201;see: <a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
 <p>Note that both role and user must already exist.
@@ -2227,11 +2372,13 @@ role ("Edge2User", "role:Edge2":);</code></pre>
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
-<h2 id="lbl-control-document-access"><a class="anchor" href="#lbl-control-document-access"></a>Allow Channel Access</h2>
+<h2 id="lbl-control-document-access"><a class="anchor" href="#lbl-control-document-access"></a>Control Document Access</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Related&#160;Concepts</em>: <a href="access-control-model.html" class="page">Access Model</a> | <a href="channels.html" class="page">Channels</a> | <a href="users.html" class="page">Users</a> | <a href="roles.html" class="page">Roles</a></p>
+<p><em>Related&#160;Concepts</em>: <a href="access-control-model.html" class="page">Access control Model</a> | <a href="channels.html" class="page">Channels</a> | <a href="users.html" class="page">Users</a> | <a href="roles.html" class="page">Roles</a></p>
 </div>
 <div class="sect2">
 <h3 id="read-access-control"><a class="anchor" href="#read-access-control"></a>Read Access Control</h3>
@@ -2240,7 +2387,7 @@ role ("Edge2User", "role:Edge2":);</code></pre>
 </div>
 <div class="paragraph">
 <p>Every document in the database is assigned a list of channels it is distributed to.
-Every user (or role) is granted access to a list of channels&#8201;&#8212;&#8201;as shown in <a href="#ex-read-access">Example 2</a>.</p>
+Every user (or role) is granted access to a list of channels&#8201;&#8212;&#8201;as shown in <a href="#ex-read-access">Example 4</a>.</p>
 </div>
 <div class="paragraph">
 <p>Channels can be user-defined or they can be system channels (like the public, all-docs, wildcard)</p>
@@ -2264,7 +2411,7 @@ Every user (or role) is granted access to a list of channels&#8201;&#8212;&#8201
 <div class="ulist">
 <ul>
 <li>
-<p>Admin Rest API +
+<p>Admin REST API +
 Using admin_channels property using the admin REST API endpoint&#8201;&#8212;&#8201;see <a href="rest-api-admin.html#/user/post\__db___user_name_" class="page">/{tkn-db}/_user/{name}</a></p>
 </li>
 <li>
@@ -2279,7 +2426,7 @@ Using the appropriate <code>admin_channels</code> property in the <a href="confi
 </ul>
 </div>
 <div id="ex-read-access" class="exampleblock">
-<div class="title">Example 2. Allow Access</div>
+<div class="title">Example 4. Allow Access</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -2298,7 +2445,7 @@ Using the appropriate <code>admin_channels</code> property in the <a href="confi
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset4_admin-rest-api">
 <div class="paragraph">
-<p>Add a channel to an existing user by sending a PUT request to the Admin Rest API <code>_role</code> endpoint (<a href="rest-api-admin.html#/role/put__db___role__name_" class="page">/{tkn-db}/_role/{name}</a> ).</p>
+<p>Add a channel to an existing user by sending a PUT request to the Admin REST API <code>_role</code> endpoint (<a href="rest-api-admin.html#/role/put__db___role__name_" class="page">/{tkn-db}/_role/{name}</a> ).</p>
 </div>
 <div class="paragraph">
 <p>Specify the roles to be assigned in the <code>admin_channels</code> array.</p>
@@ -2337,7 +2484,7 @@ Using the appropriate <code>admin_channels</code> property in the <a href="confi
 In this case, the document content itself is used to govern access and routing</p>
 </li>
 <li>
-<p>Starting 3.0, the role can be specified within a special user-defined xattr associated with the document&#8201;&#8212;&#8201;see: <a href="using-xattr-access-grants.html" class="page">Using XATTR Access Grants</a>.</p>
+<p>Starting 3.0, the role can be specified within a special user-defined xattr associated with the document&#8201;&#8212;&#8201;see: <a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a>.</p>
 </li>
 </ul>
 </div>
@@ -2355,7 +2502,7 @@ In this case, the document content itself is used to govern access and routing</
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset5_version-3-0">
 <div class="paragraph">
-<p>Here we are using a specific XATTR to determine which users need access to the document&#8217;s contents&#8201;&#8212;&#8201;for more on how to configure ths see <a href="using-xattr-access-grants.html" class="page">Using XATTR Access Grants</a>.</p>
+<p>Here we are using a specific XATTR to determine which users need access to the document&#8217;s contents&#8201;&#8212;&#8201;for more on how to configure ths see <a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2486,11 +2633,11 @@ Use the <strong>Admin REST API</strong> for production systems.</p>
 Any user who has access to a document can update the document.</p>
 </div>
 <div class="paragraph">
-<p>Write access can be enforced at a document property level by implementing suitable logic within the Sync Function, using its helper functions to control the users allowed to make document updates and deletions&#8201;&#8212;&#8201;as shown in <a href="#ex-check-write-access">Example 3</a>.</p>
+<p>Write access can be enforced at a document property level by implementing suitable logic within the Sync Function, using its helper functions to control the users allowed to make document updates and deletions&#8201;&#8212;&#8201;as shown in <a href="#ex-check-write-access">Example 5</a>.</p>
 </div>
 <div class="paragraph">
 <p>You can build user validation into your Sync Function.
-For example, yYou can require that the user making the change has a specific name, role or channel access&#8201;&#8212;&#8201;as shown in <a href="#ex-helper-functions">Example 4</a>.
+For example, yYou can require that the user making the change has a specific name, role or channel access&#8201;&#8212;&#8201;as shown in <a href="#ex-helper-functions">Example 6</a>.
 Do this using any combination of: <a href="sync-function-api-require-user-cmd.html" class="page">requireUser()</a>,
 <a href="sync-function-api-require-role-cmd.html" class="page">requireRole()</a> or <a href="sync-function-api-require-access-cmd.html" class="page">requireAccess()</a>.</p>
 </div>
@@ -2499,7 +2646,7 @@ Do this using any combination of: <a href="sync-function-api-require-user-cmd.ht
 Calls to <code>requireUser</code>, <code>requireAccess</code> and <code>requireRole</code> will be no-ops, and will always appear successful.</p>
 </div>
 <div id="ex-check-write-access" class="exampleblock">
-<div class="title">Example 3. Check Write Access</div>
+<div class="title">Example 5. Check Write Access</div>
 <div class="content">
 <div class="paragraph">
 <p>This example shows Sync Function logic that allows only the document owner to make changes.
@@ -2519,7 +2666,7 @@ It does so by requiring that the current user is the one recorded as an owner on
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset6_version-3-0">
 <div class="paragraph">
-<p>This example makes use of channel data stored in XATTRS, an option introduced in 3.0&#8201;&#8212;&#8201;see <a href="using-xattr-access-grants.html" class="page">Using XATTR Access Grants</a> for more on this topic.</p>
+<p>This example makes use of channel data stored in XATTRS, an option introduced in 3.0&#8201;&#8212;&#8201;see <a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a> for more on this topic.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2598,7 +2745,7 @@ It does so by requiring that the current user is the one recorded as an owner on
 </div>
 </div>
 <div id="ex-helper-functions" class="exampleblock">
-<div class="title">Example 4. Helper Function examples</div>
+<div class="title">Example 6. Helper Function examples</div>
 <div class="content">
 <div class="paragraph">
 <p>Here we show various ways to use some of the Sync Function API&#8217;s helper functions:</p>
@@ -2652,190 +2799,10 @@ requireAccess(["events", "messages"]) <i class="conum" data-value="6"></i><b>(6)
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-inspect-access"><a class="anchor" href="#lbl-inspect-access"></a>Inspect Access</h2>
+<h2 id="lbl-verify-access"><a class="anchor" href="#lbl-verify-access"></a>Verify Access</h2>
 <div class="sectionbody">
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Related Concepts</dt>
-<dd>
-<p>{access&#8212;&#8203;xref} | <a href="access-control-model.html" class="page">Access Model</a></p>
-</dd>
-</dl>
-</div>
-<div class="sect2">
-<h3 id="purpose-2"><a class="anchor" href="#purpose-2"></a>Purpose</h3>
 <div class="paragraph">
-<p>Use the Admin REST API to see the:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Channels a user has access to</p>
-</li>
-<li>
-<p>Channels a role has access to</p>
-</li>
-<li>
-<p>Channels a document is assigned to</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="context"><a class="anchor" href="#context"></a>Context</h3>
-<div class="paragraph">
-<p>The <code>all_channels</code> property of a user account determines the channels a user can access.
-Its value is derived from the union of:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The user&#8217;s <code>admin_channels</code> property, which is set using the Admin REST API.</p>
-</li>
-<li>
-<p>The channels the user has been granted access to by <code>access()</code> calls from sync functions invoked for current revisions of documents.</p>
-</li>
-<li>
-<p>The <code>all_channels</code> properties of any roles the user belongs to. These are themselves computed using the above rules.</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="process-2"><a class="anchor" href="#process-2"></a>Process</h3>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset7_users"></a>Users</p>
-</li>
-<li>
-<p><a id="tabset7_roles"></a>Roles</p>
-</li>
-<li>
-<p><a id="tabset7_document"></a>Document</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset7_users">
-<div class="paragraph">
-<p>Send a get request to the <a href="rest-api-admin.html#/user/post\__db___user_name_" class="page">/{tkn-db}/_user/{name}</a> endpoint</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl http://localhost:4985/db/_user/pupshaw</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The <a href="#ex-output">output</a> shows that the user <code>pupshaw</code> has access to the following channels:</p>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>all</code> through its own <code>admin_channels</code> setting</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>hoopy</code> through the <code>froods</code> role&#8217;s <code>admin_channels</code> setting</td>
-</tr>
-</table>
-</div>
-<div id="ex-output" class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-    "admin_channels": [
-        "all" <i class="conum" data-value="1"></i><b>(1)</b>
-    ],
-    "admin_roles": [
-        "froods"
-    ],
-    "all_channels": [
-        "all",
-        "hoopy" <i class="conum" data-value="2"></i><b>(2)</b>
-    ],
-    "name": "pupshaw",
-    "roles": [
-        "froods"
-    ]
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset7_roles">
-<div class="paragraph">
-<p>Send a get request to the <a href="rest-api-admin.html#/role/get__db___role__name_" class="page">/{tkn-db}/_role/</a> endpoint</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl http://localhost:4985/db/_role/frood</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The output shows that the role <code>froods</code> has access to the following channels:</p>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>hoopy</code> through its role&#8217;s <code>admin_channels</code> setting</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-    "name": "froods",
-    "admin_channels": [
-        "hoopy" <i class="conum" data-value="1"></i><b>(1)</b>
-    ],
-    "admin_roles": [
-        "froods"
-    ],
-    "all_channels": [
-        "hoopy" <i class="conum" data-value="2"></i><b>(2)</b>
-    ]
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset7_document">
-<div class="paragraph">
-<p>Send a get request to the xref:sync-gateway::rest-api-admin.adoc#get__db___all_docs endpoint</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl http://localhost:4985/ourdb/_all_docs?channels=true&amp;keys=[ourdoc]" -H "accept: application/json"</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <a href="#ex-outdoc">output</a> shows that the document <code>ourdoc</code> is assigned to the channels: <code>all</code> and <code>hoopy</code><br>
-That assignment to <code>hoopy</code> is what makes it available to our <code>froods</code> role and therefore to our user <code>pupshaw</code>.</td>
-</tr>
-</table>
-</div>
-<div id="ex-outdoc" class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "id": "ourdoc",
-  "key": "ourdoc",
-  "value": {
-      "channels": [ <i class="conum" data-value="1"></i><b>(1)</b>
-          "short",
-          "hoopy"
-      ],
-      "rev": "1-86effb929acbf953905dd0e3974f6051"
-  }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
+<p>Unresolved include directive in modules/ROOT/pages/access-control-how.adoc - include::partial$howto/how-to-verify-access.adoc[]</p>
 </div>
 </div>
 </div>
@@ -2846,12 +2813,12 @@ That assignment to <code>hoopy</code> is what makes it available to our <code>fr
 <dl>
 <dt class="hdlist1">Related Concepts</dt>
 <dd>
-<p>{access&#8212;&#8203;xref} | <a href="access-control-model.html" class="page">Access Model</a></p>
+<p>{access&#8212;&#8203;xref} | <a href="access-control-model.html" class="page">Access control Model</a></p>
 </dd>
 </dl>
 </div>
 <div class="sect2">
-<h3 id="purpose-3"><a class="anchor" href="#purpose-3"></a>Purpose</h3>
+<h3 id="purpose"><a class="anchor" href="#purpose"></a>Purpose</h3>
 <div class="paragraph">
 <p>Use the Sync Function&#8217;s helper functions to control the users allowed to make document updates and deletions.</p>
 </div>
@@ -2860,7 +2827,7 @@ That assignment to <code>hoopy</code> is what makes it available to our <code>fr
 <h3 id="process-3"><a class="anchor" href="#process-3"></a>Process</h3>
 <div class="paragraph">
 <p>Build user validation into your Sync Function.
-You can require that the user making the change has a specific name, role or channel access&#8201;&#8212;&#8201;as shown in <a href="#ex-check-write-access">Example 3</a>&#8201;&#8212;&#8201;by using any combination  of:</p>
+You can require that the user making the change has a specific name, role or channel access&#8201;&#8212;&#8201;as shown in <a href="#ex-check-write-access">Example 5</a>&#8201;&#8212;&#8201;by using any combination  of:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2915,7 +2882,7 @@ If the XATTR is not set we throw an exception.</td>
 </div>
 </div>
 <div class="paragraph">
-<p>See <a href="#ex-helpers">Example 5</a> for more helper function examples.</p>
+<p>See <a href="#ex-helpers">Example 7</a> for more helper function examples.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2930,7 +2897,7 @@ When sending a change to Sync Gateway through the <a href="rest-api-admin.html" 
 </table>
 </div>
 <div id="ex-helpers" class="exampleblock">
-<div class="title">Example 5. Helper Function examples</div>
+<div class="title">Example 7. Helper Function examples</div>
 <div class="content">
 <div class="paragraph">
 <p>This example shows how to use some of the helper functions:</p>
@@ -2984,7 +2951,7 @@ requireAccess(["events", "messages"]) <i class="conum" data-value="6"></i><b>(6)
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-xattrs"><a class="anchor" href="#lbl-xattrs"></a>Using Extended Attributes (XATTRS)</h2>
+<h2 id="lbl-xattrs"><a class="anchor" href="#lbl-xattrs"></a>Use Extended Attributes (XATTRS)</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="why-use-xattrs"><a class="anchor" href="#why-use-xattrs"></a>Why use XATTRS</h3>
@@ -3011,31 +2978,31 @@ This approach has the benefit of:</p>
 <h3 id="lbl-config"><a class="anchor" href="#lbl-config"></a>Configuration</h3>
 <div class="paragraph">
 <p>Name the XATTR
-(see: <a href="configuration-schema-database.html#databases-this_db-user_xattr_key" class="page">user_xattr_key</a>) to be used for channel routing by defining it using the Admin Rest API&#8217;s <a href="rest-api-admin-database.html" class="page">Database Configuration API</a>&#8201;&#8212;&#8201;see: <a href="#ex-config">Example 6</a>.</p>
+(see: <a href="configuration-schema-database.html#databases-this_db-user_xattr_key" class="page">user_xattr_key</a>) to be used for channel routing by defining it using the Admin REST API&#8217;s <a href="rest-api-admin-database.html" class="page">Database Configuration API</a>&#8201;&#8212;&#8201;see: <a href="#ex-config">Example 8</a>.</p>
 </div>
 <div class="paragraph">
 <p>The actual value of this XATTR can be anything that enables the Sync Function to make an appropriate access grant.
 Its data type can be string, array, object&#8201;&#8212;&#8201;any valid JSON that meets the required use case.</p>
 </div>
 <div id="ex-config" class="exampleblock">
-<div class="title">Example 6. Define the User Extended Attribute Key</div>
+<div class="title">Example 8. Define the User Extended Attribute Key</div>
 <div class="content">
 <div class="paragraph">
-<p>This example uses the Admin Rest API to specify the required XATTR name as <code>channelXattr</code> on the database <code>hotels</code>.</p>
+<p>This example uses the Admin REST API to specify the required XATTR name as <code>channelXattr</code> on the database <code>hotels</code>.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset8_curl"></a>CURL</p>
+<p><a id="tabset7_curl"></a>CURL</p>
 </li>
 <li>
-<p><a id="tabset8_http"></a>HTTP</p>
+<p><a id="tabset7_http"></a>HTTP</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset8_curl">
+<div class="tab-pane" aria-labelledby="tabset7_curl">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl -X PUT 'http://localhost:4985/hotels/_config' \
@@ -3048,7 +3015,7 @@ Its data type can be string, array, object&#8201;&#8212;&#8201;any valid JSON th
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset8_http">
+<div class="tab-pane" aria-labelledby="tabset7_http">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-http hljs" data-lang="http">PUT /hotels/_config HTTP/1.1
@@ -3083,11 +3050,11 @@ Content-Length: 999
 You cannot set it using the <em>Sync Gateway</em> REST API.</p>
 </div>
 <div class="paragraph">
-<p>For an example of setting the value of the XATTR using the C# SDK, see <a href="#ex-cbs-metadata-setting">Example 7</a>, this cn be easily translated to any of the available SDK languages.
-See <a href="#ex-cbs-metadata">Example 8</a> for an example of the metadata model.</p>
+<p>For an example of setting the value of the XATTR using the C# SDK, see <a href="#ex-cbs-metadata-setting">Example 9</a>, this cn be easily translated to any of the available SDK languages.
+See <a href="#ex-cbs-metadata">Example 10</a> for an example of the metadata model.</p>
 </div>
 <div id="ex-cbs-metadata-setting" class="exampleblock">
-<div class="title">Example 7. Set XATTR using Couchbase Server SDK</div>
+<div class="title">Example 9. Set XATTR using Couchbase Server SDK</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -3249,7 +3216,7 @@ Completed Changes</code></pre>
 </div>
 </div>
 <div id="ex-cbs-metadata" class="exampleblock">
-<div class="title">Example 8. Metadata on Couchbase Server document</div>
+<div class="title">Example 10. Metadata on Couchbase Server document</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -3300,7 +3267,7 @@ You will set the value of the xattr using the SDK API when the document is creat
 <p>The designated XATTR is exposed to the <a href="sync-function-overview.html" class="page">Sync Function Overview</a> as an additional argument <code>meta.xattrs.&lt;xattr name&gt;</code></p>
 </div>
 <div id="ex-syncfunc-args" class="exampleblock">
-<div class="title">Example 9. Sync Function Arguments</div>
+<div class="title">Example 11. Sync Function Arguments</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -3354,7 +3321,7 @@ You will set the value of the xattr using the SDK API when the document is creat
 <div class="title">Learn more &#8230;&#8203;</div>
 <ul>
 <li>
-<p><a href="#sync-gateway::sync-function.adoc" class="page unresolved">Sync Function</a></p>
+<p><a href="sync-function-overview.html" class="page">Sync Function</a></p>
 </li>
 <li>
 <p><a href="import-filter.html" class="page">Import filter</a></p>

@@ -1293,7 +1293,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <ul class="menu_row">
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-model.html">Access Model</a>
+      <a class="menu_title menu_link" href="access-control-model.html">Access control Model</a>
     </span>
   </li>
   <li class="menu_list" data-depth="2">
@@ -1407,12 +1407,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </li>
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-how-inspect-access.html">Verify Access</a>
+      <a class="menu_title menu_link" href="access-control-how-verify-access.html">Verify Access</a>
     </span>
   </li>
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="#sync-gateway::access-control-how-use-xattrs.adoc">Use XATTRS for Access Grants</a>
+      <a class="menu_title menu_link" href="access-control-how-use-xattrs-for-access-grants.html">Use XATTRs for Access Grants</a>
     </span>
   </li>
 </ul>
@@ -1467,11 +1467,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </span>
   </li>
 </ul>
-  </li>
-  <li class="menu_list" data-depth="1">
-    <span class="menu_line">
-      <a class="menu_title menu_link" href="sync-function-from-sync-nav.html">Sync Function</a>
-    </span>
   </li>
   <li class="menu_list" data-depth="1">
     <span class="menu_line">
@@ -1811,7 +1806,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <div class="paragraph">
 <p><em>Related  Topics</em>:  <a href="access-control-concepts.html" class="page">Concepts</a>  |
 <a href="access-control-how.html" class="page">How-to</a>  |
-<a href="sync-function-api.html" class="page">Sync Function API</a></p>
+Sync Function  |
+<a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a></p>
+</div>
+<div class="paragraph">
+<p><em>Other Topics</em>: <a href="sync-function-api.html" class="page">Sync Function API</a></p>
 </div>
 </div>
 </div>
@@ -1889,7 +1888,7 @@ A deletion is just a revision with a "_deleted": true property; and usually noth
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>In version 3.0+ we can use XATTR contents to drive access control.
-To support this, an additional optional argument <code>meta</code> is exposed&#8201;&#8212;&#8201;see <a href="#lbl-args">[lbl-args]</a></td>
+To support this, an additional optional argument <code>meta</code> is exposed&#8201;&#8212;&#8201;see <a href="#lbl-args">Arguments</a></td>
 </tr>
 </table>
 </div>
@@ -1906,7 +1905,7 @@ To support this, an additional optional argument <code>meta</code> is exposed&#8
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The prototype shows the default Sync Function&#8201;&#8212;&#8201;see <a href="#lbl-args">[lbl-args]</a> for more on the arguments.</td>
+<td>The prototype shows the default Sync Function&#8201;&#8212;&#8201;see <a href="#lbl-args">Arguments</a> for more on the arguments.</td>
 </tr>
 </table>
 </div>
@@ -1918,7 +1917,7 @@ To support this, an additional optional argument <code>meta</code> is exposed&#8
 </div>
 </div>
 <div class="sect1">
-<h2 id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+<h2 id="lbl-args"><a class="anchor" href="#lbl-args"></a>Arguments</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The sync function arguments are:</p>
@@ -1942,27 +1941,16 @@ To support this, an additional optional argument <code>meta</code> is exposed&#8
 It matches the JSON saved by the Couchbase Lite application and replicated to Sync Gateway.</p>
 </div>
 <div class="paragraph">
-<p>The document&#8217;s:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>_id</code> property contains the document ID</p>
-</li>
-<li>
-<p><code>_rev</code> property is the new revision ID.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>If the document is being deleted, it will have  a <code>_deleted</code> property with the value <code>true</code>.</p>
+<p>The document&#8217;s <code>_id</code> property contains the document ID
+The document&#8217;s <code>_rev</code> property is the new revision ID.
+If the document is being deleted, it will have  a <code>_deleted</code> property with the value <code>true</code>.</p>
 </div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>oldDoc</code></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>This object references the revision that is being replaced if the document has been saved before; otherwise it is null.<br>
-<strong>Note:</strong>  In the case of a document with conflicts, the current provisional winning revision is passed in oldDoc.</p>
+<p>If the document has been saved before, this object references the revision being replaced; otherwise it is null.<br>
+<strong>Note:</strong>  In the case of a document with conflicts, the current provisional winning revision is passed in <code>oldDoc</code>.</p>
 </div>
 <div class="paragraph">
 <p>Your implementation of the sync function can omit the oldDoc parameter if you do not need it (JavaScript ignores extra parameters passed to a function).</p>
@@ -1977,7 +1965,7 @@ It matches the JSON saved by the Couchbase Lite application and replicated to Sy
 <p>This argument references the user defined XATTR that you are using to hold access grant data.</p>
 </div>
 <div class="paragraph">
-<p>The referenced object can include items such as channels or roles. So instead of embedding channel information directly within the document body, users can specify this user-defined XATTR which is associated with the document&#8201;&#8212;&#8201;see <a href="using-xattr-access-grants.html" class="page">Using XATTR Access Grants</a>.</p>
+<p>The referenced object can include items such as channels or roles. So instead of embedding channel information directly within the document body, users can specify this user-defined XATTR which is associated with the document&#8201;&#8212;&#8201;see <a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a>.</p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1988,10 +1976,10 @@ It matches the JSON saved by the Couchbase Lite application and replicated to Sy
 <h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If you don’t supply a sync function, Sync Gateway uses the {configuration-schema-static-pfx}#databases-this_db-sync[default Sync Function].</p>
+<p>If you don’t supply a sync function, Sync Gateway uses the <a href="configuration-schema-static.html#databases-this_db-sync" class="page">default Sync Function</a>.</p>
 </div>
 <div id="ex-prov" class="exampleblock">
-<div class="title">Example 2. Provisioning a Sync Function</div>
+<div class="title">Example 2. Configuring a Sync Function</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -2031,7 +2019,7 @@ It matches the JSON saved by the Couchbase Lite application and replicated to Sy
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Users running version 3.x must run with <code>disable-persistent-configuration=true</code>
+Users running version v3.0+ must run with <code>disable-persistent-configuration=true</code>
 </td>
 </tr>
 </table>
@@ -2079,7 +2067,7 @@ Note the sync function is enclosed in backticks.</td>
 <h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When you come to build your Sync Function you will need to decide the access control and document distribution requirements:</p>
+<p>When you come to build your Sync Function you will need to decide the access control and document distribution requirements. For example:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2098,7 +2086,7 @@ Note the sync function is enclosed in backticks.</td>
 </ul>
 </div>
 <div class="paragraph">
-<p>Our requirements for this purpose are:</p>
+<p>Our requirements for this example are:</p>
 </div>
 <div class="colist arabic">
 <table>
@@ -2121,7 +2109,7 @@ Note the sync function is enclosed in backticks.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>That we will assign the document to the channel(s) identified within the documents contents or metadata.</td>
+<td>That we will assign the document to the channel(s) identified within the documents contents or metadata (v3.0+).</td>
 </tr>
 </table>
 </div>
@@ -2183,7 +2171,7 @@ Note the sync function is enclosed in backticks.</td>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Note the new at 3.0, optional, argument <code>meta</code></td>
+<td>Note the new (3.0), optional, argument <code>meta</code></td>
 </tr>
 </table>
 </div>
@@ -2244,7 +2232,7 @@ Note the sync function is enclosed in backticks.</td>
 <div class="title">Learn more &#8230;&#8203;</div>
 <ul>
 <li>
-<p><a href="#sync-gateway::sync-function.adoc" class="page unresolved">Sync Function</a></p>
+<p><a href="sync-function-overview.html" class="page">Sync Function</a></p>
 </li>
 <li>
 <p><a href="import-filter.html" class="page">Import filter</a></p>

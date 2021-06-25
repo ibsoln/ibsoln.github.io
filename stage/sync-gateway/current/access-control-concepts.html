@@ -1293,7 +1293,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <ul class="menu_row">
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-model.html">Access Model</a>
+      <a class="menu_title menu_link" href="access-control-model.html">Access control Model</a>
     </span>
   </li>
   <li class="menu_list" data-depth="2">
@@ -1407,12 +1407,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </li>
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-how-inspect-access.html">Verify Access</a>
+      <a class="menu_title menu_link" href="access-control-how-verify-access.html">Verify Access</a>
     </span>
   </li>
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="#sync-gateway::access-control-how-use-xattrs.adoc">Use XATTRS for Access Grants</a>
+      <a class="menu_title menu_link" href="access-control-how-use-xattrs-for-access-grants.html">Use XATTRs for Access Grants</a>
     </span>
   </li>
 </ul>
@@ -1467,11 +1467,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </span>
   </li>
 </ul>
-  </li>
-  <li class="menu_list" data-depth="1">
-    <span class="menu_line">
-      <a class="menu_title menu_link" href="sync-function-from-sync-nav.html">Sync Function</a>
-    </span>
   </li>
   <li class="menu_list" data-depth="1">
     <span class="menu_line">
@@ -1811,106 +1806,19 @@ The sync function API provides several methods that you can use to validate and 
 <div class="paragraph">
 <p><em>Related  Topics</em>:  <strong>Concepts</strong>  |
 <a href="access-control-how.html" class="page">How-to</a>  |
-<a href="sync-function-api.html" class="page">Sync Function API</a></p>
+<a href="sync-function-overview.html" class="page">Sync Function</a>  |
+<a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You control document access by routing it to a channel and by making that channel accessible to the users or roles you want to be able to access documents of that type.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="model"><a class="anchor" href="#model"></a>Model</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>In the Couchbase Mobile ecosystem access to documents is governed by three key entities: <a href="#sync-gateway::{user&.adoc#8212;&#8203;page}" class="page unresolved">users</a>, <a href="#sync-gateway::{role&.adoc#8212;&#8203;page}" class="page unresolved">roles</a> and <a href="channels.html" class="page">channels</a>.</p>
-</div>
-<div id="img-access-control-model" class="paragraph right text-center">
-<div class="title">Access Control Model</div>
-<p><span class="image"><img src="_images/access-control-triangle.png" alt="Access" width="400"></span></p>
-</div>
-<div class="paragraph">
-<p>Conceptually, the <em>channel</em> can be considered as a <em>tag</em> associated with a document.
-Every document processed by the Sync Gateway is assigned to a channel (user-defined or system-defined).
-A channel is the fundamental way to segregate documents and for enforcing access control.</p>
-</div>
-<div class="paragraph">
-<p>Every Sync Gateway user is granted access to zero, one or more channels.
-It is the channels membership that determines the documents users can access&#8201;&#8212;&#8201;as illustrated in <a href="#img-access-control-model">Access Control Model</a></p>
-</div>
-<div class="paragraph">
-<p>A Sync Gateway role is a way of logically grouping users.
-Like the channel, a role is granted access to zero, one or more channels.</p>
-</div>
-<div class="paragraph">
-<p>A user can only read documents that are in at least one of their assigned channels; whether directly or as part of an assigned role.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="context"><a class="anchor" href="#context"></a>Context</h2>
+<h2 id="lbl-access"><a class="anchor" href="#lbl-access"></a>Access Control Model</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>You control document access by routing it to a channel and by making that channel accessible to the users or roles you want to be able to access documents of that type.</p>
 </div>
 <div class="sect2">
-<h3 id="sync-gateway"><a class="anchor" href="#sync-gateway"></a>Sync Gateway</h3>
-<div class="paragraph">
-<p>All users can implicitly access any document in the public channel.
-In addition, there can be user-defined channels that users can be assigned to.</p>
-</div>
-<div class="paragraph">
-<p>Once a user is granted access to a new channel, the next replication pull request from the client will retrieve all documents to which the user now has access.</p>
-</div>
-<div class="paragraph">
-<p>Revoking access to a channel means that users who previously used the channel to get replicated documents will no longer see any synced updates.</p>
-</div>
-<div class="paragraph">
-<p>Note that access grants neither confer, nor constrain, the <strong>type</strong> of access.
-Instead you can explicitly implement write access controls within the Sync Function; perhaps restricting updates to specific users or roles — for more on this see {access-control-how-write-access-xref}.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="couchbase-lite"><a class="anchor" href="#couchbase-lite"></a>Couchbase Lite</h3>
-<div class="paragraph">
-<p>By default, Couchbase Lite gets all the channels to which the configured user account has access.
-Optionally, a Couchbase Lite "pull" replication can also specify a comma-separated list of channel names to receive documents from.
-In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
-Client apps can use this ability to intelligently sync with a subset of the available documents from the database.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="provisioning"><a class="anchor" href="#provisioning"></a>Provisioning</h2>
-<div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><a href="channels.html" class="page">Channel</a>&#8201;&#8212;&#8201;the channels topic discusses how channels are created and how documents can be assigned to channels.</p>
-</li>
-<li>
-<p><a href="users.html" class="page">User</a>&#8201;&#8212;&#8201;the user topic discusses provisioning of users and providing users access to channels.</p>
-</li>
-<li>
-<p><a href="roles.html" class="page">Role</a>&#8201;&#8212;&#8201;the role topic discusses roles, assignment of users to roles created and providing roles access to channels.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-access"><a class="anchor" href="#lbl-access"></a>Access</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You control document access by routing it to a channel and by making that channel accessible to the users or roles you want to be able to access documents of that type.</p>
-</div>
-<div class="sect2">
-<h3 id="model-2"><a class="anchor" href="#model-2"></a>Model</h3>
+<h3 id="model"><a class="anchor" href="#model"></a>Model</h3>
 <div class="paragraph">
 <p>In the Couchbase Mobile ecosystem access to documents is governed by three key entities: <a href="#sync-gateway::{user&.adoc#8212;&#8203;page}" class="page unresolved">users</a>, <a href="#sync-gateway::{role&.adoc#8212;&#8203;page}" class="page unresolved">roles</a> and <a href="channels.html" class="page">channels</a>.</p>
 </div>
@@ -1936,12 +1844,12 @@ Like the channel, a role is granted access to zero, one or more channels.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="context-2"><a class="anchor" href="#context-2"></a>Context</h3>
+<h3 id="context"><a class="anchor" href="#context"></a>Context</h3>
 <div class="paragraph">
 <p>You control document access by routing it to a channel and by making that channel accessible to the users or roles you want to be able to access documents of that type.</p>
 </div>
 <div class="sect3">
-<h4 id="sync-gateway-2"><a class="anchor" href="#sync-gateway-2"></a>Sync Gateway</h4>
+<h4 id="sync-gateway"><a class="anchor" href="#sync-gateway"></a>Sync Gateway</h4>
 <div class="paragraph">
 <p>All users can implicitly access any document in the public channel.
 In addition, there can be user-defined channels that users can be assigned to.</p>
@@ -1958,7 +1866,7 @@ Instead you can explicitly implement write access controls within the Sync Funct
 </div>
 </div>
 <div class="sect3">
-<h4 id="couchbase-lite-2"><a class="anchor" href="#couchbase-lite-2"></a>Couchbase Lite</h4>
+<h4 id="couchbase-lite"><a class="anchor" href="#couchbase-lite"></a>Couchbase Lite</h4>
 <div class="paragraph">
 <p>By default, Couchbase Lite gets all the channels to which the configured user account has access.
 Optionally, a Couchbase Lite "pull" replication can also specify a comma-separated list of channel names to receive documents from.
@@ -1968,7 +1876,7 @@ Client apps can use this ability to intelligently sync with a subset of the avai
 </div>
 </div>
 <div class="sect2">
-<h3 id="provisioning-2"><a class="anchor" href="#provisioning-2"></a>Provisioning</h3>
+<h3 id="provisioning"><a class="anchor" href="#provisioning"></a>Provisioning</h3>
 <div class="ulist">
 <ul>
 <li>
@@ -2077,15 +1985,15 @@ In addition, all the stores may need to have access to a common set of documents
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Programmatically using Access Grant Document:
- The <a href="sync-function-overview.html" class="page">Sync Function Overview</a> provides a flexible and secure method for controlling document access and routing.
-You can program it to derive appropriate access and channel routing information from document properties.
-Optionally, the access grant can be specified via a designated extended attribute (XATTR) — see: <a href="using-xattr-access-grants.html" class="page">Using XATTR Access Grants</a> for how to define the XATTR.</td>
+<td>Statically via Admin REST API :
+You can provide the <code>admin_channels</code> property using the <strong>Admin REST API</strong> endpoint (<a href="rest-api-admin.html#/user/post\__db___user_name_" class="page">/{tkn-db}/_user/{name}</a>).</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Statically via Admin REST API :
-You can provide the <code>admin_channels</code> property using the <strong>Admin REST API</strong> endpoint (<a href="rest-api-admin.html#/user/post\__db___user_name_" class="page">/{tkn-db}/_user/{name}</a>).</td>
+<td>Programmatically using Access Grant Document:
+The <a href="sync-function-overview.html" class="page">Sync Function Overview</a> provides a flexible and secure method for controlling document access and routing.
+You can program it to derive appropriate access and channel routing information from document properties.<br>
+Optionally, the access grant can be specified via a designated extended attribute (XATTR) — see: <a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a> for how to define the XATTR.</td>
 </tr>
 </table>
 </div>
@@ -2100,19 +2008,20 @@ You can provide the <code>admin_channels</code> property using the <strong>Admin
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Programmatically using Access Grant Document:
- The <a href="sync-function-overview.html" class="page">Sync Function Overview</a> provides a flexible and secure method for controlling document access and routing.
-You can program it to derive appropriate access and channel routing information from document properties.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Statically via Admin REST API :
 You can provide the <code>admin_channels</code> property using the <strong>Admin REST API</strong> endpoint (<a href="rest-api-admin.html#/user/post\__db___user_name_" class="page">/{tkn-db}/_user/{name}</a>).</td>
 </tr>
 <tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Programmatically using Access Grant Document:
+ The <a href="sync-function-overview.html" class="page">Sync Function Overview</a> provides a flexible and secure method for controlling document access and routing.<br>
+You can program it to derive appropriate access and channel routing information from data embedded within document properties.</td>
+</tr>
+<tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Configuration  (ONLY IN PRE 3.0) :
-This is only available in 3.0 and is typically used for dev/test environments. You can do it in the Sync Gateway JSON Configuration File (<a href="configuration-schema-static.html" class="page">Static Configuration Schema</a> ) by adding the appropriate channel to the user’s admin_channels property&#8201;&#8212;&#8201;see: <a href="configuration-schema-static.html#databases-this_db-users-this_user-admin_channels" class="page">user admin_channels</a></td>
+<td>Static Configuration:
+This is only available in 3.0 and is typically used for dev/test environments.
+You can do it in the Sync Gateway JSON Configuration File (<a href="configuration-schema-static.html" class="page">Static Configuration Schema</a> ) by adding the appropriate channel to the user’s admin_channels property&#8201;&#8212;&#8201;see: <a href="configuration-schema-static.html#databases-this_db-users-this_user-admin_channels" class="page">user admin_channels</a>.</td>
 </tr>
 </table>
 </div>
@@ -2297,17 +2206,8 @@ You can restrict document access to specific users and-or to users with specific
 <div class="paragraph">
 <p>As an entity a <em>user</em> comprises a name, password, list of <a href="roles.html" class="page">Roles</a> and a list of <a href="channels.html" class="page">Channels</a>.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Sync Gateway users and roles have no relationship to Couchbase Server&#8217;s <a href="#server:learn:security/authorization-overview.adoc" class="page unresolved">RBAC (Role-base Access Control) users</a>.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Sync Gateway users and roles have no relationship to Couchbase Server&#8217;s <em>RBAC (Role-based Access Control) users</em>&#8201;&#8212;&#8201;see: <a href="#server:learn:security/authorization-overview.adoc" class="page unresolved">Security Authorization Overview</a> for more on RBAC.</p>
 </div>
 <div class="paragraph">
 <p>Users that are granted access to a channel are able to access the documents assigned to that channel.</p>
@@ -2354,223 +2254,6 @@ Roles have a separate namespace from users, so it’s possible to have a user an
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-sync-function"><a class="anchor" href="#lbl-sync-function"></a>Sync Function</h2>
-<div class="sectionbody">
-<div class="literalblock">
-<div class="content">
-<pre> b// -- concept -- Sync Function
-//
-// tag::summary[]</pre>
-</div>
-</div>
-<div class="paragraph">
-<p><strong>The sync function is crucial to the security of your application.</strong>
-It is in charge of data validation, access control and routing.
-The function executes every time a new revision/update is made to a document.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-The sync function should be a focus of any security review of your application.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect2">
-<h3 id="context-3"><a class="anchor" href="#context-3"></a>Context</h3>
-<div class="paragraph">
-<p>Any changes to <a href="channels.html" class="page">Channels</a> and {access&#8212;&#8203;xref} made by the sync function are <em>tied to that revision</em>.
-If the document is later updated, the sync function is called again on the new revision, and the new channel assignments and user/channel access <em>replace</em> those from the first call.</p>
-</div>
-<div class="sect3">
-<h4 id="lbl-document-conflicts"><a class="anchor" href="#lbl-document-conflicts"></a>Conflicts</h4>
-<div class="paragraph">
-<p>If a document is in conflict there will be multiple current revisions.
-The default, "winning" one is the one whose channel assignments and access grants take effect.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="lbl-handling-deletions"><a class="anchor" href="#lbl-handling-deletions"></a>Deletions</h4>
-<div class="paragraph">
-<p>Validation checks often need to treat deletions specially, because a deletion is just a revision with a <code>"_deleted": true</code> property and usually nothing else.
-Many types of validations won&#8217;t work on a deletion because of the missing properties&#8201;&#8212;&#8201;for example, a check for a required property, or a check that a property value doesn&#8217;t change.
-You&#8217;ll need to skip such checks if <code>doc._deleted</code> is true.</p>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="use"><a class="anchor" href="#use"></a>Use</h3>
-<div class="paragraph">
-<p>The Sync Function exposes a number of helper functions to control access&#8201;&#8212;&#8201;see reference information in <a href="sync-function-api.html" class="page">Sync Function API</a>.
-For example, to grant a user access to a channel use the <a href="sync-function-api-access-cmd.html" class="page">access()</a> helper function in the Sync Function.</p>
-</div>
-<div class="paragraph">
-<p>The <code>access()</code> function can also operate on roles.
-If a user name string begins with <code>role:</code> then the remainder of the string is interpreted as a role name.
-There&#8217;s no ambiguity here, because ":" is an illegal character in a user or role name.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-Because anonymous requests are authenticated as the user "GUEST", you can make a channel and its documents public by calling <code>access</code> with a username of <code>GUEST</code>.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="get-started"><a class="anchor" href="#get-started"></a>Get Started</h3>
-<div class="paragraph">
-<p>When you come to build your Sync Function you will need to decide the access control and document distribution requirements:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The document types it will process</p>
-</li>
-<li>
-<p>The users it will serve</p>
-</li>
-<li>
-<p>Which users need to access which document types</p>
-</li>
-<li>
-<p>What constraints are to be be placed on creating, updating and-or deleting documents</p>
-</li>
-</ul>
-</div>
-<div id="lbl-practical-example" class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>In this example we will build a complete Sync Function that validates and authorizes both new and updated documents.</p>
-</div>
-<div class="paragraph">
-<p>Our requirements for this purpose are:</p>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>That all documents have the following properties:<br>
-<em>creator</em>, <em>writers</em>, <em>title</em>  <em>channels</em></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>That we allow only create and-or delete access to users with the role <code>editor</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>That we only allow changes, including deletions, to be made by users identified in the document&#8217;s <em>writers</em> property</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>That the <em>creator</em> is immutable</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>That we will assign the document to the channel(s) identified in its <em>channels</em> property</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>That we provide the Sync Function Javascript code embedded in our Configuration file&#8201;&#8212;&#8201;see <a href="configuration-schema-static.html#databases-this_db-sync" class="page">sync</a>.<br></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>NOTE&#8201;&#8212;&#8201;The sync function is enclosed in backticks.</td>
-</tr>
-</table>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  //  ... may be preceded by additional configuration data as required by the user ...
-  "databases": { <i class="conum" data-value="6"></i><b>(6)</b>
-    "getting-started-db": {
-      "server": "http://localhost:8091",
-      "bucket": "getting-started-bucket",
-      "username": "sync_gateway",
-      "password": "password",
-      "enable_shared_bucket_access": true,
-      "import_docs": true,
-      "num_index_replicas": 0,
-      "users": {
-        "GUEST": { "disabled": false, "admin_channels": ["*"] },
-      },
-      "sync": ' <i class="conum" data-value="6"></i><b>(6)</b> <i class="conum" data-value="7"></i><b>(7)</b>
-         function (doc, oldDoc) { <i class="conum" data-value="5"></i><b>(5)</b>
-            if (doc._deleted) {
-              // Only editors with write access can delete documents:
-              requireRole("role:editor"); <i class="conum" data-value="2"></i><b>(2)</b>
-              requireUser(oldDoc.writers); <i class="conum" data-value="3"></i><b>(3)</b>
-              // Skip other validation because a deletion has no other properties:
-              return;
-            }
-            // Required properties:
-            if (!doc.title || !doc.creator ||
-                  !doc.channels || !doc.writers) { <i class="conum" data-value="1"></i><b>(1)</b>
-              throw({forbidden: "Missing required properties"});
-            } else if (doc.writers.length == 0) {
-              throw({forbidden: "No writers"});
-            }
-            if (oldDoc == null) {
-              // Only editors can create documents:
-              requireRole("role:editor"); <i class="conum" data-value="2"></i><b>(2)</b>
-              // The 'creator' property must match the user creating the document:
-              requireUser(doc.creator)
-            } else {
-              // Only users in the existing doc's writers list can change a document:
-              requireUser(oldDoc.writers); <i class="conum" data-value="3"></i><b>(3)</b>
-              // The "creator" property is immutable:
-              if (doc.creator != oldDoc.creator) {
-                      throw({forbidden: "Can't change creator"}); <i class="conum" data-value="4"></i><b>(4)</b>
-              }
-            }
-            // Finally, assign the document to the channels in the list:
-            channel(doc.channels); <i class="conum" data-value="5"></i><b>(5)</b>
-
-        }`, <i class="conum" data-value="7"></i><b>(7)</b>
-        //  ... may be followed by additional configuration data as required by the user ...
-    }
-  }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This example used a number of helper functions:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="sync-function-api-channel-cmd.html" class="page">channel()</a></p>
-</li>
-<li>
-<p><a href="sync-function-api-require-user-cmd.html" class="page">requireUser()</a></p>
-</li>
-<li>
-<p><a href="sync-function-api-require-role-cmd.html" class="page">requireRole()</a></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>You could also supply the same Sync Function using the <a href="rest-api-admin.html" class="page">Admin REST API</a> using the _db/_config endpoint</p>
-</div>
-<div class="paragraph">
-<p>If you don&#8217;t supply a sync function, Sync Gateway uses the <a href="configuration-schema-static.html#databases-this_db-sync" class="page">default Sync Function</a>.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
 <div class="sectionbody">
 <div class="card-row three-column-row">
@@ -2580,7 +2263,7 @@ Because anonymous requests are authenticated as the user "GUEST", you can make a
 <div class="title">Learn more &#8230;&#8203;</div>
 <ul>
 <li>
-<p><a href="#sync-gateway::sync-function.adoc" class="page unresolved">Sync Function</a></p>
+<p><a href="sync-function-overview.html" class="page">Sync Function</a></p>
 </li>
 <li>
 <p><a href="import-filter.html" class="page">Import filter</a></p>

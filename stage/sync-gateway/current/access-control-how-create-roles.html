@@ -1294,7 +1294,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <ul class="menu_row">
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-model.html">Access Model</a>
+      <a class="menu_title menu_link" href="access-control-model.html">Access control Model</a>
     </span>
   </li>
   <li class="menu_list" data-depth="2">
@@ -1408,12 +1408,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </li>
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-how-inspect-access.html">Verify Access</a>
+      <a class="menu_title menu_link" href="access-control-how-verify-access.html">Verify Access</a>
     </span>
   </li>
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="#sync-gateway::access-control-how-use-xattrs.adoc">Use XATTRS for Access Grants</a>
+      <a class="menu_title menu_link" href="access-control-how-use-xattrs-for-access-grants.html">Use XATTRs for Access Grants</a>
     </span>
   </li>
 </ul>
@@ -1468,11 +1468,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </span>
   </li>
 </ul>
-  </li>
-  <li class="menu_list" data-depth="1">
-    <span class="menu_line">
-      <a class="menu_title menu_link" href="sync-function-from-sync-nav.html">Sync Function</a>
-    </span>
   </li>
   <li class="menu_list" data-depth="1">
     <span class="menu_line">
@@ -1818,8 +1813,8 @@ Sync Gateway <em>Roles</em> are a key part of a flexible approach to data routin
 <a href="access-control-how-create-users.html" class="page">Create User</a>  |
 <a href="access-control-how-add-roles-to-users.html" class="page">Add Role to User</a>  |
 <a href="access-control-how-control-document-access.html" class="page">Allow Access</a>  |
-<a href="access-control-how-inspect-access.html" class="page">Inspect Access</a>  |
-<a href="access-control-how-write-access.html" class="page">Write Access</a></p>
+<a href="access-control-how-verify-access.html" class="page">Verify Access</a>  |
+<a href="#sync-gateway::access-control-how-write-access.adoc" class="page unresolved">Write Access</a></p>
 </div>
 <div class="dlist">
 <dl>
@@ -1845,19 +1840,33 @@ They enable the grouping together of <a href="users.html" class="page">Users</a>
 <h2 id="provisioning"><a class="anchor" href="#provisioning"></a>Provisioning</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Create and-or manage roles using the Sync Gateway Admin REST API&#8201;&#8212;&#8201;<a href="rest-api-admin.html" class="page">Admin REST API</a>.</p>
+<p>The creation of roles is optional.
+It depends on the use case whether there is a need to logically group users.</p>
 </div>
 <div class="paragraph">
-<p>If you are running Sync gateway in static mode then you can also configure roles within the Sync Gateway Static Configuration File&#8201;&#8212;&#8201;<a href="configuration-schema-static.html" class="page">Static Configuration Schema</a></p>
+<p>You can create and-or manage roles using the following options</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Admin REST API:<br>
+Roles are created via the Sync Gateway Admin REST API&#8201;&#8212;&#8201;see: <a href="rest-api-admin.html" class="page">Admin REST API</a>.</p>
+</li>
+<li>
+<p>Static Configuration ( PRE 3.0)<br>
+Roles can be statically configured within using the Sync Gateway Static Configuration File&#8201;&#8212;&#8201;see: {configuration-schema-static—​xref}.<br>
+<strong>Note</strong> To use this option in v3.0, you must set the <code>disable_persistent_config</code> flag to <code>true.</code></p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>Note that removing a role effectively revokes access to the channel that role is associated with and may mean users will lose access to required documents.</p>
+<p><strong>Note</strong> that removing a role effectively revokes access to the channel that role is associated with and may mean users will lose access to required documents.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_admin-rest-api"></a>Admin Rest API</p>
+<p><a id="tabset1_admin-rest-api"></a>Admin REST API</p>
 </li>
 <li>
 <p><a id="tabset1_configuration-file"></a>Configuration File</p>
@@ -1866,6 +1875,18 @@ They enable the grouping together of <a href="users.html" class="page">Users</a>
 </div>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset1_admin-rest-api">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This is the default recommended option starting 3.0..
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>Create a new role using the <a href="rest-api-admin.html#/role/post__db___role" class="page">/{tkn-db}/_role/</a> endpoint.</p>
 </div>
@@ -1880,8 +1901,20 @@ They enable the grouping together of <a href="users.html" class="page">Users</a>
 <div class="tab-pane" aria-labelledby="tabset1_configuration-file">
 <div class="openblock">
 <div class="content">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This option is disabled by default starting 3.0
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
-<p>Create users by hardcoding their credentials in the <a href="configuration-schema-static.html" class="page">Static Configuration Schema</a>.
+<p>Create roles by hardcoding them in the <a href="configuration-schema-static.html" class="page">Static Configuration Schema</a>.
 This method is convenient for testing and to get started.
 It is recommended to use the <strong>Admin REST API</strong> for production systems.</p>
 </div>
@@ -1936,7 +1969,7 @@ It is recommended to use the <strong>Admin REST API</strong> for production syst
 <div class="title">Learn more &#8230;&#8203;</div>
 <ul>
 <li>
-<p><a href="#sync-gateway::sync-function.adoc" class="page unresolved">Sync Function</a></p>
+<p><a href="sync-function-overview.html" class="page">Sync Function</a></p>
 </li>
 <li>
 <p><a href="import-filter.html" class="page">Import filter</a></p>
