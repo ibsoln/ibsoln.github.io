@@ -1316,7 +1316,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <li class="menu_list is-parent closed" data-depth="1">
     <span class="menu_line">
       <span class="in-toggle"></span>
-      <span class="menu_title menu_text">Sync Function</span>
+      <a class="menu_title menu_link" href="sync-function.html">Sync Function</a>
     </span>
 <ul class="menu_row">
   <li class="menu_list" data-depth="2">
@@ -1397,7 +1397,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </li>
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-how-add-roles-to-users.html">Assign Roles to Users</a>
+      <a class="menu_title menu_link" href="access-control-how-assign-users-to-roles.html">Assign Roles to Users</a>
     </span>
   </li>
   <li class="menu_list" data-depth="2">
@@ -1813,53 +1813,30 @@ The Sync Function is crucial to the security of data sync and replication. It is
 <div class="sect1">
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
-<div class="literalblock">
-<div class="content">
-<pre> b// -- concept -- Sync Function
-//
-// tag::summary[]</pre>
-</div>
-</div>
 <div class="paragraph">
-<p><strong>The sync function is crucial to the security of your application.</strong>
-It is in charge of data validation, access control and routing.
-The function executes every time a new revision/update is made to a document.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-The sync function should be a focus of any security review of your application.
-</td>
-</tr>
-</table>
+<p><em>Related&nbspConcepts</em>:  <a href="access-control-model.html" class="page">Access Control Model</a>  |
+<a href="channels.html" class="page">Channels</a>  |
+<a href="roles.html" class="page">Roles</a>  |
+<a href="sync-function-overview.html" class="page">Sync Function</a>  |
+<a href="users.html" class="page">Users</a></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="context"><a class="anchor" href="#context"></a>Context</h2>
+<h2 id="concept"><a class="anchor" href="#concept"></a>Concept</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Any changes to <a href="channels.html" class="page">Channels</a> and {access&#8212;&#8203;xref} made by the sync function are <em>tied to that revision</em>.
-If the document is later updated, the sync function is called again on the new revision, and the new channel assignments and user/channel access <em>replace</em> those from the first call.</p>
+<p>The sync function is crucial to the security of your application.
+It is in charge of data validation, access control and routing.
+The function executes every time a new revision/update is made to a document.</p>
 </div>
-<div class="sect2">
-<h3 id="lbl-document-conflicts"><a class="anchor" href="#lbl-document-conflicts"></a>Conflicts</h3>
+<div class="imageblock">
+<div class="content">
+<img src="_images/sync-function-context.png" alt="Sync Function Context" width="300">
+</div>
+</div>
 <div class="paragraph">
-<p>If a document is in conflict there will be multiple current revisions.
-The default, "winning" one is the one whose channel assignments and access grants take effect.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="lbl-handling-deletions"><a class="anchor" href="#lbl-handling-deletions"></a>Deletions</h3>
-<div class="paragraph">
-<p>Validation checks often need to treat deletions specially, because a deletion is just a revision with a <code>"_deleted": true</code> property and usually nothing else.
-Many types of validations won&#8217;t work on a deletion because of the missing properties&#8201;&#8212;&#8201;for example, a check for a required property, or a check that a property value doesn&#8217;t change.
-You&#8217;ll need to skip such checks if <code>doc._deleted</code> is true.</p>
-</div>
+<p>The sync function should be a focus of any security review of your application.</p>
 </div>
 </div>
 </div>
@@ -1867,33 +1844,242 @@ You&#8217;ll need to skip such checks if <code>doc._deleted</code> is true.</p>
 <h2 id="use"><a class="anchor" href="#use"></a>Use</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Sync Function exposes a number of helper functions to control access&#8201;&#8212;&#8201;see reference information in <a href="sync-function-api.html" class="page">Sync Function API</a>.
+<p>The Sync Function exposes a number of helper functions to control access — see reference information in <a href="sync-function-api.html" class="page">Sync Function API</a>.
 For example, to grant a user access to a channel use the <a href="sync-function-api-access-cmd.html" class="page">access()</a> helper function in the Sync Function.</p>
 </div>
 <div class="paragraph">
 <p>The <code>access()</code> function can also operate on roles.
-If a user name string begins with <code>role:</code> then the remainder of the string is interpreted as a role name.
-There&#8217;s no ambiguity here, because ":" is an illegal character in a user or role name.</p>
+If a user name string begins with role: then the remainder of the string is interpreted as a role name.
+There’s no ambiguity here, because ":" is an illegal character in a user or role name.</p>
 </div>
-<div class="admonitionblock tip">
+<div class="paragraph">
+<p>Because anonymous requests are authenticated as the user "GUEST", you can make a channel and its documents public by calling access with a username of GUEST.</p>
+</div>
+<div class="paragraph">
+<p>You will likely need to include a check for deleted documents and to treat these differently when validating.
+A deletion is just a revision with a "_deleted": true property; and usually nothing else.</p>
+</div>
+<div class="paragraph">
+<p>Any validation checks will probably fail because of the missing properties, so build -in a check for <code>doc._deleted == true</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="sync-function-prototype"><a class="anchor" href="#sync-function-prototype"></a>Sync Function Prototype</h2>
+<div class="sectionbody">
+<div id="ex-prototype" class="exampleblock">
+<div class="title">Example 1. Prototype Sync Function</div>
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_version-3-0"></a>Version 3.0+</p>
+</li>
+<li>
+<p><a id="tabset1_all-versions"></a>All Versions</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_version-3-0">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) { <i class="conum" data-value="1"></i><b>(1)</b>
+   channel(doc.channels); <i class="conum" data-value="2"></i><b>(2)</b>
+
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-Because anonymous requests are authenticated as the user "GUEST", you can make a channel and its documents public by calling <code>access</code> with a username of <code>GUEST</code>.
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>In version 3.0+ we can use XATTR contents to drive access control.
+To support this, an additional optional argument <code>meta</code> is exposed&#8201;&#8212;&#8201;see <a href="#lbl-args">Arguments</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>[This prototype shows the default Sync Function&#8201;&#8212;&#8201;see <a href="#lbl-args">Arguments</a> for more on the arguments.]</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_all-versions">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc) {
+   channel(doc.channels); <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>[This prototype shows the default Sync Function&#8201;&#8212;&#8201;see <a href="#lbl-args">Arguments</a> for more on the arguments.]</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+</div>
 <div class="sect1">
-<h2 id="get-started"><a class="anchor" href="#get-started"></a>Get Started</h2>
+<h2 id="lbl-args"><a class="anchor" href="#lbl-args"></a>Arguments</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>When you come to build your Sync Function you will need to decide the access control and document distribution requirements:</p>
+<p>The sync function arguments are:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Name</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>doc</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>This object references the content of the document that is being saved.
+It matches the JSON saved by the Couchbase Lite application and replicated to Sync Gateway.</p>
+</div>
+<div class="paragraph">
+<p>The document&#8217;s <code>_id</code> property contains the document ID
+The document&#8217;s <code>_rev</code> property is the new revision ID.
+If the document is being deleted, it will have  a <code>_deleted</code> property with the value <code>true</code>.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oldDoc</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>If the document has been saved before, this object references the revision being replaced; otherwise it is null.<br>
+<strong>Note:</strong>  In the case of a document with conflicts, the current provisional winning revision is passed in <code>oldDoc</code>.</p>
+</div>
+<div class="paragraph">
+<p>Your implementation of the sync function can omit the oldDoc parameter if you do not need it (JavaScript ignores extra parameters passed to a function).</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Meta (optional)</code></p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Starting 3.0, the Sync Function includes support for a new <code>meta</code> argument.</p>
+</div>
+<div class="paragraph">
+<p>This argument references the user defined XATTR that you are using to hold access grant data.</p>
+</div>
+<div class="paragraph">
+<p>The referenced object can include items such as channels or roles. So instead of embedding channel information directly within the document body, users can specify this user-defined XATTR which is associated with the document&#8201;&#8212;&#8201;see <a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a>.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you don’t supply a sync function, Sync Gateway uses the <a href="configuration-schema-static.html#databases-this_db-sync" class="page">default Sync Function</a>.</p>
+</div>
+<div id="ex-prov" class="exampleblock">
+<div class="title">Example 2. Configuring a Sync Function</div>
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_version-3-0"></a>Version 3.0+</p>
+</li>
+<li>
+<p><a id="tabset2_all-versions"></a>All Versions</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_version-3-0">
+<div class="paragraph">
+<p>Here we use the Database Configuration API to provision our Sync Function&#8201;&#8212;&#8201;see: <a href="rest-api-admin-database.html" class="page">Database Configuration API</a></p>
+</div>
+<div class="paragraph">
+<p>The example uses <em>CURL</em> to do this, but you may use a mechanism of your choice.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://localhost:4985/getting-started-db/_config' \
+--header 'accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "sync": ` /* sync function code */ `  <i class="conum" data-value="1"></i><b>(1)</b>
+        }'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_all-versions">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Users running version v3.0+ must run with <code>disable-persistent-configuration=true</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Here we embed our Sync Function in our Sync Gateway configuration file.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">  //  ... may be preceded by additional configuration data as required by the user ...
+  "databases": {
+    "getting-started-db": {
+      "server": "http://localhost:8091",
+      "bucket": "getting-started-bucket",
+      "username": "sync_gateway",
+      "password": "password",
+      "enable_shared_bucket_access": true,
+      "import_docs": true,
+      "num_index_replicas": 0,
+      "users": {
+        "GUEST": { "disabled": false, "admin_channels": ["*"] },
+      },
+      "sync": `/* sync function code */` <i class="conum" data-value="1"></i><b>(1)</b>
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Insert the Sync Function code, for example from <a href="#ex-sample-function">Example 3</a> here.
+Note the sync function is enclosed in backticks.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When you come to build your Sync Function you will need to decide the access control and document distribution requirements. For example:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1911,13 +2097,8 @@ Because anonymous requests are authenticated as the user "GUEST", you can make a
 </li>
 </ul>
 </div>
-<div id="lbl-practical-example" class="exampleblock">
-<div class="content">
 <div class="paragraph">
-<p>In this example we will build a complete Sync Function that validates and authorizes both new and updated documents.</p>
-</div>
-<div class="paragraph">
-<p>Our requirements for this purpose are:</p>
+<p>Our requirements for this example are:</p>
 </div>
 <div class="colist arabic">
 <table>
@@ -1940,96 +2121,109 @@ Because anonymous requests are authenticated as the user "GUEST", you can make a
 </tr>
 <tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>That we will assign the document to the channel(s) identified in its <em>channels</em> property</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>That we provide the Sync Function Javascript code embedded in our Configuration file&#8201;&#8212;&#8201;see <a href="configuration-schema-static.html#databases-this_db-sync" class="page">sync</a>.<br></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>NOTE&#8201;&#8212;&#8201;The sync function is enclosed in backticks.</td>
+<td>That we will assign the document to the channel(s) identified within the documents contents or metadata (v3.0+).</td>
 </tr>
 </table>
 </div>
-<div class="listingblock">
+<div id="ex-sample-function" class="exampleblock">
+<div class="title">Example 3. Sync Function Example</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  //  ... may be preceded by additional configuration data as required by the user ...
-  "databases": { <i class="conum" data-value="6"></i><b>(6)</b>
-    "getting-started-db": {
-      "server": "http://localhost:8091",
-      "bucket": "getting-started-bucket",
-      "username": "sync_gateway",
-      "password": "password",
-      "enable_shared_bucket_access": true,
-      "import_docs": true,
-      "num_index_replicas": 0,
-      "users": {
-        "GUEST": { "disabled": false, "admin_channels": ["*"] },
-      },
-      "sync": ' <i class="conum" data-value="6"></i><b>(6)</b> <i class="conum" data-value="7"></i><b>(7)</b>
-         function (doc, oldDoc) { <i class="conum" data-value="5"></i><b>(5)</b>
-            if (doc._deleted) {
-              // Only editors with write access can delete documents:
-              requireRole("role:editor"); <i class="conum" data-value="2"></i><b>(2)</b>
-              requireUser(oldDoc.writers); <i class="conum" data-value="3"></i><b>(3)</b>
-              // Skip other validation because a deletion has no other properties:
-              return;
-            }
-            // Required properties:
-            if (!doc.title || !doc.creator ||
-                  !doc.channels || !doc.writers) { <i class="conum" data-value="1"></i><b>(1)</b>
-              throw({forbidden: "Missing required properties"});
-            } else if (doc.writers.length == 0) {
-              throw({forbidden: "No writers"});
-            }
-            if (oldDoc == null) {
-              // Only editors can create documents:
-              requireRole("role:editor"); <i class="conum" data-value="2"></i><b>(2)</b>
-              // The 'creator' property must match the user creating the document:
-              requireUser(doc.creator)
-            } else {
-              // Only users in the existing doc's writers list can change a document:
-              requireUser(oldDoc.writers); <i class="conum" data-value="3"></i><b>(3)</b>
-              // The "creator" property is immutable:
-              if (doc.creator != oldDoc.creator) {
-                      throw({forbidden: "Can't change creator"}); <i class="conum" data-value="4"></i><b>(4)</b>
-              }
-            }
-            // Finally, assign the document to the channels in the list:
-            channel(doc.channels); <i class="conum" data-value="5"></i><b>(5)</b>
-
-        }`, <i class="conum" data-value="7"></i><b>(7)</b>
-        //  ... may be followed by additional configuration data as required by the user ...
-    }
-  }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This example used a number of helper functions:</p>
-</div>
-<div class="ulist">
+<div class="tabset is-loading">
+<div class="ulist tabs">
 <ul>
 <li>
-<p><a href="sync-function-api-channel-cmd.html" class="page">channel()</a></p>
+<p><a id="tabset3_version-3-0"></a>Version 3.0+</p>
 </li>
 <li>
-<p><a href="sync-function-api-require-user-cmd.html" class="page">requireUser()</a></p>
-</li>
-<li>
-<p><a href="sync-function-api-require-role-cmd.html" class="page">requireRole()</a></p>
+<p><a id="tabset3_all-versions"></a>All Versions</p>
 </li>
 </ul>
 </div>
-</div>
-</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_version-3-0">
 <div class="paragraph">
-<p>You could also supply the same Sync Function using the <a href="rest-api-admin.html" class="page">Admin REST API</a> using the _db/_config endpoint</p>
+<p>In versions 3.0+ we can use XATTR contents to drive access control.</p>
 </div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// Note the new (3.0), optional, argument `meta`
+function (doc, oldDoc, meta) {
+  if (doc._deleted) {
+    // Only editors with write access can delete documents:
+    requireRole("role:editor"); <i class="conum" data-value="2"></i><b>(2)</b>
+    requireUser(oldDoc.writers); <i class="conum" data-value="3"></i><b>(3)</b>
+    // Skip other validation because a deletion has no other properties:
+    return;
+  }
+  // Required properties:
+  if (!doc.title || !doc.creator ||
+        !doc.channels || !doc.writers) { <i class="conum" data-value="1"></i><b>(1)</b>
+    throw({forbidden: "Missing required properties"});
+  } else if (doc.writers.length == 0) {
+    throw({forbidden: "No writers"});
+  }
+  if (oldDoc == null) {
+    // Only editors can create documents:
+    requireRole("role:editor"); <i class="conum" data-value="2"></i><b>(2)</b>
+    // The 'creator' property must match the user creating the document:
+    requireUser(doc.creator)
+  } else {
+    // Only users in the existing doc's writers list can change a document:
+    requireUser(oldDoc.writers); <i class="conum" data-value="3"></i><b>(3)</b>
+    // The "creator" property is immutable:
+    if (doc.creator != oldDoc.creator) {
+            throw({forbidden: "Can't change creator"}); <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+  }
+  // Finally, assign the document to the channels in the list:
+  channel(meta.XattrChannels.channels); <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_all-versions">
 <div class="paragraph">
-<p>If you don&#8217;t supply a sync function, Sync Gateway uses the <a href="configuration-schema-static.html#databases-this_db-sync" class="page">default Sync Function</a>.</p>
+<p>Here we will use the document content to drive the channels to be accessed&#8201;&#8212;&#8201;using <code>doc.channels</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc) {
+  if (doc._deleted) {
+    // Only editors with write access can delete documents:
+    requireRole("role:editor"); <i class="conum" data-value="2"></i><b>(2)</b>
+    requireUser(oldDoc.writers); <i class="conum" data-value="3"></i><b>(3)</b>
+    // Skip other validation because a deletion has no other properties:
+    return;
+  }
+  // Required properties:
+  if (!doc.title || !doc.creator ||
+        !doc.channels || !doc.writers) { <i class="conum" data-value="1"></i><b>(1)</b>
+    throw({forbidden: "Missing required properties"});
+  } else if (doc.writers.length == 0) {
+    throw({forbidden: "No writers"});
+  }
+  if (oldDoc == null) {
+    // Only editors can create documents:
+    requireRole("role:editor"); <i class="conum" data-value="2"></i><b>(2)</b>
+    // The 'creator' property must match the user creating the document:
+    requireUser(doc.creator)
+  } else {
+    // Only users in the existing doc's writers list can change a document:
+    requireUser(oldDoc.writers); <i class="conum" data-value="3"></i><b>(3)</b>
+    // The "creator" property is immutable:
+    if (doc.creator != oldDoc.creator) {
+            throw({forbidden: "Can't change creator"}); <i class="conum" data-value="4"></i><b>(4)</b>
+    }
+  }
+  // Finally, assign the document to the channels in the list:
+  channel(doc.channels); <i class="conum" data-value="5"></i><b>(5)</b>
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

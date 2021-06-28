@@ -1317,7 +1317,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <li class="menu_list is-parent closed" data-depth="1">
     <span class="menu_line">
       <span class="in-toggle"></span>
-      <span class="menu_title menu_text">Sync Function</span>
+      <a class="menu_title menu_link" href="sync-function.html">Sync Function</a>
     </span>
 <ul class="menu_row">
   <li class="menu_list" data-depth="2">
@@ -1398,7 +1398,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </li>
   <li class="menu_list" data-depth="2">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-how-add-roles-to-users.html">Assign Roles to Users</a>
+      <a class="menu_title menu_link" href="access-control-how-assign-users-to-roles.html">Assign Roles to Users</a>
     </span>
   </li>
   <li class="menu_list" data-depth="2">
@@ -1811,7 +1811,7 @@ Sync Gateway <em>users</em> are a key part of a flexible approach to data routin
 <div class="paragraph">
 <p><em>Related  topics</em>:  <a href="access-control-how-create-roles.html" class="page">Create Role</a>  |
 Create User  |
-<a href="access-control-how-add-roles-to-users.html" class="page">Add Role to User</a>  |
+<a href="access-control-how-assign-users-to-roles.html" class="page">Add Role to User</a>  |
 <a href="access-control-how-control-document-access.html" class="page">Allow Access</a>  |
 <a href="access-control-how-verify-access.html" class="page">Verify Access</a>  |
 <a href="#sync-gateway::access-control-how-write-access.adoc" class="page unresolved">Write Access</a></p>
@@ -1897,11 +1897,11 @@ $ curl -vX PUT "http://localhost:4985/mydatabase/_user/Edge1User" -H
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Add new user "Edge1User", no <code>access_channel</code> or <code>role</code> is specified here.</td>
+<td>Add new user "Edge1User", no <code>admin_channels</code> or <code>role</code> is specified here.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Update existing user "Edge1User" and add <code>access_channels</code> data</td>
+<td>Update existing user "Edge1User" and add <code>admin_channels</code> data</td>
 </tr>
 </table>
 </div>
@@ -1929,7 +1929,7 @@ $ curl -vX PUT "http://localhost:4985/mydatabase/_user/Edge1User" -H
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>register=true</code> to automatically create a Sync Gateway user on successful completion of vaidation.</td>
+<td>Use <code>register=true</code> to automatically create a Sync Gateway user on successful completion of validation.</td>
 </tr>
 </table>
 </div>
@@ -1942,7 +1942,8 @@ $ curl -vX PUT "http://localhost:4985/mydatabase/_user/Edge1User" -H
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This option is disabled by default starting 3.0.
+This option is disabled by default starting 3.0.<br>
+To use this method in 3.0+, run Sync Gateway with the`disable_persistent_config` flag set to <code>true</code>.
 </td>
 </tr>
 </table>
@@ -1951,18 +1952,6 @@ This option is disabled by default starting 3.0.
 <p>Create users by hardcoding their credentials in the Static Configuration Schema. This method is convenient for testing and to get started.<br>
 Use the Admin REST API for production system changes.</p>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-To use this method in 3.0+, run Sync Gateway with the`disable_persistent_config` flag set to <code>true</code>.
-</td>
-</tr>
-</table>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
@@ -1970,7 +1959,7 @@ To use this method in 3.0+, run Sync Gateway with the`disable_persistent_config`
     "mydatabase": {
       "users": { <i class="conum" data-value="1"></i><b>(1)</b>
         "GUEST": {"disabled": true},
-        "Edge1User": {"password": "pass",
+        "Edge1User": {"password": "pass", <i class="conum" data-value="2"></i><b>(2)</b>
                       "admin_channels": ["RandomChannel"]},
       }
     }
@@ -1986,7 +1975,7 @@ To use this method in 3.0+, run Sync Gateway with the`disable_persistent_config`
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we add the Edge1 role used in the example in this topic.</td>
+<td>Here we add the Edge1 user</td>
 </tr>
 </table>
 </div>
