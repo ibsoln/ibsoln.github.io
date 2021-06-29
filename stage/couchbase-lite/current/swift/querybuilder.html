@@ -3350,7 +3350,40 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift"></code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">
+    do {
+
+        for (_, row) in
+            try! listQuery.execute().allResults().enumerated() {
+
+            let jsonString = row.dictionary(forKey: "_doc")!.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
+
+            let thisJsonObj =
+                    try! JSONSerialization.jsonObject(
+                            with: jsonString.data(using: .utf8)! , options:[])
+                                as? [String: Any] <i class="conum" data-value="2"></i><b>(2)</b>
+
+            // Use Json Object to populate Native object <i class="conum" data-value="3"></i><b>(3)</b>
+            this_hotel.id = thisJsonObj!["id"] as! String
+
+            this_hotel.name = thisJsonObj!["name"] as! String
+
+            this_hotel.type = thisJsonObj!["type"] as! String
+
+            this_hotel.city = thisJsonObj!["city"] as! String
+
+            hotels[this_hotel.id] = this_hotel
+
+
+        } // end for
+
+    } catch let err {
+        print(err.localizedDescription)
+
+    } // end do
+
+
+} // end func dontTestQueryAll</code></pre>
 </div>
 </div>
 <div class="colist arabic">

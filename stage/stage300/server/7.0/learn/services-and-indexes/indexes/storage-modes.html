@@ -7499,6 +7499,9 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 A Secondary Index can be saved in either of two ways: <em>memory-optimized</em> or <em>standard</em>.
 </blockquote>
 </div>
+<div class="paragraph">
+<p>Both standard and memory-optimized indexes implement multi-version concurrency control (MVCC) to provide consistent index scan results and high throughput.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -7509,6 +7512,10 @@ A Secondary Index can be saved in either of two ways: <em>memory-optimized</em> 
 </div>
 <div class="paragraph">
 <p>Memory-optimized index-storage is supported by the <em>Nitro</em> storage engine, and is only available in Couchbase Server Enterprise Edition.</p>
+</div>
+<div class="paragraph">
+<p>A memory-optimized index uses a lock-free skiplist to maintain the index and keeps all the index data in memory.
+A memory-optimized index has better latency for index scans and processes the mutations of the data much faster.</p>
 </div>
 <div class="paragraph">
 <p>Memory-optimized index-storage allows high-speed maintenance and scanning; since the index is kept fully in memory at all times.
@@ -7564,6 +7571,10 @@ For information on these settings, see <a href="index-replication.html" class="p
 <p><em>Standard</em> is the default storage-setting for Secondary Indexes: the indexes are saved on disk; in a disk-optimized format that uses both memory and disk for index-update and scanning.
 The performance of standard index storage depends on overall I/O performance.</p>
 </div>
+<div class="paragraph">
+<p>The standard global secondary index uses a B-Tree index and keeps the optimal working set of data in the buffer.
+This means the total size of the index can be much bigger than the amount of memory available in each index node.</p>
+</div>
 <div class="sidebarblock">
 <div class="content">
 <div class="paragraph">
@@ -7572,6 +7583,9 @@ The performance of standard index storage depends on overall I/O performance.</p
 <div class="paragraph">
 <p>In Couchbase Server Enterprise Edition, standard index-storage is supported by the <em>Plasma</em> storage engine.
 In this case, compaction is handled automatically.</p>
+</div>
+<div class="paragraph">
+<p>However, for installations of Couchbase Server Enterprise Edition running on Linux, note that hole punching is required to enable auto-compaction of Global Secondary Indexes using standard index-storage.</p>
 </div>
 </div>
 </div>

@@ -1274,24 +1274,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </li>
 </ul>
   </li>
-  <li class="menu_list is-parent closed" data-depth="0">
-    <span class="menu_line">
-      <span class="in-toggle"></span>
-      <a class="menu_title menu_link" href="../../../sync-gateway/current/introduction.html">Sync&#160;Gateway</a>
-    </span>
-<ul class="menu_row">
-  <li class="menu_list" data-depth="1">
-    <span class="menu_line">
-      <a class="menu_title menu_link" href="../../../sync-gateway/current/configuration-schema-static.html">Configure</a>
-    </span>
-  </li>
-  <li class="menu_list" data-depth="1">
-    <span class="menu_line">
-      <a class="menu_title menu_link" href="../../../sync-gateway/current/rest-api-admin.html">REST API</a>
-    </span>
-  </li>
-</ul>
-  </li>
 </ul>
       </div>
     </li>
@@ -2354,7 +2336,45 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java">
+  ArrayList&lt;Hotel&gt; hotels = new ArrayList&lt;Hotel&gt;();
+
+  // Run query
+  for (Result result : listQuery.execute()) {
+
+    // Get result as JSON string
+    String thisJsonString =
+              result.getDictionary(0).toJSON(); <i class="conum" data-value="1"></i><b>(1)</b>
+    Log.d("Convert", "JSON string: " + thisJsonString );
+
+    // Get JSON object from JSON string
+    JSONObject thisJSONobject = new JSONObject(thisJsonString); <i class="conum" data-value="2"></i><b>(2)</b>
+    Log.d("Convert", "JSON object: " + thisJSONobject.get("name"));
+
+    // Get native object from JSON object <i class="conum" data-value="3"></i><b>(3)</b>
+    JSONObject jsonObject = new JSONObject(thisJsonString.trim());
+    Iterator&lt;String&gt; keys = jsonObject.keys();
+    HashMap&lt;String,Object&gt; jsonDict  = new HashMap&lt;String,Object&gt;();
+
+    while(keys.hasNext()) {
+        String key = keys.next();
+        jsonDict.put(key,jsonObject.get(key));
+        // do something with jsonObject here
+        Log.d("Convert", "Native object: " + jsonDict.get(key));
+    }
+
+    // Get custom object from Native 'dictionary' object
+    Hotel thisHotel = new Hotel();
+    thisHotel.id = jsonDict.get("id").toString();
+    thisHotel.type = jsonDict.get("type").toString();
+    thisHotel.name = jsonDict.get("name").toString();
+    thisHotel.city = jsonDict.get("city").toString();
+    thisHotel.country = jsonDict.get("country").toString();
+    thisHotel.description = jsonDict.get("description").toString();
+    hotels.add(thisHotel);
+    Log.d("Convert", "MutableArray of Hotels: " + hotels.get(hotels.size()-1).name);
+
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">

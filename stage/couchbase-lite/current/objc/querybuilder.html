@@ -3321,7 +3321,46 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">for (CBLQueryResult *result in [listQuery execute:&amp;error]) {
+
+    // Get result as a JSON string
+    NSString *thisJsonString =
+                [[result valueAtIndex:0 ] toJSON]; <i class="conum" data-value="1"></i><b>(1)</b>
+
+    // Get a Json Object from the Json String
+    NSArray *thisJsonObject =
+            [NSJSONSerialization JSONObjectWithData:
+             [thisJsonString dataUsingEncoding: NSUTF8StringEncoding]
+                   options: NSJSONReadingAllowFragments
+                   error: &amp;error]; <i class="conum" data-value="2"></i><b>(2)</b>
+    if (error) {
+        NSLog(@"Error in serialization: %@",error);
+        return;
+    }
+
+    // Get an native Obj-C object from the Json Object
+    NSDictionary *hotelJson
+                    = [thisJsonObject mutableCopy]; <i class="conum" data-value="3"></i><b>(3)</b>
+
+    // Populate a custom object from native dictionary
+    Hotel *hotelFromJson = Hotel.new;
+    NSMutableArray&lt;Hotel *&gt; *hotels = NSMutableArray.new;
+
+    hotelFromJson.id = hotelJson[@"id"];
+    hotelFromJson.name = hotelJson[@"name"];
+    hotelFromJson.city = hotelJson[@"city"];
+    hotelFromJson.country = hotelJson[@"country"];
+    hotelFromJson.descriptive = hotelJson[@"description"];
+
+    [hotels addObject:hotelFromJson];
+
+    // Log generated Json and Native objects
+    // For demo/example purposes
+    NSLog(@"Json Object %@", thisJsonObject);
+    NSLog(@"Json String %@", thisJsonString);
+    NSLog(@"Native Object: id: %@ name: %@ city: %@ country: %@ descriptive: %@", hotelFromJson.id, hotelFromJson.name, hotelFromJson.city, hotelFromJson.country, hotelFromJson.descriptive);
+
+   }; // end for</code></pre>
 </div>
 </div>
 <div class="colist arabic">

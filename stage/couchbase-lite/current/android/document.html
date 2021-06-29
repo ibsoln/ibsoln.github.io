@@ -2367,14 +2367,88 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 <div class="tab-pane" aria-labelledby="tabset1_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-kotlin hljs" data-lang="kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Uses simple JSON -- e.g. import org.json.JSONObject
+// Relies on Hotel class object defined out-of-scope
+
+val hotels = ArrayList&lt;Hotel&gt;()
+// Run query
+for (result in listQuery.execute()) {
+
+  // Get result as JSON string
+  val thisJsonString = result.getDictionary(0)!!.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
+  Log.d("Convert", "JSON string: $thisJsonString")
+
+  // Get JSON object from JSON string
+  val thisJSONobject = JSONObject(thisJsonString) <i class="conum" data-value="2"></i><b>(2)</b>
+  Log.d("Convert", "JSON object: " + thisJSONobject["name"])
+
+  // Get native object from JSON object
+  val jsonObject = JSONObject(thisJsonString.trim { it &lt;= ' ' })
+  val keys = jsonObject.keys()
+  val jsonDict = HashMap&lt;String, Any&gt;()
+  while (keys.hasNext()) { <i class="conum" data-value="3"></i><b>(3)</b>
+      val key = keys.next()
+      jsonDict[key] = jsonObject[key]
+      Log.d("Convert", "Native object: " + jsonDict[key])
+  }
+
+  // Get custom object from Native 'dictionary' object
+  val thisHotel = Hotel()
+  thisHotel.id = jsonDict["id"].toString() <i class="conum" data-value="4"></i><b>(4)</b>
+  thisHotel.type = jsonDict["type"].toString()
+  thisHotel.name = jsonDict["name"].toString()
+  thisHotel.city = jsonDict["city"].toString()
+  thisHotel.country = jsonDict["country"].toString()
+  thisHotel.description = jsonDict["description"].toString()
+  hotels.add(thisHotel)
+  Log.d("Convert", "MutableArray of Hotels: " + hotels[hotels.size - 1].name)
+
+} // end for query loop</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">  // Uses simple JSON -- e.g. import org.json.JSONObject
+  // Relies on Hotel class object defined out-of-scope
+  ArrayList&lt;Hotel&gt; hotels = new ArrayList&lt;Hotel&gt;();
+
+  // Run query
+  for (Result result : listQuery.execute()) {
+
+    // Get result as JSON string
+    String thisJsonString =
+              result.getDictionary(0).toJSON(); <i class="conum" data-value="1"></i><b>(1)</b>
+    Log.d("Convert", "JSON string: " + thisJsonString );
+
+    // Get JSON object from JSON string
+    JSONObject thisJSONobject = new JSONObject(thisJsonString); <i class="conum" data-value="2"></i><b>(2)</b>
+    Log.d("Convert", "JSON object: " + thisJSONobject.get("name"));
+
+    // Get native object from JSON object <i class="conum" data-value="3"></i><b>(3)</b>
+    JSONObject jsonObject = new JSONObject(thisJsonString.trim());
+    Iterator&lt;String&gt; keys = jsonObject.keys();
+    HashMap&lt;String,Object&gt; jsonDict  = new HashMap&lt;String,Object&gt;();
+
+    while(keys.hasNext()) {
+        String key = keys.next();
+        jsonDict.put(key,jsonObject.get(key));
+        Log.d("Convert", "Native object: " + jsonDict.get(key));
+    }
+
+    // Get custom object from Native 'dictionary' object
+    Hotel thisHotel = new Hotel();
+    thisHotel.id = jsonDict.get("id").toString();
+    thisHotel.type = jsonDict.get("type").toString();
+    thisHotel.name = jsonDict.get("name").toString();
+    thisHotel.city = jsonDict.get("city").toString();
+    thisHotel.country = jsonDict.get("country").toString();
+    thisHotel.description = jsonDict.get("description").toString();
+    hotels.add(thisHotel);
+    Log.d("Convert", "MutableArray of Hotels: " + hotels.get(hotels.size()-1).name);
+
+}</code></pre>
 </div>
 </div>
 </div>
