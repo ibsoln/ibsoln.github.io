@@ -17,14 +17,14 @@ produces:
 - application/json
 paths:
   /{db}/:
-    parameters:
-    - $ref: '#/parameters/db'
     get:
       tags:
       - configure
       summary: Database info
       description: |
         This request retrieves basic database information.
+      parameters:
+      - $ref: '#/parameters/db'
       responses:
         200:
           description: Request completed successfully.
@@ -35,8 +35,6 @@ paths:
         404:
           description: Not Found. Requested database not found.
   /{db}/_compact:
-    parameters:
-    - $ref: '#/parameters/db'
     post:
       tags:
       - manage
@@ -53,7 +51,8 @@ paths:
         1.3-1.4 -- the parent revision is marked with a 5 minute expiry time, thus calling the `/{db}/_compact` endpoint is not necessary.
 
         1.2 -- obsolete revision bodies have to be cleaned up by calling the `/{db}/_compact` endpoint.
-
+      parameters:
+      - $ref: '#/parameters/db'
       responses:
         200:
           description: Request completed successfully.
@@ -64,14 +63,14 @@ paths:
                 type: integer
                 description: Count of the number of revisions that were compacted away.
   /{db}/_config:
-    parameters:
-    - $ref: '#/parameters/db'
     get:
       tags:
       - configure
       summary: Database configuration settings
       description: |
         This request retrieves the database configuration
+      parameters:
+      - $ref: '#/parameters/db'
       responses:
         200:
           description: Request completed successfully.
@@ -84,14 +83,6 @@ paths:
     put:
       tags:
       - configure
-      parameters:
-        - $ref: '#/parameters/db'
-        - in: body
-          name: body
-          description: Database Configuration Settings
-          required: true
-          schema:
-            $ref: '#/definitions/Database-config'
       summary: Create or update a database configuration
       description: |+
         Use this endpoint to create new databases and-or to update the configuration of an existing database.
@@ -111,6 +102,14 @@ paths:
 
         NOTE -- Changes made via REST API are persisted by default.
         This behavior can be changed by the command-line setting `disable_persistent_config=true`.
+      parameters:
+        - $ref: '#/parameters/db'
+        - in: body
+          name: body
+          description: Database Configuration Settings
+          required: true
+          schema:
+            $ref: '#/definitions/Database-config'
       responses:
         201:
           description: The database configuration was created/updated successfully.
@@ -125,8 +124,6 @@ paths:
           schema:
             $ref: '#/definitions/Success'
   /{db}/_offline:
-    parameters:
-    - $ref: '#/parameters/db'
     post:
       tags:
       - manage
@@ -147,12 +144,12 @@ paths:
         Taking a database offline that is in the progress of coming online will take the database offline after it comes online.
 
         For more information about taking a database offline and bringing it back online, see [this guide](../database-offline.html).
+      parameters:
+      - $ref: '#/parameters/db'
       responses:
         200:
           description: Database brought online
   /{db}/_online:
-    parameters:
-    - $ref: '#/parameters/db'
     post:
       tags:
       - manage
@@ -174,6 +171,7 @@ paths:
 
         For more information about taking a database offline and bringing it back online, see [this guide](../database-offline.html).
       parameters:
+      - $ref: '#/parameters/db'
       - in: body
         name: body
         description: Optional request body to specify a delay.
@@ -190,8 +188,6 @@ paths:
         503:
           description: Service Unavailable – Database resync is in progress.
   /{db}/_purge:
-    parameters:
-    - $ref: '#/parameters/db'
     post:
       tags:
       - manage
@@ -201,6 +197,7 @@ paths:
 
         When **convergence** is enabled (introduced in Sync Gateway 1.5), this endpoint removes the document and its associated extended attributes.
       parameters:
+      - $ref: '#/parameters/db'
       - in: body
         name: body
         description: The message body is a JSON document that contains the following objects.
@@ -220,9 +217,6 @@ paths:
                   type: string
                   description: Revision ID that was purged
   /{db}/_raw/{doc}:
-    parameters:
-    - $ref: '#/parameters/db'
-    - $ref: '#/parameters/doc'
     get:
       tags:
       - manage
@@ -231,14 +225,15 @@ paths:
         Returns the document with the metadata.
 
         Note: The direct use of this endpoint is unsupported. The sync metadata is maintained internally by Sync Gateway and its structure can change. It should not be used to drive business logic of applications since the response to the `/{db}/_raw/{id}` endpoint can change at any time.
+      parameters:
+      - $ref: '#/parameters/db'
+      - $ref: '#/parameters/doc'
       responses:
         200:
           description: hello
           schema:
             $ref: '#/definitions/DocMetadata'
   /{db}/_resync:
-    parameters:
-    - $ref: '#/parameters/db'
     post:
       tags:
       - manage
@@ -251,6 +246,8 @@ paths:
         A _resync operation on a database that is not in the offline state will be rejected (503 Service Unavailable).
 
         A _resync operation will block until all documents in the database have been processed.
+      parameters:
+      - $ref: '#/parameters/db'
       responses:
         200:
           description: OK – The _resync operation has completed
@@ -262,13 +259,13 @@ paths:
                 type: integer
                 description: The number of documents that were successfully updated
   /{db}/_role:
-    parameters:
-    - $ref: '#/parameters/db'
     get:
       tags:
       - role
       summary: Get roles
       description: This request returns all the roles in the specified database.
+      parameters:
+      - $ref: '#/parameters/db'
       responses:
         200:
           description: 200 OK – Returns the list of roles as an array of strings
@@ -290,14 +287,14 @@ paths:
         409:
           description: 409 Conflict – A role with this name already exists
   /{db}/_role/{name}:
-    parameters:
-    - $ref: '#/parameters/db'
-    - $ref: '#/parameters/role_name'
     get:
       tags:
       - role
       summary: Get role
       description: Request a specific role by name.
+      parameters:
+      - $ref: '#/parameters/db'
+      - $ref: '#/parameters/role_name'
       responses:
         200:
           description: The response contains information about this role.
@@ -339,8 +336,6 @@ paths:
         200:
           description: 200 OK – The role was successfully deleted
   /{db}/_session:
-    parameters:
-    - $ref: '#/parameters/db'
     post:
       tags:
       - session
@@ -348,6 +343,7 @@ paths:
       description: |
         If the credentials provided in the request body are valid, the session is created with an idle session timeout of 24 hours. An idle session timeout in the context of Sync Gateway is defined as the following: if 10% or more of the current expiration time has elapsed when a subsequent request with that session id is processed, the session's expiry time is automatically updated to 24 hours from that time.
       parameters:
+      - $ref: '#/parameters/db'
       - in: body
         name: SessionBody
         description: The message body is a JSON document that contains the following objects.
@@ -378,15 +374,15 @@ paths:
                 type: string
                 description: Session ID.
   /{db}/_session/{sessionid}:
-    parameters:
-    - $ref: '#/parameters/db'
-    - $ref: '#/parameters/sessionid'
     get:
       tags:
       - session
       summary: Retrieves information about a session
       description: |
         This request retrieves information about a session.
+      parameters:
+      - $ref: '#/parameters/db'
+      - $ref: '#/parameters/sessionid'
       responses:
         200:
           description: 200 OK – Request completed successfully.
@@ -414,38 +410,38 @@ paths:
         200:
           description: 200 OK – Request completed successfully. If the session is successfully deleted, the response has an empty message body. If the session is not deleted, the message body contains error information.
   /{db}/_user/{name}/_session:
-    parameters:
-    - $ref: '#/parameters/db'
-    - $ref: '#/parameters/name'
     delete:
       tags:
       - session
       summary: Deletes all user sessions
       description: This request delete the session for the specified user.
+      parameters:
+      - $ref: '#/parameters/db'
+      - $ref: '#/parameters/name'
       responses:
         200:
           description: User session deleted.
   /{db}/_user/{name}/_session/{sessionid}:
-    parameters:
-    - $ref: '#/parameters/db'
-    - $ref: '#/parameters/name'
-    - $ref: '#/parameters/sessionid'
     delete:
       tags:
       - session
       summary: Deletes a specific user session
       description: This request delete the specified session for the specified user.
+      parameters:
+      - $ref: '#/parameters/db'
+      - $ref: '#/parameters/name'
+      - $ref: '#/parameters/sessionid'
       responses:
         200:
           description: User session deleted.
   /{db}/_user/:
-    parameters:
-    - $ref: '#/parameters/db'
     get:
       tags:
       - user
       summary: Retrieves all users
       description: This request returns all the users in the specified database.
+      parameters:
+      - $ref: '#/parameters/db'
       responses:
         200:
           description: The message body contains the list of users in a JSON array. Each element of the array is a string representing the name of a user in the specified database.
@@ -467,14 +463,14 @@ paths:
         409:
           description: 409 Conflict – A user with this name already exists
   /{db}/_user/{name}:
-    parameters:
-    - $ref: '#/parameters/db'
-    - $ref: '#/parameters/name'
     get:
       tags:
       - user
       summary: Retrieves a specific user
       description: This request returns information about the specified user.
+      parameters:
+      - $ref: '#/parameters/db'
+      - $ref: '#/parameters/name'
       responses:
         200:
           description: 200 OK – Returns information about the specified user
@@ -2437,29 +2433,16 @@ parameters:
   upgrade_preview:
     in: query
     name: preview
-    description: Lists the design documents to be removed if the request is sent without this paramter.
+    description: Lists the design documents to be removed if the request is sent without this parameter.
     type: boolean
     default: false
     required: false
 
 tags:
-  # - name: my_access_control
-  #   description: groups all access control related activities (user, role, channel and sync function)
-  # - name: my_database
-    # description: groups all db management activities
-  # - name: my_config
-  #   description: groups all general non-restart config activities
-
-  # - name: attachment
-  #   description: Groups all endpoints for attachment activities
   - name: configure
     description: Create and configure databases
   - name: manage
     description: Maintain databases
-  # - name: replication
-  #   description: Groups all endpoints for sync and replication activities
-  # - name: auth
-  #   description: Groups all endpoints for authentication activities
   - name: role
     description: Access-control -- manage database user roles
   - name: user
