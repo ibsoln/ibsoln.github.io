@@ -1450,12 +1450,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <ul class="menu_row">
   <li class="menu_list" data-depth="1">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-control-overview.html">Access Control Overview</a>
+      <a class="menu_title menu_link" href="#sync-gateway::access-control-overview.adoc">Access Control Overview</a>
     </span>
   </li>
   <li class="menu_list" data-depth="1">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="access-grants.html">Access Grants</a>
+      <a class="menu_title menu_link" href="#sync-gateway::access-grants.adoc">Access Grants</a>
     </span>
   </li>
   <li class="menu_list" data-depth="1">
@@ -1480,7 +1480,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   </li>
   <li class="menu_list" data-depth="1">
     <span class="menu_line">
-      <a class="menu_title menu_link" href="using-xattr-access-grants.html">Using XATTR Access Grants</a>
+      <a class="menu_title menu_link" href="#sync-gateway::using-xattr-access-grants.adoc">Use XATTR Access Grants</a>
     </span>
   </li>
 </ul>
@@ -1878,29 +1878,88 @@ Here we introduce the concept of <em>users</em> and their role in assuring secur
 </blockquote>
 </div>
 <div class="paragraph">
-<p><em>Related access-control topics</em>:  <a href="access-grants.html" class="page">Access Grants</a>  |  <a href="sync-function.html" class="page">Sync Function</a>  |  <a href="channels.html" class="page">Channels</a>  |  <a href="roles.html" class="page">Roles</a>  |  Users  |
-<a href="using-xattr-access-grants.html" class="page">Extended Attributes Key</a></p>
+<p><em>Related  Topics</em>:  <a href="access-control-concepts.html" class="page">Concepts</a>  |
+<a href="access-control-how.html" class="page">How-to</a>  |
+<a href="sync-function-overview.html" class="page">Sync Function</a>  |
+<a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a></p>
+</div>
+<div class="paragraph">
+<p><em>Related&nbspConcepts</em>:  <a href="access-control-model.html" class="page">Access Control Model</a>  |
+<a href="channels.html" class="page">Channels</a>  |
+<a href="roles.html" class="page">Roles</a>  |
+<a href="sync-function-overview.html" class="page">Sync Function</a>  |
+Users</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<h2 id="concept"><a class="anchor" href="#concept"></a>Concept</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Users are one of the cornerstone concepts behind <em>Sync Gateway</em>'s access control feature.</p>
+<p>Users are one of the cornerstone concepts of access control.
+You can restrict document access to specific users and-or to users with specific roles.</p>
 </div>
 <div class="paragraph">
-<p>You can authorize users and control their access to your database by creating user accounts and assigning roles to users.
-This topic focuses on how to authorize users to be able to access the Sync Gateway and their remote databases.</p>
+<p>As an entity a <em>user</em> comprises a name, password, list of <a href="roles.html" class="page">Roles</a> and a list of <a href="channels.html" class="page">Channels</a>.</p>
+</div>
+<div class="paragraph">
+<p>Sync Gateway users and roles have no relationship to Couchbase Server&#8217;s <em>RBAC (Role-based Access Control) users</em>&#8201;&#8212;&#8201;see: <a href="../../server/current/learn/security/authorization-overview.html" class="page">Security Authorization Overview</a> for more on RBAC.</p>
+</div>
+<div class="paragraph">
+<p>Users that are granted access to a channel are able to access the documents assigned to that channel.</p>
+</div>
+<div class="paragraph">
+<p>Users can also be assigned to zero or more roles.
+A user inherits the channel access of all roles it belongs to.
+This is very much like Unix groups, except that roles do not form a hierarchy.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="creating"><a class="anchor" href="#creating"></a>Creating</h2>
+<h2 id="process"><a class="anchor" href="#process"></a>Process</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The user must be created on Sync Gateway before it can be used for authentication&#8201;&#8212;&#8201;see also: <a href="authentication-users.html" class="page">User Authentication</a>.</p>
+<p>A user must be created on Sync Gateway before it can be granted access to documents.</p>
 </div>
+<div class="paragraph">
+<p>You create and-or manage users using the following options&#8201;&#8212;&#8201;as shown in <a href="#ex-create-users">Example 1</a>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Admin REST API<br>
+Users are created via the Sync Gateway <a href="rest-api-admin.html" class="page">Admin REST API</a>.</p>
+</li>
+<li>
+<p>OIDC<br>
+Configure <em>OIDC</em> authentication to auto-register a user following successful validation of an ID Token&#8201;&#8212;&#8201;<a href="authentication-users.html" class="page">User Authentication</a>.</p>
+</li>
+<li>
+<p>Static Configuration (Pre 3.0):<br>
+Users can be statically configured within the Sync Gateway Configuration File&#8201;&#8212;&#8201;see: <a href="configuration-schema-static.html" class="page">File-based Configuration Schema</a>.<br>
+<strong>Note</strong>, to use this option in version 3.0+x users must run Sync Gateway with the <code>disable_persistent_config</code> flag set to <code>true</code>.</p>
+</li>
+</ul>
+</div>
+<div id="ex-create-users" class="exampleblock">
+<div class="title">Example 1. How to Create Users</div>
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_admin-rest-api"></a>Admin REST API</p>
+</li>
+<li>
+<p><a id="tabset1_oidc"></a>OIDC</p>
+</li>
+<li>
+<p><a id="tabset1_configuration-file"></a>Configuration File</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_admin-rest-api">
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1908,43 +1967,88 @@ This topic focuses on how to authorize users to be able to access the Sync Gatew
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Sync Gateway users and roles have no relationship to Couchbase Server&#8217;s <a href="../../server/current/learn/security/authorization-overview.html" class="page">RBAC (Role-base Access Control) users</a>.
+This is the default recommended option starting 3.0.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>You create Users through either the <a href="rest-api-admin.html" class="page">Admin REST API</a> or <a href="configuration-schema-static.html" class="page">File-based Configuration Schema</a>.</p>
+<p>Create a new user by sending a POST request to the Admin Rest Api <code>_user</code> endpoint (<a href="rest-api-admin.html#/user/put__db___user__name_" class="page">{db}/_user/{name}</a>).
+Update existing users by sending a PUT instead; in this case include the user name at the end of the url.</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Admin REST API</dt>
-<dd>
-<p>Create a new user by sending a PUT request to <a href="rest-api-admin.html#/user/put__db___user<em>name_" class="page">/{tkn-db}/_user/{name}</a> or by sending a POST request to <a href="rest-api-admin.html#/user/post\</em>db___user_" class="page">/{tkn-db}/_user</a>, where <code>db</code> is the configured name of the database and <code>name</code> is the user name.</p>
 <div class="paragraph">
 <p>The user credentials (<strong>username</strong>/<strong>password</strong>) are passed in the request body.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -vX POST "http://localhost:4985/mydatabase/_user/" -H "accept: application/json" -H "Content-Type: application/json" -d '{"name": "john", "password": "pass"}'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -vX POST "http://localhost:4985/mydatabase/_user/" -H
+"accept: application/json" -H "Content-Type: application/json" -d
+'{"name": "Edge1User", "password": "pass"}' <i class="conum" data-value="1"></i><b>(1)</b>
+
+$ curl -vX PUT "http://localhost:4985/mydatabase/_user/Edge1User" -H
+"accept: application/json" -H "Content-Type: application/json" -d
+'{"name": "Edge1User", "admin_channels": ["RandomChannel"]}' <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Add new user "Edge1User", no <code>admin_channels</code> or <code>role</code> is specified here.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Update existing user "Edge1User" and add <code>admin_channels</code> data</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_oidc">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://localhost:4985/ourdb/_config' \
+--header 'accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+  oidc: {
+    providers: {
+      google_implicit: {
+        issuer:https://accounts.google.com,
+        client_id:yourclientid-uso.apps.googleusercontent.com,
+        register:true <i class="conum" data-value="1"></i><b>(1)</b>
+      },
+    },
+  }
+}'</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>register=true</code> to automatically create a Sync Gateway user on successful completion of validation.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_configuration-file">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This option is disabled by default starting 3.0.<br>
+To use this method in 3.0+, run Sync Gateway with the`disable_persistent_config` flag set to <code>true</code>.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>The Admin REST API is for administrator use only, and hence is <strong>not</strong> accessible from the clients directly.
-To allow users to sign up, it is recommended to have an app server sitting alongside Sync Gateway that performs the user validation, creates a new user on this API and then returns the response to the application.</p>
+<p>Create users by hardcoding their credentials in the Static Configuration Schema. This method is convenient for testing and to get started.<br>
+Use the Admin REST API for production system changes.</p>
 </div>
-<div class="paragraph">
-<p>Additionally, this API can be used in conjunction with a 3rd party server for the authentication process (see <a href="authentication-users.html#custom-authentication" class="page">Custom authentication</a>).</p>
-</div>
-<div class="paragraph">
-<p>Lastly, Sync Gateway supports <a href="authentication-users.html#openid-connect" class="page">OpenID Connect authentication</a>.
-In this case, Sync Gateway can automatically create users for successfully authenticated users that don&#8217;t have an already existing user in Sync Gateway.</p>
-</div>
-</dd>
-<dt class="hdlist1">Configuration file</dt>
-<dd>
-<p>Create users by hardcoding their credentials in the <a href="configuration-schema-static.html" class="page">File-based Configuration Schema</a>.
-This method is convenient for testing and to get started, otherwise it is generally recommended to use the <strong>Admin REST API</strong> for a programmatic behavior.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
@@ -1952,7 +2056,8 @@ This method is convenient for testing and to get started, otherwise it is genera
     "mydatabase": {
       "users": { <i class="conum" data-value="1"></i><b>(1)</b>
         "GUEST": {"disabled": true},
-        "john": {"password": "pass"}
+        "Edge1User": {"password": "pass", <i class="conum" data-value="2"></i><b>(2)</b>
+                      "admin_channels": ["RandomChannel"]},
       }
     }
   }
@@ -1965,11 +2070,18 @@ This method is convenient for testing and to get started, otherwise it is genera
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td><a href="configuration-schema-static.html#databases-this_db-users" class="page">databases.$db.users</a></td>
 </tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Here we add the Edge1 user</td>
+</tr>
 </table>
 </div>
-</dd>
-</dl>
 </div>
+</div>
+</div>
+</div>
+</div>
+<hr>
 </div>
 </div>
 <div class="sect1">
@@ -1982,7 +2094,7 @@ This method is convenient for testing and to get started, otherwise it is genera
 <div class="title">Learn more &#8230;&#8203;</div>
 <ul>
 <li>
-<p><a href="sync-function.html" class="page">Sync Function</a></p>
+<p><a href="sync-function-overview.html" class="page">Sync Function</a></p>
 </li>
 <li>
 <p><a href="import-filter.html" class="page">Import filter</a></p>
