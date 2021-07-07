@@ -7714,8 +7714,7 @@ To create a variadic function, that is, a function which you can call with any n
 <dd>
 <p>The name of the JavaScript function that you want to use for the user-defined function.
 This parameter is a string and must be wrapped in quotes.
-The supported JavaScript syntax is the same as for the Eventing service.
-For details, refer to <a href="../../eventing/eventing-language-constructs.html" class="page">Language Constructs</a>.</p>
+External functions in N1QL <em>only</em> support plain JavaScript, without any of the <a href="../../eventing/eventing-language-constructs.html#added-lang-features" class="page">added language features</a> supported by functions in the Eventing Service.</p>
 </dd>
 </dl>
 </div>
@@ -7888,7 +7887,7 @@ The expression expects two named arguments: <code>vString</code>, which is the s
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/af2a05960c5b550a41627c692509e47a77368353/modules/n1ql/examples/n1ql-language-reference/udf-locations-define.n1ql">CREATE FUNCTION locations(vActivity) { (
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/1a80ba385fc8f48f1d30fd00992cb88101cc464f/modules/n1ql/examples/n1ql-language-reference/udf-locations-define.n1ql">CREATE FUNCTION locations(vActivity) { (
   SELECT id, name, address, city
   FROM `travel-sample`.inventory.landmark
   WHERE activity = vActivity) };</code></pre>
@@ -7897,13 +7896,13 @@ The expression expects two named arguments: <code>vString</code>, which is the s
 <div class="listingblock">
 <div class="title">Test</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/af2a05960c5b550a41627c692509e47a77368353/modules/n1ql/examples/n1ql-language-reference/udf-locations-test.n1ql">EXECUTE FUNCTION locations("see");</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/1a80ba385fc8f48f1d30fd00992cb88101cc464f/modules/n1ql/examples/n1ql-language-reference/udf-locations-test.n1ql">EXECUTE FUNCTION locations("see");</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/af2a05960c5b550a41627c692509e47a77368353/modules/n1ql/examples/n1ql-language-reference/udf-locations-test.jsonc#L2-L15">[
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/couchbase/docs-server/blob/1a80ba385fc8f48f1d30fd00992cb88101cc464f/modules/n1ql/examples/n1ql-language-reference/udf-locations-test.jsonc#L2-L15">[
   [
     {
       "address": "Prince Arthur Road, ME4 4UG",
@@ -7979,6 +7978,16 @@ The function takes no arguments.</p>
 <div class="paragraph">
 <p>The following command registers two JavaScript functions called <code>encodeGeoHash</code> and <code>calculateAdjacent</code> in a library called <code>geohash-js</code>.
 <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The function <code>encodeGeoHash</code> takes two arguments, a latitude and a longitude, and returns the 12-character <a href="https://en.wikipedia.org/wiki/Geohash" target="_blank" rel="noopener">geohash</a> for the specified location.</p>
+</li>
+<li>
+<p>The function <code>calculateAdjacent</code> takes two arguments, a geohash and a direction&#8201;&#8212;&#8201;<code>"top"</code>, <code>"bottom"</code>, <code>"left"</code>, or <code>"right"</code>&#8201;&#8212;&#8201;and returns the geohash of the location next to the original geohash in the specified direction.</p>
+</li>
+</ul>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -8103,6 +8112,10 @@ CREATE FUNCTION adjacent(src, dir)
 ]</code></pre>
 </div>
 </div>
+<div class="paragraph">
+<p>To view the geohash on a map, go to <a href="http://geohash.org/gcqrs0z2jfdr" class="bare">http://geohash.org/gcqrs0z2jfdr</a> and follow one of the links provided.
+At the specified latitude, the geohash represents an area of approximately 11 𐄂 19 millimeters.</p>
+</div>
 <div class="listingblock">
 <div class="title">Test <code>adjacent</code></div>
 <div class="content">
@@ -8116,6 +8129,10 @@ CREATE FUNCTION adjacent(src, dir)
   "gcqrs0z2jff2"
 ]</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>To view the geohash on a map, go to <a href="http://geohash.org/gcqrs0z2jff2" class="bare">http://geohash.org/gcqrs0z2jff2</a> and follow one of the links provided.
+At this level of precision, the geohash should appear to be in almost exactly the same location as the previous one.</p>
 </div>
 </div>
 </div>
