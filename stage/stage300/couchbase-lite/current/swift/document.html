@@ -2365,21 +2365,25 @@ name Hotel Ted</code></pre>
         for (_, row) in
             try! listQuery.execute().allResults().enumerated() {
 
-            let jsonString = row.dictionary(forKey: "_doc")!.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
+            let jsonString = row.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
+            // ALTERNATIVELY:
+            let jsonString = row.dictionary(at: 0)!.toJSON() <i class="conum" data-value="2"></i><b>(2)</b>
 
-            let thisJsonObj =
-                    try! JSONSerialization.jsonObject(
-                            with: jsonString.data(using: .utf8)! , options:[])
-                                as? [String: Any] <i class="conum" data-value="2"></i><b>(2)</b>
+            // Get native dictionary from JSON string
+            let thisDictFromJSON:Dictionary =
+                try! (JSONSerialization.jsonObject(
+                        with: jsonString.data(using: .utf8)! , options:[])
+                        as? [String: Any])! <i class="conum" data-value="3"></i><b>(3)</b>
 
-            // Use Json Object to populate Native object <i class="conum" data-value="3"></i><b>(3)</b>
-            this_hotel.id = thisJsonObj!["id"] as! String
 
-            this_hotel.name = thisJsonObj!["name"] as! String
+            // Use new dictionary to populate custom object <i class="conum" data-value="4"></i><b>(4)</b>
+            this_hotel.id = thisDictFromJSON!["id"] as! String
 
-            this_hotel.type = thisJsonObj!["type"] as! String
+            this_hotel.name = thisDictFromJSON!["name"] as! String
 
-            this_hotel.city = thisJsonObj!["city"] as! String
+            this_hotel.type = thisDictFromJSON!["type"] as! String
+
+            this_hotel.city = thisDictFromJSON!["city"] as! String
 
             hotels[this_hotel.id] = this_hotel
 
@@ -2399,15 +2403,19 @@ name Hotel Ted</code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Get the Query result as a JSON string</td>
+<td>Get the Query result as a JSON string&#8201;&#8212;&#8201;this example assumes your query SELECTed specific properties.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Get a JSON object from the JSON string</td>
+<td>Get the Query result as a JSON string&#8201;&#8212;&#8201;this example assumes your query SELECTed ALL</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Get a native object from the JSON object</td>
+<td>Get a native object from the JSON string</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Populate your custom object from the dictionary created from JSON data</td>
 </tr>
 </table>
 </div>

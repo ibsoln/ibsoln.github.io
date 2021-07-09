@@ -3189,44 +3189,46 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">for (CBLQueryResult *result in [listQuery execute:&amp;error]) {
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">NSMutableArray&lt;Hotel *&gt; *hotels = NSMutableArray.new;
+for (CBLQueryResult* result in [listQuery execute:&amp;error]) {
 
     // Get result as a JSON string
-    NSString *thisJsonString =
-                [[result valueAtIndex:0 ] toJSON]; <i class="conum" data-value="1"></i><b>(1)</b>
 
-    // Get a Json Object from the Json String
-    NSArray *thisJsonObject =
+    NSString* thisJsonString =
+                [result toJSON]; <i class="conum" data-value="1"></i><b>(1)</b>
+    //  ALTERNATIVELY
+    NSString* thisJsonString =
+                [[result valueAtIndex:0 ] toJSON]; <i class="conum" data-value="2"></i><b>(2)</b>
+
+    // Get an native Obj-C object from the Json String
+    NSDictionary *thisDictFromJSON =
             [NSJSONSerialization JSONObjectWithData:
              [thisJsonString dataUsingEncoding: NSUTF8StringEncoding]
                    options: NSJSONReadingAllowFragments
-                   error: &amp;error]; <i class="conum" data-value="2"></i><b>(2)</b>
+                   error: &amp;error]; <i class="conum" data-value="3"></i><b>(3)</b>
     if (error) {
         NSLog(@"Error in serialization: %@",error);
         return;
     }
 
-    // Get an native Obj-C object from the Json Object
-    NSDictionary *hotelJson
-                    = [thisJsonObject mutableCopy]; <i class="conum" data-value="3"></i><b>(3)</b>
 
     // Populate a custom object from native dictionary
     Hotel *hotelFromJson = Hotel.new;
-    NSMutableArray&lt;Hotel *&gt; *hotels = NSMutableArray.new;
 
-    hotelFromJson.id = hotelJson[@"id"];
-    hotelFromJson.name = hotelJson[@"name"];
-    hotelFromJson.city = hotelJson[@"city"];
-    hotelFromJson.country = hotelJson[@"country"];
-    hotelFromJson.descriptive = hotelJson[@"description"];
+    hotelFromJson.id = thisDictFromJSON[@"id"];  <i class="conum" data-value="4"></i><b>(4)</b>
+    hotelFromJson.name = thisDictFromJSON[@"name"];
+    hotelFromJson.city = thisDictFromJSON[@"city"];
+    hotelFromJson.country = thisDictFromJSON[@"country"];
+    hotelFromJson.descriptive = thisDictFromJSON[@"description"];
 
     [hotels addObject:hotelFromJson];
 
+
     // Log generated Json and Native objects
     // For demo/example purposes
-    NSLog(@"Json Object %@", thisJsonObject);
     NSLog(@"Json String %@", thisJsonString);
-    NSLog(@"Native Object: id: %@ name: %@ city: %@ country: %@ descriptive: %@", hotelFromJson.id, hotelFromJson.name, hotelFromJson.city, hotelFromJson.country, hotelFromJson.descriptive);
+    NSLog(@"Native Object %@", thisDictFromJSON);
+    NSLog(@"Custom Object: id: %@ name: %@ city: %@ country: %@ descriptive: %@", hotelFromJson.id, hotelFromJson.name, hotelFromJson.city, hotelFromJson.country, hotelFromJson.descriptive);
 
    }; // end for</code></pre>
 </div>
@@ -3235,15 +3237,19 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Get the Query result as a JSON string</td>
+<td>Get the Query result as a JSON string&#8201;&#8212;&#8201;this example assumes your query SELECTed specific properties.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Get a JSON object from the JSON string</td>
+<td>Get the Query result as a JSON string&#8201;&#8212;&#8201;this example assumes your query SELECTed ALL</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Get a native object from the JSON object</td>
+<td>Get a native object from the JSON string</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Populate your custom object from the dictionary created from JSON data</td>
 </tr>
 </table>
 </div>
