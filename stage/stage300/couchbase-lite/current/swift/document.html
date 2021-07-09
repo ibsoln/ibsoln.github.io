@@ -2369,24 +2369,24 @@ name Hotel Ted</code></pre>
             // ALTERNATIVELY:
             let jsonString = row.dictionary(at: 0)!.toJSON() <i class="conum" data-value="2"></i><b>(2)</b>
 
+
             // Get native dictionary from JSON string
             let thisDictFromJSON:Dictionary =
                 try! (JSONSerialization.jsonObject(
                         with: jsonString.data(using: .utf8)! , options:[])
                         as? [String: Any])! <i class="conum" data-value="3"></i><b>(3)</b>
 
+            // Use new dictionary to  populate objects with the JSON data
+            anhotelId = thisDictFromJSON!["id"] as! String
+            anhotelNname = thisDictFromJSON!["name"] as! String
 
-            // Use new dictionary to populate custom object <i class="conum" data-value="4"></i><b>(4)</b>
-            this_hotel.id = thisDictFromJSON!["id"] as! String
 
-            this_hotel.name = thisDictFromJSON!["name"] as! String
-
-            this_hotel.type = thisDictFromJSON!["type"] as! String
-
-            this_hotel.city = thisDictFromJSON!["city"] as! String
+            // Get custom object from JSON string
+            let this_hotel:Hotel =
+              (try JSONDecoder().decode(Hotel.self,
+                     from: jsonString.data(using: .utf8)!)) <i class="conum" data-value="4"></i><b>(4)</b>
 
             hotels[this_hotel.id] = this_hotel
-
 
         } // end for
 
