@@ -1365,10 +1365,18 @@
     <a class="menu_title menu_link" href="configuration-schema-bootstrap.html">Bootstrap Configuration Schema</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
+    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="rest-api-admin-database.html">Database Configuration</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="configuration-schema-database.html">Schema</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1464,12 +1472,12 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#sync-gateway::access-control-overview.adoc">Access Control Overview</a>
+    <a class="menu_title menu_link" href="access-control-overview.html">Access Control Overview</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#sync-gateway::access-grants.adoc">Access Grants</a>
+    <a class="menu_title menu_link" href="access-grants.html">Access Grants</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -1494,7 +1502,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#sync-gateway::using-xattr-access-grants.adoc">Use XATTR Access Grants</a>
+    <a class="menu_title menu_link" href="using-xattr-access-grants.html">Using XATTR Access Grants</a>
   </span>
 </li>
 </ul>
@@ -1876,7 +1884,7 @@ This content explains how to implement user authentication in Sync Gateway</p>
 </blockquote>
 </div>
 <div class="paragraph">
-<p>Related <em>Security</em> topics: <a href="authentication-certs.html" class="page">TLS Certificate Authentication</a>  |  <a href="sync-function-overview.html" class="page">Sync Function</a>  |  <a href="import-filter.html" class="page">Import filter</a>  |  <a href="read-access.html" class="page">Read Access</a>  |  <a href="write-access.html" class="page">Write Access</a></p>
+<p>Related <em>Security</em> topics: <a href="authentication-certs.html" class="page">TLS Certificate Authentication</a>  |  <a href="sync-function.html" class="page">Sync Function</a>  |  <a href="import-filter.html" class="page">Import filter</a>  |  <a href="read-access.html" class="page">Read Access</a>  |  <a href="write-access.html" class="page">Write Access</a></p>
 </div>
 </div>
 </div>
@@ -2149,45 +2157,12 @@ In the algorithm dropdown, make sure to select <code>RS256</code> as the signing
 <div class="paragraph">
 <p>Since Open ID tokens are typically large, the usual approach is to use the Open ID token to obtain a Sync Gateway session id (using the <a href="rest-api.html#/session/post__db___session" class="page">POST /db/_session</a> endpoint), and then use the returned session id for subsequent authentication requests.</p>
 </div>
-<div class="exampleblock">
-<div class="content">
-<div class="dlist">
-<dl>
-<dt class="hdlist1">REST API</dt>
-<dd>
-<div class="openblock">
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://localhost:4985/ourdb/_config' \
---header 'accept: application/json' \
---header 'Content-Type: application/json' \
---data-raw '{
-  oidc: {
-    providers: {
-      google_implicit: {
-        issuer:https://accounts.google.com,
-        client_id:yourclientid-uso.apps.googleusercontent.com,
-        register:true <i class="conum" data-value="1"></i><b>(1)</b>
-      },
-    },
-  }
-}'</code></pre>
-</div>
-</div>
-</div>
-</div>
-</dd>
-<dt class="hdlist1">Configuration File</dt>
-<dd>
-<div class="openblock">
-<div class="content">
 <div class="paragraph">
 <p>Here is a sample Sync Gateway config file, configured to use the Implicit Flow.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">{
   "interface":":4984",
   "log":["*"],
   "databases": {
@@ -2199,28 +2174,13 @@ In the algorithm dropdown, make sure to select <code>RS256</code> as the signing
           "google_implicit": {
             "issuer":"https://accounts.google.com",
             "client_id":"yourclientid-uso.apps.googleusercontent.com",
-            "register":true <i class="conum" data-value="1"></i><b>(1)</b>
+            "register":true
           },
         },
       }
     }
   }
 }</code></pre>
-</div>
-</div>
-</div>
-</div>
-</dd>
-</dl>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>register</code> to auto-register a Sync Gateway user on successful completion of the validation</td>
-</tr>
-</table>
-</div>
 </div>
 </div>
 <div class="sect3">

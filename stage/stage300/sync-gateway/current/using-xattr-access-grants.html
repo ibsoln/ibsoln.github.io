@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>role() | Couchbase Docs</title>
-<link rel="canonical" href="https://ibsoln.github.io/stage/stage300/sync-gateway/current/sync-function-api-role-cmd.html">
+<title>Using Extended Attribute Access Grants | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/stage300/sync-gateway/current/using-xattr-access-grants.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Assigning Sync Gateway &lt;em&gt;roles&lt;/em&gt;">
+<meta name="description" content="How to set access grants using extended attributes (xattrs).">
+<meta name="keywords" content="access control, sync, replicate, secure,">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="3.0">
-<meta name="page-url" content="/sync-gateway/current/sync-function-api-role-cmd.html">
+<meta name="page-url" content="/sync-gateway/current/using-xattr-access-grants.html">
 <meta name="generator" content="Antora 3.0.0-alpha.6">
 <link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
 </head>
@@ -1365,10 +1366,18 @@
     <a class="menu_title menu_link" href="configuration-schema-bootstrap.html">Bootstrap Configuration Schema</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
+    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="rest-api-admin-database.html">Database Configuration</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="configuration-schema-database.html">Schema</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1464,12 +1473,12 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#sync-gateway::access-control-overview.adoc">Access Control Overview</a>
+    <a class="menu_title menu_link" href="access-control-overview.html">Access Control Overview</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#sync-gateway::access-grants.adoc">Access Grants</a>
+    <a class="menu_title menu_link" href="access-grants.html">Access Grants</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -1492,9 +1501,9 @@
     <a class="menu_title menu_link" href="channels.html">Channels</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-current-page" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#sync-gateway::using-xattr-access-grants.adoc">Use XATTR Access Grants</a>
+    <a class="menu_title menu_link is-current-page" href="using-xattr-access-grants.html">Using XATTR Access Grants</a>
   </span>
 </li>
 </ul>
@@ -1793,7 +1802,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/sync-function-api-role-cmd.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/using-xattr-access-grants.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -1852,13 +1861,14 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb"><a href="sync-function-api-role-cmd.html">role()</a></li>
+<li class="crumb">Access Control</li>
+<li class="crumb"><a href="using-xattr-access-grants.html">Using XATTR Access Grants</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">role()</h1>
+<h1 class="page">Using Extended Attribute Access Grants</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -1869,153 +1879,384 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Assigning Sync Gateway <em>roles</em><br></p>
+<p>How to set access grants using extended attributes (xattrs).<br>
+Here we introduce the concept of <em>XATTRS</em> for access grants and their role in assuring secure access control within <em>Sync Gateway</em>.</p>
 </div>
 </blockquote>
 </div>
 <div class="paragraph">
-<p><em>Related Topics</em>: &#160;&#160;
-<a href="sync-function-api-access-cmd.html" class="page">access()</a> &#160;&#160;|&#160;&#160;
-<a href="sync-function-api-channel-cmd.html" class="page">channel()</a> &#160;&#160;|&#160;&#160;
-<a href="sync-function-api-expiry-cmd.html" class="page">expiry()</a> &#160;&#160;|&#160;&#160;
-<a href="sync-function-api-require-access-cmd.html" class="page">requireAccess()</a> &#160;&#160;|&#160;&#160;
-<a href="sync-function-api-require-admin-cmd.html" class="page">requireAdmin()</a> &#160;&#160;|&#160;&#160;
-<a href="sync-function-api-require-role-cmd.html" class="page">requireRole()</a> &#160;&#160;|&#160;&#160;
-<a href="sync-function-api-require-user-cmd.html" class="page">requireUser()</a> &#160;&#160;|&#160;&#160;
-role() &#160;&#160;|&#160;&#160;
-<a href="sync-function-api-throw-cmd.html" class="page">throw()</a></p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">Function</dt>
-<dd>
-<p>role(username, rolename)</p>
-</dd>
-</dl>
+<p><em>Related access-control topics</em>:  <a href="access-grants.html" class="page">Access Grants</a>  |  <a href="sync-function.html" class="page">Sync Function</a>  |  <a href="channels.html" class="page">Channels</a>  |  <a href="roles.html" class="page">Roles</a>  |  <a href="users.html" class="page">Users</a>  |
+Extended Attributes Key</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-role"><a class="anchor" href="#lbl-role"></a>Purpose</h2>
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Use the <code>role()</code> function to add a role to a user.
-This indirectly gives them access to any channels assigned to that role.</p>
+<p>Access grants are one of the cornerstone concepts behind <em>Sync Gateway</em>'s access control feature.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Roles, like users, have to be explicitly created by an administrator.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Using the <a href="sync-function.html" class="page">Sync Function</a>, you can grant users access to specific documents and channels based on the contents of the document being processed.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can instead nominate a specific <em>extended attribute</em> (XATTR) to determine the access grants<sup class="footnote" id="_footnote_fn-3x0">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.
+This approach has the benefit of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Providing an added level of security, users can no longer identify the channels and users a document is available to from reading its contents, because the information is in metadata that is inaccessible to them</p>
+</li>
+<li>
+<p>Removing the necessity to create a new revision and push the full document to a client following changes to access-control information only</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Sync Gateway exposes a single user-definable XATTR for this purpose.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-<div class="sectionbody">
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 80%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Argument</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>rolename</code></p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Must be a string identifying a role, or an array of strings identifying multiple roles; the function is applied to each role in the array.</p>
-</div>
-<div class="paragraph">
-<p>If the value resolves to null the function result is a no-op.</p>
-</div>
-<div class="paragraph">
-<p><strong>Note</strong>&#8201;&#8212;&#8201;Role names must always be prefixed with <code>role:</code>; an exception is thrown if a role name doesn&#8217;t conform with this rule..</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>username</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Must be a string identifying a user, or an array of strings identifying multiple users; the function is applied to each user in the array.</p>
-<p class="tableblock">If the value resolves to null the function result is a no-op.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect1">
-<h2 id="context"><a class="anchor" href="#context"></a>Context</h2>
+<h2 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This function affects the user&#8217;s ability to revise documents, if the access function requires role membership to validate certain types of changes.
-Its use is similar to <code>access</code>.</p>
+<p>Name the XATTR
+(see: <a href="configuration-schema-database.html#databases-this_db-user_xattr_key" class="page">user_xattr_key</a>) to be used for channel routing by defining it using the Admin Rest API&#8217;s <a href="rest-api-admin-database.html" class="page">Database Configuration API</a>&#8201;&#8212;&#8201;see: <a href="#ex-config">Example 1</a>.</p>
 </div>
 <div class="paragraph">
-<p>Nonexistent roles don&#8217;t cause an error, but have no effect on the user&#8217;s access privileges.</p>
+<p>The actual value of this XATTR can be anything that enables the Sync Function to make an appropriate access grant.
+Its data type can be string, array, object&#8201;&#8212;&#8201;any valid JSON that meets the required use case.</p>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-You can create roles retrospectively.
-As soon as a role is created, any pre-existing references to it take effect.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="use"><a class="anchor" href="#use"></a>Use</h2>
-<div class="sectionbody">
-<div class="exampleblock">
-<div class="title">Example 1. role(username, rolename)</div>
+<div id="ex-config" class="exampleblock">
+<div class="title">Example 1. Define the User Extended Attribute Key</div>
 <div class="content">
+<div class="paragraph">
+<p>This example uses the Admin Rest API to specify the required XATTR name as <code>channelXattr</code> on the database <code>hotels</code>.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_curl"></a>CURL</p>
+</li>
+<li>
+<p><a id="tabset1_http"></a>HTTP</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_curl">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">role ("jchris", "role:admin"); <i class="conum" data-value="1"></i><b>(1)</b>
-role ("jchris", ["role:portlandians", "role:portlandians-owners"]); <i class="conum" data-value="2"></i><b>(2)</b>
-role (["snej", "jchris", "traun"], "role:mobile"); <i class="conum" data-value="3"></i><b>(3)</b>
-role ("ed", null);  <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">curl -X PUT 'http://localhost:4985/hotels/_config' \
+--header 'Accept: application/json' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "user_xattr_key": "channelXattr" <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_http">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-http hljs" data-lang="http">PUT /hotels/_config HTTP/1.1
+Host: http://localhost:4985
+Accept: application/json
+Content-Type: application/json
+Content-Length: 999
+
+{
+  “user_xattr_key”: “channelXattr” <i class="conum" data-value="1"></i><b>(1)</b>
+}</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The role <code>admin</code> is assigned to the user</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Both the named roles are assigned to the user</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>The role <code>mobile</code> is assigned to all the named users</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>No op</td>
+<td>Here <em>channelXattr</em> is set as the name of the XATTR designated to hold channel routing information.</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
-<hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id="setting"><a class="anchor" href="#setting"></a>Setting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can set and maintain the value of the XATTR using a Couchbase Server SDK API.
+You cannot set it using the <em>Sync Gateway</em> REST API.</p>
+</div>
+<div class="paragraph">
+<p>For an example of setting the value of the XATTR using the C# SDK, see <a href="#ex-cbs-metadata-setting">Example 2</a>, this cn be easily translated to any of the available SDK languages.
+See <a href="#ex-cbs-metadata">Example 3</a> for an example of the metadata model.</p>
+</div>
+<div id="ex-cbs-metadata-setting" class="exampleblock">
+<div class="title">Example 2. Set XATTR using Couchbase Server SDK</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/code/csharp/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs">using System;
+using System.Threading.Tasks;
+using Couchbase;
+using Couchbase.KeyValue; <i class="conum" data-value="1"></i><b>(1)</b>
+
+
+namespace examples
+{
+
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            // Set scope - cluster, bucket and collection
+            var cluster =
+                    await Cluster.ConnectAsync(
+                                    "couchbase://localhost",
+                                    "Administrator",
+                                    "password");
+
+            var bucket = await cluster.BucketAsync("hotels");
+            var collection = bucket.DefaultCollection();
+
+            // Set required  user_xattr_key name and value
+            var our_user_xattr_key_name = "channelXattr"; <i class="conum" data-value="2"></i><b>(2)</b>
+            String[] channelXattrValue =
+                {"channel1","channel3", "useradmin" }; <i class="conum" data-value="3"></i><b>(3)</b>
+
+            var ourDocumentType = "hotel";
+            var documentKey = "";
+
+            // Find our documents and get their ids
+            var queryResult =
+               await cluster.QueryAsync&lt;dynamic&gt;(
+                   "select meta().id from `hotels`.`_default`.`_default` h where h.type = $1",
+                        new Couchbase.Query.QueryOptions().Parameter(ourDocumentType)); <i class="conum" data-value="4"></i><b>(4)</b>
+            await foreach (var row in queryResult)
+            {
+                documentKey = row.id;
+                Console.WriteLine("Working with document id: {0} ",
+                                    documentKey);
+
+                // Check if the document has an existing
+                // user_xattr_key and update or insert new value
+                var result =
+                    await collection.LookupInAsync(
+                            documentKey,
+                            specs =&gt; specs.Exists(
+                                path: our_user_xattr_key_name,
+                                isXattr: true)
+                            ); <i class="conum" data-value="5"></i><b>(5)</b>
+
+                if (result.Exists(0))
+                {
+                    // Update xattr for retrieved Id
+                    await collection.MutateInAsync(
+                            documentKey,
+                            specs =&gt; specs.Upsert(
+                                path: our_user_xattr_key_name, <i class="conum" data-value="6"></i><b>(6)</b>
+                                value: channelXattrValue, <i class="conum" data-value="7"></i><b>(7)</b>
+                                isXattr: true)); <i class="conum" data-value="8"></i><b>(8)</b>
+
+                    Console.Write("Updated Existing user_xattr_key: {0} to this value: {1}\n",
+                        our_user_xattr_key_name,
+                        string.Join(", ", channelXattrValue));
+
+                }
+                else
+                {
+                    // Insert xattr for retrieved id
+                    await collection.MutateInAsync(
+                            documentKey,
+                            specs =&gt; specs.Insert(
+                                path: our_user_xattr_key_name, <i class="conum" data-value="9"></i><b>(9)</b>
+                                value: channelXattrValue, <i class="conum" data-value="10"></i><b>(10)</b>
+                                isXattr: true)); <i class="conum" data-value="11"></i><b>(11)</b>
+
+                    Console.Write("Inserted New user_xattr_key: {0} with value {1}\n",
+                        our_user_xattr_key_name,
+                        string.Join(", ", channelXattrValue));
+
+                }
+
+            }
+            Console.WriteLine("Completed Changes\n");
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is required to make the <code>MutateInSpec</code> class available, providing access to sub-documents, of which metadata is a special class</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This string&#8217;s value is what we want this document&#8217;s XATTR to be called</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>This array contains the channels we want to include as the XATTR value</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Here we get all documents that we want to set the XATTR on (type = 'hotel' in this instance)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Check if the XATTR has been defined yet</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Update the XATTR&#8201;&#8212;&#8201;specify the item to update</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Update the XATTR&#8201;&#8212;&#8201;set the required value</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Update the XATTR&#8201;&#8212;&#8201;specify the item is an XATTR</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td>Insert the XATTR&#8201;&#8212;&#8201;specify the item to add (<code>channelXattr</code>)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="10"></i><b>10</b></td>
+<td>Insert the XATTR&#8201;&#8212;&#8201;set the required value using <code>channelXattrValue</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="11"></i><b>11</b></td>
+<td>Insert the XATTR&#8201;&#8212;&#8201;specify the item is an XATTR</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="12"></i><b>12</b></td>
+<td>Running the code produces the following output:
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Working with document id: 1000
+Updated Existing user_xattr_key:
+  channelXattr to this value: channel1, channel3, useradmin
+
+Working with document id: 1001
+Inserted New user_xattr_key:
+  channelXattr with this value: channel1, channel3, useradmin
+
+Completed Changes</code></pre>
+</div>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div id="ex-cbs-metadata" class="exampleblock">
+<div class="title">Example 3. Metadata on Couchbase Server document</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "meta": { <i class="conum" data-value="1"></i><b>(1)</b>
+    "id": "1000",
+    "rev": "7-1680c88cbce700000000000002000006",
+    "expiration": 0,
+    "flags": 33554438,
+    "type": "json"
+  },
+  "xattrs": { <i class="conum" data-value="2"></i><b>(2)</b>
+    "channelXattr": [ <i class="conum" data-value="3"></i><b>(3)</b>
+      "channel1",
+      "channel3",
+      "useradmin"
+    ]
+  }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>This is the Fixed (or System) metadata</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>This is the User metadata, where you can define extended attributes</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Here <em>channelXattr</em> is the name of the designated xattr holding the channel routing information to be passed to the Sync Function.
+You will set the value of the xattr using the SDK API when the document is created and-or updated.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>For more on Couchbase Server metadata and extended attributes&#8201;&#8212;&#8201;see Couchbase Server topics:  <a href="#server:learn/data/data.html#metadata" class="page unresolved">Metadata</a> | <a href="#server:learn/data/extended-attributes-fundamentals.html" class="page unresolved">Extended Attributes</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="sync-function"><a class="anchor" href="#sync-function"></a>Sync Function</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The designated XATTR is exposed to the <a href="sync-function.html" class="page">Sync Function</a> as an additional argument <code>meta.xattrs.&lt;xattr name&gt;</code></p>
+</div>
+<div id="ex-syncfunc-args" class="exampleblock">
+<div class="title">Example 4. Sync Function Arguments</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/code/javascript/javasnippets.js">function (doc, oldDoc, meta) { <i class="conum" data-value="1"></i><b>(1)</b>
+
+  if (meta.xattrs.channelXattr == "undefined") <i class="conum" data-value="2"></i><b>(2)</b>
+    {
+      console.log("no user_xattr_key defined")
+      channel(null)
+    } else {
+      channel(meta.xattrs.channelXattr) <i class="conum" data-value="3"></i><b>(3)</b>
+
+
+
+    }
+
+  // Further processing as required ../</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The meta parameter exposes the user defined user_xattr_key if defined. The item takes the name configured for the database</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Access the meta parameter object to check an xattr exists on this document</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use the content of the xattr to define the <code>channels</code> setting for this document</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>See: <a href="sync-function.html" class="page">Sync Function</a> topic for more information.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2028,7 +2269,7 @@ role ("ed", null);  <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 <div class="title">Learn more &#8230;&#8203;</div>
 <ul>
 <li>
-<p><a href="sync-function-overview.html" class="page">Sync Function</a></p>
+<p><a href="sync-function.html" class="page">Sync Function</a></p>
 </li>
 <li>
 <p><a href="import-filter.html" class="page">Import filter</a></p>
@@ -2067,6 +2308,12 @@ role ("ed", null);  <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </ul>
 </div>
 </div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. From release 3.0
 </div>
 </div>
 </article>
