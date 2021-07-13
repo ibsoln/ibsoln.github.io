@@ -1357,61 +1357,35 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="configuration-overview.html">Configuration Overview</a>
+    <a class="menu_title menu_link" href="configuration-overview.html">Overview</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="configuration-schema-bootstrap.html">Bootstrap Configuration Schema</a>
+    <a class="menu_title menu_link" href="configuration-schema-bootstrap.html">Bootstrap</a>
   </span>
 </li>
-<li class="menu_list is-parent closed" data-depth="1">
+<li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="rest-api-admin-database.html">Database Configuration</a>
+    <a class="menu_title menu_link" href="rest-api-admin-database.html">Database</a>
   </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="2">
+</li>
+<li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="configuration-schema-database.html">Schema</a>
+    <a class="menu_title menu_link" href="rest-api-admin-access-control.html">Access Control</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest-api-admin-isgr.html">Inter-Sync&#160;Gateway Replication</a>
   </span>
 </li>
 </ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="rest-api-admin-access-control.html">Access Control Configuration</a>
+    <a class="menu_title menu_link" href="configuration-schema-static.html">File-based Configuration</a>
   </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="rest-api-admin-isgr.html">Inter-Sync&#160;Gateway Replication Configuration</a>
-  </span>
-</li>
-</ul>
-</li>
-<li class="menu_list is-parent closed" data-depth="0">
-  <span class="menu_line">
-    <span class="in-toggle"></span>
-    <span class="menu_title menu_text">File-based Configuration</span>
-  </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="configuration-schema-static.html">Configuration Schema</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="configuration-javascript-functions.html">Configuration Javascript Functions</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="configuration-environment-variables.html">Configuration Environment Variables</a>
-  </span>
-</li>
-</ul>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
   <span class="menu_line">
@@ -1907,8 +1881,74 @@ At a high level, a rolling upgrade consists of the following steps:</p>
 </ol>
 </div>
 <div class="paragraph">
-<p>Those steps are then repeated for each node in the Sync Gateway cluster.</p>
+<p>Those steps are then repeated for each node in the sync&#160;gateway cluster.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="use-enhanced-configuration"><a class="anchor" href="#use-enhanced-configuration"></a>Use Enhanced Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Sync&#160;Gateway</em> provides an automatic migration path for existing users.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+To continue using sync&#160;gateway in pre-3.0 mode, that-is using file-based configuration, you need to use the <code>-disable_persistent_config</code> option at the command line when starting sync&#160;gateway.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Startup a sync&#160;gateway node using a pre-3.0 configuration properties file and sync&#160;gateway will take the appropriate upgrade path as shown in <a href="#tbl-enhancedcfg">Table 1</a>.</p>
+</div>
+<div class="paragraph">
+<p>If you want the sync&#160;gateway to associate with a specific configuration group Id, you must add the <code>config_group_id</code> value to the configuration file prior to startup.
+Failing to do so may result in the configuration being overridden by one configured on  a different sync&#160;gateway node that has already started and registered its configuration.</p>
+</div>
+<table id="tbl-enhancedcfg" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Upgrade Paths</caption>
+<colgroup>
+<col style="width: 12.5%;">
+<col style="width: 12.5%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Node Type</th>
+<th class="tableblock halign-center valign-top">Group ID Set?</th>
+<th class="tableblock halign-left valign-top">Configuration exists in bucket</th>
+<th class="tableblock halign-left valign-top">No configuration exists</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Homogenous-cluster or single node</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Sync&#160;gateway ignores supplied file and uses the default group configuration</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Sync&#160;gateway uses the file-based configuration to derive and persist a configuration for this node and any subsequent members of the default group that startup.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Non-Homogenous</p></td>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Sync&#160;gateway ignores supplied file and uses the identified group&#8217;s configuration</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Sync&#160;gateway uses the file-based configuration to derive and persist a configuration for this node and any subsequent members of the identified group that startup.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -2117,7 +2157,7 @@ When Sync Gateway starts, it will publish a Design Document which contains the V
 </div>
 </div>
 <div class="sect2">
-<h3 id="avoding-downtime"><a class="anchor" href="#avoding-downtime"></a>Avoding Downtime</h3>
+<h3 id="avoiding-downtime"><a class="anchor" href="#avoiding-downtime"></a>Avoiding Downtime</h3>
 <div class="paragraph">
 <p><strong>Potential Downtime</strong>: Following the Design Document creation, it must run against all the documents in the Couchbase Server bucket to build the index. An index rebuild may also be required during a Sync Gateway upgrade, if the Design Document definition has changed.</p>
 </div>

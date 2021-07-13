@@ -7,6 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/stage/stage300/server/current/n1ql/n1ql-language-reference/aggregatefun.html">
 <link rel="stylesheet" href="../../../../_/css/site.css">
 <script src="../../../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Aggregate functions take multiple values from documents, perform calculations, and return a single value as the result.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="server">
 <meta name="dcterms.identifier" content="7.0">
@@ -1317,18 +1318,10 @@
     <a class="menu_title menu_link" href="userfun.html">User-Defined Functions</a>
   </span>
 </li>
-<li class="menu_list is-parent closed" data-depth="4">
+<li class="menu_list" data-depth="4">
   <span class="menu_line">
-    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="windowfun.html">Window Functions</a>
   </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="5">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="window.html">OVER clause</a>
-  </span>
-</li>
-</ul>
 </li>
 </ul>
 </li>
@@ -1537,47 +1530,52 @@
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="with.html">WITH clause</a>
+    <a class="menu_title menu_link" href="with.html">WITH Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="from.html">FROM clause</a>
+    <a class="menu_title menu_link" href="from.html">FROM Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="hints.html">USE clause</a>
+    <a class="menu_title menu_link" href="hints.html">USE Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="join.html">JOIN clause</a>
+    <a class="menu_title menu_link" href="join.html">JOIN Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="nest.html">NEST clause</a>
+    <a class="menu_title menu_link" href="nest.html">NEST Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="unnest.html">UNNEST clause</a>
+    <a class="menu_title menu_link" href="unnest.html">UNNEST Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="let.html">LET clause</a>
+    <a class="menu_title menu_link" href="let.html">LET Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="where.html">WHERE clause</a>
+    <a class="menu_title menu_link" href="where.html">WHERE Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="groupby.html">GROUP BY clause</a>
+    <a class="menu_title menu_link" href="groupby.html">GROUP BY Clause</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="5">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="window.html">WINDOW Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
@@ -1587,17 +1585,17 @@
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="orderby.html">ORDER BY clause</a>
+    <a class="menu_title menu_link" href="orderby.html">ORDER BY Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="limit.html">LIMIT clause</a>
+    <a class="menu_title menu_link" href="limit.html">LIMIT Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="offset.html">OFFSET clause</a>
+    <a class="menu_title menu_link" href="offset.html">OFFSET Clause</a>
   </span>
 </li>
 </ul>
@@ -7511,27 +7509,31 @@ The function names are case insensitive.</p>
 When using an aggregate function in a query, the query operates as an aggregate query.</p>
 </div>
 <div class="paragraph">
-<p>In Couchbase Server 6.5 Enterprise Edition and later, aggregate functions can also be used as <a href="windowfun.html" class="page">window functions</a>, when they are used with a window definition, which is introduced by the <code>OVER</code> keyword.</p>
+<p>In Couchbase Server Enterprise Edition, aggregate functions can also be used as <a href="windowfun.html" class="page">window functions</a> when they are used with a window specification, which is introduced by the <code>OVER</code> keyword.</p>
 </div>
 <div class="paragraph">
-<p>This page describes the syntax of aggregate functions.
-See the <a href="window.html" class="page">OVER clause and Window Functions</a> page for the generic syntax of window functions, window options, and the window definition.</p>
+<p>In Couchbase Server 7.0 and later, window functions (and aggregate functions used as window functions) may specify their own inline window definitions, or they may refer to a named window defined by the WINDOW clause elsewhere in the query.
+By defining a named window with the WINDOW clause, you can reuse the window definition across several functions in the query, potentially making the query easier to write and maintain.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="syntax"><a class="anchor" href="#syntax"></a>Syntax</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>This section describes the generic syntax of aggregate functions, including the OVER clause.
+See the sections below for details of individual aggregate functions.</p>
+</div>
 <div class="sect2">
 <h3 id="aggregate-functions"><a class="anchor" href="#aggregate-functions"></a>Aggregate Functions</h3>
 <div class="listingblock">
 <div class="content">
-<pre>aggregate-function ::= function-name '(' [ <a href="#aggregate-quantifier">aggregate-quantifier</a> ] <a href="index.html" class="page">expr</a> ')'</pre>
+<pre>aggregate-function ::= function-name '(' [ <a href="#aggregate-quantifier">aggregate-quantifier</a> ] <a href="index.html#N1QL_Expressions" class="page">expr</a> ')'</pre>
 </div>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../_images/n1ql-language-reference/aggregate-function.png" alt="aggregate function">
+<img src="../_images/n1ql-language-reference/aggregate-function.png" alt="function-name '(' aggregate-quantifier? expr ')'">
 </div>
 </div>
 </div>
@@ -7542,12 +7544,12 @@ See the <a href="window.html" class="page">OVER clause and Window Functions</a> 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>aggregate-function-window ::= function-name '(' [ <a href="#aggregate-quantifier">aggregate-quantifier</a> ] <a href="index.html" class="page">expr</a> ')' OVER '(' <a href="window.html#window-definition" class="page">window-definition</a> ')'</pre>
+<pre>aggregate-function-window ::= function-name '(' [ <a href="#aggregate-quantifier">aggregate-quantifier</a> ] <a href="index.html#N1QL_Expressions" class="page">expr</a> ')' <a href="#over-clause">over-clause</a> )</pre>
 </div>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="../_images/n1ql-language-reference/aggregate-function-window.png" alt="function-name '(' aggregate-quantifier? expr ')' 'OVER' '(' window-definition ')'">
+<img src="../_images/n1ql-language-reference/aggregate-function-window.png" alt="function-name '(' aggregate-quantifier? expr ')' over-clause">
 </div>
 </div>
 </div>
@@ -7592,6 +7594,39 @@ The <code>COUNT</code> function can also take a wildcard (*) or a path with a wi
 If omitted, the default value is <code>ALL</code>.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="over-clause"><a class="anchor" href="#over-clause"></a>OVER Clause</h4>
+<div class="paragraph labels">
+<p><span class="edition"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a></span></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>over-clause ::= OVER ( <a href="identifiers.html" class="page">window-ref</a> | '(' <a href="window.html#window-definition" class="page">window-definition</a> ')' )</pre>
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/n1ql-language-reference/over-clause.png" alt="window-function-type '(' window-function-arguments ')' window-function-options? 'OVER' '(' window-definition ')'">
+</div>
+</div>
+<div class="paragraph">
+<p>The OVER clause introduces the window specification for the function.
+There are two ways of specifying the window.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An <em>inline window definition</em> specifies the window directly within the function call.
+It is delimited by parentheses <code>()</code> and has exactly the same syntax as the window definition in a WINDOW clause.
+For further details, refer to <a href="window.html#window-definition" class="page">Window Definition</a>.</p>
+</li>
+<li>
+<p>A <em>window reference</em> refers to a named window, which must be defined by a WINDOW clause in the same query block as the function call.
+For further details, refer to <a href="window.html" class="page">WINDOW Clause</a>.</p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="defaults"><a class="anchor" href="#defaults"></a>Default Values</h3>
@@ -7623,7 +7658,8 @@ All other aggregate functions return NULL.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT ARRAY_AGG(reviews[0].ratings.Cleanliness) AS Reviews FROM `travel-sample`.inventory.hotel;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT ARRAY_AGG(reviews[0].ratings.Cleanliness) AS Reviews
+FROM `travel-sample`.inventory.hotel;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7652,7 +7688,8 @@ All other aggregate functions return NULL.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT ARRAY_AGG(DISTINCT reviews[0].ratings.Cleanliness) AS Reviews FROM `travel-sample`.inventory.hotel;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT ARRAY_AGG(DISTINCT reviews[0].ratings.Cleanliness) AS Reviews
+FROM `travel-sample`.inventory.hotel;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7731,8 +7768,6 @@ All other aggregate functions return NULL.</p>
 SELECT AVG(DISTINCT stops) FROM `travel-sample`.inventory.route; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
-</div>
-</div>
 <div class="colist arabic">
 <table>
 <tr>
@@ -7744,6 +7779,8 @@ SELECT AVG(DISTINCT stops) FROM `travel-sample`.inventory.route; <i class="conum
 <td>Results in 0.5 since the docs contain only 1 or 0 stops.</td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -7827,7 +7864,8 @@ SELECT AVG(DISTINCT stops) FROM `travel-sample`.inventory.route; <i class="conum
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT COUNT(DISTINCT stops) AS CountOfDistinctStops FROM `travel-sample`.inventory.route;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT COUNT(DISTINCT stops) AS CountOfDistinctStops
+FROM `travel-sample`.inventory.route;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7840,8 +7878,6 @@ SELECT AVG(DISTINCT stops) FROM `travel-sample`.inventory.route; <i class="conum
 ]</code></pre>
 </div>
 </div>
-</div>
-</div>
 <div class="colist arabic">
 <table>
 <tr>
@@ -7849,6 +7885,8 @@ SELECT AVG(DISTINCT stops) FROM `travel-sample`.inventory.route; <i class="conum
 <td>Results in 2 because there are only 0 or 1 stops.</td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -8056,7 +8094,8 @@ If there is an even number of distinct number values, returns the mean of the me
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT MEDIAN(geo.alt) AS MedianAltitude FROM `travel-sample`.inventory.airport;</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT MEDIAN(geo.alt) AS MedianAltitude
+FROM `travel-sample`.inventory.airport;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8174,7 +8213,9 @@ To avoid this symbol confusion, you can specify letters only, as in the followin
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT MIN(name) AS MinName FROM `travel-sample`.inventory.hotel WHERE SUBSTR(name,0)&gt;="A";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT MIN(name) AS MinName
+FROM `travel-sample`.inventory.hotel
+WHERE SUBSTR(name,0)&gt;="A";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8216,7 +8257,9 @@ To avoid this symbol confusion, you can specify letters only, as in the followin
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV(reviews[0].ratings.Cleanliness) AS StdDev FROM `travel-sample`.inventory.hotel WHERE city="London";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV(reviews[0].ratings.Cleanliness) AS StdDev
+FROM `travel-sample`.inventory.hotel
+WHERE city="London";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8238,7 +8281,9 @@ To avoid this symbol confusion, you can specify letters only, as in the followin
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV(reviews[0].ratings.Cleanliness) AS StdDevSingle FROM `travel-sample`.inventory.hotel WHERE name="Sachas Hotel";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV(reviews[0].ratings.Cleanliness) AS StdDevSingle
+FROM `travel-sample`.inventory.hotel
+WHERE name="Sachas Hotel";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8251,8 +8296,6 @@ To avoid this symbol confusion, you can specify letters only, as in the followin
 ]</code></pre>
 </div>
 </div>
-</div>
-</div>
 <div class="colist arabic">
 <table>
 <tr>
@@ -8261,6 +8304,8 @@ To avoid this symbol confusion, you can specify letters only, as in the followin
 </tr>
 </table>
 </div>
+</div>
+</div>
 <div class="exampleblock">
 <div class="content">
 <div class="paragraph">
@@ -8268,7 +8313,9 @@ To avoid this symbol confusion, you can specify letters only, as in the followin
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV(DISTINCT reviews[0].ratings.Cleanliness) AS StdDev FROM `travel-sample`.inventory.hotel WHERE city="London";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV(DISTINCT reviews[0].ratings.Cleanliness) AS StdDev
+FROM `travel-sample`.inventory.hotel
+WHERE city="London";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8310,7 +8357,9 @@ To avoid this symbol confusion, you can specify letters only, as in the followin
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV_POP(reviews[0].ratings.Cleanliness) AS PopStdDev FROM `travel-sample`.inventory.hotel WHERE city="London";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV_POP(reviews[0].ratings.Cleanliness) AS PopStdDev
+FROM `travel-sample`.inventory.hotel
+WHERE city="London";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8332,7 +8381,9 @@ To avoid this symbol confusion, you can specify letters only, as in the followin
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV_POP(DISTINCT reviews[0].ratings.Cleanliness) AS PopStdDev FROM `travel-sample`.inventory.hotel WHERE city="London";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV_POP(DISTINCT reviews[0].ratings.Cleanliness) AS PopStdDev
+FROM `travel-sample`.inventory.hotel
+WHERE city="London";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8366,7 +8417,9 @@ The only difference is that <code>STDDEV_SAMP()</code> returns NULL if there is 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV_SAMP(reviews[0].ratings.Cleanliness) AS StdDevSingle FROM `travel-sample`.inventory.hotel WHERE name="Sachas Hotel";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT STDDEV_SAMP(reviews[0].ratings.Cleanliness) AS StdDevSingle
+FROM `travel-sample`.inventory.hotel
+WHERE name="Sachas Hotel";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8379,8 +8432,6 @@ The only difference is that <code>STDDEV_SAMP()</code> returns NULL if there is 
 ]</code></pre>
 </div>
 </div>
-</div>
-</div>
 <div class="colist arabic">
 <table>
 <tr>
@@ -8388,6 +8439,8 @@ The only difference is that <code>STDDEV_SAMP()</code> returns NULL if there is 
 <td>There is only one matching result in the input, so the function returns NULL.</td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -8441,8 +8494,6 @@ In the <code>route</code> keyspace, nearly all flights are non-stop (0 stops) an
 ]</code></pre>
 </div>
 </div>
-</div>
-</div>
 <div class="colist arabic">
 <table>
 <tr>
@@ -8450,6 +8501,8 @@ In the <code>route</code> keyspace, nearly all flights are non-stop (0 stops) an
 <td>There are 6 routes with 1 stop each.</td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 <div class="exampleblock">
 <div class="content">
@@ -8471,8 +8524,6 @@ In the <code>route</code> keyspace, nearly all flights are non-stop (0 stops) an
 ]</code></pre>
 </div>
 </div>
-</div>
-</div>
 <div class="colist arabic">
 <table>
 <tr>
@@ -8480,6 +8531,8 @@ In the <code>route</code> keyspace, nearly all flights are non-stop (0 stops) an
 <td>There are only 0 and 1 stops per route; and 0 + 1 = 1.</td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -8512,7 +8565,9 @@ The only difference is that <code>VARIANCE()</code> returns NULL if there is onl
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE(reviews[0].ratings.Cleanliness) AS Variance FROM `travel-sample`.inventory.hotel WHERE city="London";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE(reviews[0].ratings.Cleanliness) AS Variance
+FROM `travel-sample`.inventory.hotel
+WHERE city="London";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8534,7 +8589,9 @@ The only difference is that <code>VARIANCE()</code> returns NULL if there is onl
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE(reviews[0].ratings.Cleanliness) AS VarianceSingle FROM `travel-sample`.inventory.hotel WHERE name="Sachas Hotel";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE(reviews[0].ratings.Cleanliness) AS VarianceSingle
+FROM `travel-sample`.inventory.hotel
+WHERE name="Sachas Hotel";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8547,8 +8604,6 @@ The only difference is that <code>VARIANCE()</code> returns NULL if there is onl
 ]</code></pre>
 </div>
 </div>
-</div>
-</div>
 <div class="colist arabic">
 <table>
 <tr>
@@ -8557,6 +8612,8 @@ The only difference is that <code>VARIANCE()</code> returns NULL if there is onl
 </tr>
 </table>
 </div>
+</div>
+</div>
 <div class="exampleblock">
 <div class="content">
 <div class="paragraph">
@@ -8564,7 +8621,9 @@ The only difference is that <code>VARIANCE()</code> returns NULL if there is onl
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE(DISTINCT reviews[0].ratings.Cleanliness) AS Variance FROM `travel-sample`.inventory.hotel WHERE city="London";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE(DISTINCT reviews[0].ratings.Cleanliness) AS Variance
+FROM `travel-sample`.inventory.hotel
+WHERE city="London";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8609,7 +8668,9 @@ The only difference is that <code>VARIANCE()</code> returns NULL if there is onl
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE_POP(reviews[0].ratings.Cleanliness) AS PopVariance FROM `travel-sample`.inventory.hotel WHERE city="London";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE_POP(reviews[0].ratings.Cleanliness) AS PopVariance
+FROM `travel-sample`.inventory.hotel
+WHERE city="London";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8631,7 +8692,9 @@ The only difference is that <code>VARIANCE()</code> returns NULL if there is onl
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE_POP(DISTINCT reviews[0].ratings.Cleanliness) AS PopVarianceDistinct FROM `travel-sample`.inventory.hotel WHERE city="London";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE_POP(DISTINCT reviews[0].ratings.Cleanliness) AS PopVarianceDistinct
+FROM `travel-sample`.inventory.hotel
+WHERE city="London";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8668,7 +8731,9 @@ The only difference is that <code>VARIANCE_SAMP()</code> returns NULL if there i
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE_SAMP(reviews[0].ratings.Cleanliness) AS VarianceSamp FROM `travel-sample`.inventory.hotel WHERE name="Sachas Hotel";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT VARIANCE_SAMP(reviews[0].ratings.Cleanliness) AS VarianceSamp
+FROM `travel-sample`.inventory.hotel
+WHERE name="Sachas Hotel";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8681,8 +8746,6 @@ The only difference is that <code>VARIANCE_SAMP()</code> returns NULL if there i
 ]</code></pre>
 </div>
 </div>
-</div>
-</div>
 <div class="colist arabic">
 <table>
 <tr>
@@ -8690,6 +8753,8 @@ The only difference is that <code>VARIANCE_SAMP()</code> returns NULL if there i
 <td>There is only one matching result in the input, so the function returns NULL.</td>
 </tr>
 </table>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -8736,8 +8801,18 @@ The only difference is that <code>VARIANCE_SAMP()</code> returns NULL if there i
 <div class="sect1">
 <h2 id="related-links"><a class="anchor" href="#related-links"></a>Related Links</h2>
 <div class="sectionbody">
-<div class="paragraph">
+<div class="ulist">
+<ul>
+<li>
 <p><a href="groupby.html" class="page">GROUP BY Clause</a> for GROUP BY, LETTING, and HAVING clauses.</p>
+</li>
+<li>
+<p><a href="window.html" class="page">WINDOW Clause</a> for WINDOW clauses.</p>
+</li>
+<li>
+<p><a href="windowfun.html" class="page">Window Functions</a> for window functions.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
