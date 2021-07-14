@@ -1385,7 +1385,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#sync-gateway::configuration-properties.adoc">File-based Configuration</a>
+    <a class="menu_title menu_link" href="configuration-properties.html">File-based Configuration</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1883,9 +1883,23 @@ Add Role to User  |
 Assign a user to a role via the <a href="rest-api-admin.html" class="page">Admin REST API</a></p>
 </li>
 <li>
-<p>Configuration File (Pre v3.0+)<br>
-Roles can be statically configured within using the Sync Gateway Static Configuration File&#8201;&#8212;&#8201;see: {configuration-schema-static&#8212;&#8203;xref}.<br>
-To use this option in 3.0, you must set the <code>disable_persistent_config</code> flag to <code>true</code></p>
+<p>Configuration Properties file (Pre v3.x+)</p>
+<div class="paragraph">
+<p>Roles can be configured within using the DB section&#8201;&#8212;&#8201;see: <a href="configuration-properties.html" class="page">File-based Configuration Schema</a>.<br></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This option is disabled by default from 3.x.<br>
+To continue using this method start <em>Sync Gateway</em> with the <code>-disable_persistent_config</code> CLI option set.
+</td>
+</tr>
+</table>
+</div>
 </li>
 <li>
 <p>Sync Function<br>
@@ -1894,7 +1908,8 @@ Programmatically assign users to roles.</p>
 </ul>
 </div>
 <div class="paragraph">
-<p>Note that removing a role effectively revokes access to the channel that role is associated with and may mean users will lose access to required documents.</p>
+<p>Removing a role effectively revokes access to the channel that role is associated with.
+This may mean users will lose access to required documents.</p>
 </div>
 <div class="exampleblock">
 <div class="title">Example 1. Assign user to role</div>
@@ -1906,10 +1921,10 @@ Programmatically assign users to roles.</p>
 <p><a id="tabset1_admin-rest-api"></a>Admin REST API</p>
 </li>
 <li>
-<p><a id="tabset1_configuration"></a>Configuration</p>
+<p><a id="tabset1_sync-function"></a>Sync Function</p>
 </li>
 <li>
-<p><a id="tabset1_sync-function"></a>Sync Function</p>
+<p><a id="tabset1_file-based-configuration-properties"></a>File-based Configuration Properties</p>
 </li>
 </ul>
 </div>
@@ -1956,7 +1971,35 @@ This is the recommended method from 3.0
 <p>See also: <a href="rest-api-admin.html#/role/put__db___role__name_" class="page">/{tkn-db}/_role/{name}</a></p>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset1_configuration">
+<div class="tab-pane" aria-labelledby="tabset1_sync-function">
+<div class="paragraph">
+<p>You can also use the Sync Function&#8217;s <a href="sync-function-api-role-cmd.html" class="page">role()</a> function to assign users to roles programmatically.</p>
+</div>
+<div class="paragraph">
+<p>In this use case, where role assignment is done dynamically via the sync function, the role(s) to which user is assigned can be identified in two ways:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>By document content&#8201;&#8212;&#8201;the role can be derived or specified as a property within the document body.</p>
+</li>
+<li>
+<p>By user defined XATTR (3.0+)&#8201;&#8212;&#8201;the role can be specified within a special user-defined XATTR associated with the document&#8201;&#8212;&#8201;see: <a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Note that both role and user must already exist.
+Nonexistent roles don’t cause an error, but have no effect on the user’s access privileges.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">role ("Edge1User", "role:Edge1");
+role ("Edge2User", "role:Edge2":);</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_file-based-configuration-properties">
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -1964,7 +2007,8 @@ This is the recommended method from 3.0
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-This option is disabled by default starting 3.0.
+This option is disabled by default from 3.x.<br>
+To continue using this method start <em>Sync Gateway</em> with the <code>-disable_persistent_config</code> CLI option set.
 </td>
 </tr>
 </table>
@@ -1998,37 +2042,9 @@ Use the <strong>Admin REST API</strong> for production systems.</p>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Add the role the user is to be assigned to in <code>admin_roles</code>&#8201;&#8212;&#8201;see: {configuration-schema-static&#8212;&#8203;pfx}#databases-this_db-users-this_user-admin_roles[databases.$db.users.$user.admin_roles]</td>
+<td>Add the role the user is to be assigned to in <code>admin_roles</code>&#8201;&#8212;&#8201;see: <a href="configuration-properties.html#databases-this_db-users-this_user-admin_roles" class="page">databases.$db.users.$user.admin_roles</a></td>
 </tr>
 </table>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset1_sync-function">
-<div class="paragraph">
-<p>You can also use the Sync Function&#8217;s <a href="sync-function-api-role-cmd.html" class="page">role()</a> function to assign users to roles programmatically.</p>
-</div>
-<div class="paragraph">
-<p>In this use case, where role assignment is done dynamically via the sync function, the role(s) to which user is assigned can be identified in two ways:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>By document content&#8201;&#8212;&#8201;the role can be derived or specified as a property within the document body.</p>
-</li>
-<li>
-<p>By user defined XATTR (3.0+)&#8201;&#8212;&#8201;the role can be specified within a special user-defined XATTR associated with the document&#8201;&#8212;&#8201;see: <a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a></p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Note that both role and user must already exist.
-Nonexistent roles don’t cause an error, but have no effect on the user’s access privileges.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">role ("Edge1User", "role:Edge1");
-role ("Edge2User", "role:Edge2":);</code></pre>
-</div>
 </div>
 </div>
 </div>
