@@ -7,6 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/stage/stage300/server/current/n1ql/n1ql-language-reference/metafun.html">
 <link rel="stylesheet" href="../../../../_/css/site.css">
 <script src="../../../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Miscellaneous utility functions enable you to perform tasks beyond the usual evaluation and transformation of data.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="server">
 <meta name="dcterms.identifier" content="7.0">
@@ -7500,7 +7501,159 @@
 </div><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Meta functions retrieve information about the document or item as well as perform base64 encoding.</p>
+<p>Miscellaneous utility functions enable you to perform tasks beyond the usual evaluation and transformation of data.
+For example, there are functions to retrieve information about a document or item, perform base64 encoding and decoding, generate UUIDs, and control the flow of a query.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="abort"><a class="anchor" href="#abort"></a>ABORT(<code>expression</code>)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>(Introduced in Couchbase Server 7.0)</em></p>
+</div>
+<div class="paragraph">
+<p>Generates an error.
+The error message contains the text specified by the given <code class="var">expression</code>.</p>
+</div>
+<div class="paragraph">
+<p>This function is useful for flow control when <a href="createfunction.html" class="page">creating inline user-defined functions</a>.
+You can use <a href="conditionalops.html" class="page">conditional operators</a> to check the parameters, and use this function to generate an error if something is wrong.</p>
+</div>
+<div class="sect2">
+<h3 id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h3>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code class="var">expression</code></dt>
+<dd>
+<p>An expression resolving to a string.</p>
+</dd>
+</dl>
+</div>
+</div>
+<div class="sect2">
+<h3 id="return-value"><a class="anchor" href="#return-value"></a>Return Value</h3>
+<div class="paragraph">
+<p>The function does not return a return value.</p>
+</div>
+<div class="paragraph">
+<p>If this function is executed in a query, it causes the query to halt with an error code 5011.
+The error message contains the text specified by the given <code class="var">expression</code>.</p>
+</div>
+<div class="paragraph">
+<p>When this function is executed by a user-defined function, it causes the query to halt with an error code 10109.
+The error message shows the name of the user-defined function and contains the text specified by the given <code class="var">expression</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="examples"><a class="anchor" href="#examples"></a>Examples</h3>
+<div class="exampleblock">
+<div class="title">Example 1. Abort a query</div>
+<div class="content">
+<div class="listingblock">
+<div class="title">Query</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT ABORT("Something went wrong");</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+  {
+    "code": 5011,
+    "msg": "Abort: \"Something went wrong\". - cause: \"Something went wrong\""
+  }
+]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 2. User-defined function with error checking</div>
+<div class="content">
+<div class="listingblock">
+<div class="title">Function</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE OR REPLACE FUNCTION rstr(vString, vLen) LANGUAGE INLINE AS
+CASE
+  WHEN NOT IS_STRING(vString)
+    THEN ABORT("Search string is not a string")
+  WHEN NOT IS_NUMBER(vLen)
+    THEN ABORT("Substring length is not a number")
+  WHEN vLen &gt; LENGTH(vString)
+    THEN ABORT("Substring longer than search string")
+  ELSE SUBSTR(vString, LENGTH(vString) - vLen, vLen)
+END;</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Test invalid string argument</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXECUTE FUNCTION rstr(100, 4);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+  {
+    "code": 10109,
+    "msg": "Error executing function rstr : \"Search string is not a string\" - cause: \"Search string is not a string\""
+  }
+]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Test invalid number argument</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXECUTE FUNCTION rstr("Couchbase", "foo");</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+  {
+    "code": 10109,
+    "msg": "Error executing function rstr : \"Substring length is not a number\" - cause: \"Substring length is not a number\""
+  }
+]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Test out-of-range value</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXECUTE FUNCTION rstr("Couchbase", 10);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+  {
+    "code": 10109,
+    "msg": "Error executing function rstr : \"Substring longer than search string\" - cause: \"Substring longer than search string\""
+  }
+]</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Test with valid arguments</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXECUTE FUNCTION rstr("Couchbase", 4);</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Result</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+  "base"
+]</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -7547,7 +7700,7 @@ Only certain metadata properties are indexable; these are indicated in the descr
 <p>You can also use the <code>META()</code> function with a property in the predicate of an <a href="join.html#section_ek1_jnx_1db" class="page">ANSI JOIN Clause</a>.</p>
 </div>
 <div class="sect2">
-<h3 id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h3>
+<h3 id="arguments-2"><a class="anchor" href="#arguments-2"></a>Arguments</h3>
 <div class="dlist">
 <dl>
 <dt class="hdlist1">keyspace_expr</dt>
@@ -7613,16 +7766,16 @@ If you attempt to build an index on this property, an error is returned.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="return-value"><a class="anchor" href="#return-value"></a>Return Value</h3>
+<h3 id="return-value-2"><a class="anchor" href="#return-value-2"></a>Return Value</h3>
 <div class="paragraph">
 <p>The bare function returns a JSON object containing the specified document&#8217;s metadata.
 When the function is used with a property as part of a nested expression, the expression returns the JSON value of the property.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="examples"><a class="anchor" href="#examples"></a>Examples</h3>
+<h3 id="examples-2"><a class="anchor" href="#examples-2"></a>Examples</h3>
 <div class="exampleblock">
-<div class="title">Example 1. Return all metadata</div>
+<div class="title">Example 3. Return all metadata</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -7668,7 +7821,7 @@ LIMIT 3;</code></pre>
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 2. Return a single metadata property</div>
+<div class="title">Example 4. Return a single metadata property</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -7696,7 +7849,7 @@ LIMIT 3;</code></pre>
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 3. Return a single metadata property for a specified keyspace</div>
+<div class="title">Example 5. Return a single metadata property for a specified keyspace</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -7762,7 +7915,7 @@ Nested sub-object fields are explored recursively.
 </table>
 </div>
 <div class="sect2">
-<h3 id="arguments-2"><a class="anchor" href="#arguments-2"></a>Arguments</h3>
+<h3 id="arguments-3"><a class="anchor" href="#arguments-3"></a>Arguments</h3>
 <div class="dlist">
 <dl>
 <dt class="hdlist1"><code class="var">obj</code></dt>
@@ -7773,7 +7926,7 @@ Nested sub-object fields are explored recursively.
 </div>
 </div>
 <div class="sect2">
-<h3 id="return-value-2"><a class="anchor" href="#return-value-2"></a>Return Value</h3>
+<h3 id="return-value-3"><a class="anchor" href="#return-value-3"></a>Return Value</h3>
 <div class="paragraph">
 <p>Array of [<code class="var">field_name</code>, <code>value</code>] arrays for each field in the input object <code class="var">obj</code>.</p>
 </div>
@@ -7823,9 +7976,9 @@ For example,</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="examples-2"><a class="anchor" href="#examples-2"></a>Examples</h3>
+<h3 id="examples-3"><a class="anchor" href="#examples-3"></a>Examples</h3>
 <div id="pairs-example1" class="exampleblock">
-<div class="title">Example 4. Input value of a nested object</div>
+<div class="title">Example 6. Input value of a nested object</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -7917,7 +8070,7 @@ LIMIT  1;</code></pre>
 </div>
 </div>
 <div id="pairs-example2" class="exampleblock">
-<div class="title">Example 5. Input value of an array</div>
+<div class="title">Example 7. Input value of an array</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -7999,7 +8152,7 @@ LIMIT  1;</code></pre>
 </div>
 </div>
 <div id="pairs-example3a" class="exampleblock">
-<div class="title">Example 6. Input value of a primitive (field document string) data type</div>
+<div class="title">Example 8. Input value of a primitive (field document string) data type</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -8024,7 +8177,7 @@ LIMIT  1;</code></pre>
 </div>
 </div>
 <div id="pairs-example3b" class="exampleblock">
-<div class="title">Example 7. Input value of a primitive (constant) data type</div>
+<div class="title">Example 9. Input value of a primitive (constant) data type</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -8078,7 +8231,7 @@ LIMIT  1;</code></pre>
 </div>
 </div>
 <div id="pairs-example4" class="exampleblock">
-<div class="title">Example 8. Input value of an array of objects</div>
+<div class="title">Example 10. Input value of an array of objects</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
