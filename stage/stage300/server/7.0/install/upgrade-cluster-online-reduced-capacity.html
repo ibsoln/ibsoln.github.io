@@ -7574,13 +7574,10 @@ The <code>REPO_NAME</code> is the name of the repository that will be associated
 </div>
 <div class="paragraph">
 <p>Here, the <code>CLUSTER_ADDRESS</code> is the IP address or domain name of the cluster that is being backed up.
-The <code>full-backup</code> flag ensures that the backup is indeed a <em>full</em> backup.</p>
+The <code>--full-backup</code> flag ensures that the backup is indeed a <em>full</em> backup.</p>
 </div>
 <div class="paragraph">
 <p>For the equivalent procedure as performed by the Backup Service, see <a href="../manage/manage-backup-and-restore/manage-backup-and-restore.html#run-an-immediate-backup" class="page">Run an Immediate Backup</a>.</p>
-</div>
-<div class="paragraph">
-<p>In the event of node-upgrade failing, the backed-up data can be restored by means of <a href="#backup-restore:cbbackupmgr-restore.adoc" class="page unresolved">cbbackupmgr restore</a> or <a href="#cli:cbtools/cbrecovery.adoc" class="page unresolved">cbrecovery</a>; or by means of the Backup Service (see <a href="../manage/manage-backup-and-restore/manage-backup-and-restore.html#restore-backups" class="page">Restore Backups</a>).</p>
 </div>
 </div>
 </div>
@@ -7628,7 +7625,7 @@ The <code>NODE_HOSTNAME_OR_IP</code> is the IP address or domain name of the nod
 Enter the following command:</p>
 <div class="listingblock">
 <div class="content">
-<pre>systemctl stop couchbase-server.service</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl stop couchbase-server.service</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7639,7 +7636,7 @@ If such disabling is desired, enter the following command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>systemctl disable --now couchbase-server.service</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl disable --now couchbase-server.service</code></pre>
 </div>
 </div>
 </li>
@@ -7650,7 +7647,7 @@ Ideally, these should be backed up onto a different machine.
 The command takes the following form:</p>
 <div class="listingblock">
 <div class="content">
-<pre>cp -r /opt/couchbase/var/lib/couchbase/config ${PATH_TO_A_SAFE_LOCATION}/${NODE_IP}_config_files</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp -r /opt/couchbase/var/lib/couchbase/config ${PATH_TO_A_SAFE_LOCATION}/${NODE_IP}_config_files</code></pre>
 </div>
 </div>
 </li>
@@ -7673,14 +7670,14 @@ Note that the following examples remove <em>Enterprise Edition</em> of Couchbase
 <div class="tab-pane" aria-labelledby="tabset1_redhat-amp-centos">
 <div class="listingblock">
 <div class="content">
-<pre>yum autoremove couchbase-server</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">yum autoremove couchbase-server</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_ubuntu-amp-debian">
 <div class="listingblock">
 <div class="content">
-<pre>apt autoremove --purge couchbase-server</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apt autoremove --purge couchbase-server</code></pre>
 </div>
 </div>
 </div>
@@ -7697,7 +7694,7 @@ Note also that care should taken regarding the potential removal of files used i
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>rm -r /opt/couchbase</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">rm -r /opt/couchbase</code></pre>
 </div>
 </div>
 </li>
@@ -7726,11 +7723,12 @@ This ensures that no further upgrade can occur to this node until the next time 
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset2_redhat-amp-centos">
 <div class="paragraph">
-<p>For Couchbase Server Enterprise Edition, add the following to the file <code>/etc/yum/yum.conf</code>:</p>
+<p>For Couchbase Server Enterprise Edition, ensure that the package-name appears in the list that follows the <code>exclude</code> statement, in the file <code>/etc/yum/yum.conf</code>.
+For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>exclude=couchbase-server</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exclude=couchbase-server</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7743,7 +7741,7 @@ This ensures that no further upgrade can occur to this node until the next time 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>apt-mark hold couchbase-server</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apt-mark hold couchbase-server</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7761,7 +7759,7 @@ To re-enable the service, if necessary, enter the following command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>systemctl enable --now couchbase-server.service</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl enable --now couchbase-server.service</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7769,7 +7767,7 @@ To re-enable the service, if necessary, enter the following command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>systemctl start couchbase-server.service</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl start couchbase-server.service</code></pre>
 </div>
 </div>
 </li>
@@ -7782,7 +7780,7 @@ To re-enable the service, if necessary, enter the following command:</p>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>Add</em> the upgraded, removed node back into the cluster, and <em>remove</em> a node that is currently part of the cluster.
-The node that is being added should be configured to run the same service as that running on the node that is to be removed.
+The node that is being added should be configured to run the same service (or services) on the node that is to be removed.
 For example, if the node to be removed is running the Data Service, configure the node to be added to run the Data Service.
 Couchbase Server will execute the rebalance as a <em>swap rebalance</em>, to maximize efficiency.</p>
 </div>
@@ -7791,9 +7789,25 @@ Couchbase Server will execute the rebalance as a <em>swap rebalance</em>, to max
 For an overview of node-addition, see xref:learn:clusters-and-availability/nodes.html#clusters" class="page unresolved">Clusters</a>; and for practical examples of node-addition, see <a href="../manage/manage-nodes/add-node-and-rebalance.html" class="page">Add a Node and Rebalance</a>.</p>
 </div>
 <div class="paragraph">
-<p>Note that for the CLI and REST API, the staging of a swap rebalance requires <em>two</em> separate commands.
-The first specifies that one or more nodes be <em>added</em> to the cluster: however, this command requires a subsequent rebalance to be performed, to complete the process.
-The second command indeed specifies that subsequent rebalance, but also includes an instruction to <em>remove</em> one or more nodes from the cluster: therefore, as the rebalance occurs, it finalizes both node-addition and node-removal.</p>
+<p>Note that for the CLI and REST API, the staging of a swap rebalance requires <em>two</em> separate commands.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The first specifies that one or more nodes be <em>added</em> to the cluster: however, this command requires a subsequent rebalance to be performed, to complete the process.</p>
+<div class="paragraph">
+<p>For an example of performing addition with the CLI, see <a href="../manage/manage-nodes/add-node-and-rebalance.html#add-a-node-with-the-cli" class="page">Add a Node and Rebalance with the CLI</a>.
+For an example of performing addition with the REST API, see <a href="../manage/manage-nodes/add-node-and-rebalance.html#add-a-node-with-the-rest-api" class="page">Add a Node and Rebalance with the REST API</a>.</p>
+</div>
+</li>
+<li>
+<p>The second command indeed specifies that subsequent rebalance, but also includes an instruction to <em>remove</em> one or more nodes from the cluster: therefore, as the rebalance occurs, it finalizes both node-addition and node-removal.</p>
+<div class="paragraph">
+<p>For an example of using rebalance to remove a node with the CLI, see <a href="../manage/manage-nodes/remove-node-and-rebalance.html#remove-a-node-with-the-cli" class="page">Remove a Node with the CLI</a>.
+For an example of using rebalance to remove a node with the REST API, see <a href="../manage/manage-nodes/remove-node-and-rebalance.html#remove-a-node-with-the-rest-api" class="page">Remove a Node with the REST API</a>.</p>
+</div>
+</li>
+</ul>
 </div>
 </div>
 </div>

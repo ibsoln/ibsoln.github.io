@@ -7547,7 +7547,7 @@ However, it necessitates cluster-downtime.</p>
 </div>
 </li>
 <li>
-<p>Each node in turn is taken offline; is upgraded; and is re-introduced into the cluster &#8212; by means of either <em>adding</em> or <em>joining</em>, as described in <a href="#learn:clusters-and-availability/nodes.html#clusters" class="page unresolved">Clusters</a>.
+<p>Each node in turn is taken offline; is upgraded; and is re-introduced into the cluster &#8212; by means of either <em>adding</em> or <em>joining</em>, as described in <a href="../learn/clusters-and-availability/nodes.html#clusters" class="page">Clusters</a>.
 This means that while any given node is offline, all other nodes remain online.</p>
 <div class="paragraph">
 <p>This process (referred to as <em>cluster online</em>) is more complex, but allows the cluster to continue serving data without interruption.
@@ -7584,14 +7584,19 @@ This is described in <a href="#using-spare-nodes">Using Spare Nodes</a>, below.<
 </ul>
 </div>
 <div class="paragraph">
-<p>Since the introduced nodes are recognized by Couchbase Server to have equivalent capacities and configurations to those that have been taken out, rebalance is performed as a <em>swap rebalance</em>; which confines its activity to the incoming and outgoing nodes.
-Thus, for example, if one Data Service node is removed and another added, the swap rebalance simply transfers the vBucket layout of the outgoing node directly onto the incoming node; with the layouts of other Data Service nodes not requiring modification.</p>
+<p>Since the introduced nodes are recognized by Couchbase Server to have equivalent capacities and configurations to those that have been taken out, rebalance is performed as a <em>swap rebalance</em>; which largely confines its activity to the incoming and outgoing nodes.
+Thus, for example, if one Data Service node is removed and another added, the swap rebalance ensures that the vBucket layout of the outgoing node is created identically on the incoming node; with the layouts of other Data Service nodes not requiring modification.</p>
 </div>
 <div class="paragraph">
 <p>By contrast, if two Data Service nodes are taken out, and one Data Service node and one Search Service node are introduced, since the incoming and outgoing nodes differ in configuration, when rebalance is triggered by the administrator, Couchbase Server performs a <em>full</em> rebalance; involving more nodes than those in transit; and indeed, potentially involving the entire cluster.</p>
 </div>
 <div class="paragraph">
 <p>Note that the effect of rebalance on different Couchbase Services is described in <a href="../learn/clusters-and-availability/rebalance.html" class="page">Rebalance</a>: familiarity with this information is required before proceeding.</p>
+</div>
+<div class="paragraph">
+<p>Note also that swap rebalance performed with outgoing and incoming Data-Service nodes <em>does</em> involve data-copying from other Data-Service nodes on the cluster.
+This is because replica vBuckets are created by means of <em>streaming</em> from their corresponding active vBuckets: streaming <em>cannot</em> proceed from a replica vBucket.
+Consequently, whereas the active vBuckets for an incoming node can be streamed from the corresponding active vBuckets on the outgoing node; the replica vBuckets for an incoming node must be streamed from the corresponding active vBuckets elsewhere on the cluster.</p>
 </div>
 <div class="sect3">
 <h4 id="using-spare-nodes"><a class="anchor" href="#using-spare-nodes"></a>Using Spare Nodes</h4>
@@ -7647,7 +7652,7 @@ All clusters are assumed to be <em>multi-node</em> clusters, except in the final
 Online upgrade can be performed in either of the following ways.</p>
 </div>
 <div class="sect3">
-<h4 id="cluster-online-swap-rebalance-with-capacity-reduced"><a class="anchor" href="#cluster-online-swap-rebalance-with-capacity-reduced"></a>Cluster Online: Swap Rebalance at Full Capacity</h4>
+<h4 id="cluster-online-swap-rebalance-at-full-capacity"><a class="anchor" href="#cluster-online-swap-rebalance-at-full-capacity"></a>Cluster Online: Swap Rebalance at Full Capacity</h4>
 <div class="paragraph">
 <p>One or more spare nodes, which exist in addition to those committed to the cluster, are prepared for addition to the cluster.
 When these nodes are added to the cluster, the same number are removed.
@@ -7671,7 +7676,7 @@ Finally, a further <a href="../learn/clusters-and-availability/rebalance.html" c
 For details, see <a href="upgrade-feature-availability.html" class="page">Feature Availability During Upgrade</a>.</p>
 </div>
 <div class="paragraph">
-<p>The step-by-step procedure is provided in <a href="upgrade-cluster-online-full-capacity.html" class="page">Upgrade an Full-Capacity, Online Cluster</a>.</p>
+<p>The step-by-step procedure is provided in <a href="upgrade-cluster-online-full-capacity.html" class="page">Upgrade a Full-Capacity, Online Cluster</a>.</p>
 </div>
 </div>
 <div class="sect3">
@@ -7686,7 +7691,7 @@ The diminished cluster continues to serve data.</p>
 One or more nodes are added to the cluster, and the same number are removed.
 The added nodes are configured such that when rebalance is triggered by the administrator, Couchbase Server performs a <em>swap rebalance</em>.
 Removed nodes are kept <em>up</em> and <em>network-accessible</em>: and in this state, are upgraded to the latest version of Couchbase Server.
-Then, following the upgrade procedure, the upgraded nodes are re-introduced into the cluster: each can either be <em>joined</em> or <em>added</em>, as described in <a href="#learn:clusters-and-availability/nodes.html#clusters" class="page unresolved">Clusters</a>.
+Then, following the upgrade procedure, the upgraded nodes are re-introduced into the cluster: each can either be <em>joined</em> or <em>added</em>, as described in <a href="../learn/clusters-and-availability/nodes.html#clusters" class="page">Clusters</a>.
 The configuration of added nodes must match that of the spare nodes that are now removed.
 Finally, a further <a href="../learn/clusters-and-availability/rebalance.html" class="page">Rebalance</a> is performed, and the upgraded nodes become full members of the cluster.</p>
 </div>
@@ -7724,7 +7729,7 @@ No rebalance is required at any stage, since no data is modified during the clus
 When all nodes have been restored, the cluster can then brought back online, so that the serving of data can resume.</p>
 </div>
 <div class="paragraph">
-<p>The step-by-step procedure is provided in <a href="upgrade-cluster-offline.html" class="page">Upgrade an Offline, Multi-Node Cluster</a>.</p>
+<p>The step-by-step procedure is provided in <a href="upgrade-cluster-offline.html" class="page">Upgrade an Offline Cluster</a>.</p>
 </div>
 </div>
 <div class="sect2">

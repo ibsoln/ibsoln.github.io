@@ -7534,7 +7534,7 @@ Monitor the <em>disk-write queue</em> on each node, to ensure that all data has 
 A command of the following form can be used:</p>
 <div class="listingblock">
 <div class="content">
-<pre>curl -s -u '${USERNAME}:${PASSWORD}' ${NODE_HOSTNAME}:${NODE_MANGEMENT_PORT}/pools/default/buckets/${BUCKET}/stats | jq ".op.samples.disk_write_queue[-1]"</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -s -u '${USERNAME}:${PASSWORD}' ${NODE_HOSTNAME}:${NODE_MANGEMENT_PORT}/pools/default/buckets/${BUCKET}/stats | jq ".op.samples.disk_write_queue[-1]"</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7566,25 +7566,22 @@ The <code>REPO_NAME</code> is the name of the repository that will be associated
 </div>
 <div class="paragraph">
 <p>Here, the <code>CLUSTER_ADDRESS</code> is the IP address or domain name of the cluster.
-The <code>full-backup</code> flag ensures that the backup is indeed a <em>full</em> backup.</p>
+The <code>--full-backup</code> flag ensures that the backup is indeed a <em>full</em> backup.</p>
 </div>
 <div class="paragraph">
 <p>For the equivalent procedure as performed by the Backup Service, see <a href="../manage/manage-backup-and-restore/manage-backup-and-restore.html#run-an-immediate-backup" class="page">Run an Immediate Backup</a>.</p>
 </div>
-<div class="paragraph">
-<p>In the event of node-upgrade failing, the backed-up data can be restored by means of <a href="#backup-restore:cbbackupmgr-restore.adoc" class="page unresolved">cbbackupmgr restore</a> or <a href="#cli:cbtools/cbrecovery.adoc" class="page unresolved">cbrecovery</a>; or by means of the Backup Service (see <a href="../manage/manage-backup-and-restore/manage-backup-and-restore.html#restore-backups" class="page">Restore Backups</a>).</p>
-</div>
 </li>
 <li>
 <p>Disable auto-failover (to prevent auto-failover from occuring when individual nodes stop communicating with the rest of the cluster, during their upgrade).
-Disablement is performed by means of the <a href="../manage/manage-settings/general-settings.html" class="page">General Settings</a> screen, by means of the <a href="../manage/manage-settings/general-settings.html#node-availability" class="page">Node Availability</a> panel.
-This needs to be done only once, on one node.</p>
+Disablement is performed by means of Couchbase-Server <a href="../manage/manage-settings/general-settings.html" class="page">General Settings</a>, using the UI, the CLI, or the REST API.
+Disablement needs to be performed only once, on one node.</p>
 <div class="paragraph">
-<p>For example, enter a command of the following form:</p>
+<p>For example, to disable auto-failover by means of the CLI, enter a command of the following form:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>couchbase-cli setting-autofailover -c ${NODE_HOSTNAME} -u ${USERNAME} -p ${PASSWORD} --enable-auto-failover 0</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">couchbase-cli setting-autofailover -c ${NODE_HOSTNAME} -u ${USERNAME} -p ${PASSWORD} --enable-auto-failover 0</code></pre>
 </div>
 </div>
 </li>
@@ -7593,7 +7590,7 @@ This needs to be done only once, on one node.</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="upgrade-each-individual-node"><a class="anchor" href="#upgrade-each-individual-node"></a>Stage Two: Upgrade each Individual Node</h2>
+<h2 id="upgrade-each-individual-node"><a class="anchor" href="#upgrade-each-individual-node"></a>Stage Two: Upgrade Each Individual Node</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Each individual node must now be upgraded in turn.
@@ -7606,7 +7603,7 @@ Therefore, for each node, proceed as follows:</p>
 Enter the following command:</p>
 <div class="listingblock">
 <div class="content">
-<pre>systemctl stop couchbase-server.service</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl stop couchbase-server.service</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7617,7 +7614,7 @@ If such disabling is desired, enter the following command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>systemctl disable --now couchbase-server.service</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl disable --now couchbase-server.service</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7634,7 +7631,7 @@ It is also recommended that the backup-location be on a separate machine.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>cp -r /opt/couchbase/var/lib/couchbase/config ${PATH_TO_A_SAFE_LOCATION}/${NODE_IP}_config_files</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cp -r /opt/couchbase/var/lib/couchbase/config ${PATH_TO_A_SAFE_LOCATION}/${NODE_IP}_config_files</code></pre>
 </div>
 </div>
 </li>
@@ -7655,7 +7652,27 @@ Proceed as follows, for the appropriate platform:</p>
 <div class="content">
 <div class="tab-pane" aria-labelledby="tabset1_redhat-amp-centos">
 <div class="paragraph">
-<p>Move the reference to the <code>couchbase-server</code> (or <code>couchbase-server-community</code>, if using Community Edition) package to the <code>exclude</code> section of the <code>yum.conf</code> file, located in <code>/etc/yum/yum.conf</code>.</p>
+<p>By editing the file <code>/etc/yum/yum.conf</code>, ensure that the package <code>couchbase-server</code> (or the package <code>couchbase-server-community</code>, if using Community Edition) is <em>not excluded</em>.
+This means that the package-name must <em>not</em> appear on the list of one or more package-names that follows the <code>exclude=</code> statement.</p>
+</div>
+<div class="paragraph">
+<p>For example, the line may initially appear as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exclude=couchbase-server</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If so, edit the line so that it appears as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exclude=</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, save the file.</p>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_ubuntu-amp-debian">
@@ -7664,7 +7681,7 @@ Proceed as follows, for the appropriate platform:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>apt-mark unhold couchbase-server</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apt-mark unhold couchbase-server</code></pre>
 </div>
 </div>
 </div>
@@ -7678,7 +7695,7 @@ Proceed as follows, for the appropriate platform:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>yum update couchbase-server</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">yum update couchbase-server</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7686,7 +7703,7 @@ Proceed as follows, for the appropriate platform:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>apt --only-upgrade install couchbase-server</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apt --only-upgrade install couchbase-server</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7707,14 +7724,14 @@ Proceed as follows, for the appropriate platform:</p>
 <div class="tab-pane" aria-labelledby="tabset2_redhat-amp-centos">
 <div class="listingblock">
 <div class="content">
-<pre>yum install ${PATH_TO_RPM_PACKAGE}</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">yum install ${PATH_TO_RPM_PACKAGE}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_ubuntu-amp-debian">
 <div class="listingblock">
 <div class="content">
-<pre>dpkg -i ${PATH_TO_DEB_PACKAGE}</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">dpkg -i ${PATH_TO_DEB_PACKAGE}</code></pre>
 </div>
 </div>
 </div>
@@ -7729,9 +7746,9 @@ Proceed as follows, for the appropriate platform:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>systemctl enable couchbase-server.service
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">systemctl enable --now couchbase-server.service
 
-systemctl is-active --quiet couchbase-server.service || systemctl start couchbase-server.service</pre>
+systemctl is-active --quiet couchbase-server.service || systemctl start couchbase-server.service</code></pre>
 </div>
 </div>
 </li>
@@ -7757,7 +7774,7 @@ The line appears as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>exclude=couchbase-server</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">exclude=couchbase-server</code></pre>
 </div>
 </div>
 </div>
@@ -7767,7 +7784,7 @@ The line appears as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>apt-mark hold couchbase-server</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">apt-mark hold couchbase-server</code></pre>
 </div>
 </div>
 </div>
@@ -7797,7 +7814,7 @@ Note that this may take some time, if the buckets contain large amounts of data.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>cbstats ${NODE_ADDRESS}:${NODE_KV_PORT} -u ${USERNAME} -p ${PASSWORD} -b ${BUCKET} warmup | grep state</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cbstats ${NODE_ADDRESS}:${NODE_KV_PORT} -u ${USERNAME} -p ${PASSWORD} -b ${BUCKET} warmup | grep state</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7805,7 +7822,7 @@ Note that this may take some time, if the buckets contain large amounts of data.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>/opt/couchbase/bin/cbstats localhost:11210 -u Administrator -p password -b travel-sample warmup | grep state</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">/opt/couchbase/bin/cbstats localhost:11210 -u Administrator -p password -b travel-sample warmup | grep state</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7813,7 +7830,7 @@ Note that this may take some time, if the buckets contain large amounts of data.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>ep_warmup_state:                 done</pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">ep_warmup_state:                 done</code></pre>
 </div>
 </div>
 <div class="paragraph">
