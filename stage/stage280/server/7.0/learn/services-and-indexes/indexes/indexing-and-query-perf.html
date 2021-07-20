@@ -3,19 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<!-- Google Tag Manager -->
-<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push(
-
-{'gtm.start': new Date().getTime(),event:'gtm.js'}
-);var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-MVPNN2');</script>
-<!-- End Google Tag Manager --><title>Indexing and Query Performance | Couchbase Docs</title>
+<title>Indexing and Query Performance | Couchbase Docs</title>
 <link rel="canonical" href="https://ibsoln.github.io/stage/stage280/server/current/learn/services-and-indexes/indexes/indexing-and-query-perf.html">
 <link rel="stylesheet" href="../../../../../_/css/site.css">
 <script src="../../../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="This topic provides an overview of the indexing options for JSON in Couchbase, which in turn would help query for data efficiently and improve query performance.">
+<meta name="description" content="This topic provides an overview of the types of index that you can create using the Index Service, and explains how they help to query for data efficiently and improve query performance.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="server">
 <meta name="dcterms.identifier" content="7.0">
@@ -1085,12 +1077,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="index-replication.html">Index Availability</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="3">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="storage-modes.html">Storage Settings</a>
+    <a class="menu_title menu_link" href="index-lifecycle.html">Index Lifecycle</a>
   </span>
 </li>
 <li class="menu_list is-current-page" data-depth="3">
@@ -1116,6 +1103,16 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/groupby-aggregate-performance.html">Grouping and Aggregate Pushdown</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="index-replication.html">Index Availability</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="storage-modes.html">Storage Settings</a>
   </span>
 </li>
 </ul>
@@ -1326,18 +1323,10 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/userfun.html">User-Defined Functions</a>
   </span>
 </li>
-<li class="menu_list is-parent closed" data-depth="4">
+<li class="menu_list" data-depth="4">
   <span class="menu_line">
-    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/windowfun.html">Window Functions</a>
   </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="5">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/window.html">OVER clause</a>
-  </span>
-</li>
-</ul>
 </li>
 </ul>
 </li>
@@ -1546,47 +1535,52 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/with.html">WITH clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/with.html">WITH Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/from.html">FROM clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/from.html">FROM Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/hints.html">USE clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/hints.html">USE Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/join.html">JOIN clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/join.html">JOIN Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/nest.html">NEST clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/nest.html">NEST Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/unnest.html">UNNEST clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/unnest.html">UNNEST Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/let.html">LET clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/let.html">LET Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/where.html">WHERE clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/where.html">WHERE Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/groupby.html">GROUP BY clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/groupby.html">GROUP BY Clause</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="5">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/window.html">WINDOW Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
@@ -1596,17 +1590,17 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/orderby.html">ORDER BY clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/orderby.html">ORDER BY Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/limit.html">LIMIT clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/limit.html">LIMIT Clause</a>
   </span>
 </li>
 <li class="menu_list" data-depth="5">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/offset.html">OFFSET clause</a>
+    <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/offset.html">OFFSET Clause</a>
   </span>
 </li>
 </ul>
@@ -2331,37 +2325,53 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="../../../install/upgrade.html">Upgrading Couchbase Server</a>
+    <a class="menu_title menu_link" href="../../../install/upgrade.html">Upgrade</a>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../install/upgrade-strategies.html">Upgrade Options</a>
+    <a class="menu_title menu_link" href="../../../install/upgrade-procedure-selection.html">Upgrade-Procedure Selection</a>
   </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../install/upgrade-procedures.html">Upgrade Procedures</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../install/upgrade-cluster-offline.html">Cluster Offline</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="3">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../install/upgrade-cluster-online.html">Cluster Online</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../install/upgrade-cluster-online-reduced-capacity.html">At Reduced Capacity</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../install/upgrade-cluster-online-full-capacity.html">At Full Capacity</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../install/upgrade-ipv6-cluster.html">IPv6 Cluster-Upgrade</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../install/upgrade-online.html">Performing the Rolling Online Upgrade</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="2">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../install/upgrade-offline.html">Performing the Offline Upgrade</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="2">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../install/upgrade-individual-nodes.html">Performing the Single Node Upgrade</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="2">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../install/upgrade-to-ipv6.html">Upgrading IPv6 Clusters</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="2">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../install/upgrade-strategy-for-features.html">Upgrading to Couchbase Server 6.6</a>
+    <a class="menu_title menu_link" href="../../../install/upgrade-feature-availability.html">Feature Availability During Upgrade</a>
   </span>
 </li>
 </ul>
@@ -3661,7 +3671,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../metrics-reference/ns-server-metrics.html">ns_server Metrics</a>
+    <a class="menu_title menu_link" href="../../../metrics-reference/ns-server-metrics.html">Cluster Manager Metrics</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -7497,7 +7507,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <div class="paragraph">
 <p>Creating the right index&#8201;&#8212;&#8201;with the right keys, in the right order, and using the right expressions&#8201;&#8212;&#8201;is critical to query performance in any database system.
 This is true for Couchbase as well.
-This topic provides an overview of the indexing options for JSON in Couchbase, which in turn would help query for data efficiently and improve query performance.</p>
+This topic provides an overview of the types of index that you can create using the Index Service, and explains how they help to query for data efficiently and improve query performance.</p>
 </div>
 <div class="paragraph">
 <p>There are two types of index storage available:</p>
@@ -7824,7 +7834,8 @@ For example:</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT * FROM `travel-sample`.inventory.airport WHERE LOWER(name) = "villeneuve-sur-lot";</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">EXPLAIN SELECT * FROM `travel-sample`.inventory.airport
+WHERE LOWER(name) = "villeneuve-sur-lot";</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -7905,7 +7916,8 @@ For example:</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX travel_cx1 ON `travel-sample`.inventory.airport(LOWER(name), ROUND(geo.alt * 0.3048));</code></pre>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX travel_cx1 ON `travel-sample`.inventory.airport
+(LOWER(name), ROUND(geo.alt * 0.3048));</code></pre>
 </div>
 </div>
 </div>
@@ -7957,7 +7969,7 @@ Consider the following example array.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX travel_sched ON `travel-sample`.inventory.route
- (ALL DISTINCT ARRAY v.day FOR v IN schedule END);</code></pre>
+(ALL DISTINCT ARRAY v.day FOR v IN schedule END);</code></pre>
 </div>
 </div>
 </div>
@@ -8084,10 +8096,13 @@ To store all elements of an array in an index, do not use the DISTINCT modifier 
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">CREATE INDEX travel_sched ON `travel-sample`.inventory.route
-    (ALL ARRAY v.day FOR v IN schedule END);</code></pre>
+(ALL ARRAY v.day FOR v IN schedule END);</code></pre>
 </div>
 </div>
 </div>
+</div>
+<div class="paragraph">
+<p>For further details and examples, refer to <a href="../../../n1ql/n1ql-language-reference/indexing-arrays.html" class="page">Array Indexing</a>.</p>
 </div>
 </div>
 </div>
@@ -8223,6 +8238,9 @@ After the index selection is made, the query engine analyzes the query to see if
 If it does, the query engine skips retrieving the whole document from the data nodes.
 This is a performance optimization to keep in mind when designing your indexes.</p>
 </div>
+<div class="paragraph">
+<p>For further details and examples, refer to <a href="../../../n1ql/n1ql-language-reference/covering-indexes.html" class="page">Covering Indexes</a>.</p>
+</div>
 </div>
 </div>
 </article>
@@ -8296,7 +8314,7 @@ This is a performance optimization to keep in mind when designing your indexes.<
     </div>
   </div>
 </footer>
-<script src="../../../../../_/js/site.js"></script>
+<script id="site-script" src="../../../../../_/js/site.js"></script>
 <script async src="../../../../../_/js/vendor/fontawesome-icon-defs.js"></script>
 <script async src="../../../../../_/js/vendor/fontawesome.js"></script>
 <script async src="../../../../../_/js/vendor/highlight.js"></script>
