@@ -986,10 +986,28 @@
     <a class="menu_title menu_link" href="../../sdk/development-intro.html">Developer&#8217;s Intro</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../sdk/overview.html">SDKs</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../../home/sdk.html">SDKs</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::distributed-acid-transactions.adoc">Distributed ACID Transactions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::field-level-encryption.adoc">Field Level Encryption</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::response-time-observability.adoc">Response Time Observability</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1076,12 +1094,7 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-replication.html">Index Availability</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="3">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/storage-modes.html">Storage Settings</a>
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-lifecycle.html">Index Lifecycle</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1107,6 +1120,16 @@
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../../n1ql/n1ql-language-reference/groupby-aggregate-performance.html">Grouping and Aggregate Pushdown</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-replication.html">Index Availability</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/storage-modes.html">Storage Settings</a>
   </span>
 </li>
 </ul>
@@ -3665,7 +3688,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../metrics-reference/ns-server-metrics.html">ns_server Metrics</a>
+    <a class="menu_title menu_link" href="../../metrics-reference/ns-server-metrics.html">Cluster Manager Metrics</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -8353,21 +8376,19 @@ http://10.144.210.101:8091/controller/cancelXDCR/ac41764b9e261725e874dbd34c7eda6
 <p>On the source cluster, <code>10.144.210.101</code>, create a new replication to the target cluster <code>10.144.210.102</code>, specifying the explicit mapping of the source collection <code>airline</code> to the target collection <code>MyAirline</code>:</p>
 <div class="listingblock">
 <div class="content">
-<pre>/opt/couchbase/bin/couchbase-cli xdcr-replicate \
--c localhost:8091 \
--u Administrator \
--p password \
---create \
---xdcr-cluster-name 10.144.210.102 \
---xdcr-from-bucket travel-sample \
---xdcr-to-bucket ts \
---collection-explicit-mappings 1 \
---collection-mapping-rules '{"inventory.airline":"inventory.MyAirline"}'</pre>
+<pre>curl -v -X POST -u Administrator:password \
+http://localhost:8091/controller/createReplication \
+-d replicationType=continuous \
+-d toBucket=ts \
+-d toCluster=10.144.210.102 \
+-d fromBucket=travel-sample \
+-d collectionsExplicitMapping=true \
+-d colMappingRules=%7B%22inventory.airline%22%3A%22inventory.MyAirline%22%7D</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Note that the <code>collection-explicit-mappings</code> flag has been specified, with a value of <code>1</code>.
-The value of <code>collection-mapping-rules</code> is a JSON object whose key is the source collection, and whose target is the target collection.
+<p>Note that the <code>collectionsExplicitMapping</code> flag has been specified, with a value of <code>true</code>.
+The value of <code>colMappingRules</code> is an encoded JSON object whose key is the source collection, and whose target is the target collection.
 If the call is successful, the following output is displayed:</p>
 </div>
 <div class="listingblock">
@@ -8410,7 +8431,7 @@ Enter the following expression:</p>
 </div>
 <div class="paragraph">
 <p>The <code>collectionsMigrationMode</code> flag is specified, with a value of <code>true</code>.
-Note the format required for the specifying of <code>collection-mapping-rules</code>: the regular expression <code>"city=\"San Francisco\"</code> is provided as the key of a key-value pair, whose value is the destination collection, <code>"California.SanFrancisco"</code>.
+Note the format required for the specifying of <code>colMappingRules</code>: the regular expression <code>"city=\"San Francisco\"</code> is provided as the key of a key-value pair, whose value is the destination collection, <code>"California.SanFrancisco"</code>.
 (Note also that, in cases where <em>all</em> data from the source bucket is to be migrated, and no regular expression is therefore required, the key of the key-value pair should be specified as the keyspace of the default bucket: i.e. <code>"_default._default"</code>.)</p>
 </div>
 <div class="paragraph">

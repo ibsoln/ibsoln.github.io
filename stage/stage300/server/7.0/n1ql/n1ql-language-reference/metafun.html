@@ -987,10 +987,28 @@
     <a class="menu_title menu_link" href="../../sdk/development-intro.html">Developer&#8217;s Intro</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../sdk/overview.html">SDKs</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../../home/sdk.html">SDKs</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::distributed-acid-transactions.adoc">Distributed ACID Transactions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::field-level-encryption.adoc">Field Level Encryption</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::response-time-observability.adoc">Response Time Observability</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1077,12 +1095,7 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-replication.html">Index Availability</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="3">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/storage-modes.html">Storage Settings</a>
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-lifecycle.html">Index Lifecycle</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1108,6 +1121,16 @@
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="groupby-aggregate-performance.html">Grouping and Aggregate Pushdown</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-replication.html">Index Availability</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/storage-modes.html">Storage Settings</a>
   </span>
 </li>
 </ul>
@@ -3666,7 +3689,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../metrics-reference/ns-server-metrics.html">ns_server Metrics</a>
+    <a class="menu_title menu_link" href="../../metrics-reference/ns-server-metrics.html">Cluster Manager Metrics</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -7780,7 +7803,7 @@ When the function is used with a property as part of a nested expression, the ex
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT META() AS metadata
-FROM `travel-sample`
+FROM `travel-sample`.inventory.airline
 LIMIT 3;</code></pre>
 </div>
 </div>
@@ -7826,7 +7849,7 @@ LIMIT 3;</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT META().id AS id
-FROM `travel-sample`
+FROM `travel-sample`.inventory.airline
 LIMIT 3;</code></pre>
 </div>
 </div>
@@ -7854,8 +7877,8 @@ LIMIT 3;</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT META(route).id AS id <i class="conum" data-value="1"></i><b>(1)</b>
-FROM `travel-sample` AS route
-JOIN `travel-sample` AS airport
+FROM `travel-sample`.inventory.route
+JOIN `travel-sample`.inventory.airport
 ON route.sourceairport = airport.faa
 WHERE airport.city = "Paris"
 LIMIT 3;</code></pre>
@@ -7984,8 +8007,7 @@ For example,</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT t        AS orig_t,
        PAIRS(t) AS pairs_t
-FROM   `travel-sample` t
-WHERE  type = "airport"
+FROM   `travel-sample`.inventory.airport t
 LIMIT  1;</code></pre>
 </div>
 </div>
@@ -8077,8 +8099,7 @@ LIMIT  1;</code></pre>
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT public_likes          AS orig_t,
        PAIRS(public_likes)   AS pairs_array_t,
        PAIRS({public_likes}) AS pairs_obj_t
-FROM   `travel-sample`
-WHERE  type = "hotel"
+FROM   `travel-sample`.inventory.hotel
 LIMIT  1;</code></pre>
 </div>
 </div>
@@ -8158,8 +8179,7 @@ LIMIT  1;</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT country        AS orig_t,
        PAIRS(country) AS pairs_t
-FROM   `travel-sample`
-WHERE  type = "airport"
+FROM   `travel-sample`.inventory.airport
 LIMIT  1;</code></pre>
 </div>
 </div>
@@ -8237,8 +8257,7 @@ LIMIT  1;</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT reviews[*].ratings,
        PAIRS({reviews[*].ratings}) AS pairs_t
-FROM   `travel-sample`
-WHERE  type = "hotel"
+FROM   `travel-sample`.inventory.hotel
 LIMIT  1;</code></pre>
 </div>
 </div>

@@ -987,10 +987,28 @@
     <a class="menu_title menu_link" href="../../../sdk/development-intro.html">Developer&#8217;s Intro</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../sdk/overview.html">SDKs</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../../../home/sdk.html">SDKs</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::distributed-acid-transactions.adoc">Distributed ACID Transactions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::field-level-encryption.adoc">Field Level Encryption</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::response-time-observability.adoc">Response Time Observability</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1075,14 +1093,9 @@
     <a class="menu_title menu_link" href="global-secondary-indexes.html">Using Indexes</a>
   </span>
 <ul class="menu_row">
-<li class="menu_list is-current-page" data-depth="3">
-  <span class="menu_line">
-    <a class="menu_title menu_link is-current-page" href="index-replication.html">Index Availability</a>
-  </span>
-</li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="storage-modes.html">Storage Settings</a>
+    <a class="menu_title menu_link" href="index-lifecycle.html">Index Lifecycle</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1108,6 +1121,16 @@
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../../../n1ql/n1ql-language-reference/groupby-aggregate-performance.html">Grouping and Aggregate Pushdown</a>
+  </span>
+</li>
+<li class="menu_list is-current-page" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link is-current-page" href="index-replication.html">Index Availability</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="storage-modes.html">Storage Settings</a>
   </span>
 </li>
 </ul>
@@ -3666,7 +3689,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../metrics-reference/ns-server-metrics.html">ns_server Metrics</a>
+    <a class="menu_title menu_link" href="../../../metrics-reference/ns-server-metrics.html">Cluster Manager Metrics</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -7541,7 +7564,7 @@ In the following example, an index with two replicas is created.
 The active index is on <code>node1</code>, and the replicas are on <code>node2</code> and <code>node3</code>:</p>
 <div id="nodes-example2" class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/6c5446e83a88892bfc735ba5a5ca4b7acf0cb616/modules/learn/examples/services-and-indexes/indexes/replication-nodes.n1ql">CREATE INDEX country_idx ON `travel-sample`.inventory.airport(country, city)
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/00c2f283e77e81298e46fc73d067f8a9da621e49/modules/learn/examples/services-and-indexes/indexes/replication-nodes.n1ql">CREATE INDEX country_idx ON `travel-sample`.inventory.airport(country, city)
 WITH {"nodes": ["node1:8091", "node2:8091", "node3:8091"]};</code></pre>
 </div>
 </div>
@@ -7554,7 +7577,7 @@ The replicas are automatically distributed across those nodes of the cluster tha
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/6c5446e83a88892bfc735ba5a5ca4b7acf0cb616/modules/learn/examples/services-and-indexes/indexes/replication-num.n1ql">CREATE INDEX country_idx ON `travel-sample`.inventory.airport(country, city)
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql" data-source-url="https://github.com/couchbase/docs-server/blob/00c2f283e77e81298e46fc73d067f8a9da621e49/modules/learn/examples/services-and-indexes/indexes/replication-num.n1ql">CREATE INDEX country_idx ON `travel-sample`.inventory.airport(country, city)
 WITH {"num_replica": 2};</code></pre>
 </div>
 </div>
@@ -7648,13 +7671,16 @@ If index-maintenance is running behind, the query waits for it to catch up.</p>
 <div class="paragraph">
 <p>For N1QL, the default consistency is <code>not_bounded</code>.</p>
 </div>
+<div class="paragraph">
+<p>You can specify the scan consistency via the <a href="../../../tools/query-workbench.html#query-preferences" class="page">run-time preferences</a> in the Query Workbench, or by setting the <a href="../../../settings/query-settings.html#scan_consistency" class="page">scan_consistency</a> request-level parameter.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="index-snapshots"><a class="anchor" href="#index-snapshots"></a>Index Snapshots</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>One or more index <a href="../../clusters-and-availability/intra-cluster-replication.html#database-change-protocol" class="page">snapshots</a> are maintained on disk, to permit rapid recovery if node-failures are experienced.
+<p>One or more <em>index snapshots</em> are maintained on disk, to permit rapid recovery if node-failures are experienced.
 In cases where recovery requires an Index-Service node to be restarted, the node’s indexes are rebuilt from the snapshots retained on disk.</p>
 </div>
 <div class="paragraph">

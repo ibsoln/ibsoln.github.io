@@ -986,10 +986,28 @@
     <a class="menu_title menu_link" href="../../sdk/development-intro.html">Developer&#8217;s Intro</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../sdk/overview.html">SDKs</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../../home/sdk.html">SDKs</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::distributed-acid-transactions.adoc">Distributed ACID Transactions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::field-level-encryption.adoc">Field Level Encryption</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::response-time-observability.adoc">Response Time Observability</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1076,12 +1094,7 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-replication.html">Index Availability</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="3">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/storage-modes.html">Storage Settings</a>
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-lifecycle.html">Index Lifecycle</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1107,6 +1120,16 @@
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="groupby-aggregate-performance.html">Grouping and Aggregate Pushdown</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-replication.html">Index Availability</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/storage-modes.html">Storage Settings</a>
   </span>
 </li>
 </ul>
@@ -3665,7 +3688,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../metrics-reference/ns-server-metrics.html">ns_server Metrics</a>
+    <a class="menu_title menu_link" href="../../metrics-reference/ns-server-metrics.html">Cluster Manager Metrics</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -7855,14 +7878,14 @@ Group aggregates and projection are not pushed.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT META(t1).id
-FROM `travel-sample` AS t1
+FROM `travel-sample`.inventory.airline AS t1
 WHERE SEARCH(t1.country, "+United +States");</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT META(t1).id
-FROM `travel-sample` AS t1
+FROM `travel-sample`.inventory.airline AS t1
 WHERE SEARCH(t1, "country:\"United States\"");</code></pre>
 </div>
 </div>
@@ -7870,14 +7893,18 @@ WHERE SEARCH(t1, "country:\"United States\"");</code></pre>
 <div class="title">Results</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
+
   {
-    "id": "airport_3725"
+    "id": "airline_10"
   },
   {
-    "id": "hotel_25592"
+    "id": "airline_10123"
   },
   {
-    "id": "landmark_3385"
+    "id": "airline_10226"
+  },
+  {
+    "id": "airline_10748"
   },
 ...
 ]</code></pre>
@@ -7894,7 +7921,7 @@ WHERE SEARCH(t1, "country:\"United States\"");</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT t1.name
-FROM `travel-sample` AS t1
+FROM `travel-sample`.inventory.hotel AS t1
 WHERE SEARCH(t1, {
   "match": "bathrobes",
   "field": "reviews.content",
@@ -7930,7 +7957,7 @@ WHERE SEARCH(t1, {
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT t1.name
-FROM `travel-sample` AS t1
+FROM `travel-sample`.inventory.hotel AS t1
 WHERE SEARCH(t1, {
   "explain": false,
   "fields": [
@@ -7983,7 +8010,7 @@ As an alternative, you could limit the number of results and order them using th
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT META(t1).id
-FROM `travel-sample` AS t1
+FROM `travel-sample`.inventory.hotel AS t1
 WHERE t1.type = "hotel" AND SEARCH(t1.description, "amazing");</code></pre>
 </div>
 </div>
@@ -7992,16 +8019,16 @@ WHERE t1.type = "hotel" AND SEARCH(t1.description, "amazing");</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
   {
-    "id": "hotel_22096"
+    "id": "hotel_20422"
   },
   {
-    "id": "hotel_27741"
+    "id": "hotel_22096"
   },
   {
     "id": "hotel_25243"
   },
   {
-    "id": "hotel_20422"
+    "id": "hotel_27741"
   }
 ]</code></pre>
 </div>
@@ -8087,15 +8114,15 @@ It may also include other metadata requested by advanced search options, such as
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT SEARCH_META() AS meta <i class="conum" data-value="1"></i><b>(1)</b>
-FROM `travel-sample` AS t1
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT SEARCH_META() AS meta
+FROM `travel-sample`.inventory.hotel AS t1
 WHERE SEARCH(t1, {
   "query": {
     "match": "bathrobes",
     "field": "reviews.content",
     "analyzer": "standard"
   },
-  "includeLocations": true <i class="conum" data-value="2"></i><b>(2)</b>
+  "includeLocations": true
 })
 LIMIT 3;</code></pre>
 </div>
@@ -8198,9 +8225,9 @@ LIMIT 3;</code></pre>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT t1.name, SEARCH_META(s1) AS meta <i class="conum" data-value="1"></i><b>(1)</b>
-FROM `travel-sample` AS t1
-WHERE SEARCH(t1.description, "mountain", {"out": "s1"}) <i class="conum" data-value="2"></i><b>(2)</b>
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT t1.name, SEARCH_META(s1) AS meta
+FROM `travel-sample`.inventory.hotel AS t1
+WHERE SEARCH(t1.description, "mountain", {"out": "s1"})
 AND SEARCH(t1, {
   "query": {
     "match": "bathrobes",
@@ -8215,10 +8242,6 @@ AND SEARCH(t1, {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
   {
-    "meta": {
-      "id": "hotel_17598",
-      "score": 3.200725185447
-    },
     "name": "Marina del Rey Marriott"
   }
 ]</code></pre>
@@ -8311,11 +8334,11 @@ If an outname was not specified by the <a href="#search">SEARCH()</a> function, 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT name, description, SEARCH_SCORE() AS score <i class="conum" data-value="1"></i><b>(1)</b>
-FROM `travel-sample` AS t1
+<pre class="highlightjs highlight"><code class="language-n1ql hljs" data-lang="n1ql">SELECT name, description, SEARCH_SCORE() AS score
+FROM `travel-sample`.inventory.hotel AS t1
 WHERE SEARCH(t1.description, "mountain")
 ORDER BY score DESC
-LIMIT 5;</code></pre>
+LIMIT 3;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8323,31 +8346,18 @@ LIMIT 5;</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
   {
-    "description": "370 guest rooms offering both water and mountain view.",
-    "name": "Marina del Rey Marriott",
-    "score": 3.20079710333644
-  },
-  {
-    "description": "Log cabin glamping in a rural setting with panoramic views toward the Clwydian Mountain Range.",
-    "name": "Clwydian Holidays",
-    "score": 2.553352846064742
-  },
-  {
     "description": "3 Star Hotel next to the Mountain Railway terminus and set in 30 acres of grounds which include Dolbadarn Castle",
-    "name": "The Royal Victoria Hotel",
-    "score": 2.2648264583793623
+    "name": "The Royal Victoria Hotel"
   },
   {
-    "description": "Hotel Faucigny is situated in the historical center of Chamonix Mont-Blanc, close to shops, ski schools and mountain house, at 100 m from ski buses. Private car park.",
-    "name": "Hotel Le Faucigny",
-    "score": 1.9344169596440783
+    "description": "370 guest rooms offering both water and mountain view.",
+    "name": "Marina del Rey Marriott"
   },
   {
-    "description": "5 star Visit Wales cottages - each sleeps 6 - in quiet village location close to shops and amenities. Convenient for Gower, Mumbles, Brecon Beacons, Black Mountain. Dedicated bike storage and bike washing facilities - 20 mins to Afan Forest Mountain Bike Centre. Awards : Tripadvisor Certificate of Excellence 2014, Tourism Swansea Bay 2012 &amp;quot;Best Self Catering Accommodation&amp;quot;.",
-    "name": "Cwmshon Cottages",
-    "score": 1.7315201463687813
+    "description": "This small family run hotel captures the spirit of Mull and is a perfect rural holiday retreat. The mountain and sea blend together to give fantastic, panoramic views from the hotel which is in an elevated position on the shoreline. Panoramic views are also available from the bar and restaurant which serves local produce 7 days a week.",
+    "name": "The Glenforsa Hotel"
   }
-]</code></pre>
+]----</code></pre>
 </div>
 </div>
 </div>

@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/stage/stage300/server/current/manage/manage-xdcr/recover-data-with-xdcr.html">
 <link rel="stylesheet" href="../../../../_/css/site.css">
 <script src="../../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="In the event of data-loss, the &lt;strong&gt;cbrecovery&lt;/strong&gt; tool can be used to restore data.">
+<meta name="description" content="In the event of data-loss, the &lt;strong&gt;cbrecovery&lt;/strong&gt; tool can be used to restore data. The tool accesses remotely replicated buckets, previously created with XDCR, and copies appropriate subsets of their data back onto the original source-cluster.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="server">
 <meta name="dcterms.identifier" content="7.0">
@@ -987,10 +987,28 @@
     <a class="menu_title menu_link" href="../../sdk/development-intro.html">Developer&#8217;s Intro</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../sdk/overview.html">SDKs</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../../home/sdk.html">SDKs</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::distributed-acid-transactions.adoc">Distributed ACID Transactions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::field-level-encryption.adoc">Field Level Encryption</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::response-time-observability.adoc">Response Time Observability</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1077,12 +1095,7 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-replication.html">Index Availability</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="3">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/storage-modes.html">Storage Settings</a>
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-lifecycle.html">Index Lifecycle</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1108,6 +1121,16 @@
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../../n1ql/n1ql-language-reference/groupby-aggregate-performance.html">Grouping and Aggregate Pushdown</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/index-replication.html">Index Availability</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../learn/services-and-indexes/indexes/storage-modes.html">Storage Settings</a>
   </span>
 </li>
 </ul>
@@ -3666,7 +3689,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../metrics-reference/ns-server-metrics.html">ns_server Metrics</a>
+    <a class="menu_title menu_link" href="../../metrics-reference/ns-server-metrics.html">Cluster Manager Metrics</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -7500,8 +7523,7 @@
 <div class="sectionbody">
 <div class="quoteblock abstract">
 <blockquote>
-In the event of data-loss, the <strong>cbrecovery</strong> tool can be used to restore data.
-The tool accesses remotely replicated buckets, previously created with XDCR, and copies appropriate subsets of their data back onto the original source-cluster.
+In the event of data-loss, the <strong>cbrecovery</strong> tool can be used to restore data. The tool accesses remotely replicated buckets, previously created with XDCR, and copies appropriate subsets of their data back onto the original source-cluster.
 </blockquote>
 </div>
 </div>
@@ -7511,14 +7533,14 @@ The tool accesses remotely replicated buckets, previously created with XDCR, and
 <div class="sectionbody">
 <div class="paragraph">
 <p>Couchbase Server allows one or more replicas to be created for each vBucket on the cluster.
-This helps to ensure continued data-availability in the event of node-failure.</p>
+This helps to ensure continued data-availability, in the event of node-failure.</p>
 </div>
 <div class="paragraph">
 <p>However, if multiple nodes within a single cluster fail simultaneously, one or more active vBuckets and all their replicas may be affected; meaning that lost data cannot be recovered locally.</p>
 </div>
 <div class="paragraph">
-<p>In such cases, provided that a bucket affected by such failure has already been established as a source bucket for XDCR, the lost data may be retrieved from the bucket defined on the remote server as the corresponding replication-target.
-This retrieval is achieved from the command-line, by means of the Couchbase <strong>cbrecovery</strong> tool.</p>
+<p>In such cases, provided that a bucket affected by such failure has already been established as a source bucket for XDCR, the lost data may be retrieved from the bucket defined on the remote cluster as the corresponding replication-target.
+This retrieval is achieved from the command-line, by means of the Couchbase <a href="#cli:cbtools/cbrecovery.adoc" class="page unresolved">cbrecovery</a> tool.</p>
 </div>
 </div>
 </div>
@@ -7552,13 +7574,57 @@ An XDCR reference to a remote cluster, named <code>10.142.180.104</code>, has al
 </div>
 <div class="paragraph">
 <p>Since <code>travel-sample</code> was established with one replica, the permanent unavailability of two nodes out of three means data-loss from the local cluster.
-To begin the XDCR-based recovery-process, proceed as follows.</p>
+To begin the XDCR-based recovery-process, proceed as follows.
+(Note that the following steps assume knowledge of <a href="../manage-nodes/failover-hard.html#hard-failover-of-multiple-nodes" class="page">Hard Failover of Multiple Nodes</a>.)</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>If the unavailable nodes and their data absolutely cannot be retrieved, fail each node over, by left-clicking the <strong>Failover</strong> button.
-Then, remove each node from the cluster, by left-clicking the <strong>Remove</strong> button.</p>
+<p>If the unavailable nodes and their data absolutely cannot be retrieved, fail them both over.
+In order to fail over multiple nodes, left-click on the <strong>FAILOVER</strong> button, at the upper right of the screen:</p>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-xdcr/leftClickOnMultiFailoverButton.png" alt="leftClickOnMultiFailoverButton" width="100">
+</div>
+</div>
+<div class="paragraph">
+<p>This brings up the <strong>Failover Multiple Nodes</strong> dialog, which appears as follows:</p>
+</div>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-xdcr/failoverMultipleNodesDialogInitial.png" alt="failoverMultipleNodesDialogInitial" width="440">
+</div>
+</div>
+<div class="paragraph">
+<p>Check the checkboxes to the left of the two nodes that are to be failed over, and then left-click on the <strong>Failover Nodes</strong> button, at the lower-right of the dialog:</p>
+</div>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-xdcr/failoverMultipleNodes.png" alt="failoverMultipleNodes" width="440">
+</div>
+</div>
+<div class="paragraph">
+<p>This brings up a warning notification concerning <strong>Unsafe Mode</strong>:</p>
+</div>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-xdcr/unsafeModeWarning2.png" alt="unsafeModeWarning2" width="440">
+</div>
+</div>
+<div class="paragraph">
+<p>A detailed explanation of this warning is provided in <a href="../manage-nodes/failover-hard.html#hard-failover-of-multiple-nodes" class="page">Hard Failover of Multiple Nodes</a>.
+Essentially, the warning indicates that because of majority of the cluster&#8217;s nodes will now be failed over, data will be lost.</p>
+</div>
+<div class="paragraph">
+<p>To continue with the hard failover, check (once again) the checkboxes for the nodes that are to be failed over, and then left-click on the <strong>Failover Nodes: Unsafe Mode</strong> button, at the lower-right of the dialog.
+The unsafe failover now proceeds.
+Subsequently, the cluster has been reduced to a single node:</p>
+</div>
+<div class="imageblock text-left">
+<div class="content">
+<img src="../_images/manage-xdcr/clusterFollowingUnsafeFailover.png" alt="clusterFollowingUnsafeFailover" width="620">
+</div>
+</div>
 </li>
 <li>
 <p>Before attempting to recover the lost data, restore capacity to the local cluster, as appropriate.
@@ -7569,8 +7635,11 @@ The illustration below shows the two nodes that were previously lost, cleansed o
 </div>
 </div>
 <div class="paragraph">
+<p>See <a href="#manage:manage-nodes/add-a-node-and-rebalance.adoc" class="page unresolved">Add a Node and Rebalance</a>, for information on adding nodes.</p>
+</div>
+<div class="paragraph">
 <p><em>Do not</em> at this point rebalance the cluster: the rebalance operation affects local vBucket data, and thereby prevents recovery of lost data from the remote cluster.
-<strong>Rebalance</strong> will be performed <em>after</em> the lost data has been recovered.</p>
+Rebalance will be performed <em>after</em> the lost data has been recovered.</p>
 </div>
 </li>
 <li>
@@ -7578,13 +7647,13 @@ The illustration below shows the two nodes that were previously lost, cleansed o
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bourne hljs" data-lang="bourne">$ cbrecovery http://10.142.180.104:8091 http://10.142.180.101:8091 \
-&gt; -b travelSampleBackup \
-&gt; -B travel-sample \
-&gt; -u Administrator \
-&gt; -p password \
-&gt; -U Administrator \
-&gt; -P password \
-&gt; -v</code></pre>
+-b travelSampleBackup \
+-B travel-sample \
+-u Administrator \
+-p password \
+-U Administrator \
+-P password \
+-v</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7648,9 +7717,6 @@ done</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Additionally, you can monitor the recovery process by means of Couchbase Web Console: access the <strong>Statistics</strong> panel for the <code>travel-sample</code> bucket, on the local cluster; and inspect the contents of the <strong>Incoming XDCR Operations</strong> panel.</p>
-</div>
-<div class="paragraph">
 <p>When <strong>cbrecovery</strong> has concluded, a message similar to the following is displayed on the console:</p>
 </div>
 <div class="listingblock">
@@ -7665,8 +7731,16 @@ msg      :                 8509 |       45.5
 </li>
 <li>
 <p>To conclude the data-recovery process, rebalance the nodes on the local cluster, by left-clicking the <strong>Rebalance</strong> button.</p>
+<div class="imageblock text-middle">
+<div class="content">
+<img src="../_images/manage-nodes/rebalanceButton.png" alt="rebalanceButton" width="140">
+</div>
+</div>
 </li>
 </ol>
+</div>
+<div class="paragraph">
+<p>The previously lost data has now been entirely restored to the source cluster.</p>
 </div>
 </div>
 </div>

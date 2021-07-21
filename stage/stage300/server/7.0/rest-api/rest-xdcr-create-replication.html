@@ -986,10 +986,28 @@
     <a class="menu_title menu_link" href="../sdk/development-intro.html">Developer&#8217;s Intro</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../sdk/overview.html">SDKs</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../home/sdk.html">SDKs</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::distributed-acid-transactions.adoc">Distributed ACID Transactions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::field-level-encryption.adoc">Field Level Encryption</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#sdk-extensions::response-time-observability.adoc">Response Time Observability</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1076,12 +1094,7 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../learn/services-and-indexes/indexes/index-replication.html">Index Availability</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="3">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../learn/services-and-indexes/indexes/storage-modes.html">Storage Settings</a>
+    <a class="menu_title menu_link" href="../learn/services-and-indexes/indexes/index-lifecycle.html">Index Lifecycle</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1107,6 +1120,16 @@
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../n1ql/n1ql-language-reference/groupby-aggregate-performance.html">Grouping and Aggregate Pushdown</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../learn/services-and-indexes/indexes/index-replication.html">Index Availability</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../learn/services-and-indexes/indexes/storage-modes.html">Storage Settings</a>
   </span>
 </li>
 </ul>
@@ -3665,7 +3688,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../metrics-reference/ns-server-metrics.html">ns_server Metrics</a>
+    <a class="menu_title menu_link" href="../metrics-reference/ns-server-metrics.html">Cluster Manager Metrics</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -7535,8 +7558,7 @@ Once a replication is defined, it automatically begins.</p>
   -d fromBucket=[bucket-name]
   -d toCluster=[cluster-name]
   -d toBucket=[bucket-name]
-  -d collection-explicit-mappings [1 | 0]
-  -d collection-mapping-rules [JSON-Document]
+  -d collectionsExplicitMapping [true | false]
   -d collectionsMigrationMode [true | false]
   -d colMappingRules [JSON-Document]
   -d replicationType="continuous"
@@ -7572,12 +7594,12 @@ If the default is to be used, this parameter does not need to be specified.</p>
 This value must be specified.</p>
 </div>
 <div class="paragraph">
-<p>If the optional parameters <code>collection-explicit-mappings</code>, <code>collection-mapping-rules</code>, <code>collectionsMigrationMode</code>, and <code>colMappingRules</code> are all <em>unspecified</em>, replication occurs between the specified <code>fromBucket</code> and <code>toBucket</code> according to whatever <em>implicit mappings</em> can be determined at bucket-level: that is, if a collection in the source bucket has the same <em>keyspace</em> as a collection in the target bucket (i.e., the name of a collection and the name of the scope within which it is located form the identical <em>scope-name.collection-name</em> pattern, on both source and target), data is replicated between those collections; with the optional application of a filter expression.
+<p>If the optional parameters <code>collectionsExplicitMapping</code>, <code>colMappingRules</code>, and <code>collectionsMigrationMode</code> are all <em>unspecified</em>, replication occurs between the specified <code>fromBucket</code> and <code>toBucket</code> according to whatever <em>implicit mappings</em> can be determined at bucket-level: that is, if a collection in the source bucket has the same <em>keyspace</em> as a collection in the target bucket (i.e., the name of a collection and the name of the scope within which it is located form the identical <em>scope-name.collection-name</em> pattern, on both source and target), data is replicated between those collections; with the optional application of a filter expression.
 At a minimum, this ensures that data is replicated between the default collections.</p>
 </div>
 <div class="paragraph">
-<p>The <code>collection-explicit-mappings</code> parameter, whose default value is <code>0</code>, can be specified with a value of <code>1</code>, to switch on replication based on <em>explicit</em> mapping: this means that <em>implicit</em> mapping at bucket-level does not occur.
-Instead, replication occurs between collections determined by the <em>mapping rules</em> provided in the JSON document that is the value of <code>collection-mapping-rules</code>.</p>
+<p>The <code>collectionsExplicitMapping</code> parameter, whose default value is <code>false</code>, can be specified with a value of <code>true</code>, to switch on replication based on <em>explicit</em> mapping: this means that <em>implicit</em> mapping at bucket-level does not occur.
+Instead, replication occurs between collections determined by the <em>mapping rules</em> provided in the JSON document that is the value of <code>colMappingRules</code>.</p>
 </div>
 <div class="paragraph">
 <p>The <code>collectionsMigrationMode</code> parameter, whose default value is <code>false</code>, can be specified with a value of <code>true</code>, to switch on <em>migration mode</em>.
@@ -7585,7 +7607,7 @@ This ensures that documents from the default collection of the source bucket are
 Optionally, a filter expression may also be provided in this JSON document.</p>
 </div>
 <div class="paragraph">
-<p>If the <code>collection-explicit-mappings</code> parameter is specified, the <code>collectionsMigrationMode</code> parameter cannot be specified; and vice versa.</p>
+<p>If the <code>collectionsExplicitMapping</code> parameter is specified, the <code>collectionsMigrationMode</code> parameter cannot be specified; and vice versa.</p>
 </div>
 <div class="paragraph">
 <p>The value of <code>compressionType</code>, which determines whether data is replicated in compressed form, can be either <code>Auto</code> or <code>None</code>:</p>
@@ -7739,21 +7761,19 @@ http://localhost:8091/controller/createReplication \
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>/opt/couchbase/bin/couchbase-cli xdcr-replicate \
--c localhost:8091 \
--u Administrator \
--p password \
---create \
---xdcr-cluster-name 10.144.210.102 \
---xdcr-from-bucket travel-sample \
---xdcr-to-bucket ts \
---collection-explicit-mappings 1 \
---collection-mapping-rules '{"inventory.airline":"inventory.MyAirline"}'</pre>
+<pre>curl -v -X POST -u Administrator:password \
+http://localhost:8091/controller/createReplication \
+-d replicationType=continuous \
+-d toBucket=ts \
+-d toCluster=10.144.210.102 \
+-d fromBucket=travel-sample \
+-d collectionsExplicitMapping=true \
+-d colMappingRules=%7B%22inventory.airline%22%3A%22inventory.MyAirline%22%7D</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Note that the <code>collection-explicit-mappings</code> flag has been specified, with a value of <code>1</code>.
-The value of <code>collection-mapping-rules</code> is a JSON object whose key is the source collection, and whose target is the target collection.
+<p>Note that the <code>collectionsExplicitMapping</code> flag has been specified, with a value of <code>true</code>.
+The value of <code>colMappingRules</code> is a JSON object whose key is the source collection, and whose target is the target collection.
 If the call is successful, the following output is displayed:</p>
 </div>
 <div class="listingblock">
@@ -7781,7 +7801,7 @@ If the call is successful, the following output is displayed:</p>
 </div>
 <div class="paragraph">
 <p>The <code>collectionsMigrationMode</code> flag is specified, with a value of <code>true</code>.
-Note the format required for the specifying of <code>collection-mapping-rules</code>: the regular expression <code>"city=\"San Francisco\"</code> is provided as the key of a key-value pair, whose value is the destination collection, <code>"California.SanFrancisco"</code>.
+Note the format required for the specifying of <code>colMappingRules</code>: the regular expression <code>"city=\"San Francisco\"</code> is provided as the key of a key-value pair, whose value is the destination collection, <code>"California.SanFrancisco"</code>.
 (Note also that, in cases where <em>all</em> data from the source bucket is to be migrated, and no regular expression is therefore required, the key of the key-value pair should be specified as the keyspace of the default bucket: i.e. <code>"_default._default"</code>.)</p>
 </div>
 <div class="paragraph">
@@ -7805,7 +7825,8 @@ For a conceptual overview of XDCR, see <a href="../learn/clusters-and-availabili
 </div>
 <div class="paragraph">
 <p>For an overview of scopes and collections, see <a href="../learn/data/scopes-and-collections.html" class="page">Scopes and Collections</a>.
-For an overview of how XDCR can be used to replicate between scopes and collections &#8212; and a description of the syntactic requirements of <em>mapping rules</em> &#8212; see <a href="../learn/clusters-and-availability/xdcr-with-scopes-and-collections.html" class="page">XDCR with Scopes and Collections</a>.</p>
+For an overview of how XDCR can be used to replicate between scopes and collections &#8212; and a description of the syntactic requirements of <em>mapping rules</em> &#8212; see <a href="../learn/clusters-and-availability/xdcr-with-scopes-and-collections.html" class="page">XDCR with Scopes and Collections</a>.
+For specific examples of using XDCR to replicate between scopes and collections, see <a href="../manage/manage-xdcr/replicate-using-scopes-and-collections.html" class="page">Replicate Using Scopes and Collections</a>.</p>
 </div>
 <div class="paragraph">
 <p>For an overview of XDCR filtering, see <a href="../learn/clusters-and-availability/xdcr-filtering.html" class="page">XDCR Advanced Filtering</a>.

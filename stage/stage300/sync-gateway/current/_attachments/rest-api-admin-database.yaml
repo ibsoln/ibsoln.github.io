@@ -17,74 +17,65 @@ consumes:
 - application/json
 produces:
 - application/json
+
+
+securityDefinitions:
+  admin_auth:
+    type: "oauth2"
+    authorizationUrl: "tbd"
+    flow: "implicit"
+    scopes:
+      write:databases: "modify databases in your account"
+      read:databases: "read database details"
+  api_key:
+    type: "apiKey"
+    name: "api_key"
+    in: "header"
+
 paths:
-  /{db}/:
-    get:
-      tags:
-      - configure
-      summary: Database info
-      description: |
-        This request retrieves basic database information.
-      parameters:
-      - $ref: '#/parameters/db'
-      responses:
-        200:
-          description: Request completed successfully.
-          schema:
-            $ref: '#/definitions/Database-info'
-        401:
-          description: Unauthorized. Login required.
-        404:
-          description: Not Found. Requested database not found.
-  /{db}/_compact:
-    post:
-      tags:
-      - manage
-      summary: Compact the database
-      description: |
-        Use the ```/{db}/_compact``` endpoint to trigger the compaction process, which purges the JSON bodies of non-leaf revisions. This process is also run periodically by the system.
+  # /{db}/:
+  #   get:
+  #     tags:
+  #     - database
+  #     summary: Get database details
+  #     description: |
+  #       This request retrieves basic database information.
+  #     parameters:
+  #     - $ref: '#/parameters/db'
+  #     responses:
+  #       200:
+  #         description: OK
+  #         schema:
+  #           $ref: '#/responses/200-db-info'
+  #       401:
+  #         description: Unauthorized. Login required.
+  #       404:
+  #         description: Not Found. Requested database not found.
+  #   get:
+  #     tags:
+  #     - database
+  #     summary: Database configuration settings
+  #     description: |
+  #       This request retrieves the database configuration
+  #     parameters:
+  #     - $ref: '#/parameters/db'
+  #     responses:
+  #       200:
+  #         schema:
+  #           $ref: '#/responses/200-db-config'
+  #         # description: Request completed successfully.
+  #         # schema:
+  #         #   $ref: '#/definitions/Database-configuration'
+  #       401:
+  #         description: Unauthorized. Login required.
+  #       404:
+  #         description: Not Found. Requested database not found.
 
-        Note -- Leaf revisions are not purged during compaction.
-
-        Compaction does not remove JSON bodies of leaf nodes (conflicting branches). So it is also important to resolve conflicts in your application in order to re-claim disk space.
-
-        **Pre-1.5 behavior differed from the above, as follows:**
-
-        1.3-1.4 -- the parent revision is marked with a 5 minute expiry time, thus calling the `/{db}/_compact` endpoint is not necessary.
-
-        1.2 -- obsolete revision bodies have to be cleaned up by calling the `/{db}/_compact` endpoint.
-      parameters:
-      - $ref: '#/parameters/db'
-      responses:
-        200:
-          description: Request completed successfully.
-          schema:
-            type: object
-            properties:
-              revs:
-                type: integer
-                description: Count of the number of revisions that were compacted away.
   /{db}/_config:
-    get:
-      tags:
-      - configure
-      summary: Database configuration settings
-      description: |
-        This request retrieves the database configuration
-      parameters:
-      - $ref: '#/parameters/db'
-      responses:
-        200:
-          description: Request completed successfully.
-          schema:
-            $ref: '#/definitions/Database-config'
-        401:
-          description: Unauthorized. Login required.
-        404:
-          description: Not Found. Requested database not found.
     put:
+      operationId: "upsert_db_config"
       tags:
-      - configure
+      - database
       summary: Create or update a database configuration
       description: |+
         Use this endpoint to create new databases and-or to update the configuration of an existing database.
@@ -111,526 +102,247 @@ paths:
           description: Database Configuration Settings
           required: true
           schema:
-            $ref: '#/definitions/Database-config'
+            $ref: '#/definitions/Database-configuration'
       responses:
         201:
           description: The database configuration was created/updated successfully.
     delete:
       tags:
-      - configure
+      - database
       summary: Delete a database configuration
       description: Delete the specified database and its configuration details
       responses:
-        200:
-          description: Success
-          schema:
-            $ref: '#/definitions/Success'
-  /{db}/_offline:
-    post:
-      tags:
-      - manage
-      summary: This request takes the specified database offline.
-      description: |
-        An offline database is not accessible through Sync Gateway's Public REST API. However, some commands can be given to Sync Gateway through the Admin REST API.
-
-        Taking a database offline will:
-
-        - Cleanly closes all active `_changes` feeds for this database.
-        - Rejects all access to the database through the Public REST API (503 Service Unavailable).
-        - Rejects most Admin API requests (503 Service Unavailable). A specific, short list of Admin REST API requests remain available (`GET /{db}`, `PUT /{db}/_config`, `POST /{db}/_resync`).
-        - Stops webhook event handlers.
-        - Does not take the backing Couchbase Server bucket offline. The bucket remains available and Sync Gateway keeps its connection to the bucket.
-
-        When a database is offline, you can load properties for the database, without stopping and re-starting the Sync Gateway instance. The new properties are applied when the database is brought online.
-
-        Taking a database offline that is in the progress of coming online will take the database offline after it comes online.
-
-        For more information about taking a database offline and bringing it back online, see [this guide](../database-offline.html).
-      parameters:
-      - $ref: '#/parameters/db'
-      responses:
-        200:
-          description: Database brought online
-  /{db}/_online:
-    post:
-      tags:
-      - manage
-      summary: Bring a database online.
-      description: |
-        When a database is online, Sync Gateway serves both Public and Admin REST API requests for the database. This request brings the specified database online, either immediately or after a specified delay.
-
-        Bringing a database online:
-
-        - Closes the databases connection to the backing Couchbase Server bucket.
-        - Reloads the database configuration, and connects to the backing Couchbase Server bucket.
-        - Re-establishes access to the database from the Public REST API.
-        - Accepts all Admin API requests.
-
-        You can bring an offline database online after a specific delay. Uses for this include:
-
-        - Making a database available for Couchbase Mobile clients at a specific time.
-        - Making databases on several Sync Gateway instances available at the same time.
-
-        For more information about taking a database offline and bringing it back online, see [this guide](../database-offline.html).
-      parameters:
-      - $ref: '#/parameters/db'
-      - in: body
-        name: body
-        description: Optional request body to specify a delay.
-        required: false
+       200:
+        description: OK
         schema:
-          type: object
-          properties:
-            delay:
-              type: integer
-              description: Delay in seconds before bringing the database online.
-      responses:
-        200:
-          description: OK – online request accepted.
-        503:
-          description: Service Unavailable – Database resync is in progress.
-  /{db}/_purge:
-    post:
-      tags:
-      - manage
-      summary: Purge document
-      description: |
-        The purge command provides a way to remove a document from the bucket itself. The operation removes all the revisions (active and tombstones) for the specified document(s). A common usage of this endpoint is to remove tombstone documents that are no longer needed, thus recovering storage space and reducing data replicated to clients. Other clients are not notified when a revision has been purged; so in order to purge a revision from the system it must be done from all databases (on Couchbase Lite and Sync Gateway).
+          $ref: "#/responses/200"
 
-        When **convergence** is enabled (introduced in Sync Gateway 1.5), this endpoint removes the document and its associated extended attributes.
+  /{db}/_config/import_filter:
+    put:
+      operationId: "upsert_import_filter"
+      tags:
+      - database
+      summary: Create or update the import_filter
+      description: |+
+        Use this convenience endpoint to create and-or update the import_filter Javascript function for this database.
       parameters:
-      - $ref: '#/parameters/db'
-      - in: body
-        name: body
-        description: The message body is a JSON document that contains the following objects.
-        schema:
-          $ref: '#/definitions/PurgeBody'
-      responses:
-        200:
-          description: OK – The purge operation was successful
+        - $ref: '#/parameters/db'
+        - in: body
+          name: import_filter
+          description: |+
+            Database import filer function
+          required: true
           schema:
-            type: object
-            description: Response object
-            properties:
-              a_doc_id:
-                type: array
-                description: Contains one property for each document ID successfully purged, the property key is the "docID" and the property value is a list containing the single entry "*".
-                items:
-                  type: string
-                  description: Revision ID that was purged
-  /{db}/_raw/{doc}:
-    get:
-      tags:
-      - manage
-      summary: Document with metadata
-      description: |
-        Returns the document with the metadata.
-
-        Note: The direct use of this endpoint is unsupported. The sync metadata is maintained internally by Sync Gateway and its structure can change. It should not be used to drive business logic of applications since the response to the `/{db}/_raw/{id}` endpoint can change at any time.
-      parameters:
-      - $ref: '#/parameters/db'
-      - $ref: '#/parameters/doc'
+            $ref: "#/definitions/Import-filter"
       responses:
         200:
-          description: hello
+          description: OK
           schema:
-            $ref: '#/definitions/DocMetadata'
-  /{db}/_resync:
-    post:
+            $ref: '#/responses/200-import-filter'
+    # get:
+    #   tags:
+    #   - access-control
+    #   summary: Get import_filter definition
+    #   description: |+
+    #     This endpoint will return the currently configured import_filter function
+    #   responses:
+    #     200:
+    #       description: OK
+    #       schema:
+    #         $ref: '#/responses/200-import-filter'
+
+  /{db}/_config/sync:
+    put:
+      operationId: "upsert_sync_function"
       tags:
-      - manage
-      summary: Reprocess all documents by the database in the sync function.
-      description: |
-        This request causes all documents to be reprocessed by the database sync function. The _resync operation should be called if the sync function for a database has been modified in such a way that the channel or access mappings for any existing document would change as a result.
-
-        When the sync function is invoked by _resync, the requireUser() and requireRole() calls will always return 'true'.
-
-        A _resync operation on a database that is not in the offline state will be rejected (503 Service Unavailable).
-
-        A _resync operation will block until all documents in the database have been processed.
+      - access-control
+      summary: Create or update the Sync Function
+      description: |+
+        Use this convenience endpoint to create and-or update the Sync Function for this database
       parameters:
-      - $ref: '#/parameters/db'
+        - $ref: '#/parameters/db'
+        - in: body
+          name: sync
+          description: |+
+            Access Control Sync Function
+          required: true
+          schema:
+            $ref: "#/definitions/Sync-function"
       responses:
         200:
-          description: OK – The _resync operation has completed
+          description: OK
           schema:
-            type: object
-            description: The number of documents that were successfully updated.
-            properties:
-              changes:
-                type: integer
-                description: The number of documents that were successfully updated
-  /{db}/_role:
-    get:
-      tags:
-      - role
-      summary: Get roles
-      description: This request returns all the roles in the specified database.
-      parameters:
-      - $ref: '#/parameters/db'
-      responses:
-        200:
-          description: 200 OK – Returns the list of roles as an array of strings
-          schema:
-            type: array
-            description: The message body contains the list of roles in a JSON array. Each element of the array is a string representing the name of a role in the specified database.
-            items:
-              type: string
-    post:
-      tags:
-      - role
-      summary: Role
-      description: This request creates a new role in the specified database.
-      parameters:
-      - $ref: '#/parameters/role'
-      responses:
-        201:
-          description: 201 OK – The role was created successfully
-        409:
-          description: 409 Conflict – A role with this name already exists
+            $ref: '#/responses/200-sync'
+    # get:
+    #   tags:
+    #   - access-control
+    #   summary: Get Sync Function definition
+    #   description: |+
+    #     This endpoint will return the currently configured sync function
+    #   responses:
+    #     200:
+    #       description: OK
+    #       schema:
+    #         $ref: '#/responses/200-sync'
+
+  # /{db}/_role:
+    # get:
+    #   tags:
+    #   - security
+    #   summary: Get roles
+    #   description: This request returns all the roles in the specified database.
+    #   parameters:
+    #   - $ref: '#/parameters/db'
+    #   responses:
+    #     200:
+    #       description: OK
+    #       schema:
+    #         $ref: '#/responses/200-role'
+
+    # post:
+    #   tags:
+    #   - security
+    #   summary: Role
+    #   description: This request creates a new role in the specified database.
+    #   parameters:
+    #   - $ref: '#/parameters/role'
+    #   responses:
+    #     201:
+    #       description: 201 OK – The role was created successfully
+    #     409:
+    #       description: 409 Conflict – A role with this name already exists
+
+  # /{db}/_role/{name}:
+    # get:
+    #   tags:
+    #   - security
+    #   summary: Get role
+    #   description: Request a specific role by name.
+    #   parameters:
+    #   - $ref: '#/parameters/db'
+    #   - $ref: '#/parameters/role_name'
+    #   responses:
+    #     200:
+    #       description: The response contains information about this role.
+    #       schema:
+    #         type: object
+    #         properties:
+    #           name:
+    #             type: string
+    #           admin_channels:
+    #             type: array
+    #             description: |
+    #               The admin channels that this role has granted access to. Admin channels are the ones which are
+    #               granted access to in the config file or via the Admin REST API.
+    #             items:
+    #               type: string
+    #           all_channels:
+    #             type: array
+    #             description: All the channels that this role has access to.
+    #             items:
+    #               type: string
   /{db}/_role/{name}:
-    get:
+    put:
+      operationId: "upsert_role"
       tags:
-      - role
-      summary: Get role
-      description: Request a specific role by name.
+      - security
+      summary: Role
+      description: |+
+        Use this convenience endpoint to upsert a Sync Gateway role for the specified database.
       parameters:
       - $ref: '#/parameters/db'
       - $ref: '#/parameters/role_name'
-      responses:
-        200:
-          description: The response contains information about this role.
-          schema:
-            type: object
-            properties:
-              name:
-                type: string
-              admin_channels:
-                type: array
-                description: |
-                  The admin channels that this role has granted access to. Admin channels are the ones which are
-                  granted access to in the config file or via the Admin REST API.
-                items:
-                  type: string
-              all_channels:
-                type: array
-                description: All the channels that this role has access to.
-                items:
-                  type: string
-    put:
-      tags:
-      - role
-      summary: Creates or updates a role
-      description: This request creates or updates a role in the specified database.
-      parameters:
       - $ref: '#/parameters/role'
+
       responses:
         200:
           description: 200 OK – The role was updated successfully
         201:
           description: 201 Created – The role was created successfully
-    delete:
-      tags:
-      - role
-      summary: Deletes the role
-      description: This request deletes the role with the specified name in the specified database.
-      responses:
-        200:
-          description: 200 OK – The role was successfully deleted
-  /{db}/_session:
-    post:
-      tags:
-      - session
-      summary: Creates a new session
-      description: |
-        If the credentials provided in the request body are valid, the session is created with an idle session timeout of 24 hours. An idle session timeout in the context of Sync Gateway is defined as the following: if 10% or more of the current expiration time has elapsed when a subsequent request with that session id is processed, the session's expiry time is automatically updated to 24 hours from that time.
-      parameters:
-      - $ref: '#/parameters/db'
-      - in: body
-        name: SessionBody
-        description: The message body is a JSON document that contains the following objects.
-        schema:
-          type: object
-          properties:
-            name:
-              type: string
-              description: Username of the user the session will be associated to.
-            ttl:
-              description: Default is 24 hours (86400 seconds). The TTL (time-to-live) of the session, in seconds. The value must be greater than 0.
-              type: integer
-              default: 86400
-              example: 180
-      responses:
-        200:
-          description: Session successfully created.
-          schema:
-            type: object
-            properties:
-              cookie_name:
-                type: string
-                description: Cookie used for session handling
-              expires:
-                type: string
-                description: Expiration time for session.
-              session_id:
-                type: string
-                description: Session ID.
-  /{db}/_session/{sessionid}:
-    get:
-      tags:
-      - session
-      summary: Retrieves information about a session
-      description: |
-        This request retrieves information about a session.
-      parameters:
-      - $ref: '#/parameters/db'
-      - $ref: '#/parameters/sessionid'
-      responses:
-        200:
-          description: 200 OK – Request completed successfully.
-          schema:
-            type: object
-            properties:
-              authentication_handlers:
-                type: array
-                items:
-                  type: object
-                  description: List of supported authentication handlers
-              ok:
-                type: boolean
-                description: Success flag
-              userCtx:
-                type: object
-                description: Contains an object with properties channels (the list of channels for the user associated with the session) and name (the user associated with the session)
-    delete:
-      tags:
-      - session
-      summary: Deletes a single session
-      description: |
-        This request deletes a single session.
-      responses:
-        200:
-          description: 200 OK – Request completed successfully. If the session is successfully deleted, the response has an empty message body. If the session is not deleted, the message body contains error information.
-  /{db}/_user/{name}/_session:
-    delete:
-      tags:
-      - session
-      summary: Deletes all user sessions
-      description: This request delete the session for the specified user.
-      parameters:
-      - $ref: '#/parameters/db'
-      - $ref: '#/parameters/name'
-      responses:
-        200:
-          description: User session deleted.
-  /{db}/_user/{name}/_session/{sessionid}:
-    delete:
-      tags:
-      - session
-      summary: Deletes a specific user session
-      description: This request delete the specified session for the specified user.
-      parameters:
-      - $ref: '#/parameters/db'
-      - $ref: '#/parameters/name'
-      - $ref: '#/parameters/sessionid'
-      responses:
-        200:
-          description: User session deleted.
-  /{db}/_user/:
-    get:
-      tags:
-      - user
-      summary: Retrieves all users
-      description: This request returns all the users in the specified database.
-      parameters:
-      - $ref: '#/parameters/db'
-      responses:
-        200:
-          description: The message body contains the list of users in a JSON array. Each element of the array is a string representing the name of a user in the specified database.
-          schema:
-            type: array
-            items:
-              type: string
-              description: username
-    post:
-      tags:
-      - user
-      summary: Creates a new user
-      description: This request creates a new user in the specified database.
-      parameters:
-      - $ref: '#/parameters/user'
-      responses:
-        201:
-          description: 201 OK – The user was created successfully
-        409:
-          description: 409 Conflict – A user with this name already exists
+    # delete:
+    #   tags:
+    #   - security
+    #   summary: Deletes the role
+    #   description: This request deletes the role with the specified name in the specified database.
+    #   responses:
+    #     200:
+    #       description: 200 OK – The role was successfully deleted
+
+  # /{db}/_user/:
+  #   get:
+  #     tags:
+  #     - security
+  #     summary: Retrieves all users
+  #     description: This request returns all the users in the specified database.
+  #     parameters:
+  #     - $ref: '#/parameters/db'
+  #     responses:
+  #       200:
+  #         description: The message body contains the list of users in a JSON array. Each element of the array is a string representing the name of a user in the specified database.
+  #         schema:
+  #           type: array
+  #           items:
+  #             type: string
+  #             description: username
+  #   post:
+  #     tags:
+  #     - security
+  #     summary: Creates a new user
+  #     description: This request creates a new user in the specified database.
+  #     parameters:
+  #     - $ref: '#/parameters/user'
+  #     responses:
+  #       201:
+  #         description: 201 OK – The user was created successfully
+  #       409:
+  #         description: 409 Conflict – A user with this name already exists
   /{db}/_user/{name}:
-    get:
+    # get:
+    #   tags:
+    #   - security
+    #   summary: Retrieves a specific user
+    #   description: This request returns information about the specified user.
+    #   parameters:
+    #   - $ref: '#/parameters/db'
+    #   - $ref: '#/parameters/name'
+    #   responses:
+    #     200:
+    #       description: 200 OK – Returns information about the specified user
+    #       schema:
+    #         $ref: '#/definitions/User'
+    put:
+      operationId: "upsert_user"
       tags:
-      - user
-      summary: Retrieves a specific user
-      description: This request returns information about the specified user.
+      - security
+      summary: Creates or updates a user
+      description: |+
+        Use this convenience endpoint to create or update a Sync Gateway user for the specified database.
       parameters:
       - $ref: '#/parameters/db'
       - $ref: '#/parameters/name'
-      responses:
-        200:
-          description: 200 OK – Returns information about the specified user
-          schema:
-            $ref: '#/definitions/User'
-    put:
-      tags:
-      - user
-      summary: Creates or updates a user
-      description: This request creates or updates a user in the specified database.
-      parameters:
       - $ref: '#/parameters/user'
       responses:
         200:
           description: 200 OK – The user record was updated successfully
         201:
           description: 201 Created – The user record was created successfully
-    delete:
-      tags:
-      - user
-      summary: Deletes a user
-      description: This request deletes the user with the specified name in the specified database.
-      responses:
-        200:
-          description: 200 OK – The user was successfully deleted
+    # delete:
+    #   tags:
+    #   - security
+    #   summary: Deletes a user
+    #   description: This request deletes the user with the specified name in the specified database.
+    #   responses:
+    #     200:
+    #       description: 200 OK – The user was successfully deleted
           #
+
+
+parameter definitions:
+
 
 definitions:
 
-  DocMetadata:
-    type: object
-    properties:
-      _sync:
-        type: object
-        properties:
-          rev:
-            type: string
-            description: Revision number of the current revision
-          sequence:
-            type: integer
-            description: Sequence number of this document
-          recent_sequences:
-            type: array
-            items:
-              type: integer
-              description: Previous sequence numbers
-          parents:
-            type: array
-            items:
-              type: integer
-              description: N/A
-          history:
-            type: object
-            properties:
-              revs:
-                type: array
-                items:
-                  type: string
-                  description: N/A
-              parents:
-                type: array
-                items:
-                  type: integer
-                  description: N/A
-              channels:
-                type: array
-                items:
-                  type: string
-                  description: N/A
-              time_saved:
-                type: string
-                description: Timestamp of the last operation?
-
-  Error:
-    type: object
-    properties:
-      code:
-        type: integer
-        format: int32
-      message:
-        type: string
-      fields:
-        type: string
-  Forbidden:
-    type: object
-    properties:
-      error:
-        type: string
-        default: conflict
-      id:
-        type: string
-      reason:
-        type: string
-      status:
-        type: integer
-        default: 409
-  PurgeBody:
-    type: object
-    description: Document ID
-    properties:
-      a_doc_id:
-        type: array
-        description: Only possible value is `["*"]`. It permanently removes all revisions for that document ID.
-        items:
-          type: string
-          description: Only possible value is `"*"`. It permanently removes all revisions for that document ID.
-          enum: ["*"]
-
-  InvalidJSON:
-    description: The request provided invalid JSON data
-
-  User:
-    type: object
-    description: |+
-      Definition of a Sync Gateway user
-
-      Mode is static.
-
-    properties:
-      name:
-        type: string
-        description: The user name (the same name used in the URL path). The valid characters for a user name are alphanumeric ASCII characters and the underscore character. The name property is required in a POST request. You don’t need to include it in a PUT request because the user name is specified in the URL.
-      password:
-        type: string
-        description: Password of the user that will be created. Required, unless the `allow_empty_password` Sync Gateway per-database configuration value is set to `true`, in which case the password can be omitted.
-      admin_channels:
-        type: array
-        description: The channels that the user is explicitly granted access to through the Admin REST API.
-        items:
-          type: string
-          description: Channel name
-      admin_roles:
-        type: array
-        description: The roles that the user is explicitly granted access to through the Admin REST API.
-        items:
-          type: string
-          description: Role name
-      all_channels:
-        type: array
-        description: Like the `admin_channels` property, but also includes channels the user is given access to by other documents via a sync function. This is a derived property and changes to it are ignored.
-        items:
-          type: string
-          description: Channel name
-      email:
-        type: string
-        description: Email of the user that will be created.
-      disabled:
-        type: boolean
-        description: This property is usually not included. If the value is set to `true`, access for the account is disabled and the user will not be able to login.
-      roles:
-        type: array
-        description: Like the `admin_roles` property, but also includes roles the user is given access to by other documents via a sync function. This is a derived property and changes to it are ignored. It contains an array of role name strings.
-        items:
-          type: string
-          description: Role name
-
-
-  Database-config:
+  Database-configuration:
     type: object
     description: Database configuration settings
     properties:
@@ -639,45 +351,55 @@ definitions:
         description: |+
           **Deprecated at 3.0 **
 
-          This property can be used to disable Sync Gateway's handling of conflicts.
+          Use ```allow_conflict``` to define whether Sync Gateway will handle conflicts.
 
-          Setting to `false` will cause Sync Gateway to reject any attempt to write conflicting revisions (returning a `409` HTTP status code). It will be up to the client to resolve the conflict. Restarting Sync Gateway with this property enabled will not automatically result in disk space savings (compaction on a document won't occur until a document is updated).
+          The default of ```true``` indicates that conflicts are handled.
+
+          Set the value to ```false``` to cause Sync Gateway to reject any attempt to write conflicting revisions (returning a `409` HTTP status code).
+          It will be up to the client to resolve the conflict.
+
+          Restarting Sync Gateway with this property enabled will not automatically result in disk space savings (compaction on a document won't occur until a document is updated).
 
           *Constraints:*
           - Push replications to pre-2.8 targets do not support the `"allow_conflicts": false` setting; the target must use `"allow_conflicts": true`.
 
-          Mode is static.
+          Changes initiate a database restart.
         default: 'true'
       allow_empty_password:
         type: boolean
-        description: Whether Sync Gateway users can be created with empty passwords.
+        description:
+          Use ```allow_empty_password``` to define whether to all Sync Gateway users to be created with empty passwords.
         default: 'false'
+      bucket:
+        type: string
+        default: database name
+        description: |+
+          Use ```bucket``` to identify the Couchbase Server bucket name for this database.
+
       bucket_op_timeout_ms:
         type: integer
         description: |+
-          Configures how long Sync Gateway should wait for a bucket operation to complete before timing out and trying again.
+          Use ```bucket_op_timeout_ms``` to define how long Sync Gateway will wait for a bucket operation to complete before timing out and trying again.
 
-          The value can be increased in scenarios where there is a heavy load on Couchbase Server and operations are likely to take more than 2.5 seconds to complete.
+          You may increase this value where there is a heavy load on Couchbase Server and operations are likely to take more than 2.5 seconds to complete.
 
           The default value is 2500 milliseconds.
 
-          Mode is static.
-
-          Requires db restart
+          Changes initiate a database restart.
         default: 2500
       cacertpath:
         type: string
         description: |+
-          Relative or absolute path to the root CA certificate to verify the certificate chain and hostname of the Couchbase Server cluster.
+          Use ```cacertpath``` to define the path (relative or absolute) to the root CA certificate used to verify the certificate chain and hostname of the Couchbase Server cluster.
 
-          This property is optional for X.509 authentication. If it isn't provided, Sync Gateway will accept any certificate provided by Couchbase Server.
+          Optional for X.509 authentication.
+          If it isn't provided, Sync Gateway will accept any certificate provided by Couchbase Server.
 
-          Mode is static.
-
-          Requires dbContext restart
+          Changes initiate a database restart.
       cache:
         type: object
-        description: Database cache configuration.
+        description: |+
+          The ```cache``` group of properties define the cache configuration for this database
         properties:
           channel_cache:
             type: object
@@ -689,30 +411,59 @@ definitions:
               compact_high_watermark_pct:
                 type: integer
                 description: |+
-                  High watermark for channel cache eviction (percent).
+                  Use ```compact_high_watermark_pct``` to define the trigger value for starting channel cache eviction.
+                  Specify the value as a percentage (of ```max_number```)
 
-                  When the cache size, determined by `max_number`, reaches the high watermark, the eviction process iterates through the cache to remove inactive channels.
+                  When the cache size, determined by `max_number`, reaches the high watermark, the eviction process iterates through the cache, removing inactive channels.
                 default: 80
               compact_low_watermark_pct:
                 type: integer
                 description: |+
-                  Low watermark for channel cache eviction (percent).
+                  Use ```compact_low_watermark_pct``` to define the trigger value for stopping channel cache eviction.
+                  Specify the value as a percentage (of ```max_number```)
 
                   When the cache size, determined by `max_number` returns to a value lower than `compact_low_watermark_pct`, the cache eviction process is stopped.
                 default: 60
+
+              enable_star_channel:
+                type: boolean
+                description: |+
+                  Use ```enable_star_channel``` to define whether Sync GAteway should use the all documents (*) channel -- sometimes referred to as the 'star' channel.
+
+                default: 'true'
+
+              expiry_seconds:
+                type: integer
+                description: |+
+                  Use ```expiry_seconds``` to define how long (in seconds) Sync Gateway should keep cached entries beyond the minimum retained.
+                default: 60
+
+              max_length:
+                type: integer
+                description: |+
+                  Maximum number of entries maintained in cache per channel.
+                default: 500
+
+              max_num_pending:
+                type: integer
+                description: |+
+                  Use ```max_num_pending``` to define the maximum number of pending sequences before skipping the sequence.
+                default: 10000
+
               max_number:
                 type: integer
                 description: |+
-                  Tuning this property is an [Enterprise Edition](https://www.couchbase.com/products/editions) feature.
-                  The Community Edition is configured with the default value, and will ignore any value in the configuration file.
+                  Use ```max_number``` to define the maximum number of channel caches allowed at any one point.
+                  This property is used alongside the associated eviction watermarks ```compact_low_watermark_pct``` and ```compact_high_watermark_pct``` to control the cache size.
 
-                  Maximum number of channel caches which will exist at any one point. This property is used to determine the cache size (and the associated eviction watermarks `compact_low_watermark_pct`/`compact_high_watermark_pct`).
+                  The default value for this property is 50000.
+                  Assuming the default channel `min_length` and `max_length` values, this would result in a memory usage under 1GB.
 
-                  The default value for this property is 50000. Along with the default channel `min_length` and `max_length` values, this would result in a memory usage under 1GB.
+                  Tuning this property is an [Enterprise Edition](https://www.couchbase.com/products/editions) feature -- in the Community Edition any change to the default value is ignored.
 
-                  The `max_number` value can be tuned to optimize for cache hits (requests that are handled using the cache), as opposed to cache misses (requests that require a round-trip to Couchbase Server to fetch data). The cache hit/miss ratio can be obtained with the following:
+                  *Enterprise Edition Only*: The `max_number` value can be tuned to optimize for cache hits (requests that are handled using the cache), as opposed to cache misses (requests that require a round-trip to Couchbase Server to fetch data). The cache hit/miss ratio can be obtained with the following:
 
-                  cache hit/miss ratio = `cache.chan_cache_hits` / `cache.chan_cache_misses`
+                  ```cache hit/miss ratio``` = ```cache.chan_cache_hits``` / ```cache.chan_cache_misses```
 
                   Increasing the `max_number` value can increase the cache hit/miss ratio, resulting in better cache utilization.
 
@@ -722,45 +473,28 @@ definitions:
 
                   It isn't possible to remove the limit altogether, users who wish to remove the limit would need to set `max_number` to an arbitrarily high value.
                 default: 50000
+
               max_wait_pending:
                 type: integer
                 description: |+
                   Maximum wait time in milliseconds for a pending sequence before skipping sequences.
                 default: 5000
-              max_num_pending:
-                type: integer
-                description: |+
-                  Maximum number of pending sequences before skipping the sequence.
-                default: 10000
+
               max_wait_skipped:
                 type: integer
                 description: |+
                   Maximum wait time in milliseconds for a skipped sequence before abandoning the sequence.
                 default: 3600000
-              enable_star_channel:
-                type: boolean
-                description: |+
-                  Enable the all documents (*) channel -- sometimes referred to as the 'star' channel.
-                default: 'true'
-              max_length:
-                type: integer
-                description: |+
-                  Maximum number of entries maintained in cache per channel.
-                default: 500
               min_length:
                 type: integer
                 description: |+
                   Minimum number of entries maintained in cache per channel.
                 default: 50
-              expiry_seconds:
-                type: integer
-                description: |+
-                  Time (seconds) to keep entries in cache beyond the minimum retained.
-                default: 60
               query_limit:
                 type: integer
                 default: 5000
                 description: Limit used for channel queries
+
           rev_cache:
             type: object
             description: |+
@@ -918,11 +652,25 @@ definitions:
           **WARNING:** The sync metadata is maintained internally by Sync Gateway and its structure can change at any time. It should not be used to drive business logic of applications. The direct use of the N1QL query is unsupported and must not be used in production environments.
           The `raw` endpoint ([/db/_raw/{docid}](../../../references/sync-gateway/admin-rest-api/index.html#!/document/get_db_raw_doc)) on Sync Gateway's Admin REST API returns both the document and it's associated mobile metadata.
 
-          Requires db restart
+          Changes initiate database restart
         default: 'false'
       event_handlers:
         type: object
-        description: Webhooks in Sync Gateway are designed to minimize performance impacts on Sync Gateway's regular processing. Sync Gateway manages the number of processes that are spawned for webhook event handling, so that slow response times from the HTTP POST operations don't consume available CPU resources on Sync Gateway nodes. When a `webhook` event handler is defined, after Sync Gateway has updated a document, Sync Gateway adds a `document_changed` event to an asynchronous event-processing queue (the event queue). New processes are then spawned to apply the `filter` function to the documents and to perform the HTTP POST operations. When an event is not added to the event queue, but is instead discarded, a warning message is written to the the Sync Gateway log. You can configure Sync Gateway to log information about event handling, by including either the log key `Event` or `Events+` in the `Log` property in your Sync Gateway configuration file. `Events+` is more verbose.
+        description: |+
+          Webhooks in Sync Gateway are designed to minimize performance impacts on Sync Gateway's regular processing.
+
+          Sync Gateway manages the number of processes that are spawned for webhook event handling, so that slow response times from the HTTP POST operations don't consume available CPU resources on Sync Gateway nodes.
+
+          When a `webhook` event handler is defined, after Sync Gateway has updated a document, Sync Gateway adds a `document_changed` event to an asynchronous event-processing queue (the event queue).
+
+          New processes are then spawned to apply the `filter` function to the documents and to perform the HTTP POST operations.
+
+          When an event is not added to the event queue, but is instead discarded, a warning message is written to the the Sync Gateway log.
+
+          You can configure Sync Gateway to log information about event handling, by including either the log key ```Event``` or ```Events+``` in the `Log` property in your Sync Gateway configuration file. `Events+` is more verbose.
+
+          See also: [WebHooks](webhooks.html)
+
         properties:
           document_changed:
             description: The configuration for the action to perform when a document change is detected.
@@ -931,27 +679,91 @@ definitions:
               type: object
               properties:
                 filter:
-                  description: A JavaScript function used to determine which documents to post. The filter function accepts the document body as input and returns a boolean value. If the filter function returns true, then Sync Gateway posts the document. If the filter function returns false, then Sync Gateway does not post the document. If no filter function is defined, then Sync Gateway posts all changed documents. Filtering only determines which documents to post. It does not extract specific content from documents and post only that.
                   type: string
+                  description: |+
+                    Use ```document_changed.filter``` to define a JavaScript function that determines which documents to post.
+
+                    The filter function accepts the document body as input and returns a boolean value.
+
+                    - If the filter function returns true, then Sync Gateway posts the document.
+                    - If the filter function returns false, then Sync Gateway does not post the document.
+                    - If no filter function is defined, then Sync Gateway posts all changed documents.
+
+                    Filtering only determines which documents to post.
+                    It does not extract specific content from documents and post only that.
                   # required: 'true'
                 handler:
-                  description: Type of the event handler. This must be `"webhook"` (only 1 possible value currently).
                   type: string
+                  description: Type of the event handler. This must be `"webhook"` (only 1 possible value currently).
+                options:
+                  type: string
+                  description: |+
+                    Options can be specified per-handler, and are specific to each handler type.
                 timeout:
-                  description: Time in seconds to wait for a response to the POST operation. Using a timeout ensures that slow-running POST operations don't cause the webhook event queue to back up. Slow-running POST operations are discarded (if they time out), so that new events can be processed. When the timeout is reached, Sync Gateway stops listening for a response. A value of 0 (zero) means no timeout. The default value should work well in the majority of cases. You should not need to adjust it to tune performance.
                   type: integer
+                  description: |+
+                    Defines the period in seconds to wait for a response to the POST operation.
+
+                    Using a timeout ensures that slow-running POST operations don't cause the webhook event queue to back up.
+
+                    Slow-running POST operations are discarded (if they time out), so that new events can be processed. When the timeout is reached, Sync Gateway stops listening for a response.
+
+                    A value of 0 (zero) means no timeout.
+
+                    You should not need to adjust it to tune performance as he default value should work well in the majority of cases.
                   default: 60
                 url:
-                  description: URL to which to post documents (for a webhook event handler).
+                  description: |+
+                    Defines the URL to post documents to (for a webhook event handler).
+                  type: string
+                  # required: true
+          db_state_changed:
+            description: The configuration for the action to perform when a db_state change is detected.
+            type: array
+            items:
+              type: object
+              properties:
+                filter:
+                  type: string
+                  description: |+
+                  # required: 'true'
+                handler:
+                  type: string
+                  description:
+                    placeholder
+                options:
+                  type: string
+                  description: |+
+                    placeholder
+                timeout:
+                  type: integer
+                  description: |+
+                    placeholder
+                  default: 60
+                url:
+                  description: |+
+                    placeholder
                   type: string
                   # required: true
           max_processes:
             type: integer
-            description: Maximum number of events that can be processed concurrently, that is, no more than `max_processes` concurrent processes will be spawned for event handling. The default value should work well in the majority of cases. You should not need to adjust it to tune performance. However, if you wish to ensure that most webhook posts are sent, you can set it to sufficiently high value.
+            description: |+
+              Maximum number of events that can be processed concurrently, that is, no more than `max_processes` concurrent processes will be spawned for event handling.
+
+              The default value should work well in the majority of cases.
+              You should not need to adjust it to tune performance.
+              However, if you wish to ensure that most webhook posts are sent, you can set it to sufficiently high value.
             default: 500
           wait_for_process:
             type: string
-            description: Maximum wait time in milliseconds before canceling event processing for an event that is detected when the event queue is full. If you set the value to 0 (zero), then incoming events are discarded immediately if the event queue is full. If you wish to avoid any blocking of standard Sync Gateway processing this may be a desirable value to use. The default value should work well in the majority of cases. You should not need to adjust it to tune performance.
+            description: |+
+              Maximum wait time in milliseconds before canceling event processing for an event that is detected when the event queue is full.
+
+              If you set the value to 0 (zero), then incoming events are discarded immediately if the event queue is full.
+
+              If you wish to avoid any blocking of standard Sync Gateway processing this may be a desirable value to use.
+
+              The default value should work well in the majority of cases. You should not need to adjust it to tune performance.
             default: 100
       import_backup_old_rev:
         type: string
@@ -1007,6 +819,7 @@ definitions:
           }
           ```
         default: function(doc) {return false;}
+
       import_partitions:
         type: integer
         description: |+
@@ -1033,7 +846,7 @@ definitions:
 
           Mode is static.
 
-          Requires dbContext restart
+          Change initiates database restart
       kv_tls_port:
         type: string
         description: |+
@@ -1055,9 +868,9 @@ definitions:
       name:
         type: string
         description: |+
-          Sync Gateway database name.
+          Use ```name``` to define the Sync Gateway database name.
 
-          Requires dbContext restart
+          Change requires database restart
       num_index_replicas:
         type: integer
         description: |+
@@ -1076,7 +889,12 @@ definitions:
         properties:
           default_provider:
             type: string
-            description: Provider to use for OIDC requests that don't specify a provider. If only one provider is specified in the providers map, it is used as the default provider. If multiple providers are defined and default_provider is not specified, requests to /db/_oidc must specify the provider parameter.
+            description: |+
+              Use this group to  define the provider to use for OIDC requests not specifying a provider.
+
+              If only one provider is specified in the providers map, it is used as the default provider.
+
+              If multiple providers are defined and default_provider is not specified, requests to ```/db/_oidc``` must specify the provider parameter.
           providers:
             type: object
             properties:
@@ -1149,7 +967,7 @@ definitions:
                         By default user_prefix is the issuer, but can be customized in the Sync Gateway provider config.
                         Subject is always the sub claim in the token.
 
-                        Behaviour:
+                        Behavior:
 
                         - If username_claim is set but user_prefix is not set, use that claim as the Sync Gateway username.
                         - If username_claim is set and user_prefix is also set, use [user_prefix]_[username_claim] as the Sync Gateway username.
@@ -1284,30 +1102,18 @@ definitions:
           If SSLCert is set, then secure cookies are also used by default. However, this flag can be set `false` to override this behavior and allow insecure cookies to be used alongside SSL.
 
           If SSLCert is not set then this flag defaults to false.
-      sync:
-        type: string
+
+      slow_query_warning_threshold:
+        type: integer
+        default: 500
         description: |+
-          The sync function is a JavaScript function whose source code is stored in the Sync Gateway's database configuration file. Every time a new document, revision or deletion is added to a database, the sync function is called and given a chance to examine the document (see the [Sync Function API guide](./../advance/adv-sgw-cfg-sync-function.html)).
+          The maximum wait time, in milliseconds,for N1QL or View queries made by Sync Gateway
 
-          If a document is in conflict there will be multiple current revisions. The default, the "winning" one is the one whose channel assignments and access grants take effect.
+          Log warnings if the run time of a N1QL or View query, made by Sync Gateway, exceeds this value.
 
-          **As with all embedded functions in this configuration file, the Sync Function must be enclosed in a pair of backticks.**
+      sync:
+        $ref: "#/definitions/Sync-function"
 
-          If you don't supply a sync function, Sync Gateway uses the following default sync function:
-
-          ```javascript
-          `function (doc, oldDoc) {
-              channel(doc.channels);
-          }`
-          ```
-
-          In plain English: by default, a document will be assigned to the channels listed in its channels property (whose value must be a string or an array of strings.) More subtly, since there is no validation, any user can change any document. For this reason, the default sync function is really only useful for experimentation and development.
-
-          The `channels` property is an array of strings that contains the names of the channels to which the document belongs.
-          If you do not include a `channels` property in a document, the document does not appear in any channels.
-          Adding a `channels` property to each document is the easiest way to map documents to channels but if you need more advanced behavior such as read and write access, you'll probably need to write your own Sync Function.
-        default: |
-          `function(doc, oldDoc) {channel(doc.channels);}`
       unsupported:
         type: object
         properties:
@@ -1368,12 +1174,12 @@ definitions:
               channels_per_doc:
                 type: boolean
                 description: to be completed
-              disable_clean_skipped_query:
-                type: boolean
-                description: to be completed
               xattr_size_bytes:
                 type: boolean
                 description: to be completed
+          disable_clean_skipped_query:
+            type: boolean
+            description: to be completed
       use_views:
         type: boolean
         description: |+
@@ -1415,65 +1221,152 @@ definitions:
           The view query timeout in seconds. This property allows you to specify the time Sync Gateway should wait for a view query response from Couchbase Server before it times out. The timeout is used for both view and N1QL queries issued by Sync Gateway.
         default: 75
 
-  Database-info:
+
+
+  Import-filter:
     type: object
-    description: Database Information
+    description: some text
     properties:
-      db_name:
+      import_filter:
         type: string
-        description: Name of the database
-      db_uuid:
-        type: integer
-        description: Database identifier
-      disk_format_version:
-        type: integer
-        description: Database schema version
-      disk_size:
-        type: integer
-        description: Total amount of data stored on the disk (in bytes)
-      instance_start_time:
-        type: string
-        description: Date and time the database was opened (in microseconds since 1 January 1970)
-      state:
-        type: string
-        description: The state of the specified database. Possible values are 'Online' and 'Offline'. A database can be taken offline and brought back online using the /{db}/_offline and /{db}/_online endpoints on the Admin REST API.
-      update_seq:
-        type: string
-        description: Number of updates to the database
-  Success:
+        description: |+
+          Provide the JavaScript filter function used to determine whether a document written to the Couchbase Server bucket is made available to Couchbase Mobile clients (imported).
+
+          The function takes the document body as parameter and must return a boolean to indicate whether the document should be imported or not.
+
+          The function is provided in the API body as raw Javascript.
+
+          ```function(doc) {
+                if (doc.type != "mobile") {
+                  return false
+                }
+                return true
+              }```
+
+        default: function(doc) {return false;}
+
+  Role:
     type: object
+    description: |+
+      Definition a Sync Gateway role
     properties:
-      id:
+      name:
         type: string
-        description: Design document identifier
-      rev:
+        description: |+
+          Name of the role
+      admin_channels:
+        type: array
+        description: |+
+          Array of channel names the role allows access to
+        items:
+          type: string
+
+  Sync-function:
+    type: object
+    description: A Javascript function that controls access
+    properties:
+      sync:
         type: string
-        description: Revision identifier
-      ok:
+        description: |+
+          The sync function is a JavaScript function whose source code is stored in the Sync Gateway's database configuration file. Every time a new document, revision or deletion is added to a database, the sync function is called and given a chance to examine the document (see the [Sync Function API guide](./../advance/adv-sgw-cfg-sync-function.html)).
+
+          You should provide the function in the API body as raw Javascript.
+
+          If a document is in conflict there will be multiple current revisions. The default, the "winning" one is the one whose channel assignments and access grants take effect.
+
+          If you don't supply a sync function, Sync Gateway uses the following default sync function:
+
+          ```javascript
+          `function (doc, oldDoc) {
+              channel(doc.channels);
+          }`
+          ```
+
+          What this does is: Assign a document to the channels listed in its ```channels``` property -- this value must be a string or an array of strings.
+
+          Since there is no validation, any user can change any document. For this reason, the default sync function is really only useful for experimentation and development.
+
+          The `channels` property is an array of strings that contains the names of the channels to which the document belongs.
+          If you do not include a `channels` property in a document, the document does not appear in any channels.
+
+          Adding a `channels` property to each document is the easiest way to map documents to channels but if you need more advanced behavior such as read and write access, you'll probably need to write your own Sync Function.
+
+        default: |
+          `function(doc, oldDoc) {channel(doc.channels);}`
+
+  User:
+    type: object
+    description: |+
+      Definition of a Sync Gateway user
+
+      Change initiates database restart
+
+    properties:
+      name:
+        type: string
+        description: |+
+          The user name (the same name used in the URL path).
+
+          The valid characters for a user name are alphanumeric ASCII characters and the underscore character.
+
+          The name property is required in a POST request.
+
+          You don’t need to include it in a PUT request because the user name is specified in the URL.
+      password:
+        type: string
+        description: |+
+          Password of the user.
+
+          Mandatory, unless `allow_empty_password=true`.
+
+      admin_channels:
+        type: array
+        description: |+
+          The channels that the user is able to access.
+        items:
+          type: string
+          description: |+
+            Channel name
+
+      admin_roles:
+        type: array
+        description: |+
+          An array of the roles this user is associated with.
+        items:
+          type: string
+          description: Role name
+
+      all_channels:
+        type: array
+        description: |+
+          Shows the channels the user can access, as granted by the sync function.
+
+          This is a read-only property.
+          Changes to it are ignored.
+        items:
+          type: string
+          description: Channel name
+      email:
+        type: string
+        description: |+
+          Email address of the user.
+      disabled:
         type: boolean
-        description: Indicates whether the operation was successful
+        description: |+
+          This property is usually not included.
 
-  View:
-    type: object
-    properties:
-      _rev:
-        type: string
-        description: Revision identifier of the parent revision the new one should replace. (Not used when creating a new document.)
-      views:
-        type: object
-        description: List of views to save on this design document.
-        properties:
-          my_view_name:
-            type: object
-            description: The view's map/reduce functions.
-            properties:
-              map:
-                type: string
-                description: Inline JavaScript definition for the map function
-              reduce:
-                type: string
-                description: Inline JavaScript definition for the reduce function
+          If the value is `true`, access for the account is disabled and the user will not be able to login.
+      roles:
+        type: array
+        description: |+
+          Shows the roles this user is associated with by the sync function.
 
+          This is a read-only property.
+          Changes to it are ignored.
+
+        items:
+          type: string
+          description: Role name
 
 parameters:
   access:
@@ -1518,7 +1411,14 @@ parameters:
   bulkget:
     in: body
     name: BulkGetBody
-    description: List of documents being requested. Each array element is an object that must contain an id property giving the document ID. It may contain a rev property if a specific revision is desired. It may contain an atts_since property (as in a single-document GET) to limit which attachments are sent.
+    description: |+
+      List of documents being requested.
+
+      Each array element is an object that *must* contain an `id` property giving the document ID.
+
+      It may also contain
+      - a `rev` property if a specific revision is desired.
+      - an `atts_since` property (as in a single-document GET) to limit which attachments are sent.
     schema:
       type: object
       properties:
@@ -2139,43 +2039,25 @@ parameters:
     name: role
     description: The message body is a JSON document that contains the following objects.
     schema:
-      type: object
-      properties:
-        name:
-          type: string
-          description: Name of the role that will be created
-        admin_channels:
-          type: array
-          description: Array of channel names to give the role access to
-          items:
-            type: string
+      $ref: '#/definitions/Role'
+
   role_name:
     in: path
     name: name
-    description: |
+    description: |+
       Role name, may contain any combination of the characters `[a-z A-Z 0-9 - + . @ %]`, when creating a role any other characters must be percent encoded, see: [https://en.wikipedia.org/wiki/Percent-encoding](https://en.wikipedia.org/wiki/Percent-encoding).
 
       When passing a role name in a URL path it must be escaped again using percent encoding e.g. if a role is created with the name "0|59", the '|' character must first be percent-encoded resulting in "0%7C59". When using the same role name in a URL path it must be percent-encoded a second time resulting in "0%257C59"
     type: string
     required: true
-  sessionid:
-    name: sessionid
-    in: path
-    description: Session id
-    type: string
-    required: true
-  startkey:
-    name: startkey
-    in: query
-    description: Returns records starting with the specified key.
-    type: string
-    required: false
+
   since:
     in: query
     name: since
     description: Starts the results from the change immediately after the given sequence ID. Sequence IDs should be considered opaque; they come from the last_seq property of a prior response.
     type: integer
     required: false
+
   style:
     in: query
     name: style
@@ -2467,51 +2349,100 @@ parameters:
     name: body
     description: Request body
     schema:
-      type: object
-      properties:
-        name:
-          type: string
-          description: |
-            Name of the user that will be created, may contain contain any combination of the characters `[a-z A-Z 0-9 - + . @ %]`, when creating a user any other characters must be percent encoded, see: [https://en.wikipedia.org/wiki/Percent-encoding](https://en.wikipedia.org/wiki/Percent-encoding).
+      $ref: '#/definitions/User'
 
-            When passing a user name in a URL path it must be escaped again using percent encoding e.g. if a user is created with the name "0|59", the '|' character must first be percent-encoded resulting in "0%7C59". When using the same user name in a URL path it must be percent-encoded a second time resulting in "0%257C59"
-        password:
+
+responses:
+
+  '200':
+    description: OK
+    # type: object
+    schema:
+      properties:
+        id:
           type: string
-          description: Password of the user that will be created. Required, unless the `allow_empty_password` Sync Gateway per-database configuration value is set to true, in which case the password can be omitted. All active sessions for the user are invalidated when the password is changed.
-        admin_channels:
-          type: array
-          description: Array of channel names to give the user access to
-          items:
-            type: string
-            description: Channel name
-        admin_roles:
-          type: array
-          description: Array of role names to assign to this user
-          items:
-            type: string
-            description: Role name
-        email:
+          description: Document identifier
+        rev:
           type: string
-          description: Email of the user that will be created.
-        disabled:
+          description: Revision identifier
+        ok:
           type: boolean
-          description: Boolean property to disable this user. The user will not be able to login if this property is set to true.
-  upgrade_preview:
-    in: query
-    name: preview
-    description: Lists the design documents to be removed if the request is sent without this parameter.
-    type: boolean
-    default: false
-    required: false
+          description: Indicates whether the operation was successful
+
+  '200-db-config':
+    description: OK
+    # type: object
+    schema:
+      $ref: '#/definitions/Database-configuration'
+
+  '200-import-filter':
+    description: OK
+    # type: object
+    schema:
+      $ref: '#/definitions/Import-filter'
+
+  '200-role':
+    description: OK
+    # type: object
+    schema:
+      $ref: '#/definitions/Role'
+
+  '200-sync':
+    description: OK
+    # type: object
+    schema:
+      $ref: '#/definitions/Sync-function'
+
+  '200-user':
+    description: OK
+    # type: object
+    schema:
+      $ref: '#/definitions/User'
+
+  '200-db-info':
+    description: OK
+    # type: object
+    schema:
+      type: object
+      description: Database Information
+      properties:
+        db_name:
+          type: string
+          description: Name of the database
+        db_uuid:
+          type: integer
+          description: Database identifier
+        disk_format_version:
+          type: integer
+          description: Database schema version
+        disk_size:
+          type: integer
+          description: Total amount of data stored on the disk (in bytes)
+        instance_start_time:
+          type: string
+          description: Date and time the database was opened (in microseconds since 1 January 1970)
+        state:
+          type: string
+          description: The state of the specified database. Possible values are 'Online' and 'Offline'. A database can be taken offline and brought back online using the /{db}/_offline and /{db}/_online endpoints on the Admin REST API.
+        update_seq:
+          type: string
+          description: Number of updates to the database
 
 tags:
-  - name: configure
+  - name: database
     description: Create and configure databases
-  - name: manage
-    description: Maintain databases
-  - name: role
-    description: Access-control -- manage database user roles
-  - name: user
-    description: Access-control -- manage database users
-  - name: session
-    description: Monitor and manage database sessions
+  - name: security
+    description: Manage users and roles
+  - name: access-control
+    description: Created and maintain a sync function
+  # - name: manage
+  #   description: Maintain databases
+  # - name: session
+  #   description: Monitor and manage database sessions
+    # externalDocs:
+    #   description: Read more about Sync Functions
+    #   url: ../sync-function.html
+  # - name: role
+  #   description: Role Configuration
+  # - name: user
+  #   description: User Configuration
