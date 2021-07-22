@@ -1370,6 +1370,11 @@
     <a class="menu_title menu_link" href="rest-api-admin-database.html">Database</a>
   </span>
 </li>
+<li class="menu_list is-current-page" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link is-current-page" href="rest-api-admin-db-security.html">Database Security</a>
+  </span>
+</li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
     <a class="menu_title menu_link" href="rest-api-admin-access-control.html">Access Control</a>
@@ -1923,7 +1928,8 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb"><a href="rest-api-admin-db-security.html">Database Security Configuration</a></li>
+<li class="crumb">Configuration</li>
+<li class="crumb"><a href="rest-api-admin-db-security.html">Database Security</a></li>
 </ul>
 </nav>
 </div>
@@ -1941,24 +1947,18 @@
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
 </div><div class="sect1">
-<h2 id="upsert-roles"><a class="anchor" href="#upsert-roles"></a>Upsert Roles</h2>
+<h2 id="upsert-role"><a class="anchor" href="#upsert-role"></a>Upsert Role</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>overview of usage goes here</p>
 </div>
-<div class="sect2">
-<h3 id="path"><a class="anchor" href="#path"></a>Path</h3>
 <div class="listingblock">
 <div class="content">
-<pre>https:://{sgw-uri}/{db}/_config/</pre>
+<pre>PUT /{db}/_role/{name}</pre>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="description"><a class="anchor" href="#description"></a>Description</h3>
 <div class="paragraph">
 <p>Use this convenience endpoint to upsert a Sync Gateway role for the specified database.</p>
-</div>
 </div>
 <div class="sect2">
 <h3 id="parameters"><a class="anchor" href="#parameters"></a>Parameters</h3>
@@ -1979,26 +1979,52 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>db</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Database name</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>db</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Database name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Role name, may contain any combination of the characters <code>[a-z A-Z 0-9 - + . @ %]</code>, when creating a role any other characters must be percent encoded, see: <a href="https://en.wikipedia.org/wiki/Percent-encoding" class="bare">https://en.wikipedia.org/wiki/Percent-encoding</a>.</p>
-<p class="tableblock">When passing a role name in a URL path it must be escaped again using percent encoding e.g. if a role is created with the name "0|59", the '|' character must first be percent-encoded resulting in "0%7C59". When using the same role name in a URL path it must be percent-encoded a second time resulting in "0%257C59"</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>name</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Role name, may contain any combination of the characters <code>[a-z A-Z 0-9 - + . @ %]</code>, when creating a role any other characters must be percent encoded, see: <a href="https://en.wikipedia.org/wiki/Percent-encoding" class="bare">https://en.wikipedia.org/wiki/Percent-encoding</a>.</p>
+</div>
+<div class="paragraph">
+<p>When passing a role name in a URL path it must be escaped again using percent encoding e.g. if a role is created with the name "0|59", the '|' character must first be percent-encoded resulting in "0%7C59". When using the same role name in a URL path it must be percent-encoded a second time resulting in "0%257C59"</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>role</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The message body is a JSON document that contains the following objects.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_role">Role</a></p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Body</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>role</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>The message body is a JSON document that contains the following objects.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><a href="#_role_configuration_model">role_configuration_model</a></p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -2020,14 +2046,26 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">200 OK – The role was updated successfully</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>200</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>200 OK – The role was updated successfully</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>No Content</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>201</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">201 Created – The role was created successfully</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>201</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>201 Created – The role was created successfully</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>No Content</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -2068,9 +2106,9 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="Role"><a class="anchor" href="#Role"></a>Model</h3>
+<h3 id="_role"><a class="anchor" href="#_role"></a>Model</h3>
 <div class="paragraph">
-<p>Definition a Sync Gateway role</p>
+<p>Use the <code>role</code> property to define a Sync Gateway role</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
@@ -2087,16 +2125,44 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>admin_channels</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Array of channel names the role allows access to</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>name</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Name of the role</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Name of the role</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>admin_channels</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Array of channel names the role allows access to</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>&lt; string &gt; array</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>all_channels</strong><br>
+<em>optional</em><br>
+<em>read-only</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Lists all the channels the role has access to including any assigned by the <code>sync</code> function.</p>
+</div>
+<div class="paragraph">
+<p>This is a derived property and changes to it are ignored.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>&lt; string &gt; array</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -2104,24 +2170,26 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="users"><a class="anchor" href="#users"></a>Users</h2>
+<h2 id="upsert-user"><a class="anchor" href="#upsert-user"></a>Upsert User</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>overview of usage goes here</p>
 </div>
-<div class="sect2">
-<h3 id="path-2"><a class="anchor" href="#path-2"></a>Path</h3>
 <div class="listingblock">
 <div class="content">
-<pre>https:://{sgw-uri}/{db}/_config/</pre>
+<pre>PUT /{db}/_user/{name} // &lt;&gt;&gt;</pre>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>where <code>{db}</code> is the Sync Gateway databse and <code>{name}</code> is the user name</td>
+</tr>
+</table>
 </div>
-<div class="sect2">
-<h3 id="description-2"><a class="anchor" href="#description-2"></a>Description</h3>
 <div class="paragraph">
-<p>Use this convenience endpoint to create or update a Sync Gateway user for the specified database.</p>
-</div>
+<p>Use the <code>\_user</code> endpoint to create or update a Sync Gateway user for the specified database.</p>
 </div>
 <div class="sect2">
 <h3 id="parameters-2"><a class="anchor" href="#parameters-2"></a>Parameters</h3>
@@ -2142,26 +2210,52 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>db</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Database name</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>db</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Database name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">User&#8217;s name, may contain contain any combination of the characters <code>[a-z A-Z 0-9 - + . @ %]</code>, when creating a user any other characters must be percent encoded, see: <a href="https://en.wikipedia.org/wiki/Percent-encoding" class="bare">https://en.wikipedia.org/wiki/Percent-encoding</a>.</p>
-<p class="tableblock">When passing a user name in a URL path it must be escaped again using percent encoding e.g. if a user is created with the name "0|59", the '|' character must first be percent-encoded resulting in "0%7C59". When using the same user name in a URL path it must be percent-encoded a second time resulting in "0%257C59"</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>name</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>User&#8217;s name, may contain contain any combination of the characters <code>[a-z A-Z 0-9 - + . @ %]</code>, when creating a user any other characters must be percent encoded, see: <a href="https://en.wikipedia.org/wiki/Percent-encoding" class="bare">https://en.wikipedia.org/wiki/Percent-encoding</a>.</p>
+</div>
+<div class="paragraph">
+<p>When passing a user name in a URL path it must be escaped again using percent encoding e.g. if a user is created with the name "0|59", the '|' character must first be percent-encoded resulting in "0%7C59". When using the same user name in a URL path it must be percent-encoded a second time resulting in "0%257C59"</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>body</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Request body</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_user">User</a></p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Body</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>body</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Request body</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><a href="#_user_configuration_model">user_configuration_model</a></p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -2183,14 +2277,26 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">200 OK – The user record was updated successfully</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>200</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>200 OK – The user record was updated successfully</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>No Content</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>201</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">201 Created – The user record was created successfully</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>201</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>201 Created – The user record was created successfully</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>No Content</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -2231,7 +2337,7 @@
 </div>
 </div>
 <div class="sect2">
-<h3 id="User"><a class="anchor" href="#User"></a>Model</h3>
+<h3 id="_user"><a class="anchor" href="#_user"></a>Model</h3>
 <div class="paragraph">
 <p>Definition of a Sync Gateway user</p>
 </div>
@@ -2253,61 +2359,125 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>admin_channels</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The channels that the user is able to access.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>name</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>The user name (the same name used in the URL path).</p>
+</div>
+<div class="paragraph">
+<p>The valid characters for a user name are alphanumeric ASCII characters and the underscore character.</p>
+</div>
+<div class="paragraph">
+<p>The name property is required in a POST request.</p>
+</div>
+<div class="paragraph">
+<p>You don’t need to include it in a PUT request because the user name is specified in the URL.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>admin_roles</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An array of the roles this user is associated with.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>password</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Password of the user.</p>
+</div>
+<div class="paragraph">
+<p>Mandatory, unless <code>allow_empty_password=true</code>.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>all_channels</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Shows the channels the user can access, as granted by the sync function.</p>
-<p class="tableblock">This is a read-only property.
-Changes to it are ignored.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>admin_channels</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>The channels that the user is able to access.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>&lt; string &gt; array</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>disabled</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">This property is usually not included.</p>
-<p class="tableblock">If the value is <code>true</code>, access for the account is disabled and the user will not be able to login.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>admin_roles</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>An array of the roles this user is associated with.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>&lt; string &gt; array</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>email</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Email address of the user.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>all_channels</strong><br>
+<em>optional</em><br>
+<em>read-only</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Shows the channels the user can access, as granted by the sync function.</p>
+</div>
+<div class="paragraph">
+<p>This is a read-only property.
+Changes to it are ignored.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>&lt; string &gt; array</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The user name (the same name used in the URL path).</p>
-<p class="tableblock">The valid characters for a user name are alphanumeric ASCII characters and the underscore character.</p>
-<p class="tableblock">The name property is required in a POST request.</p>
-<p class="tableblock">You don’t need to include it in a PUT request because the user name is specified in the URL.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>email</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Email address of the user.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>password</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Password of the user.</p>
-<p class="tableblock">Mandatory, unless <code>allow_empty_password=true</code>.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>disabled</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>This property is usually not included.</p>
+</div>
+<div class="paragraph">
+<p>If the value is <code>true</code>, access for the account is disabled and the user will not be able to login.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>boolean</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>roles</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Shows the roles this user is associated with by the sync function.</p>
-<p class="tableblock">This is a read-only property.
-Changes to it are ignored.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>roles</strong><br>
+<em>optional</em><br>
+<em>read-only</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Shows the roles this user is associated with by the Sync function.</p>
+</div>
+<div class="paragraph">
+<p>This is a read-only property.
+Changes to it are ignored.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>&lt; string &gt; array</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>

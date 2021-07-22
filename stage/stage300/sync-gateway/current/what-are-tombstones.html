@@ -1372,6 +1372,11 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
+    <a class="menu_title menu_link" href="rest-api-admin-db-security.html">Database Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
     <a class="menu_title menu_link" href="rest-api-admin-access-control.html">Access Control</a>
   </span>
 </li>
@@ -1976,6 +1981,42 @@ Here we introduce the concept of <em>Tombstones</em> and their role in the  <em>
 </li>
 </ul>
 </div>
+<div class="sect2">
+<h3 id="tombstones-and-mobile-convergence"><a class="anchor" href="#tombstones-and-mobile-convergence"></a>Tombstones and Mobile Convergence</h3>
+<div class="paragraph">
+<p>When <code>enable_shared_bucket_access</code> is enabled, mobile tombstones are now also server tombstones. The document body is deleted, and only the mobile sync metadata required to replicate the tombstone is retained in the mobile extended attribute.</p>
+</div>
+<div class="paragraph">
+<p>The server&#8217;s metadata purge interval becomes an important consideration for mobile deployments under convergence. When the server purges a tombstone (based on the metadata purge interval), that tombstone will no longer be replicated to mobile clients.</p>
+</div>
+<div class="paragraph">
+<p>Users should set the server&#8217;s metadata purge interval based on their expected client replication frequency, to ensure that clients are notified of the tombstone prior to that tombstone being purged.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The default Metadata Purge Interval is set to 3 days which can potentially result in tombstones being purged before all clients have had a chance to get notified of it.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Ways to tune the Metadata Purge Interval on Couchbase Server:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Bucket settings [on UI](<a href="https://docs.couchbase.com/server/current/manage/manage-settings/configure-compact-settings.html" class="bare">https://docs.couchbase.com/server/current/manage/manage-settings/configure-compact-settings.html</a>)</p>
+</li>
+<li>
+<p>Bucket endpoint [on the REST API](<a href="https://docs.couchbase.com/server/current/rest-api/rest-bucket-create.html" class="bare">https://docs.couchbase.com/server/current/rest-api/rest-bucket-create.html</a>)</p>
+</li>
+</ul>
+</div>
 <div class="listingblock">
 <div class="title">Example tombstone artefact</div>
 <div class="content">
@@ -1984,6 +2025,7 @@ Here we introduce the concept of <em>Tombstones</em> and their role in the  <em>
   "_id": "foobar",
   "_rev": "3-db962c6d93c3f1720cc7d3b6e50ac9df"
 }</code></pre>
+</div>
 </div>
 </div>
 </div>

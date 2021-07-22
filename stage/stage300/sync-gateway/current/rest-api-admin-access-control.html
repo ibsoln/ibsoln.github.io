@@ -1370,6 +1370,11 @@
     <a class="menu_title menu_link" href="rest-api-admin-database.html">Database</a>
   </span>
 </li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest-api-admin-db-security.html">Database Security</a>
+  </span>
+</li>
 <li class="menu_list is-current-page" data-depth="1">
   <span class="menu_line">
     <a class="menu_title menu_link is-current-page" href="rest-api-admin-access-control.html">Access Control</a>
@@ -1947,23 +1952,13 @@
 <div class="paragraph">
 <p>overview of usage goes here</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="path"><a class="anchor" href="#path"></a>Path</h2>
-<div class="sectionbody">
 <div class="listingblock">
 <div class="content">
 <pre>https:://{sgw-uri}/{db}/_config/</pre>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="description"><a class="anchor" href="#description"></a>Description</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Use this convenience endpoint to create and-or update the Sync Function for this database</p>
+<p>Use this convenience endpoint to create and-or update the <code>Sync</code> Function for this database</p>
 </div>
 </div>
 </div>
@@ -1987,18 +1982,32 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>db</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Database name</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>db</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Database name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Body</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sync</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Access Control Sync Function</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_sync-function">Sync-function</a></p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Body</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>sync</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><a href="#_sync_function_model">sync_function_model</a></p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -2022,9 +2031,15 @@
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">OK</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_0-sync">0-sync</a></p></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>200</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>OK</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><a href="#_200-sync">200-sync</a></p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
@@ -2068,48 +2083,18 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="Sync"><a class="anchor" href="#Sync"></a>Model</h2>
+<h2 id="_sync"><a class="anchor" href="#_sync"></a>Model</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A Javascript function that controls access</p>
+<p>Use <code>sync</code> to provision a Javascript Sync function that determines which users can access which documents.
+Provide the function in the API body as raw Javascript.</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 61.1111%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>sync</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The sync function is a JavaScript function whose source code is stored in the Sync Gateway&#8217;s database configuration file. Every time a new document, revision or deletion is added to a database, the sync function is called and given a chance to examine the document (see the <a href="./../advance/adv-sgw-cfg-sync-function.html">Sync Function API guide</a>).</p>
-<p class="tableblock">You should provide the function in the API body as raw Javascript.</p>
-<p class="tableblock">If a document is in conflict there will be multiple current revisions. The default, the "winning" one is the one whose channel assignments and access grants take effect.</p>
-<p class="tableblock">If you don&#8217;t supply a sync function, Sync Gateway uses the following default sync function:</p>
-<p class="tableblock">[source,javascript]
-----
-<code>function (doc, oldDoc) {
-    channel(doc.channels);
-}</code>
-----</p>
-<p class="tableblock">What this does is: Assign a document to the channels listed in its <code>channels</code> property – this value must be a string or an array of strings.</p>
-<p class="tableblock">Since there is no validation, any user can change any document. For this reason, the default sync function is really only useful for experimentation and development.</p>
-<p class="tableblock">The <code>channels</code> property is an array of strings that contains the names of the channels to which the document belongs.
-If you do not include a <code>channels</code> property in a document, the document does not appear in any channels.</p>
-<p class="tableblock">Adding a <code>channels</code> property to each document is the easiest way to map documents to channels but if you need more advanced behavior such as read and write access, you&#8217;ll probably need to write your own Sync Function.<br>
-<strong>Default</strong> : <code>"`function(doc, oldDoc) {channel(doc.channels);}</code>\n"`</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-</tbody>
-</table>
+<div class="paragraph">
+<p><a href="sync-function.html">Sync Function</a></p>
+</div>
+<div class="paragraph">
+<p><em>Type</em> : string</p>
+</div>
 <hr>
 </div>
 </div>
