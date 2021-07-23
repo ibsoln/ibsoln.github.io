@@ -1971,45 +1971,28 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="upsert-database"><a class="anchor" href="#upsert-database"></a>Upsert Database</h2>
+<h2 id="create-database"><a class="anchor" href="#create-database"></a>Create Database</h2>
 <div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre>PUT {db}/_config/</pre>
+<pre>PUT {db}/</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Use this endpoint to add a new Sync Gateway databases and-or to update the configuration of an existing database.</p>
+<p>Use this endpoint to add new Sync Gateway databases.</p>
 </div>
 <div class="paragraph">
 <p>Provide the database name in the URL path.
-Provide the required database configuration settings as a JSON object in the request body.
-For updates you only need to provide those settings you wish to change.</p>
+Provide the required database configuration settings as a JSON object in the request body.</p>
 </div>
 <div class="paragraph">
 <p>By default the created database is brought online immediately, <strong>unless</strong> you include <code>&quot;offline&quot;: true</code> in the configuration.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Changes made via REST API are persisted by default.
-This behavior can be changed by the command-line setting <code>disable_persistent_config</code>.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p><code>See: <a href="rest-api-admin.html" class="page">Admin REST API</a></code> for further information on this.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="parameters"><a class="anchor" href="#parameters"></a>Parameters</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="parameters"><a class="anchor" href="#parameters"></a>Parameters</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 11.1111%;">
@@ -2046,12 +2029,10 @@ This behavior can be changed by the command-line setting <code>disable_persisten
 <p><strong>Body</strong></p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><strong>body</strong><br>
+<p><strong>db config settings</strong><br>
 <em>required</em></p>
 </div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>Database Configuration Settings</p>
-</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
 <p><a href="#_database_configuration_model">database_configuration_model</a></p>
 </div></div></td>
@@ -2059,10 +2040,190 @@ This behavior can be changed by the command-line setting <code>disable_persisten
 </tbody>
 </table>
 </div>
+<div class="sect2">
+<h3 id="responses"><a class="anchor" href="#responses"></a>Responses</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>201</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>201 OK – Successful Create Operation</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>No Content</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>401</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>401 - Unauthorized</p>
+</div>
+<div class="paragraph">
+<p>Typically arising when the supplied basic auth credentials do not match those found on Couchbase Server</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>No Content</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="example"><a class="anchor" href="#example"></a>Example</h3>
+<div class="exampleblock">
+<div class="title">Example 1. Create database</div>
+<div class="content">
+<div class="paragraph">
+<p>Here we create a new sync&#160;gateway database.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_curl"></a>Curl</p>
+</li>
+<li>
+<p><a id="tabset1_http"></a>HTTP</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_curl">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://127.0.0.1:4985/travel25/' \ <i class="conum" data-value="1"></i><b>(1)</b>
+--header 'Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk' \ <i class="conum" data-value="2"></i><b>(2)</b>
+--header 'Content-Type: application/json' \
+--data-raw '{
+"bucket": "todo", <i class="conum" data-value="3"></i><b>(3)</b>
+"num_index_replicas": 0}'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_http">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-http hljs" data-lang="http">PUT /travel25/ HTTP/1.1 <i class="conum" data-value="1"></i><b>(1)</b>
+Host: 127.0.0.1:4985
+Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk <i class="conum" data-value="2"></i><b>(2)</b>
+Content-Type: application/json
+Content-Length: 44
+
+{
+"bucket": "todo", <i class="conum" data-value="3"></i><b>(3)</b>
+"num_index_replicas": 0}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we create a sync&#160;gateway database called <code>travel25</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Note we are using Basic Authentication here to authenticate against an existing Couchbase Server RBAC user</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Here we point to the Couchbase Server bucket called <code>todo</code></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div class="sect1">
-<h2 id="responses"><a class="anchor" href="#responses"></a>Responses</h2>
+<h2 id="configure-database"><a class="anchor" href="#configure-database"></a>Configure Database</h2>
 <div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre>PUT {db}/_config</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use this endpoint to update the configuration of an existing database.</p>
+</div>
+<div class="paragraph">
+<p>Provide the database name in the URL path.
+Provide the required database configuration settings as a JSON object in the request body.
+You only need to provide those settings you wish to change.</p>
+</div>
+<div class="paragraph">
+<p><code>See: <a href="rest-api-admin.html" class="page">Admin REST API</a></code> for further information on this.</p>
+</div>
+<div class="sect2">
+<h3 id="parameters-2"><a class="anchor" href="#parameters-2"></a>Parameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 11.1111%;">
+<col style="width: 16.6666%;">
+<col style="width: 50%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>db</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Database name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Body</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>db config settings</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><a href="#_database_configuration_model">database_configuration_model</a></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="responses-2"><a class="anchor" href="#responses-2"></a>Responses</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 10%;">
@@ -2082,7 +2243,7 @@ This behavior can be changed by the command-line setting <code>disable_persisten
 <p><strong>200</strong></p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>200 OK – The database configuration was updated successfully</p>
+<p>200 OK – Successful Operation</p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
 <p>No Content</p>
@@ -2090,10 +2251,13 @@ This behavior can be changed by the command-line setting <code>disable_persisten
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><strong>201</strong></p>
+<p><strong>401</strong></p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>201 Created – The database configuration was created successfully.</p>
+<p>401 - Unauthorized</p>
+</div>
+<div class="paragraph">
+<p>Typically arising when the supplied basic auth credentials do not match those found on Couchbase Server</p>
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
 <p>No Content</p>
@@ -2102,80 +2266,72 @@ This behavior can be changed by the command-line setting <code>disable_persisten
 </tbody>
 </table>
 </div>
-</div>
-<div class="sect1">
-<h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="example-2"><a class="anchor" href="#example-2"></a>Example</h3>
 <div class="exampleblock">
+<div class="title">Example 2. Configure database</div>
 <div class="content">
+<div class="paragraph">
+<p>Here we configure an existing sync&#160;gateway database.</p>
+</div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset1_curl"></a>Curl</p>
+<p><a id="tabset2_curl"></a>Curl</p>
 </li>
 <li>
-<p><a id="tabset1_http"></a>HTTP</p>
+<p><a id="tabset2_http"></a>HTTP</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_curl">
+<div class="tab-pane" aria-labelledby="tabset2_curl">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location -g --request PUT '{sgw-admin-url}/{db}/_config' \ <i class="conum" data-value="1"></i><b>(1)</b>
-  --header 'Accept: application/json' \
-  --header 'Content-Type: application/json' \
-  --data-raw '{
-      "bucket": "mybucket",
-      "name": "mydb",
-      "users": {"john": {"password": "pass", "admin_channels": ["*"]}}
-    }'</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://127.0.0.1:4985/travel25/_config/' \ <i class="conum" data-value="1"></i><b>(1)</b>
+--header 'Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk' \ <i class="conum" data-value="2"></i><b>(2)</b>
+--header 'Content-Type: application/json' \
+--data-raw '{
+  "enable_shared_bucket_access": true,
+  "import_docs": true
+}' <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_http">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-http hljs" data-lang="http">PUT /travel25/_config/ HTTP/1.1  <i class="conum" data-value="1"></i><b>(1)</b>
+Host: 127.0.0.1:4985
+Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk  <i class="conum" data-value="2"></i><b>(2)</b>
+Content-Type: application/json
+Content-Length: 120
+
+{
+"enable_shared_bucket_access": true,
+"import_docs": true
+} <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we provide:
-<div class="ulist">
-<ul>
-<li>
-<p>{sgw-admin-url}, which is the path to the sgw, including admin port</p>
-</li>
-<li>
-<p>{db}, which is the name of the Sync Gateway database</p>
-</li>
-</ul>
-</div></td>
+<td>Here we choose to configure (<code>_config</code>) a sync&#160;gateway database called <code>travel25</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Note we are using Basic Authentication here to authenticate against an existing Couchbase Server RBAC user</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Here we toggle a couple of database properties</td>
 </tr>
 </table>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset1_http">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-http hljs" data-lang="http">PUT /{db}/_config HTTP/1.1
-Host: {sgw-admin-url}
-Accept: application/json
-Content-Type: application/json
-Content-Length: 314
-
-{
-    "bucket": "{server-bucket-name}",
-    "name": "{db}",
-    "users": {
-      "john": {
-        "password": "pass",
-        "admin_channels": ["*"],
-        "all_channels": null,
-        "disabled": false
-        }
-    }
-}</code></pre>
-</div>
-</div>
-</div>
 </div>
 </div>
 </div>
@@ -2183,152 +2339,8 @@ Content-Length: 314
 </div>
 </div>
 <div class="sect1">
-<h2 id="model"><a class="anchor" href="#model"></a>Model</h2>
+<h2 id="schemas"><a class="anchor" href="#schemas"></a>Schemas</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="_bucket_configuration_model"><a class="anchor" href="#_bucket_configuration_model"></a>bucket_configuration_model</h3>
-<div class="paragraph">
-<p>Defines the Couchbase Server bucket to which this Sync Gateway database is associated.</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 61.1111%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><strong>server</strong><br>
-<em>required</em><br>
-<em>read-only</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>Read-only item inherited from the bootstrap configuration file; cannot be changed using the REST API.</p>
-</div>
-<div class="paragraph">
-<p>Defines the Couchbase Server connection string.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>string</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><strong>bucket</strong><br>
-<em>required</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>The <code>bucket</code> property defines the Couchbase Server bucket name for this database.</p>
-</div>
-<div class="paragraph">
-<p>If not specified, then the database <code>name</code> is used as the <code>bucket</code> name.<br>
-<strong>Default</strong> : <code>"database name"</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>string</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><strong>username</strong><br>
-<em>required</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>The item defines the RBAC user&#8217;s username for authenticating to Couchbase Server.</p>
-</div>
-<div class="paragraph">
-<p>There is no default.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>string</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><strong>password</strong><br>
-<em>required</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>The item defines the RBAC user&#8217;s password for authenticating to Couchbase Server.</p>
-</div>
-<div class="paragraph">
-<p>There is no default.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>string</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><strong>certpath</strong><br>
-<em>optional</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>Absolute or relative path on the filesystem to the TLS certificate file to be used to connect to the Couchbase Server.</p>
-</div>
-<div class="paragraph">
-<p>Relative paths are relative to the directory that contains the Sync Gateway executable.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>string</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><strong>keypath</strong><br>
-<em>optional</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>Absolute or relative path on the filesystem to the TLS private key file to be used to connect to the Couchbase Server.</p>
-</div>
-<div class="paragraph">
-<p>Relative paths are relative to the directory that contains the Sync Gateway executable.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>string</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><strong>cacertpath</strong><br>
-<em>optional</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>Absolute or relative path on the filesystem to the root CA certificate to verify the certificate chain and hostname of the Couchbase Server cluster.</p>
-</div>
-<div class="paragraph">
-<p>Required for X509 Authentication.</p>
-</div>
-<div class="paragraph">
-<p>Relative paths are relative to the directory that contains the Sync Gateway executable.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>string</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p><strong>kv_tls_port</strong><br>
-<em>optional</em></p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>Unused item</p>
-</div></div></td>
-<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
-<p>string</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-</div>
 <div class="sect2">
 <h3 id="_database_configuration_model"><a class="anchor" href="#_database_configuration_model"></a>database_configuration_model</h3>
 <div class="paragraph">
@@ -4393,6 +4405,150 @@ The storage of backed up revision bodies for delta sync incurs additional bucket
 </div></div></td>
 <td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
 <p>integer</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_bucket_configuration_model"><a class="anchor" href="#_bucket_configuration_model"></a>bucket_configuration_model</h3>
+<div class="paragraph">
+<p>Defines the Couchbase Server bucket to which this Sync Gateway database is associated.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 61.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>server</strong><br>
+<em>required</em><br>
+<em>read-only</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Read-only item inherited from the bootstrap configuration file; cannot be changed using the REST API.</p>
+</div>
+<div class="paragraph">
+<p>Defines the Couchbase Server connection string.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>bucket</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>The <code>bucket</code> property defines the Couchbase Server bucket name for this database.</p>
+</div>
+<div class="paragraph">
+<p>If not specified, then the database <code>name</code> is used as the <code>bucket</code> name.<br>
+<strong>Default</strong> : <code>"database name"</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>username</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>The item defines the RBAC user&#8217;s username for authenticating to Couchbase Server.</p>
+</div>
+<div class="paragraph">
+<p>There is no default.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>password</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>The item defines the RBAC user&#8217;s password for authenticating to Couchbase Server.</p>
+</div>
+<div class="paragraph">
+<p>There is no default.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>certpath</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Absolute or relative path on the filesystem to the TLS certificate file to be used to connect to the Couchbase Server.</p>
+</div>
+<div class="paragraph">
+<p>Relative paths are relative to the directory that contains the Sync Gateway executable.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>keypath</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Absolute or relative path on the filesystem to the TLS private key file to be used to connect to the Couchbase Server.</p>
+</div>
+<div class="paragraph">
+<p>Relative paths are relative to the directory that contains the Sync Gateway executable.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>cacertpath</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Absolute or relative path on the filesystem to the root CA certificate to verify the certificate chain and hostname of the Couchbase Server cluster.</p>
+</div>
+<div class="paragraph">
+<p>Required for X509 Authentication.</p>
+</div>
+<div class="paragraph">
+<p>Relative paths are relative to the directory that contains the Sync Gateway executable.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>kv_tls_port</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Unused item</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
 </div></div></td>
 </tr>
 </tbody>

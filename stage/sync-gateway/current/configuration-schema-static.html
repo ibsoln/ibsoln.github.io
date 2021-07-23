@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Access Grants | Couchbase Docs</title>
-<link rel="canonical" href="http://127.0.0.1:5000/sync-gateway/current/access-grants.html">
+<title>Static Configuration Schema | Couchbase Docs</title>
+<link rel="canonical" href="http://127.0.0.1:5000/sync-gateway/current/configuration-schema-static.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="How to implement Sync Gateway access controls in the Sync Function using access grants, users, roles and channels">
+<meta name="description" content="Configuring &lt;em&gt;Sync Gateway&lt;/em&gt; to provide secure cloud-to-edge synchronization of enterprise data using the standard, static, configuration file.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="3.0">
-<meta name="page-url" content="/sync-gateway/current/access-grants.html">
+<meta name="page-url" content="/sync-gateway/current/configuration-schema-static.html">
 <meta name="generator" content="Antora 3.0.0-alpha.6">
 <link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
 </head>
@@ -1369,9 +1369,9 @@
     <span class="menu_title menu_text">Static</span>
   </span>
 <ul class="menu_row">
-<li class="menu_list" data-depth="3">
+<li class="menu_list is-current-page" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="configuration-schema-static.html">Static Configuration Schema</a>
+    <a class="menu_title menu_link is-current-page" href="configuration-schema-static.html">Static Configuration Schema</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1488,9 +1488,9 @@
     <a class="menu_title menu_link" href="access-control-overview.html">Access Control Overview</a>
   </span>
 </li>
-<li class="menu_list is-current-page" data-depth="2">
+<li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link is-current-page" href="access-grants.html">Access Grants</a>
+    <a class="menu_title menu_link" href="access-grants.html">Access Grants</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -1849,7 +1849,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/access-grants.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/configuration-schema-static.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -1908,14 +1908,20 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb">Access Control</li>
-<li class="crumb"><a href="access-grants.html">Access Grants</a></li>
+<li class="crumb">Configuration</li>
+<li class="crumb">Static</li>
+<li class="crumb"><a href="configuration-schema-static.html">Static Configuration Schema</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Access Grants</h1>
+<h1 class="page">Static Configuration Schema</h1>
+<div class="labels">
+<ul>
+<li class="status"><span>Deprecated</span></li>
+</ul>
+</div>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -1926,26 +1932,52 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>How to implement Sync Gateway access controls in the Sync Function using access grants, users, roles and channels<br>
-The sync function API provides several methods that you can use to validate and control user access to databases and documents.</p>
+<p>Configuring <em>Sync Gateway</em> to provide secure cloud-to-edge synchronization of enterprise data using the standard, static, configuration file.<br></p>
 </div>
 </blockquote>
 </div>
-<div class="paragraph">
-<p><em>Related access-control topics</em>:  <strong>Access Grants</strong>  |  <a href="sync-function.html" class="page">Sync Function</a>  |  <a href="channels.html" class="page">Channels</a>  |  <a href="roles.html" class="page">Roles</a>  |  <a href="users.html" class="page">Users</a>  |
-<a href="using-xattr-access-grants.html" class="page">Extended Attributes Key</a></p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Topic Group</dt>
+<dd>
+<p><a href="configuration-overview.html" class="page">Overview</a>
+|  Static Schema
+|  <a href="configuration-javascript-functions.html" class="page">Javascript Functions</a>
+|  <a href="configuration-environment-variables.html" class="page">Environment Variables</a>
+|  <a href="configuration-rest-api.html" class="page">REST API</a></p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<h2 id="about-the-schema"><a class="anchor" href="#about-the-schema"></a>About the Schema</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the Couchbase Mobile ecosystem, every <a href="users.html" class="page">User</a> and <a href="roles.html" class="page">Role</a> is granted access to zero, one or more <a href="channels.html" class="page">Channels</a>.
-It is this channels list that determines the documents users can access.</p>
+<p>Sync Gateway uses a JSON-like configuration file to define its runtime behavior.
+The file&#8217;s contents include, for example:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Details of the connected Couchbase databases</p>
+</li>
+<li>
+<p>How replications are conducted</p>
+</li>
+<li>
+<p>What security is to be used</p>
+</li>
+<li>
+<p>What logging options are to be applied, and</p>
+</li>
+<li>
+<p>Any customization of import filtering and synchronization.</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>A user can only read documents that are in at least one of their assigned channels; whether directly or as part of an assigned role.</p>
+<p>The majority of the configuration is achieved using standard JSON syntax&#8201;&#8212;&#8201;see <a href="#configuration-reference">Configuration Reference</a> for more.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1954,331 +1986,213 @@ It is this channels list that determines the documents users can access.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-All users can implicitly access any document in the <a href="channels.html#lbl-public-channel" class="page">Public Channel</a>
+<div class="paragraph">
+<p>The <code>sync-gateway-config.json</code> file relies on the use of one <em>relaxed</em> JSON feature; the use of back ticks  (<code>`</code>).
+Text between back ticks is treated as a string.
+It can span multiple lines and contain double-quotes.
+Those features make it ideal for the incorporation of inline JavaScript, which can be used to provision, for example, <code>sync</code> and <code>import_filter</code> functions.</p>
+</div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Once a user is granted access to a new channel, the <a href="changes-feed.html" class="page">Changes Feed</a> will include all existing documents in that channel, even those from earlier sequences than the current request&#8217;s <code>since</code> parameter.
-So, the next replication pull request, will retrieve all documents to which the user now has access.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-access-grants"><a class="anchor" href="#lbl-access-grants"></a>Access Grants</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Make user or role access grants in one of the following ways:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Directly through the Admin REST API&#8201;&#8212;&#8201;see: <a href="#lbl-admin-rest-api">Admin REST API</a></p>
-</li>
-<li>
-<p>Dynamically, in the <a href="#lbl-sync-function">Sync Function</a> when a document is accessed:</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The <a href="sync-function.html" class="page">Sync Function</a> is the preferred method for granting access to channels programmatically.
-Here the document access and routing requirements are derived from document properties or, more securely, from a designated extended attribute (XATTR)&#8201;&#8212;&#8201;see: <a href="using-xattr-access-grants.html" class="page">Using XATTR Access Grants</a> for how to define the XATTR.</p>
-</div>
-<div class="paragraph">
-<p>Note that access grants do not confer, nor constrain, the type of access.
-You can explicitly implement write access controls within your Sync Function; perhaps restricting updates to specific users or roles&#8201;&#8212;&#8201;for more on this see <a href="#lbl-control-write-access">Control Write Access</a>:</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-sync-function"><a class="anchor" href="#lbl-sync-function"></a>Sync Function</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Calling <a href="sync-function.html#lbl-access" class="page">access(user, channel)</a> grants a user access to a channel.</p>
-</div>
-<div class="paragraph">
-<p>So, for example, this would allow a document to act as a membership, or access-control, list.</p>
-</div>
-<div class="paragraph">
-<p>A typical example is a document that represents a shared resource (like a chat room or photo gallery)&#8201;&#8212;&#8201;see: <a href="#ex-helper">Example 1</a>.</p>
-</div>
-<div id="ex-helper" class="exampleblock">
-<div class="title">Example 1. Using the Access helper function</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, olddoc, meta) {
-  if (doc.type == "chatroom") {  <i class="conum" data-value="1"></i><b>(1)</b>
-    access(doc.members, <i class="conum" data-value="2"></i><b>(2)</b>
-      meta.xattrs.channelXattr);  <i class="conum" data-value="3"></i><b>(3)</b>
-  }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>In this example:</p>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>A chat room is represented by a document with a <code>type</code> property set to <code>chatroom</code>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here the chatroom document&#8217;s <code>members</code> property contains the names of all valid chatroom users.
-These users need to be granted access to the chat channel</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Here the chat message channel is picked up from the XATTR key <code>channelXattr</code> and the 'access()' function grants all members access to that channel.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>The <code>access()</code> function can also operate on roles.
-If a user name string begins with <code>role:</code> then the remainder of the string is interpreted as a role name.
-There&#8217;s no ambiguity here, because ":" is an illegal character in a user or role name.</p>
-</div>
-<div class="paragraph">
-<p>Because anonymous requests are authenticated as the user "GUEST", you can make a channel and its documents public by calling <code>access</code> with a username of <code>GUEST</code>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-admin-rest-api"><a class="anchor" href="#lbl-admin-rest-api"></a>Admin REST API</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>A user can be granted access to a channel through the <code>admin_channels</code> property on the <a href="rest-api-admin.html#/user/put__db___user__name_" class="page">/\{db}/user/{name}</a> admin REST API endpoint.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-revoke-access"><a class="anchor" href="#lbl-revoke-access"></a>Revoke Access</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Revoking access to a channel can cause a user to lose access to documents, if s/he no longer has access to any channels those documents are in.</p>
-</div>
-<div class="paragraph">
-<p>However, the replicator does <em>not</em> currently delete such documents that have already been synced to a user&#8217;s device (although future changes to those documents will not be replicated.)
-This is a design limitation of Sync Gateway that may be resolved in the future.</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>A GET request to a document not assigned to one or more of the user&#8217;s available channels fails with a 403 error.</p>
-</li>
-<li>
-<p>The <code>_all_docs</code> property is filtered to return only documents that are visible to the user.</p>
-</li>
-<li>
-<p>The <code>_changes</code> property ignores requests (via the <code>channels</code> parameter) for channels not visible to the user.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-inspect-access"><a class="anchor" href="#lbl-inspect-access"></a>Inspect Access</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can use the admin REST API to see what channels a user has access to.
-Issue an <a href="rest-api-admin.html#/database/get
-__db___all_docs" class="page">/\{tkn-db}/_user/\{name}</a> request.
-Here&#8217;s an example of the response.
-The output shows that the user <code>pupshaw</code> has access to channels <code>all</code> and <code>hoopy</code>.</p>
+<p>Use the following command to run Sync Gateway with a configuration file:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-    "admin_channels": [
-        "all"
-    ],
-    "admin_roles": [
-        "froods"
-    ],
-    "all_channels": [
-        "all",
-        "hoopy"
-    ],
-    "name": "pupshaw",
-    "roles": [
-        "froods"
-    ]
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-bashrc hljs" data-lang="bashrc">sync_gateway sync-gateway-config.json</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>The <code>all_channels</code> property of a user account determines the channels a user can access.
-Its value is derived from the union of:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The user&#8217;s <code>admin_channels</code> property, which is set using the Admin REST API.</p>
-</li>
-<li>
-<p>The channels the user has been granted access to by <code>access()</code> calls from sync functions invoked for current revisions of documents.</p>
-</li>
-<li>
-<p>The <code>all_channels</code> properties of any roles the user belongs to. These are themselves computed using the above rules.</p>
-</li>
-</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-control-write-access"><a class="anchor" href="#lbl-control-write-access"></a>Control Write Access</h2>
+<h2 id="configuration-reference"><a class="anchor" href="#configuration-reference"></a>Configuration Reference</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Use the Sync Function&#8217;s helper functions to control who or what can make document updates.</p>
+<div id="swagger-ui"></div>
 </div>
-<div class="paragraph">
-<p>So can require that the user making the change has a specific name, role or channel access&#8201;&#8212;&#8201;as shown in <a href="#ex-check-write-access">Example 2</a>&#8201;&#8212;&#8201;by using any combination  of:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="sync-function.html#lbl-require-user" class="page">requireUser()</a></p>
-</li>
-<li>
-<p><a href="sync-function.html#lbl-require-role" class="page">requireRole()</a></p>
-</li>
-<li>
-<p><a href="sync-function.html#lbl-require-channel" class="page">requireChannel()role</a></p>
-</li>
-</ul>
-</div>
-<div id="ex-check-write-access" class="exampleblock">
-<div class="title">Example 2. Control Write Access</div>
-<div class="content">
-<div class="paragraph">
-<p>Here the simple Sync Function validates whether the user modifying a document is a valid owner by checking if they are recorded as an owner of the old document:</p>
-</div>
+<div class="sect1">
+<h2 id="example-sync-gateway-configuration"><a class="anchor" href="#example-sync-gateway-configuration"></a>Example Sync Gateway Configuration</h2>
+<div class="sectionbody">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function (doc, oldDoc, meta) {
-  if (oldDoc) {
-    requireUser(oldDoc.owner); <i class="conum" data-value="1"></i><b>(1)</b>
-  }
-  if (meta.xattr.channelxattr) {
-    requireAccess(meta.xattr.channelxattr); <i class="conum" data-value="2"></i><b>(2)</b>
-  } else
-    {
-      throw("No channel access granted")
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/configuration/sync-gateway-config.json">{
+  "interface":":5984",
+  "adminInterface":":5985",
+  "logging": {
+    "log_file_path": "/var/tmp/sglogs",
+    "console": {
+      "log_level": "debug",
+      "log_keys": ["*"]
+    },
+    "error": {
+      "enabled": true,
+      "rotation": {
+        "max_size": 20,
+        "max_age": 180
+      }
+    },
+    "warn": {
+      "enabled": true,
+      "rotation": {
+        "max_size": 20,
+        "max_age": 90
+      }
+    },
+    "info": {
+      "enabled": false
+    },
+    "debug": {
+      "enabled": false
     }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>If the user making the change is not an owner of the pre-change document, an exception is thrown and the update is rejected with an error.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we check the designated xattr for the document channel(s) and require the user making the change to have access to on or more of the channels.
-If the xattr is not set we throw an exception.</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>See <a href="#ex-helpers">Example 3</a> for more helper function examples.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-When sending a change to Sync Gateway through the <a href="rest-api-admin.html" class="page">Admin REST API</a>, the Sync Function executes with <em>admin privileges</em>. Calls to <code>requireUser</code>, <code>requireAccess</code> and <code>requireRole</code> will be no-ops, and will always appear successful.
-</td>
-</tr>
-</table>
-</div>
-<div id="ex-helpers" class="exampleblock">
-<div class="title">Example 3. Helper Function examples</div>
-<div class="content">
-<div class="paragraph">
-<p>This example shows how to use some of the helper functions:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">requireUser("snej") <i class="conum" data-value="1"></i><b>(1)</b>
+  },
+  "databases": {
+       "db1-local": {
+            "import_docs": true,
+            "bucket":"db1-local",
+            "server": "couchbase://cb-server",
+            "enable_shared_bucket_access":true,
+            "delta_sync": {
+              "enabled": true
+            },
+            "import_filter": `
+              function(doc) {
+                return true;
+              }
+              `,
+            "username": "admin",
+            "password": "password",
+            "users":{
+                "admin": {"password": "password", "admin_channels": ["*"]},
+                "user1": {"password": "password", "admin_channels":["channel.user1"]}
+            },
+           "num_index_replicas":0,
+           "sgreplicate_enabled":false,
+           "replications":{
+               "db1-rep-id1" : {
+                   "direction": "pushAndPull",
+                   "conflict_resolution_type":"custom",
+                    "custom_conflict_resolver":`
+                      function(conflict) {
+                          if (  (conflict.LocalDocument.type != null) &amp;&amp;
+                                (conflict.RemoteDocument.type != null) &amp;&amp;
+                                (conflict.LocalDocument.type == "usedefault"))
+                          {
+                              console.log("Will use default policy");
+                              // Resolve using built-in policy
+                              return defaultPolicy(conflict);
+                          }
+                          else
+                          {
+                            // Merge local and remote docs
+                            var remoteDoc = conflict.RemoteDocument;
+                            console.log("full remoteDoc doc: "+JSON.stringify(remoteDoc));
+                            var localDoc = conflict.LocalDocument;
+                            console.log("full localDoc doc: "+JSON.stringify(localDoc));
+                            var mergedDoc = extend({}, localDoc, remoteDoc);
+                            delete mergedDoc._rev <i class="conum" data-value="1"></i><b>(1)</b>
 
-requireUser(["snej", "jchris", "tleyden"]) <i class="conum" data-value="2"></i><b>(2)</b>
+                            console.log("full mergedDoc doc: "+JSON.stringify(mergedDoc));
+                            // Resolve using this merged doc as the winner
+                            return mergedDoc;
 
-requireRole("admin") <i class="conum" data-value="3"></i><b>(3)</b>
+                            function extend(target) {
+                                var sources = [].slice.call(arguments, 1);
+                                sources.forEach(function (source) {
+                                    for (var prop in source) {
+                                      if (prop.indexOf('_') != 0) { <i class="conum" data-value="2"></i><b>(2)</b>
+                                        target[prop] = source[prop];
+                                      }
+                                    }
+                                });
+                                return target;
+                            } // end function extend()
+                          } // end if
+                      }` // end function()
+                    , // end custom_conflict_resolver
+                   "purge_on_removal":true,
+                   "remote": "http://user1:password@example.com:4984/db1-remote",
+                   "filter":"sync_gateway/bychannel",
+                   "query_params": {
+                       "channels":["channel.user1"]
+                   },
+                   "enable_delta_sync":  true,
+                    "batch_size" :1000,
+                    "continuous": true,
+                    "state": "running"
+               }
+           },
+          "sync": `
+      function sync(doc, oldDoc) {
+        /* sanity check */
+        // check if document was removed from server or via SDK
+        // In this case, just return
+        if (isRemoved()) {
+          return;
+        }
 
-requireRole(["admin", "old-timer"]) <i class="conum" data-value="4"></i><b>(4)</b>
+        /* Routing */
+        // Add doc to the user's channel.
+        channel("channel.user1");
 
-requireAccess("events") <i class="conum" data-value="5"></i><b>(5)</b>
+        // This is when document is removed via SDK or directly on server
+        function isRemoved() {
+          return( isDelete() &amp;&amp; oldDoc == null);
+        }
 
-requireAccess(["events", "messages"]) <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+        function isDelete() {
+          return (doc._deleted == true);
+        }
+
+      }
+            `
+          },
+    "db2-local": {
+      "import_docs": true,
+      "bucket":"db2-local",
+      "server": "couchbase://cb-server",
+      "enable_shared_bucket_access":true,
+      "delta_sync": {
+        "enabled": true
+      },
+      "import_filter": `
+        function(doc) {
+          return true;
+        }
+        `,
+      "username": "admin",
+      "password": "password",
+      "users":{
+        "admin": {"password": "password", "admin_channels": ["*"]},
+        "user1": {"password": "password", "admin_channels":["channel.user1"]}
+      },
+      "num_index_replicas":0,
+      "sgreplicate_enabled":true,
+      "replications":{
+        "db2-rep-id1-pull" : {
+          "direction": "pull",
+          "purge_on_removal":true,
+          "remote": "http://user1:password@example2.com:4984/db2-remote",
+          "conflict_resolution_type":"remoteWins",
+          "filter":"sync_gateway/bychannel",
+          "query_params": {
+            "channels":["channel.user1"]
+          },
+          "enable_delta_sync":  true,
+          "batch_size" :1000,
+          "continuous": true,
+          "state": "stopped"
+            }
+          },
+          "sync": `
+          function sync(doc, oldDoc) {
+            // . . . code as required
+          `
+        }
+      }
+    }</code></pre>
 </div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>throw an error if username is not "snej"</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>throw if username is not in the list</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>throw an error unless the user has the "admin" role</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>throw an error unless the user has one of those roles</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>throw an error unless the user has access to read the "events" channel</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>throw an error unless the can read one of these channels</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-To create and manage user accounts, refer to <a href="users.html" class="page">Users</a>.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-replication"><a class="anchor" href="#lbl-replication"></a>Replication</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>By default, Couchbase Lite gets all the channels to which the configured user account has access.
-This behavior is suitable for most apps that rely on <a href="authentication-users.html" class="page">User Authentication</a> and the <a href="sync-function.html" class="page">Sync Function</a> to specify which data to pull for each user.</p>
-</div>
-<div class="paragraph">
-<p>Optionally, a Couchbase Lite "pull" replication can also specify a comma-separated list of channel names to receive documents from.
-In this case, the replication from Sync Gateway will only pull documents tagged with those channels.
-Client apps can use this ability to intelligently sync with a subset of the available documents from the database.</p>
 </div>
 </div>
 </div>
@@ -2289,27 +2203,7 @@ Client apps can use this ability to intelligently sync with a subset of the avai
 <div class="sect5 column">
 <h6 id=""><a class="anchor" href="#"></a></h6>
 <div class="ulist">
-<div class="title">Learn more &#8230;&#8203;</div>
-<ul>
-<li>
-<p><a href="sync-function.html" class="page">Sync Function</a></p>
-</li>
-<li>
-<p><a href="import-filter.html" class="page">Import filter</a></p>
-</li>
-<li>
-<p><a href="sync-inter-syncgateway-overview.html" class="page">Inter-Sync Gateway Replication</a></p>
-</li>
-<li>
-<p><a href="sync-with-couchbase-server.html" class="page">Sync with Couchbase Server</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
-<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
-<div class="ulist">
-<div class="title">Reference material &#8230;&#8203;</div>
+<div class="title">API Topics</div>
 <ul>
 <li>
 <p><a href="rest-api.html" class="page">Public REST API</a></p>
@@ -2327,26 +2221,23 @@ Client apps can use this ability to intelligently sync with a subset of the avai
 </div>
 </div>
 <div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Reference</div>
+<ul>
+<li>
+<p><a href="configuration-schema-static.html" class="page">Static Configuration Schema</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
 <h6 id="-3"><a class="anchor" href="#-3"></a></h6>
 <div class="ulist">
 <div class="title">Community</div>
 <ul>
 <li>
 <p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
-</li>
-</ul>
-</div>
-<div class="ulist">
-<div class="title">Sync Function Blogs</div>
-<ul>
-<li>
-<p><a href="https://blog.couchbase.com/augment-your-sync-function-with-roles-in-couchbase-sync-gateway/">Using roles in sync functions</a></p>
-</li>
-<li>
-<p><a href="https://blog.couchbase.com/data-synchronization-offline-first-apps-couchbase/">Tutorial: Getting Started with Data Synchronization using Couchbase Mobile for Offline-First Apps</a></p>
-</li>
-<li>
-<p><a href="https://blog.couchbase.com/tag/sync-function/">Sync Function (category)</a></p>
 </li>
 </ul>
 </div>
@@ -2425,6 +2316,16 @@ Client apps can use this ability to intelligently sync with a subset of the avai
   </div>
 </footer>
 <script id="site-script" src="../../_/js/site.js"></script>
+<link rel="stylesheet" href="https://couchbase-docs.s3.amazonaws.com/assets/json-config-ui/json-config-ui.css">
+<script src="https://couchbase-docs.s3.amazonaws.com/assets/json-config-ui/json-config-ui-bundle.js"></script>
+<script>
+;(function (url, version) {
+  JSONConfigUIBundle({
+    specs: [{ version: version, url: url }],
+    current: version
+  })
+})('_attachments/configuration-properties-legacy.yaml', 'undefined')
+</script>
 <script async src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
 <script async src="../../_/js/vendor/fontawesome.js"></script>
 <script async src="../../_/js/vendor/highlight.js"></script>
