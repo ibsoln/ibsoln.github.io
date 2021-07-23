@@ -7584,13 +7584,12 @@ It is running the Data and Query Services, and has the <code>travel-sample</code
 </li>
 <li>
 <p>External authentication for the cluster has been enabled.
-This can be achieved by means of the Couchbase CLI command, <code>setting-saslauthd</code>, as follows:</p>
+This can be achieved by means of the Couchbase CLI command, <code>setting-ldap</code>, as follows:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">/opt/couchbase/bin/couchbase-cli setting-saslauthd -c 10.143.192.101 \
--u Administrator \
--p password \
---enabled 1</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">/opt/couchbase/couchbase-cli setting-ldap \
+-c 10.144.210.101 -u Administrator -p password \
+--authentication-enabled 1</code></pre>
 </div>
 </div>
 </li>
@@ -7703,7 +7702,7 @@ Note that use of encryption is <em>strongly</em> recommended.</p>
 </div>
 <div id="encryption-pull-down-menu" class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-security/configureLDAPencryptionPullDownMenu.png" alt="configureLDAPencryptionPullDownMenu" width="200">
+<img src="../_images/manage-security/configureLDAPencryptionPullDownMenu.png" alt="configureLDAPencryptionPullDownMenu" width="170">
 </div>
 </div>
 <div class="paragraph">
@@ -7832,9 +7831,9 @@ For example, if the template is <code>cn=%u,dc=example,dc=com</code> and the use
 </div>
 </div>
 <div class="sect3">
-<h4 id="ldap-query-user"><a class="anchor" href="#ldap-query-user"></a>LDAP Query</h4>
+<h4 id="ldap-query-user"><a class="anchor" href="#ldap-query-user"></a>LDAP Search</h4>
 <div class="paragraph">
-<p>Selecting <strong>LDAP query</strong> displays the following:</p>
+<p>Selecting <strong>LDAP Search</strong> displays the following:</p>
 </div>
 <div class="imageblock text-left">
 <div class="content">
@@ -7852,11 +7851,11 @@ For example, if <strong>Base</strong> is specified as <code>ou=users,dc=example,
 </div>
 <div class="imageblock text-left">
 <div class="content">
-<img src="../_images/manage-security/scopePulldown.png" alt="scopePulldown" width="260">
+<img src="../_images/manage-security/scopePulldown.png" alt="scopePulldown" width="230">
 </div>
 </div>
 <div class="paragraph">
-<p>The possible values are <strong>base</strong>, <strong>one</strong>, and <strong>sub</strong>.</p>
+<p>The possible values are <strong>base object</strong>, <strong>one-level</strong>, and <strong>subtree</strong>.</p>
 </div>
 <div class="paragraph">
 <p>For further information on <strong>Base</strong>, <strong>Filter</strong>, and <strong>Scope</strong>, see <a href="https://ldap.com/the-ldap-search-operation/" target="_blank" rel="noopener">The LDAP Search Operation</a>.</p>
@@ -7896,7 +7895,7 @@ This expands the dialog vertically, as follows:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The LDAP groups of which a user is a member can be searched for by means of either the <strong>User&#8217;s attributes</strong> or an <strong>LDAP Query</strong>, each of which is provided as a radio-button option.
+<p>The LDAP groups of which a user is a member can be searched for by means of either the <strong>User&#8217;s attributes</strong> or an <strong>LDAP Search</strong>, each of which is provided as a radio-button option.
 Selection of either reveals a corresponding set of fields, in which information can be added.
 These are as follows.</p>
 </div>
@@ -7942,9 +7941,9 @@ Notifications confirming success or failure appear on the dialog.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="ldap-query-group"><a class="anchor" href="#ldap-query-group"></a>LDAP Query</h4>
+<h4 id="ldap-query-group"><a class="anchor" href="#ldap-query-group"></a>LDAP Search</h4>
 <div class="paragraph">
-<p>When the <strong>LDAP Query</strong> radio-button is selected, the <strong>Query for Groups Using</strong> panel appears as follows:</p>
+<p>When the <strong>LDAP Search</strong> radio-button is selected, the <strong>Query for Groups Using</strong> panel appears as follows:</p>
 </div>
 <div class="imageblock text-left">
 <div class="content">
@@ -7952,14 +7951,14 @@ Notifications confirming success or failure appear on the dialog.</p>
 </div>
 </div>
 <div class="paragraph">
-<p>Selection of <strong>LDAP Query</strong> instructs Couchbase Server to perform an LDAP <a href="https://ldap.com/the-ldap-search-operation/" target="_blank" rel="noopener">search operation</a>, in order to retrieve a list of the user&#8217;s groups.
+<p>Selection of <strong>LDAP Search</strong> instructs Couchbase Server to perform an LDAP <a href="https://ldap.com/the-ldap-search-operation/" target="_blank" rel="noopener">search operation</a>, in order to retrieve a list of the user&#8217;s groups.
 <strong>Base</strong> is the <em>search base</em> DN.
 <strong>Filter</strong> is the  <a href="https://ldap.com/ldap-filters/" target="_blank" rel="noopener">search filter</a>.
 <strong>Scope</strong>, accessed from a pulldown menu, can be <strong>base</strong>, <strong>one</strong> (the default), or <strong>sub</strong>.</p>
 </div>
 <div class="paragraph">
 <p>When the search is conducted, <code>%u</code> is replaced with the specified username; and <code>%D</code> is replaced with the user&#8217;s DN.
-For example, <strong>Base</strong> might be specified as <code>ou=groups,dc=example,dc=com</code>, <strong>Filter</strong> as <code>(member=%D)</code>, and <strong>Scope</strong> as <code>one</code>:</p>
+For example, <strong>Base</strong> might be specified as <code>ou=groups,dc=example,dc=com</code>, <strong>Filter</strong> as <code>(member=%D)</code>, and <strong>Scope</strong> as <code>one-level</code>:</p>
 </div>
 <div class="imageblock text-left">
 <div class="content">
@@ -7971,14 +7970,14 @@ For example, <strong>Base</strong> might be specified as <code>ou=groups,dc=exam
 </div>
 </div>
 <div class="sect3">
-<h4 id="traverse-nested-groups-for-ldap-query"><a class="anchor" href="#traverse-nested-groups-for-ldap-query"></a>Traverse Nested Groups, LDAP Query</h4>
+<h4 id="traverse-nested-groups-for-ldap-query"><a class="anchor" href="#traverse-nested-groups-for-ldap-query"></a>Traverse Nested Groups, LDAP Search</h4>
 <div class="paragraph">
 <p>See the description provided above, in
  <a href="#traverse-nested-groups-for-user-attributes">Traverse Nested Groups, for User Attribute Search</a></p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="test-groups-query-for-ldap-query"><a class="anchor" href="#test-groups-query-for-ldap-query"></a>Test Groups Query, for LDAP Query</h4>
+<h4 id="test-groups-query-for-ldap-query"><a class="anchor" href="#test-groups-query-for-ldap-query"></a>Test Groups Query, for LDAP Search</h4>
 <div class="paragraph">
 <p>See the description provided above, in <a href="#test-groups-query-for-user-attributes">Test Groups Query, for User Attribute Search</a></p>
 </div>

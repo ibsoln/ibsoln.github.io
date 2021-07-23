@@ -263,12 +263,12 @@ paths:
           schema:
             $ref: '#/responses/200-doc'
     put:
-      operationId: 'db_config_upsert'
-      summary: Upsert Database
+      operationId: 'db_config_create'
+      summary: Create Database
       tags:
       - 'Database Configuration'
       description: |+
-        Use this method to upsert database settings.
+        Use this method to create a new Sync Gateway database.
 
         The database name is taken from the URL path.
         Pass the required database configuration settings as a JSON object in the request body.
@@ -284,12 +284,13 @@ paths:
         By default the created database is brought online immediately, **unless** you include `"offline": true` in the configuration.
       parameters:
         - $ref: '#/parameters/db'
-        - $ref: '#/parameters/database_body_upsert'
+        - $ref: '#/parameters/database_config_body'
       responses:
-        200:
-          description: OK -- Operation Successful
         201:
-          description: OK -- Operation Successful
+          $ref: '#/responses/OK-create'
+        401:
+          $ref: '#/responses/Unauthorized'
+
     delete:
       tags:
       - 'Database Configuration'
@@ -502,64 +503,63 @@ paths:
         200:
           description: Sync Gateway configuration of the running instance.
     put:
-      operationId: "upsert_db_config"
+      operationId: "update_db_config"
       tags:
       - 'Database Configuration'
-      summary: Upsert Database Configuration
+      summary: Update Database Configuration
       description: |+
-        Use this endpoint to add a new Sync Gateway databases and-or to update the configuration of an existing database.
+        Use this endpoint to update the configuration of an existing Sync Gatewat database.
 
         Provide the database name in the URL path.
         Provide the required database configuration settings as a JSON object in the request body.
-        For updates you only need to provide those settings you wish to change.
+        You only need to provide those settings you wish to change.
 
-        By default the created database is brought online immediately, **unless** you include `"offline": true` in the configuration.
-
-        NOTE: Changes made via REST API are persisted by default.
-        This behavior can be changed by the command-line setting `disable_persistent_config`.
+        By default the updated database is brought online immediately, **unless** you include `"offline": true` in the configuration.
 
         `See: {rest-api-admin--xref}` for further information on this.
       parameters:
         - $ref: '#/parameters/db'
-        - $ref: '#/parameters/database_body_upsert'
+        - $ref: '#/parameters/database_config_body'
       responses:
         200:
-          description: 200 OK – The database configuration was updated successfully
-        201:
-          description: 201 Created – The database configuration was created successfully.
+          $ref: '#/responses/OK'
+        401:
+          $ref: '#/responses/Unauthorized'
   /{db}/_config/import_filter:
     put:
-      operationId: "upsert_import_filter"
+      operationId: "update_import_filter"
       tags:
       - 'Database Configuration'
-      summary: Upsert import_filter function
+      summary: Update import_filter function
       description: |+
-        Use this convenience endpoint to create and-or update the `import_filter` Javascript function for this database.
+        Use this convenience endpoint to add or update the `import_filter` Javascript function for an existing Sync Gateway database.
       parameters:
         - $ref: '#/parameters/db'
         - $ref: '#/parameters/import_filter_body'
       responses:
         200:
-          description: OK
-          schema:
-            $ref: '#/responses/200-import-filter'
+          $ref: '#/responses/200-import-filter'
+        401:
+          $ref: '#/responses/Unauthorized'
+
   /{db}/_config/sync:
     put:
-      operationId: "upsert_sync_function"
+      operationId: "update_sync_function"
       tags:
       - 'Access Control'
       - 'Database Configuration'
-      summary: Upsert a Sync Function
+      summary: Update a Sync Function
       description: |+
-        Use this convenience endpoint to create and-or update the `Sync` Function for this database
+        Use this convenience endpoint to add or update the `Sync` Function for an existing Sync Gateway database
       parameters:
         - $ref: '#/parameters/db'
         - $ref: '#/parameters/sync_function_body'
       responses:
         200:
-          description: OK
-          schema:
-            $ref: '#/responses/200-sync'
+          $ref: '#/responses/200-sync'
+        401:
+          $ref: '#/responses/Unauthorized'
+
   /{db}/{doc}:
     get:
       tags:
@@ -1425,7 +1425,6 @@ paths:
   /{db}/_role:
     get:
       tags:
-      - 'Database Configuration'
       - 'Database Security'
       summary: Get roles
       description: This request returns all the roles in the specified database.
@@ -1439,9 +1438,11 @@ paths:
             description: The message body contains the list of roles in a JSON array. Each element of the array is a string representing the name of a role in the specified database.
             items:
               type: string
+        401:
+          $ref: '#/responses/Unauthorized'
+
     post:
       tags:
-      - 'Database Configuration'
       - 'Database Security'
       summary: Role
       description: This request creates a new role in the specified database.
@@ -1450,13 +1451,14 @@ paths:
       - $ref: '#/parameters/role'
       responses:
         201:
-          description: 201 OK – The role was created successfully
+          $ref: '#/responses/OK-create'
+        401:
+          $ref: '#/responses/Unauthorized'
         409:
-          description: 409 Conflict – A role with this name already exists
+          $ref: '#/responses/Conflict'
   /{db}/_role/{name}:
     get:
       tags:
-      - 'Database Configuration'
       - 'Database Security'
       summary: Get role
       description: Request a specific role by name.
@@ -1483,10 +1485,12 @@ paths:
                 description: All the channels that this role has access to.
                 items:
                   type: string
+        401:
+          $ref: '#/responses/Unauthorized'
+
     put:
       operationId: "upsert_role"
       tags:
-      - 'Database Configuration'
       - 'Database Security'
       summary: Upsert a Role
       description: |+
@@ -1497,12 +1501,13 @@ paths:
       - $ref: '#/parameters/role_body_upsert'
       responses:
         200:
-          description: 200 OK – The role was updated successfully
+          $ref: '#/responses/OK'
         201:
-          description: 201 Created – The role was created successfully
+          $ref: '#/responses/OK-create'
+        401:
+          $ref: '#/responses/Unauthorized'
     delete:
       tags:
-      - 'Database Configuration'
       - 'Database Security'
       summary: Deletes the role
       description: This request deletes the role with the specified name in the specified database.
@@ -1617,7 +1622,6 @@ paths:
   /{db}/_user/:
     get:
       tags:
-      - 'Database Configuration'
       - 'Database Security'
       summary: Retrieves all users
       description: This request returns all the users in the specified database.
@@ -1631,24 +1635,27 @@ paths:
             items:
               type: string
               description: username
+        404:
+          $ref: '#/responses/NotFound'
     post:
       tags:
-      - 'Database Configuration'
       - 'Database Security'
-      summary: Creates a new user
+      summary: Create a new user
       description: This request creates a new user in the specified database.
       parameters:
       - $ref: '#/parameters/db'
       - $ref: '#/parameters/user'
       responses:
+
         201:
-          description: 201 OK – The user was created successfully
+          $ref: '#/responses/OK-create'
+        401:
+          $ref: '#/responses/Unauthorized'
         409:
-          description: 409 Conflict – A user with this name already exists
+          $ref: '#/responses/Conflict'
   /{db}/_user/{name}:
     get:
       tags:
-      - 'Database Configuration'
       - 'Database Security'
       summary: Retrieve a User
       description: This request returns information about the specified user.
@@ -1659,11 +1666,13 @@ paths:
         200:
           description: 200 OK – Returns information about the specified user
           schema:
-            $ref: '#/definitions/User'
+            $ref: '#/definitions/user_configuration_model'
+        401:
+          $ref: '#/responses/Unauthorized'
+
     put:
       operationId: "upsert_user"
       tags:
-      - 'Database Configuration'
       - 'Database Security'
       summary: Upsert a User
       description: |+
@@ -1674,12 +1683,14 @@ paths:
       - $ref: '#/parameters/user_body_upsert'
       responses:
         200:
-          description: 200 OK – The user record was updated successfully
+          $ref: '#/responses/OK'
         201:
-          description: 201 Created – The user record was created successfully
+          $ref: '#/responses/OK-create'
+        401:
+          $ref: '#/responses/Unauthorized'
+
     delete:
       tags:
-      - 'Database Configuration'
       - 'Database Security'
       summary: Delete a User
       description: This request deletes the user with the specified name in the specified database.
@@ -1688,7 +1699,10 @@ paths:
       - $ref: '#/parameters/name'
       responses:
         200:
-          description: 200 OK – The user was successfully deleted
+          $ref: '#/responses/OK'
+        401:
+          $ref: '#/responses/Unauthorized'
+
 #
 responses:
 
@@ -1711,7 +1725,7 @@ responses:
     schema:
       $ref: '#/definitions/database_configuration_model'
 
-  '200-import-filter':
+  200-import-filter:
     description: OK
     schema:
       $ref: '#/definitions/import_filter_model'
@@ -1730,6 +1744,21 @@ responses:
     description: OK
     schema:
       $ref: '#/definitions/user_configuration_model'
+
+  OK:
+    description: 200 - OK - Operation successful
+
+  OK-create:
+    description: 201 - OK - Create Operation successful
+
+  Unauthorized:
+    description: 401 - Unauthorized - Error validating credentials
+
+  NotFound:
+    description: 404 - Not Found - Object missing or misreferenced
+
+  Conflict:
+    description: 409 - Conflict – For example, an object with this name already exists
 
 definitions:
 
@@ -4648,13 +4677,13 @@ parameters:
 
 
 
-  database_body_upsert:
+  database_config_body:
     in: body
     name: 'database configuration details'
-    description: Provision the database configuration details as JSON object in request body
+    description: |+
+      Provision the database configuration details as JSON object in request body
     schema:
-      $ref: '#/definitions/user_configuration_model'
-
+      $ref: '#/definitions/database_configuration_model'
 
   db:
     name: db
@@ -4662,6 +4691,7 @@ parameters:
     description: Database name
     type: string
     required: true
+
   db-local:
     name: db
     in: path
