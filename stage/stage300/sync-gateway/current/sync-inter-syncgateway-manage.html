@@ -2748,7 +2748,94 @@ You need to specify the <code>replication_id</code>.</p>
 </div>
 </div>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="handling-channel-access-revocation"><a class="anchor" href="#handling-channel-access-revocation"></a>Handling Channel Access Revocation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Users may lose access to channels for many reasons, including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The User loses direct access to channel</p>
+</li>
+<li>
+<p>The User is removed from a role</p>
+</li>
+<li>
+<p>A role the user belongs to is revoked access to channel</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>By default, documents are <strong>not</strong> auto purged on the active sync gateway even if the user on the passive sync gateway loses channel access.</p>
+</div>
+<div class="paragraph">
+<p>Note: that <em>users</em>  are cluster-specific; <em>userA</em> in custer A is not the same entity as <em>userA</em> in cluster B.</p>
+</div>
+<div class="paragraph">
+<p>If required, you can override this behavior using the configurable option (<code>enable_auto_purge-true</code>).</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The behavior of the config flag is the <strong>reverse</strong> of what is done on Couchbase Lite.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Using this option auto-purges documents on the active Sync Gateway that are no longer accessible, unless a document belongs to another of replicating user’s channels.
+This applies even if they are not actively replicating that channel.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+When <code>enable_auto_purge-true=true</code>, documents in revoked user channels are auto purged from Sync Gateway.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>This is consistent with <em>Sync&#160;Gateway</em>'s handling of document access revocation using the <code>purge-on-removal</code> option</p>
+</div>
+<div class="sect2">
+<h3 id="access-reassignment"><a class="anchor" href="#access-reassignment"></a>Access Reassignment</h3>
+<div class="paragraph">
+<p>Where a user loses access to a channel and is then reassigned access to a channel, any previously auto-purged documents still assigned to any of the user’s channels are automatically pulled down by the active Sync Gateway.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This will not impact active nodes that have turned off auto-purge behavior.
+Auto-purged documents removed from a user’s channels subsequent to the purge will not be synced again.
+</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>If you want to control whether to sync previous auto purged versions of the document and do not want to pull down purged documents, you must remove the documents from all of the users channels to ensure they are not synced down again.</p>
+</div>
+</div>
+</div>
 <hr>
+</div>
 </div>
 </div>
 <div class="sect1">

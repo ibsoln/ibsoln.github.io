@@ -2039,6 +2039,105 @@ Client apps can use this ability to intelligently sync with a subset of the avai
 </div>
 </div>
 <div class="sect2">
+<h3 id="lbl-access-revocation"><a class="anchor" href="#lbl-access-revocation"></a>Channel Access Revocation</h3>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">3.0 Breaking Change</div>
+Whenever a user loses access to a channel (or channels) all document in the channel(s) are auto-purged from local Couchbase Lite databases.<br>
+In <em>Sync&#160;Gateway</em> 2.x these documents remain in the local database on channel access loss.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Users may lose access to documents for many reasons, including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The User loses direct access to channel</p>
+</li>
+<li>
+<p>The User is removed from a role</p>
+</li>
+<li>
+<p>A role the user belongs to is revoked access to channel</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) <strong>unless</strong> they belong to any of the user’s other channels&#8201;&#8212;&#8201;see: <a href="#tbl-sgw-behavior">Table 1</a>.</p>
+</div>
+<table id="tbl-sgw-behavior" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Sync&#160;Gateway behavior following access revocation</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top" colspan="2">System State</th>
+<th class="tableblock halign-left valign-top">Impact on Sync</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock">Replication Type</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Access Control on Sync Gateway</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Expected behavior (auto-purge enabled- default)</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Pull only</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>User revoked access to channel.</p>
+</div>
+<div class="paragraph">
+<p>Sync Function includes <code>requireAccess(revokedChannel)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Previously synced documents are auto purged on local</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Push only</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>User revoked access to channel. Sync Function includes <code>requireAccess(revokedChannel)</code></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>No impact of auto-purge</p>
+</div>
+<div class="paragraph">
+<p>+
+Documents get pushed but will be rejected by Sync Gateway</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">Push-pull</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>User revoked access to channel</p>
+</div>
+<div class="paragraph">
+<p>+
+Sync Function includes 'requireAccess(revokedChannel)'</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Previously synced documents are auto purged on Couchbase Lite.</p>
+</div>
+<div class="paragraph">
+<p>+
+Local changes continue to be  pushed to remote but are rejected by Sync Gateway</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
 <h3 id="provisioning"><a class="anchor" href="#provisioning"></a>Provisioning</h3>
 <div class="ulist">
 <ul>
@@ -2279,7 +2378,7 @@ Channels with no documents assigned to them are empty.</p>
 <div class="sect2">
 <h3 id="lbl-chan-limits"><a class="anchor" href="#lbl-chan-limits"></a>Channel Limits</h3>
 <table id="tbl-limits" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Guidance on Channel Assignment Limits</caption>
+<caption class="title">Table 2. Guidance on Channel Assignment Limits</caption>
 <colgroup>
 <col style="width: 22.2222%;">
 <col style="width: 44.4444%;">
@@ -2295,13 +2394,13 @@ Channels with no documents assigned to them are empty.</p>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Channels per document</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The amount of memory consumed by the combined number of channels and access grants must fit within the maximum 1Mb xattr size limit&#8201;&#8212;&#8201;see: <a href="#tbl-metadata-size">Table 2</a>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The amount of memory consumed by the combined number of channels and access grants must fit within the maximum 1Mb xattr size limit&#8201;&#8212;&#8201;see: <a href="#tbl-metadata-size">Table 3</a>.</p></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock">50</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Channels per user</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>The amount of memory consumed by channels must fit within the 20 MB available on Couchbase Server docs for storing metadata&#8201;&#8212;&#8201;see: <a href="#tbl-metadata-size">Table 2</a><br>
+<p>The amount of memory consumed by channels must fit within the 20 MB available on Couchbase Server docs for storing metadata&#8201;&#8212;&#8201;see: <a href="#tbl-metadata-size">Table 3</a><br>
 Note that the memory is retained for as long as the replication remains active.</p>
 </div></div></td>
 <td class="tableblock halign-center valign-top"><p class="tableblock">1,000</p></td>
@@ -2315,10 +2414,10 @@ Note that the memory is retained for as long as the replication remains active.<
 <p>Every time a document is assigned to a new channel, the channel name is appended to that document&#8217;s sync metadata.</p>
 </div>
 <div class="paragraph">
-<p>Therefore, a document&#8217;s set of channels is limited by the allowed sync metadata size described in <a href="#tbl-metadata-size">Table 2</a>.</p>
+<p>Therefore, a document&#8217;s set of channels is limited by the allowed sync metadata size described in <a href="#tbl-metadata-size">Table 3</a>.</p>
 </div>
 <table id="tbl-metadata-size" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Size Limits for Sync Metadata</caption>
+<caption class="title">Table 3. Size Limits for Sync Metadata</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
