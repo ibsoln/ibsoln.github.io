@@ -1297,6 +1297,24 @@
 </li>
 </ul>
 </li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="introduction.html">Sync&#160;Gateway</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="configuration-properties.html">Configure</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest-api-admin.html">REST API</a>
+  </span>
+</li>
+</ul>
+</li>
 </ul>
       </div>
     </li>
@@ -2827,13 +2845,153 @@ Auto-purged documents removed from a user’s channels subsequent to the purge w
 </tr>
 </table>
 </div>
-<div class="exampleblock">
-<div class="content">
 <div class="paragraph">
 <p>If you want to control whether to sync previous auto purged versions of the document and do not want to pull down purged documents, you must remove the documents from all of the users channels to ensure they are not synced down again.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="pull-only-replication"><a class="anchor" href="#pull-only-replication"></a>Pull-only Replication</h3>
+<div class="paragraph">
+<p>The expected impact of the enablement of auto purge behavior when</p>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Scenario</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The replicating user of a pull-only replication is revoked channel access.<br>
+ISGR is configured to run as admin user on active peer</p>
+</div>
+<div class="paragraph">
+<p>In ISGR, by default,  access control policies are only enforced at remote cluster.
+The <code>_sync</code> function  on an active node is by default run in context of admin user and as such there is no enforcement of access policies on the active side.</p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top" colspan="2">System State</th>
+<th class="tableblock halign-left valign-top">Impact on Sync</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Active Sync Gateway (Local) (Running as admin user)</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Passive Sync Gateway (Remote)</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Expected behavior when enable_auto_purge is TRUE</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">N/A</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User revoked access to channel</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Previously synced documents are auto purged on local</p></td>
+</tr>
+</tbody>
+</table>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Scenario</dt>
+<dd>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>The replicating user of a pull-only replication is revoked channel access.</p>
+</div>
+<div class="paragraph">
+<p>ISGR is configured to run as a non-admin user on active peer.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Depends on availability of a new feature (3.0) wherein the active peer is also running as the replicating user.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top" colspan="2">System State</th>
+<th class="tableblock halign-center valign-top">Impact on Sync</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Active Sync Gateway (Local) (Running as non-admin user <code>user1</code>)</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Passive Sync Gateway (Remote)</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Expected behavior when enable_auto_purge is TRUE</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>User1 revoked access to channel</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>User2 revoked access to channel</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Previously synced documents for User2 are auto purged on local</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>User1 revoked access to channel</p>
+</div>
+<div class="paragraph">
+<p>Sync Function includes
+requireAccess
+(“channel”)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>User2 still has access to channel</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Config option has no impact.</p>
+</div>
+<div class="paragraph">
+<p>Previously synced documents for User2 remain on local</p>
+</div>
+<div class="paragraph">
+<p>Subsequent remote changes synced down are rejected by local</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>User still has access to channel</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>User revoked access to channel
+Sync Function access policy is a Noop</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Previously synced documents are auto purged on local</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 <hr>
 </div>
 </div>

@@ -1297,6 +1297,24 @@
 </li>
 </ul>
 </li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/introduction.html">Sync&#160;Gateway</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/configuration-properties.html">Configure</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/rest-api-admin.html">REST API</a>
+  </span>
+</li>
+</ul>
+</li>
 </ul>
       </div>
     </li>
@@ -2857,7 +2875,6 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        let db = try! Database(name: "hotel")
         var hotels = [String:Any]()
-        var hotel:Hotel = Hotel.init()
 
         let listQuery = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database( db))</code></pre>
@@ -2942,11 +2959,8 @@ To unpack these result sets you need to iterate this array.</p>
                 let city = thisDocsProps!["city"] as! String
 
                 let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="2"></i><b>(2)</b>
-
                 let hotelId = hotel!["id"] as! String
-
                 hotels[hotelId] = hotel
-
             } // end for
 
         } //end do-block</code></pre>
@@ -3047,7 +3061,7 @@ You can add this dictionary to an array of returned matches, for processing else
 
 
             let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="1"></i><b>(1)</b>
-                // Store dictionary data in hotel object and save in array
+                // Store dictionary data in hotel object and save in arry
             hotel.id = thisDoc!["id"] as! String
             hotel.name = thisDoc!["name"] as! String
             hotel.city = thisDoc!["city"] as! String
@@ -3216,10 +3230,13 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
                 let dict = result.toDictionary() as? [String: Int]
                 let thiscount = dict!["mycount"]! <i class="conum" data-value="1"></i><b>(1)</b>
                 print("There are ", thiscount, " rows")
+
+                // Alternatively
+                print ( result["mycount"] )
+
             } // end for
 
         } // end do
-
     } // end function</code></pre>
 </div>
 </div>
@@ -3294,44 +3311,54 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">// In this example the Hotel class is defined using Codable
+//
+// class Hotel : Codable {
+//   var id : String = "undefined"
+//   var type : String = "hotel"
+//   var name : String = "undefined"
+//   var city : String = "undefined"
+//   var country : String = "undefined"
+//   var description : String? = ""
+//   var text : String? = ""
+//   ... other class content
+// }
+
+
     do {
+        var results = try! listQuery.execute()
+        for row in  results {
 
-        for (_, row) in
-            try! listQuery.execute().allResults().enumerated() {
+            // If Query selected ALL,
+            //    unpack items from encompassing dictionary <i class="conum" data-value="1"></i><b>(1)</b>
+            let jsonString = row.dictionary(at: 0)!.toJSON()
+            // ALTERNATIVELY: If Query selected specific items
+            let jsonString = row.toJSON()
 
-            let jsonString = row.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
-            // ALTERNATIVELY:
-            let jsonString = row.dictionary(at: 0)!.toJSON() <i class="conum" data-value="2"></i><b>(2)</b>
-
-
-            // Get native dictionary from JSON string
-            let thisDictFromJSON:Dictionary =
+            let thisJsonObj:Dictionary =
                 try! (JSONSerialization.jsonObject(
-                        with: jsonString.data(using: .utf8)! , options:[])
-                        as? [String: Any])! <i class="conum" data-value="3"></i><b>(3)</b>
+                        with: jsonString.data(using: .utf8)!,
+                                              options: .allowFragments)
+                        as? [String: Any])! <i class="conum" data-value="2"></i><b>(2)</b>
 
-            // Use new dictionary to  populate objects with the JSON data
-            anhotelId = thisDictFromJSON!["id"] as! String
-            anhotelNname = thisDictFromJSON!["name"] as! String
-
-
-            // Get custom object from JSON string
+            // Use Json Object to populate Native object
+            // Use Codable class to unpack JSON data to native object <i class="conum" data-value="3"></i><b>(3)</b>
             let this_hotel:Hotel =
-              (try JSONDecoder().decode(Hotel.self,
-                     from: jsonString.data(using: .utf8)!)) <i class="conum" data-value="4"></i><b>(4)</b>
+                (try JSONDecoder().decode(
+                    Hotel.self,
+                    from: jsonString.data(using: .utf8)!
+                    )
+                )
 
+            // ALTERNATIVELY unpack in steps
+            this_hotel.id = thisJsonObj["id"] as! String
+            this_hotel.name = thisJsonObj["name"] as! String
+            this_hotel.type = thisJsonObj["type"] as! String
+            this_hotel.city = thisJsonObj["city"] as! String
             hotels[this_hotel.id] = this_hotel
 
-        } // end for
 
-    } catch let err {
-        print(err.localizedDescription)
-
-    } // end do
-
-
-} // end func dontTestQueryAll</code></pre>
+        } // end for</code></pre>
 </div>
 </div>
 <div class="colist arabic">
