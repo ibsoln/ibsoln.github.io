@@ -243,7 +243,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/android/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/android/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -434,7 +434,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/clang/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/clang/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -625,7 +625,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/csharp/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/csharp/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -816,7 +816,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/java/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/java/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1007,7 +1007,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/objc/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/objc/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1203,7 +1203,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/swift/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/swift/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -2057,107 +2057,6 @@ In this case, the replication from Sync Gateway will only pull documents tagged 
 Client apps can use this ability to intelligently sync with a subset of the available documents from the database.</p>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-access-revocation"><a class="anchor" href="#lbl-access-revocation"></a>Channel Access Revocation</h2>
-<div class="sectionbody">
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="title">3.0 Breaking Change</div>
-Whenever a user loses access to a channel (or channels) all document in the channel(s) are auto-purged from local Couchbase Lite databases.<br>
-In <em>Sync&#160;Gateway</em> 2.x these documents remain in the local database on channel access loss.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Users may lose access to documents for many reasons, including:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The User loses direct access to channel</p>
-</li>
-<li>
-<p>The User is removed from a role</p>
-</li>
-<li>
-<p>A role the user belongs to is revoked access to channel</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>By default, when a user loses access to a channel, the next Couchbase Lite Pull replication auto-purges all documents in the channel from local Couchbase Lite databases (on devices belonging to the user) <strong>unless</strong> they belong to any of the user’s other channels&#8201;&#8212;&#8201;see: <a href="#tbl-sgw-behavior">Table 1</a>.</p>
-</div>
-<table id="tbl-sgw-behavior" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Sync&#160;Gateway behavior following access revocation</caption>
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 40%;">
-<col style="width: 40%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-center valign-top" colspan="2">System State</th>
-<th class="tableblock halign-left valign-top">Impact on Sync</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<th class="tableblock halign-center valign-top"><p class="tableblock">Replication Type</p></th>
-<th class="tableblock halign-left valign-top"><p class="tableblock">Access Control on Sync Gateway</p></th>
-<th class="tableblock halign-left valign-top"><p class="tableblock">Expected behavior (auto-purge enabled- default)</p></th>
-</tr>
-<tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock">Pull only</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>User revoked access to channel.</p>
-</div>
-<div class="paragraph">
-<p>Sync Function includes <code>requireAccess(revokedChannel)</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Previously synced documents are auto purged on local</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock">Push only</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>User revoked access to channel. Sync Function includes <code>requireAccess(revokedChannel)</code></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>No impact of auto-purge</p>
-</div>
-<div class="paragraph">
-<p>+
-Documents get pushed but will be rejected by Sync Gateway</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock">Push-pull</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>User revoked access to channel</p>
-</div>
-<div class="paragraph">
-<p>+
-Sync Function includes 'requireAccess(revokedChannel)'</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Previously synced documents are auto purged on Couchbase Lite.</p>
-</div>
-<div class="paragraph">
-<p>+
-Local changes continue to be  pushed to remote but are rejected by Sync Gateway</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 <div class="sect1">
