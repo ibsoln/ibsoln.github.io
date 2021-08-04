@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/stage/stage300/server/current/tools/cbq-shell.html">
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="&lt;code class&#x3D;&quot;cmd&quot;&gt;cbq&lt;/code&gt; is a comprehensive command line shell for N1QL.">
+<meta name="description" content="cbq is a comprehensive command line shell for N1QL.">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="server">
 <meta name="dcterms.identifier" content="7.0">
@@ -2092,6 +2092,11 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
+    <a class="menu_title menu_link" href="../eventing/eventing-advanced-bucket-accessors.html">Advanced Bucket Accessors</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
     <a class="menu_title menu_link" href="../eventing/eventing-timers.html">Timers</a>
   </span>
 </li>
@@ -2105,6 +2110,11 @@
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../eventing/eventing-lifecycle.html">Eventing Lifecycle</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../eventing/eventing-buckets-to-collections.html">Buckets vs Collections</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="2">
@@ -2225,6 +2235,11 @@
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../eventing/eventing-handler-shippingNotifier.html">shippingNotifier</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../eventing/eventing-handler-ConvertBucketToCollections.html">ConvertBucketToCollections</a>
   </span>
 </li>
 </ul>
@@ -7826,7 +7841,7 @@
 <div class="sectionbody">
 <div class="quoteblock abstract">
 <blockquote>
-<code class="cmd">cbq</code> is a comprehensive command line shell for N1QL.
+cbq is a comprehensive command line shell for N1QL.
 It is a powerful, developer friendly tool that enables you to query and update data from Couchbase Server.
 The cbq shell enables you to perform all the operations that are supported by the Query REST API and more, such as additional scripting functionality.
 </blockquote>
@@ -7960,13 +7975,18 @@ See <a href="#cbq-parameter-manipulation">Parameter Manipulation</a> for details
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq --script="select \* from \`travel-sample\` LIMIT 1"</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -u Administrator -p password -e "http://localhost:8091" \
+--script="SELECT * FROM \`travel-sample\`.inventory.airline LIMIT 1;"</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Results</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">Connected to : http://localhost:8091/. Type Ctrl-D to exit.
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">Connected to : http://localhost:8091/. Type Ctrl-D or \QUIT to exit.
+
+Path to history file for the shell : ~/.cbq_history
+
+SELECT * FROM `travel-sample`.inventory.airline LIMIT 1;
 {
     ...
 }</code></pre>
@@ -7983,9 +8003,9 @@ For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; select *
-&gt; from `travel-sample`
-&gt; LIMIT 1;</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; SELECT *
+   &gt; FROM `travel-sample`.inventory.airline
+   &gt; LIMIT 1;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -8001,11 +8021,11 @@ No other action is taken.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; select *
- &gt; #This is the first comment
- &gt; from `travel-sample`
- &gt; --This is the second comment
- &gt; LIMIT 1;</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; SELECT *
+   &gt; #This is the first comment
+   &gt; FROM `travel-sample`.inventory.airline
+   &gt; --This is the second comment
+   &gt; LIMIT 1;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -8014,7 +8034,7 @@ If the cbq shell encounters a block comment (enclosed between <code>/*</code> ..
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; select * from `travel-sample` /* This statement includes a block comment */ LIMIT 1;</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; SELECT * FROM `travel-sample`.inventory.airline /* Block comment */ LIMIT 1;</code></pre>
 </div>
 </div>
 </div>
@@ -8035,7 +8055,7 @@ You can change the name of the file using the SET command to set the predefined 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">\SET HISTFILE filename;</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \SET HISTFILE filename;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -8148,9 +8168,9 @@ If you specify one or more commands, the shell displays the usage information fo
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre>Connected to : http://localhost:8091/. Type Ctrl-D or \QUIT to exit.
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">Connected to : http://localhost:8091/. Type Ctrl-D or \QUIT to exit.
 Path to history file for the shell : /Users/myuser1/.cbq_history
-cbq&gt;</pre>
+cbq&gt;</code></pre>
 </div>
 </div></div></td>
 </tr>
@@ -8276,8 +8296,8 @@ When specified, cbq sends the queries to server only when you hit EOF or \ to in
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\set batch on
-\set batch off</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \set batch on;
+cbq&gt; \set batch off;</code></pre>
 </div>
 </div></div></td>
 </tr>
@@ -8381,7 +8401,7 @@ You can specify credentials for different keyspaces by separating them with a co
 <div class="listingblock">
 <div class="title">Example</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -e http://localhost:8091 -c=beer-sample:password,Administrator:password</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -e http://localhost:8091 -c=travel-sample:password,Administrator:password</code></pre>
 </div>
 </div></div></td>
 </tr>
@@ -8420,10 +8440,9 @@ To display the query engine version of Couchbase Server (this is not the same as
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre> SHELL VERSION  : 1.5
+<pre>SHELL VERSION  : 2.0
 
-                Use N1QL queries select version();
-                or select min_version(); to display server version.</pre>
+Use N1QL queries select version(); or select min_version(); to display server version.</pre>
 </div>
 </div></div></td>
 </tr>
@@ -8468,32 +8487,40 @@ If one of the commands is incorrect, an error is displayed for that command and 
 <div class="listingblock">
 <div class="title">Examples</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -s="select * from \`travel-sample\` limit 1"</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -u Administrator -p password -s="SELECT * FROM \`travel-sample\`.inventory.airline LIMIT 1;"</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq  -s="\SET v 1" -s="\SET b 2" -s="\PUSH b3" -s="\SET b 5" -s="\SET"  -ne</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -s="\SET v 1" -s="\SET b 2" -s="\PUSH b3" -s="\SET b 5" -s="\SET" -ne</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre> Path to history file for the shell : /Users/isha/.cbq_history
+<pre>Path to history file for the shell : ~/.cbq_history
+
+ \SET v 1
+ \SET b 2
  \PUSH b3
  ERROR 139 : Too few input arguments to command.
+ \SET b 5
+ \SET
+
  Query Parameters :
  Named Parameters :
  User Defined Session Parameters :
  Predefined Session Parameters :
- Parameter name : v
- Value : [1]
- Parameter name : b
- Value : [5]
  Parameter name : histfile
  Value : [".cbq_history"]
  Parameter name : batch
- Value : ["off"]</pre>
+ Value : ["off"]
+ Parameter name : quiet
+ Value : [false]
+ Parameter name : v
+ Value : [1]
+ Parameter name : b
+ Value : [5]</pre>
 </div>
 </div></div></td>
 </tr>
@@ -8541,7 +8568,7 @@ If the file already exists, it is overwritten.</p>
 <div class="listingblock">
 <div class="title">Example</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -o="results.txt" -s="select * from `travel-sample` limit 1"</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -u Administrator -p password -o="results.txt" -s="SELECT * FROM \`travel-sample\`.inventory.airline LIMIT 1;"</code></pre>
 </div>
 </div></div></td>
 </tr>
@@ -8563,7 +8590,7 @@ To specify that the output should <em>not</em> be formatted with line breaks and
 <div class="listingblock">
 <div class="title">Example</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq --pretty=false -s="select * from `travel-sample` limit 1"</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -u Administrator -p password --pretty=false -s="SELECT * FROM \`travel-sample\`.inventory.airline LIMIT 1;"</code></pre>
 </div>
 </div></div></td>
 </tr>
@@ -8716,7 +8743,7 @@ To specify that the output should <em>not</em> be formatted with line breaks and
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \CONNECT http://[fd63:6f75:6368:1075:816:3c1d:789b:bc4]:8091</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \CONNECT http://[fd63:6f75:6368:1075:816:3c1d:789b:bc4]:8091;</code></pre>
 </div>
 </div></div></td>
 </tr>
@@ -8882,7 +8909,7 @@ To specify that the output should <em>not</em> be formatted with line breaks and
 <div class="listingblock">
 <div class="title">Examples</div>
 <div class="content">
-<pre>\POP -args;</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \POP -args;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8913,7 +8940,7 @@ You can then execute the alias using <code>\\alias-name;</code>.</p>
 <div class="listingblock">
 <div class="title">Examples</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \ALIAS travel-limit1 select * from `travel-sample` limit 1;</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \ALIAS travel-limit1 SELECT * FROM `travel-sample`.inventory.airline LIMIT 1;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8925,7 +8952,7 @@ You can then execute the alias using <code>\\alias-name;</code>.</p>
 <div class="title">Result</div>
 <div class="content">
 <pre>serverversion  select version()
-travel-limit1  select * from `travel-sample` limit 1</pre>
+travel-limit1  SELECT * FROM `travel-sample`.inventory.airline LIMIT 1</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -8938,21 +8965,22 @@ travel-limit1  select * from `travel-sample` limit 1</pre>
 <div class="title">Result</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-    "requestID": "21b0efdb-b1ec-44bc-adab-071831792c03",
+    "requestID": "ef63f01b-f159-437f-a4df-28d6145fa3c2",
     "signature": {
         "$1": "string"
     },
     "results": [
         {
-            "$1": "1.5.0"
+            "$1": "7.0.0-N1QL"
         }
     ],
     "status": "success",
     "metrics": {
-        "elapsedTime": "4.03243ms",
-        "executionTime": "4.001382ms",
+        "elapsedTime": "14.54962ms",
+        "executionTime": "13.164635ms",
         "resultCount": 1,
-        "resultSize": 37
+        "resultSize": 34,
+        "serviceLoad": 12
     }
 }</code></pre>
 </div>
@@ -9036,7 +9064,7 @@ See <a href="#table_ltk_c5s_5v">Table 3</a> for details.</p>
 <div class="listingblock">
 <div class="title">Result</div>
 <div class="content">
-<pre> SHELL VERSION  : 1.5</pre>
+<pre> SHELL VERSION  : 2.0</pre>
 </div>
 </div></div></td>
 </tr>
@@ -9099,10 +9127,9 @@ Multiple commands in the input file must be separated by <code>;</code> <code cl
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>select * from `travel-sample` limit 1;
-\\ECHO this;
-#This is a comment;
-EOF</pre>
+<pre>SELECT * FROM `travel-sample`.inventory.airline LIMIT 1;
+\ECHO this;
+#This is a comment;</pre>
 </div>
 </div>
 <div class="listingblock">
@@ -9220,20 +9247,23 @@ If the shell is not connected to any endpoint, an error with a message that the 
 <div class="listingblock">
 <div class="title">Examples</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -e=http://localhost:8091;
-Connected to : http://localhost:8091/. Type Ctrl-D to exit.
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -e http://localhost:8091 -u Administrator -p password
+Connected to : http://localhost:8091/. Type Ctrl-D or \QUIT to exit.
+
+Path to history file for the shell : ~/.cbq_history
 
 cbq&gt; \DISCONNECT;
 Couchbase query shell not connected to any endpoint. Use \CONNECT command to connect.
 
 cbq&gt; \CONNECT http://127.0.0.1:8091;
-Connected to : http://127.0.0.1:8091 . Type Ctrl-D / \exit / \quit to exit.
+Connected to : http://127.0.0.1:8091. Type Ctrl-D or \QUIT to exit.
 
 cbq&gt; \EXIT;
-Exiting the shell.
 
-$ ./cbq -e=http://127.0.0.1:8091;
-Connected to : http://127.0.0.1:8091/. Type Ctrl-D to exit.
+$ ./cbq -e http://127.0.0.1:8091 -u Administrator -p password
+Connected to : http://127.0.0.1:8091/. Type Ctrl-D or \QUIT to exit.
+
+Path to history file for the shell : ~/.cbq_history
 cbq&gt;</code></pre>
 </div>
 </div>
@@ -9247,8 +9277,10 @@ After starting cbq without any service, you can connect to a specific endpoint u
 <div class="title">Example</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -ne
-cbq&gt; \CONNECT http://127.0.0.1:8091;
-Connected to : http://127.0.0.1:8091 . Type Ctrl-D / \exit / \quit to exit.</code></pre>
+Path to history file for the shell : ~/.cbq_history
+
+cbq&gt; \CONNECT http://Administrator:password@localhost;
+Connected to : http://Administrator:password@localhost:8091. Type Ctrl-D or \QUIT to exit.</code></pre>
 </div>
 </div>
 </div>
@@ -9259,8 +9291,8 @@ Connected to : http://127.0.0.1:8091 . Type Ctrl-D / \exit / \quit to exit.</cod
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\EXIT;
-\QUIT;</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \EXIT;
+cbq&gt; \QUIT;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -9269,32 +9301,32 @@ Connected to : http://127.0.0.1:8091 . Type Ctrl-D / \exit / \quit to exit.</cod
 <div class="listingblock">
 <div class="title">Example</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq
- No Input Credentials. In order to connect to a server with authentication, please provide credentials.
- Connected to : http://localhost:8091/. Type Ctrl-D to exit.
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -u Administrator -p password
+Connected to : http://localhost:8091/. Type Ctrl-D or \QUIT to exit.
+Path to history file for the shell : ~/.cbq_history
 
-cbq&gt; select name from `travel-sample` WHERE type="airline"  LIMIT 1;
+cbq&gt; SELECT name FROM `travel-sample`.inventory.airline LIMIT 1;
 {
-   "requestID":"3a86dcf2-3bb4-445c-b419-a5eabd327a1d",
-   "signature":{
-      "name":"json"
-   },
-   "results":[
-      {
-         "name":"40-Mile Air"
-      }
-   ],
-   "status":"success",
-   "metrics":{
-      "elapsedTime":"20.564ms",
-      "executionTime":"20.539035ms",
-      "resultCount":1,
-      "resultSize":45
-   }
+    "requestID": "59d1c699-11a2-47c6-b4d0-4a7de1d15a3c",
+    "signature": {
+        "name": "json"
+    },
+    "results": [
+    {
+        "name": "40-Mile Air"
+    }
+    ],
+    "status": "success",
+    "metrics": {
+        "elapsedTime": "13.514441ms",
+        "executionTime": "13.355058ms",
+        "resultCount": 1,
+        "resultSize": 37,
+        "serviceLoad": 12
+    }
 }
 
 cbq&gt; \EXIT;
-Exiting the shell.
 $</code></pre>
 </div>
 </div>
@@ -9309,23 +9341,15 @@ $</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -engine="http://&lt;keyspacename&gt;:&lt;keyspacepassword&gt;@123.45.67.89:8091/"</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -engine="http://&lt;keyspacename&gt;:&lt;keyspacepassword&gt;@localhost:8091/"</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>For the 'beer-sample' keyspace, if you add a password to it of <em>w1fg2Uhj89</em> (as by default it has none), the command to start <code class="cmd">cbq</code> would look like this:</p>
+<p>For the 'travel-sample' keyspace, if you add a password to it of <em>w1fg2Uhj89</em> (as by default it has none), the command to start <code class="cmd">cbq</code> would look like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -engine="http://beer-sample:w1fg2Uhj89@123.45.67.89:8091/"</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If you want to access all of the keyspaces in the same cbq session, you would pass in the Administrator username and password instead of the keyspace level.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -engine="http://Administrator:password@123.45.67.89:8091/"</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -engine="http://travel-sample:w1fg2Uhj89@localhost:8091/"</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -9335,10 +9359,18 @@ $</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-These commands execute successfully only if you have loaded sample bucket 'beer-sample' either at install or from the Settings menu in the web UI.
+These commands execute successfully only if you have loaded sample bucket 'travel-sample' either at install or from the Settings menu in the web UI.
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>If you want to access all of the keyspaces in the same cbq session, you would pass in the Administrator username and password instead of the keyspace level.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -engine="http://Administrator:password@localhost:8091/"</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -9371,10 +9403,10 @@ It must be used with the <code>-u</code> option to specify the user name that th
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -u=Administrator
 Enter Password:
-Connected to : http://localhost:8091/. Type Ctrl-D to exit.
+Connected to : http://localhost:8091/. Type Ctrl-D or \QUIT to exit.
 
 $ ./cbq -e http://localhost:8091 -u=Administrator -p=password
-Connected to : http://localhost:8091/. Type Ctrl-D to exit.
+Connected to : http://localhost:8091/. Type Ctrl-D or \QUIT to exit.
 cbq&gt;</code></pre>
 </div>
 </div>
@@ -9444,7 +9476,7 @@ To do so, set the <code class="param">-creds</code> query parameter for the sess
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\SET -creds travel-sample:b1, session:s1;</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \SET -creds travel-sample:b1, session:s1;</code></pre>
 </div>
 </div>
 </div>
@@ -9592,7 +9624,7 @@ You can use the SET command to set different kinds of parameters: query paramete
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\SET &lt;prefix&gt;&lt;name&gt; value;</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \SET &lt;prefix&gt;&lt;name&gt; value;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -9784,8 +9816,8 @@ The following example creates named parameters <code>r</code> and <code>date</co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\SET -$r 9.5;
-\SET -$date "1-1-2016";</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \SET -$r 9.5;
+cbq&gt; \SET -$date "1-1-2016";</code></pre>
 </div>
 </div>
 </div>
@@ -9796,7 +9828,7 @@ The following example creates named parameters <code>r</code> and <code>date</co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\SET -args value;</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \SET -args value;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -9805,7 +9837,7 @@ For example,</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\SET -args [ 9.5, "1-1-2016"];</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \SET -args [ 9.5, "1-1-2016"];</code></pre>
 </div>
 </div>
 </div>
@@ -9817,7 +9849,7 @@ To pop the top of a parameter&#8217;s stack use:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt;\POP &lt;prefix&gt;&lt;name&gt;;</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \POP &lt;prefix&gt;&lt;name&gt;;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -9825,7 +9857,7 @@ To pop the top of a parameter&#8217;s stack use:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt;\POP;</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \POP;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -9850,7 +9882,7 @@ If not, the shell considers the parameters as generic statements and displays th
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\ECHO input ... ;</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \ECHO input ... ;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -9863,7 +9895,7 @@ If not, the shell considers the parameters as generic statements and displays th
 hello
 
 cbq&gt; \ECHO \\travel-alias1;
-SELECT * from `travel-sample` LIMIT 1
+SELECT * FROM `travel-sample`.inventory.airline LIMIT 1;
 
 cbq&gt; \ECHO -$r;
 9.5</code></pre>
@@ -9881,13 +9913,13 @@ Run the following command to define an alias:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\ALIAS command-alias command</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \ALIAS command-alias command;</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Example</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \ALIAS travel-alias1 SELECT * from `travel-sample` LIMIT 1;</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \ALIAS travel-alias1 SELECT * FROM `travel-sample`.inventory.airline LIMIT 1;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -9899,22 +9931,22 @@ Run the following command to define an alias:</p>
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \\travel-alias1;
 
 {
-    "requestID": "01f25f87-bd6c-4686-8852-ab81795290d1",
+    "requestID": "b25c84d6-7b7b-440a-a286-5027e6ecbbb5",
     "signature": {
         "*": "*"
     },
     "results": [
-        {
-            "travel-sample": {
-                "callsign": "MILE-AIR",
-                "country": "United States",
-                "iata": "Q5",
-                "icao": "MLA",
-                "id": 10,
-                "name": "40-Mile Air",
-                "type": "airline"
-            }
+    {
+        "airline": {
+            "callsign": "MILE-AIR",
+            "country": "United States",
+            "iata": "Q5",
+            "icao": "MLA",
+            "id": 10,
+            "name": "40-Mile Air",
+            "type": "airline"
         }
+    }
     ],
     "status": "success",
     ...
@@ -9926,7 +9958,7 @@ Run the following command to define an alias:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\ALIAS;</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \ALIAS;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -9934,7 +9966,7 @@ Run the following command to define an alias:</p>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \ALIAS;
 serverversion  select version()
-travel-alias1  SELECT * from `travel-sample` LIMIT 1</code></pre>
+travel-alias1  SELECT * FROM `travel-sample`.inventory.airline LIMIT 1;</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -9942,7 +9974,7 @@ travel-alias1  SELECT * from `travel-sample` LIMIT 1</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>\UNALIAS alias-name ... ;</pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \UNALIAS alias-name ... ;</code></pre>
 </div>
 </div>
 <div class="listingblock">
@@ -10022,7 +10054,7 @@ An error is thrown if the timeout is invalid.</p>
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq --timeout="2s"
 
 $ ./cbq -q
-cbq&gt; \SET -TIMEOUT 1ms</code></pre>
+cbq&gt; \SET -TIMEOUT 1ms;</code></pre>
 </div>
 </div>
 </div>
@@ -10053,7 +10085,7 @@ There are two ways to accomplish this:</p>
 <p>Using a shell command:</p>
 <div class="listingblock">
 <div class="content">
-<pre>\SOURCE input-file;</pre>
+<pre>cbq&gt; \SOURCE input-file;</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -10067,9 +10099,9 @@ There are two ways to accomplish this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>CREATE PRIMARY INDEX on `beer-sample` USING GSI;
-SELECT * from `beer-sample` LIMIT 2;
-SELECT abv from `beer-sample` LIMIT 3;
+<pre>CREATE PRIMARY INDEX ON `travel-sample`.inventory.airline USING GSI;
+SELECT * from `travel-sample`.inventory.airline LIMIT 2;
+SELECT callsign from `travel-sample`.inventory.airline LIMIT 3;
 \HELP;</pre>
 </div>
 </div>
@@ -10079,25 +10111,27 @@ SELECT abv from `beer-sample` LIMIT 3;
 <div class="listingblock">
 <div class="title">Results</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">Connected to : http://localhost:8091/. Type Ctrl-D to exit.
-CREATE PRIMARY INDEX on `beer-sample` USING GSI;
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console"> Connected to : http://localhost:8091/. Type Ctrl-D or \QUIT to exit.
+
+ Path to history file for the shell : ~/.cbq_history
+CREATE PRIMARY INDEX ON `travel-sample`.inventory.airline USING GSI;
 { ...
   "results": [ ],
   ...
 }
-SELECT * from `beer-sample` LIMIT 2;
+SELECT * from `travel-sample`.inventory.airline LIMIT 2;
 { ...
   "results": [ ],
   ...
 }
-SELECT abv from `beer-sample` LIMIT 3;
+SELECT callsign from `travel-sample`.inventory.airline LIMIT 3;
 { ...
   "results": [ ],
   ...
 }
 \HELP;
-Help Information for all Shell Commands
-…
+Help information for all shell commands.
+...
 $</code></pre>
 </div>
 </div>
@@ -10107,24 +10141,24 @@ $</code></pre>
 <div class="listingblock">
 <div class="title">Results</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">CREATE PRIMARY INDEX on `beer-sample` USING GSI;
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">CREATE PRIMARY INDEX ON `travel-sample`.inventory.airline USING GSI;
 { ...
   "results": [ ],
  ...
 }
-SELECT * from `beer-sample` LIMIT 2;
+SELECT * from `travel-sample`.inventory.airline LIMIT 2;
 { ...
   "results": [ ],
   ...
 }
-SELECT abv from `beer-sample` LIMIT 3;
+SELECT callsign from `travel-sample`.inventory.airline LIMIT 3;
 { ...
   "results": [ ],
   ...
 }
 \HELP;
-Help Information for all Shell Commands
-…
+Help information for all shell commands.
+...
 cbq&gt;</code></pre>
 </div>
 </div>
@@ -10161,8 +10195,8 @@ You can append redirected output to an existing file using <a href="#file-append
 <div class="title">Example</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \REDIRECT temp_output.txt;
-cbq&gt; CREATE PRIMARY INDEX on `beer-sample` USING GSI;
-cbq&gt; SELECT * from `beer-sample` LIMIT 1;
+cbq&gt; CREATE PRIMARY INDEX ON `travel-sample`.inventory.airline USING GSI;
+cbq&gt; SELECT * FROM `travel-sample`.inventory.airline LIMIT 1;
 cbq&gt; \HELP;
 cbq&gt; \REDIRECT OFF;</code></pre>
 </div>
@@ -10184,7 +10218,7 @@ When you do so, the output file changes to the specified files and switches back
 <div class="title">Example</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \REDIRECT +temp_output.txt;
-cbq&gt; SELECT * from `beer-sample` LIMIT 1;
+cbq&gt; SELECT * FROM `travel-sample`.inventory.airline LIMIT 1;
 cbq&gt; \REDIRECT OFF;</code></pre>
 </div>
 </div>
@@ -10193,9 +10227,9 @@ cbq&gt; \REDIRECT OFF;</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>-- &lt;2020-03-06T03:37:28.484-08:00&gt; : opened in append mode
+<pre>-- &lt;2021-07-30T14:48:43.661+01:00&gt; : opened in append mode
 
-SELECT * from `beer-sample` LIMIT 1
+SELECT * FROM `travel-sample`.inventory.airline LIMIT 1
 ...</pre>
 </div>
 </div>
@@ -10222,17 +10256,21 @@ When you use the <code>-o</code> or <code>--output</code> command line option, t
 <div class="title">Example Using the Command-line Option</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">$ ./cbq -v
-SHELL VERSION : 1.0
+SHELL VERSION  : 2.0
+
+Use N1QL queries select version(); or select min_version(); to display server version.
 
 $ ./cbq --version
-SHELL VERSION : 1.0</code></pre>
+SHELL VERSION  : 2.0
+
+Use N1QL queries select version(); or select min_version(); to display server version.</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="title">Example Using the Shell Command</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \VERSION;
-SHELL VERSION : 1.0</code></pre>
+SHELL VERSION : 2.0</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -10247,12 +10285,13 @@ SHELL VERSION : 1.0</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">cbq&gt; \COPYRIGHT;
-Copyright (c) 2015 Couchbase, Inc. Licensed under the Apache License, Version 2.0 (the "License");
+Copyright (c) 2016 Couchbase, Inc. Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License. You may obtain a copy of the
 License at http://www.apache.org/licenses/LICENSE-2.0
 Unless required by applicable law or agreed to in writing, software distributed under the
 License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 either express or implied. See the License for the specific language governing permissions
+and limitations under the License.
 cbq&gt;</code></pre>
 </div>
 </div>

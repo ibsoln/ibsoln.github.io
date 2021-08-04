@@ -244,7 +244,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../android/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../android/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -435,7 +435,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../clang/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../clang/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -626,7 +626,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../csharp/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../csharp/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -817,7 +817,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1008,7 +1008,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../objc/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../objc/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1204,7 +1204,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../swift/p2psync-websocket-using-active.html">Active Peer</a>
+    <a class="menu_title menu_link" href="../swift/p2psync-websocket-using-active.html">Using Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -2144,7 +2144,563 @@ public static void main (String [] args) throws CouchbaseLiteException, Interrup
     System.out.println("Finish!");
 
     System.exit(0); <i class="conum" data-value="4"></i><b>(4)</b>
-}</code></pre>
+}
+    // initialize the replicator configuration
+    final ReplicatorConfiguration thisConfig
+       = new ReplicatorConfiguration(
+          thisDB,
+          URLEndpoint(URI("wss://listener.com:8954"))); <i class="conum" data-value="1"></i><b>(1)</b>
+
+    // Set replicator type
+    thisConfig.setReplicatorType(
+      ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+
+    // Configure Sync Mode
+    thisConfig.setContinuous(false); // default value
+
+    // Configure Server Security --
+    // only accept self-signed certs
+    thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="2"></i><b>(2)</b>
+
+    // Configure Client Security <i class="conum" data-value="3"></i><b>(3)</b>
+    // Configure basic auth using user credentials
+    final BasicAuthenticator thisAuth
+      = new BasicAuthenticator(
+          "Our Username",
+          "Our PasswordValue"));
+
+    thisConfig.setAuthenticator(thisAuth)
+
+    /* Optionally set custom conflict resolver call back */
+    thisConfig.setConflictResolver( /* user supplied code */ ); <i class="conum" data-value="4"></i><b>(4)</b>
+
+    // Create replicator
+    final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="5"></i><b>(5)</b>
+
+    // Optionally add a change listener <i class="conum" data-value="6"></i><b>(6)</b>
+    ListenerToken thisListener
+      = new thisReplicator.addChangeListener(change -&gt; {
+        if (change.getStatus().getError() != null) {
+          Log.i(TAG, "Error code ::  " +
+            change.getStatus().getError().getCode());
+        }
+      });
+
+    // Start replicator
+    thisReplicator.start(false); <i class="conum" data-value="7"></i><b>(7)</b>
+
+  }
+}
+
+
+// BEGIN additoinal active snippet
+    // Configure Server Security
+    // -- only accept CA Certs
+    thisConfig.setAcceptOnlySelfSignedServerCertificate(false); <i class="conum" data-value="8"></i><b>(8)</b>
+
+    // Return the remote pinned cert (the listener's cert)
+    byte returnedCert
+    = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
+
+    // ... other replicator configuration
+    // Provide a client certificate to the server for authentication
+    final TLSIdentity thisClientId =
+      TLSIdentity.getIdentity(
+        store,     // keystore holding private key and cert chain
+        "clientId", // key label/alias
+        null        // key password as required
+      ); <i class="conum" data-value="9"></i><b>(9)</b>
+    if (thisClientId == null) { throw new IllegalStateException("Client id not found"); } // Error path
+
+    thisConfig.setAuthenticator(
+      new ClientCertificateAuthenticator(thisClientId)); <i class="conum" data-value="10"></i><b>(10)</b>
+
+    // ... other replicator configuration
+    // final thisReplicator(thisConfig);
+
+    // Use the pinned certificate from the byte array (cert)
+    thisConfig.setPinnedServerCertificate(cert.getEncoded()); <i class="conum" data-value="11"></i><b>(11)</b>
+
+
+
+
+
+
+
+
+    Log.i(TAG, "The Replicator is currently " +
+      thisReplicator.getStatus().getActivityLevel());
+
+    Log.i(TAG, "The Replicator has processed " + t);
+
+    if (thisReplicator.getStatus().getActivityLevel() ==
+      Replicator.ActivityLevel.BUSY) {
+        Log.i(TAG, "Replication Processing");
+        Log.i(TAG, "It has completed " +
+          thisReplicator.getStatus().getProgess().getTotal() +
+          " changes");
+      }
+
+      // Stop replication.
+      thisReplicator.stop(); <i class="conum" data-value="12"></i><b>(12)</b>
+
+
+  }
+
+{
+  CouchbaseLite.init(context);
+  Database thisDB = new Database("passivepeerdb");  <i class="conum" data-value="13"></i><b>(13)</b>
+  // Initialize the listener config
+  final URLEndpointListenerConfiguration thisConfig = new URLEndpointListenerConfiguration(database);
+  thisConfig.setPort(55990)           // &lt;.&gt; Optional; defaults to auto
+  thisConfig.setDisableTls(false)     // &lt;.&gt; Optional; defaults to false
+  thisConfig.setEnableDeltaSync(true) // &lt;.&gt; Optional; Defaults to false
+
+  // Configure the client authenticator (if using basic auth)
+  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "username", "password"}; <i class="conum" data-value="14"></i><b>(14)</b>
+  thisConfig.setAuthenticator(auth); <i class="conum" data-value="15"></i><b>(15)</b>
+
+  // Initialize the listener
+  final URLEndpointListener listener = new URLEndpointListener( thisConfig ); <i class="conum" data-value="16"></i><b>(16)</b>
+
+  // Start the listener
+  listener.start(); <i class="conum" data-value="17"></i><b>(17)</b>
+    }
+
+
+
+Map&lt;String, String&gt; X509_ATTRIBUTES = mapOf(
+           TLSIdentity.CERT_ATTRIBUTE_COMMON_NAME to "Couchbase Demo",
+           TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION to "Couchbase",
+           TLSIdentity.CERT_ATTRIBUTE_ORGANIZATION_UNIT to "Mobile",
+           TLSIdentity.CERT_ATTRIBUTE_EMAIL_ADDRESS to "noreply@couchbase.com"
+       )
+
+TLSIdentity thisIdentity = new TLSIdentity.createIdentity(true, X509_ATTRIBUTES, null, "test-alias");
+
+
+
+
+String thisAlias = "alias-to-delete";
+final KeyStore thisKeyStore
+  =  KeyStore.getInstance("AndroidKeyStore");
+thisKeyStore.load(null);
+thisKeyStore.deleteEntry(thisAlias);
+
+
+// OPTIONALLY:: Retrieve a stored TLS identity using its alias/label
+
+TLSIdentity thisIdentity =
+  new TLSIdentity.getIdentity("couchbase-docs-cert")
+
+
+    // Configure the client authenticator (if using Basic Authentication)
+    // String validUser = new String("validUsername"); // an example username
+    // String validPassword = new String("validPasswordValue"); // an example password
+
+    // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( <i class="conum" data-value="18"></i><b>(18)</b>
+    //   validUser, validPassword -&gt; validUser == "validUsername" &amp;&amp; validPassword == "validPasswordValue" );
+
+    // if (thisAuth) {
+    //   thisConfig.setAuthenticator(auth);
+    // }
+    // else {
+    //   // . . . authentication failed take appropriate exception action
+    //   return
+    // };
+
+
+
+
+    ListenerToken thisListener
+      = new thisReplicator.addChangeListener(change -&gt; { <i class="conum" data-value="19"></i><b>(19)</b>
+      if (change.getStatus().getError() != null) {
+        Log.i(TAG, "Error code ::  " +
+          change.getStatus().getError().getCode());
+        }
+      });
+
+
+
+
+// g u b b i n s
+
+
+    // Configure TLS Cert CA auth using key-stored cert id alias 'doc-sync-server'
+
+    // TLSIdentity thisIdentity = new TLSIdentity.getIdentity("doc-sync-server"); // Get existing TLS ID from sec storage
+
+    // ClientCertificateAuthenticator thisAuth = new ClientCertificateAuthenticator(thisIdentity);
+
+    // thisConfig.setAuthenticator(thisAuth);
+
+
+
+    // USE KEYCHAIN IDENTITY IF EXISTS
+    // Check if Id exists in keychain. If so use that Id
+
+    // STILL NEED TO REFACTOR
+
+    do {
+      if let thisIdentity = try TLSIdentity.identity(withLabel: "couchbase-docs-cert") {
+          print("An identity with label : couchbase-docs-cert already exists in keychain")
+          return thisIdentity
+          }
+    } catch
+    {return nil}
+    thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity )
+    thisConfig.thisAuthenticator
+
+
+
+
+String thisAlias = "alias-to-delete";
+KeyStore thisKeystore = KeyStore.getInstance("AndroidKeyStore"); <i class="conum" data-value="20"></i><b>(20)</b>
+thisKeyStore.load(null);
+if (thisAlias != null) {
+   thisKeystore.deleteEntry(thisAlias);  <i class="conum" data-value="21"></i><b>(21)</b>
+}
+
+
+
+// cert auth
+let thisRootCertData = SecCertificateCopyData(cert) as Data
+let thisRootCert = SecCertificateCreateWithData(kCFAllocatorDefault, thisRootCertData as CFData)!
+// Listener:
+thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [thisRootCert])
+
+SecCertificate thisCert = new SecCertificate(); // populated as nec.
+
+Data thisRootCertData = new Data(SecCertificateCopyData(thisCert));
+
+let thisRootCert = SecCertificateCreateWithData(kCFAllocatorDefault, thisRootCertData as CFData)!
+// Listener:
+thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [thisRootCert])
+// cert auth
+
+
+// C A L L O U T S
+
+&lt;.&gt; Configure to accept only CA certs
+&lt;.&gt; Configure the pinned certificate using data from the byte array `cert`
+
+&lt;.&gt; Attempt to get the identity from secure storage
+&lt;.&gt; Set the authenticator to ClientCertificateAuthenticator and  the configure it to use the retrieved identity
+
+
+
+
+
+
+    // thisConfig.setAuthenticator(
+    // new ListenerCertificateAuthenticator(certs));
+
+
+    // Use CA Cert
+    // Create a TLSIdentity from a key-pair and
+    // certificate in Android's canonical keystore
+    TLSIdentity thisIdentity = new TLSIdentity.getIdentity("server"); <i class="conum" data-value="22"></i><b>(22)</b>
+
+
+
+
+    / For replications
+
+// BEGIN -- snippets --
+//    Purpose -- code samples for use in replication topic
+
+class MyClass {
+  Database database;
+  Replicator replicator; <i class="conum" data-value="1"></i><b>(1)</b>
+
+  void startReplication() {
+      URI uri = null;
+      try {
+          uri = new URI("wss://10.0.2.2:4984/db"); <i class="conum" data-value="2"></i><b>(2)</b>
+      } catch (URISyntaxException e) {
+          e.printStackTrace();
+      }
+      Endpoint endpoint = new URLEndpoint(uri);
+      ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+      config.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PULL);
+      this.replicator = new Replicator(config);
+      this.replicator.start();
+  }
+
+}
+
+
+&lt;.&gt; A replication is an asynchronous operation.
+To keep a reference to the `replicator` object, you can set it as an instance property.
+&lt;.&gt; The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+You should now use `ws:`, or `wss:` for SSL/TLS connections.
+In this example the hostname is `10.0.2.2`.
+
+
+// initialize the replicator configuration
+final ReplicatorConfiguration thisConfig
+    = new ReplicatorConfiguration(
+      thisDB,
+      URLEndpoint(URI("wss://listener.com:8954/travel-sample"))); <i class="conum" data-value="23"></i><b>(23)</b>
+
+
+
+
+
+
+/*
+ QUERY RESULT SET HANDLING EXAMPLES
+*/
+package com.example.docsnippet;
+        import android.app.Application.*;
+        import android.content.Context;
+        import android.content.Context.*;
+        import java.lang.Object;
+        import java.security.Key;
+        import java.util.*;
+        import com.couchbase.lite.*;
+        import com.couchbase.lite.Dictionary;
+
+public class TestQueries {
+
+    // For Documentation
+
+    Datastore ds = new Datastore();
+
+    Database this_Db = ds.getDB();
+
+    String dbName = this_Db.getName();
+
+    HashMap&lt;String, Object&gt; hotels = new HashMap&lt;&gt;();
+
+    Dictionary thisDocsProps;
+    String thisDocsId;
+    String thisDocsName;
+    String thisDocsType;
+    String thisDocsCity;
+
+
+
+    static {
+        init();
+    }
+
+    private static void init() {
+    }
+
+
+
+    public void testQuerySyntaxAll() throws CouchbaseLiteException {
+
+        try {
+          this_Db = new Database("hotels");
+        } catch (CouchbaseLiteException e) {
+          e.printStackTrace();
+        }
+
+      Query listQuery = QueryBuilder.select(SelectResult.all())
+              .from(DataSource.database(this_Db));
+
+
+        try {
+            for (Result result : listQuery.execute().allResults()) {
+                             // get the k-v pairs from the 'hotel' key's value into a dictionary
+                thisDocsProps = result.getDictionary(0)); <i class="conum" data-value="24"></i><b>(24)</b>
+                thisDocsId = thisDocsProps.getString("id");
+                thisDocsName = thisDocsProps.getString("Name");
+                thisDocsType = thisDocsProps.getString("Type");
+                thisDocsCity = thisDocsProps.getString("City");
+
+                // Alternatively, access results value dictionary directly
+                final Hotel hotel = new Hotel();
+                hotel.Id = result.getDictionary(0).getString("id"); <i class="conum" data-value="25"></i><b>(25)</b>
+                hotel.Type = result.getDictionary(0).getString("Type");
+                hotel.Name = result.getDictionary(0).getString("Name");
+                hotel.City = result.getDictionary(0).getString("City");
+                hotel.Country= result.getDictionary(0).getString("Country");
+                hotel.Description = result.getDictionary(0).getString("Description");
+                hotels.put(hotel.Id, hotel);
+
+            }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    // Uses Jackson JSON processor
+
+    ArrayList&lt;Hotel&gt; hotels = new ArrayList&lt;Hotel&gt;();
+    HashMap&lt;String, Object&gt; dictFromJSONstring;
+    for (Result result : listQuery.execute()) {
+
+      // Get result as JSON string
+      String thisJsonString = result.toJSON(); <i class="conum" data-value="26"></i><b>(26)</b>
+
+            // Get Java  Hashmap from JSON string
+      HashMap&lt;String, Object&gt; dictFromJSONstring =
+              mapper.readValue(thisJsonString, HashMap.class); <i class="conum" data-value="27"></i><b>(27)</b>
+
+
+      // Use created hashmap
+      String hotelId = dictFromJSONstring.get("id").toString();
+      String hotelType = dictFromJSONstring.get("type").toString();
+      String hotelname = dictFromJSONstring.get("name").toString();
+
+
+      // Get custom object from Native 'dictionary' object
+      Hotel thisHotel =
+              mapper.readValue(thisJsonString, Hotel.class); <i class="conum" data-value="28"></i><b>(28)</b>
+      hotels.add(thisHotel);
+
+    }
+
+            }
+
+    public void testQuerySyntaxProps() throws CouchbaseLiteException {
+
+        try {
+          this_Db = new Database("hotels");
+        } catch (CouchbaseLiteException e) {
+          e.printStackTrace();
+        }
+
+        Query listQuery =
+                QueryBuilder.select(SelectResult.expression(Meta.id),
+                        SelectResult.property("name"),
+                        SelectResult.property("Name"),
+                        SelectResult.property("Type"),
+                        SelectResult.property("City"))
+                        .from(DataSource.database(this_Db));
+
+
+
+        try {
+            for (Result result : listQuery.execute().allResults()) {
+
+                // get data direct from result k-v pairs
+                final Hotel hotel = new Hotel();
+                hotel.Id = result.getString("id");
+                hotel.Type = result.getString("Type");
+                hotel.Name = result.getString("Name");
+                hotel.City = result.getString("City");
+
+                // Store created hotel object in a hashmap of hotels
+                hotels.put(hotel.Id, hotel);
+
+                // Get result k-v pairs into a 'dictionary' object
+                Map &lt;String, Object&gt; thisDocsProps = result.toMap();
+                thisDocsId =
+                        thisDocsProps.getOrDefault("id",null).toString();
+                thisDocsName =
+                        thisDocsProps.getOrDefault("Name",null).toString();
+                thisDocsType =
+                        thisDocsProps.getOrDefault("Type",null).toString();
+                thisDocsCity =
+                        thisDocsProps.getOrDefault("City",null).toString();
+
+            }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+    public void testQuerySyntaxCount() throws CouchbaseLiteException {
+      try {
+        this_Db = new Database("hotels");
+      } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+      }
+
+      Query listQuery = QueryBuilder.select(
+              SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) <i class="conum" data-value="29"></i><b>(29)</b>
+              .from(DataSource.database(this_Db));
+
+
+
+        try {
+            for (Result result : listQuery.execute()) {
+
+                // Retrieve count using key 'mycount'
+                Integer altDocId = result.getInt("mycount");
+
+                // Alternatively, use the index
+                Integer orDocId = result.getInt(0);
+            }
+            // Or even miss out the for-loop altogether
+            Integer resultCount = listQuery.execute().next().getInt("mycount");
+
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public void testQuerySyntaxId() throws CouchbaseLiteException {
+      try {
+        this_Db = new Database("hotels");
+      } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+      }
+
+      Query listQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id).as("metaID"))
+                      .from(DataSource.database(this_Db));
+
+
+
+
+        try {
+            for (Result result : listQuery.execute().allResults()) {
+
+                // get the ID form the result's k-v pair array
+                thisDocsId = result.getString("metaID"); <i class="conum" data-value="30"></i><b>(30)</b>
+
+                // Get document from DB using retrieved ID
+                Document thisDoc = this_Db.getDocument(thisDocsId);
+
+                // Process document as required
+                thisDocsName = thisDoc.getString("Name");
+
+            }
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+    public void testQueryPagination() throws CouchbaseLiteException {
+
+
+        try {
+          this_Db = new Database("hotels");
+        } catch (CouchbaseLiteException e) {
+          e.printStackTrace();
+        }
+
+        int thisOffset = 0;
+        int thisLimit = 20;
+
+        Query listQuery =
+                QueryBuilder
+                        .select(SelectResult.all())
+                        .from(DataSource.database(this_Db))
+                        .limit(Expression.intValue(thisLimit),
+                                  Expression.intValue(thisOffset)); <i class="conum" data-value="31"></i><b>(31)</b>
+
+
+    }
+
+
+
+
+
+    } // class</code></pre>
 </div>
 </div>
 <div class="colist arabic">
