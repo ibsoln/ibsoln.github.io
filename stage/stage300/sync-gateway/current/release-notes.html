@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Release Notes | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/stage300/sync-gateway/current/release-notes.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
 <meta name="description" content="Couchbase Sync Gateway">
@@ -110,7 +111,7 @@
       <div class="component_list-version">
         <span class="component_list_title">Couchbase Lite</span>
         <select class="version_list" data-component="couchbase-lite">
-          <option value="3.0" data-url="../../couchbase-lite/current/index.html" selected>3.0 BETA</option>
+          <option value="3.0" data-url="../../couchbase-lite/current/index.html" selected>3.0</option>
         </select>
       </div>
       <div class="version_items hide" data-version="3.0">
@@ -122,7 +123,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#couchbase-lite:param-module undefined:cbl-whatsnew.adoc"><strong><em>New in 3.0</em></strong></a>
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/cbl-whatsnew.html">New at 3.0</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1328,7 +1329,7 @@
       <div class="component_list-version">
         <span class="component_list_title">Sync Gateway</span>
         <select class="version_list" data-component="sync-gateway">
-          <option value="3.0" data-url="index.html" selected>3.0 BETA</option>
+          <option value="3.0" data-url="index.html" selected>3.0</option>
         </select>
       </div>
       <div class="version_items hide" data-version="3.0">
@@ -2011,51 +2012,168 @@
 <div class="exampleblock">
 <div class="content">
 <div class="paragraph">
-<p><a href="#new-features-300">New Features</a> <strong>|</strong> <a href="#improvements-300">Enhancements</a> <strong>|</strong> <a href="#issues-and-resolutions-300">Issues and Resolutions</a> <strong>|</strong> <a href="#support-notices-300">Support Notices</a> <strong>|</strong> <a href="#related-content">Related Content</a></p>
+<p><a href="#new-features-300">New Features</a> <strong>|</strong> <a href="#improvements-300">Other Enhancements</a> <strong>|</strong> <a href="#issues-and-resolutions-300">Issues and Resolutions</a> <strong>|</strong> <a href="#support-notices-300">Support Notices</a> <strong>|</strong> <a href="#related-content">Related Content</a></p>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="new-features-300"><a class="anchor" href="#new-features-300"></a>New Features</h3>
 <div class="sect3">
-<h4 id="version-vectors"><a class="anchor" href="#version-vectors"></a>Version Vectors</h4>
+<h4 id="centralized-persistent-modular-configuration"><a class="anchor" href="#centralized-persistent-modular-configuration"></a>Centralized Persistent Modular Configuration</h4>
 <div class="paragraph">
-<p>Introduce and describe the key changes and benefits</p>
+<p><em>Centralized Persistent Modular Configuration is a core enhancement that makes it simpler for administrators to configure and manage the Sync Gateway.</em></p>
+</div>
+<div class="paragraph">
+<p>This enhancement removes reliance on monolithic JSON configuration files whilst providing a modular and <em>cluster-aware</em> approach to Sync Gateway node configuration.</p>
+</div>
+<div class="paragraph">
+<p>Basic startup configuration settings bootstrap your Sync Gateway nodes and securely connect them to a Couchbase Server.
+Configuration of cluster-wide Sync Gateway databases, access control policies and inter-Sync Gateway replications is then provided using the Admin REST API.</p>
+</div>
+<div class="paragraph">
+<p>Persistent configuration changes made to any node in a sync&#160;gateway cluster are automatically propagated throughout the cluster or&#8201;&#8212;&#8201;by using Sync&#160;gateway groups&#8201;&#8212;&#8201;a defined cluster subset.
+These changes persist across sync&#160;gateway restarts.</p>
+</div>
+<div class="paragraph">
+<p>Your existing JSON configurations can be automatically converted to the new centralized persistent modular configuration format on start-up; there is an opt-out for user wishing to temporarily continue working in pre-3.0 mode.
+Additional Detail::</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Ad Hoc database config changes made via REST API are persisted in corresponding server bucket and are not lost during sync gateway restarts - either crashes or deliberate restarts).</p>
+</li>
+<li>
+<p>The ability to centrally update the database config in large clusters simplifies manageability and administration. Database changes made to a node are automatically applied to all nodes in a cluster or  can be scoped to a subset of nodes.</p>
+</li>
+<li>
+<p>The ability to securely administer the Sync Gateway cluster using the admin REST endpoint enables programmatic control and simplifies remote administration in cloud deployments without relying on options like SSH-tunneling.</p>
+</li>
+<li>
+<p>Maintaining a monolithic file is difficult especially if the configuration is complex. Multiple sync gateway databases may be defined in a single config file. This has potentially undesirable consequences in multi-tenant applications where database changes made for one tenant would require a restart of the node impacting all tenants.</p>
+</li>
+<li>
+<p>A simple migration path ensures that existing JSON configurations are automatically converted to the new persistent modular cpnfiguration format on start-up.
+Users can opt-out of this should they wish to continue working in pre-3.x mode.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">More</dt>
+<dd>
+<p><a href="configuration-overview.html" class="page">Configuration Overview</a></p>
+</dd>
+</dl>
+</div>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect3">
-<h4 id="centralized-configuration"><a class="anchor" href="#centralized-configuration"></a>Centralized Configuration</h4>
+<h4 id="tls-encryption-enabled-by-default"><a class="anchor" href="#tls-encryption-enabled-by-default"></a>TLS Encryption Enabled by Default</h4>
 <div class="paragraph">
-<p>Introduce and describe the key changes and benefits</p>
+<p><em>The default enabling of secure TLS connections for all Couchbase Server, Client and REST API communication ensures that all communication is encrypted; enforcing and encouraging security best practices.</em></p>
+</div>
+<div class="paragraph">
+<p>Sync Gateway supports v1.3 of TLS by default.
+No un-encrypted access using non-TLS schemes (for example, <code>couchbase://</code> or <code>http://</code>) is permitted for client side network traffic through Couchbase Lite replications, the REST API endpoints, nor Couchbase Server.</p>
+</div>
+<div class="paragraph">
+<p>While we strongly recommend always having TLS enabled, we recognize that users may want to disable it for development and testing environments; there is an opt-out option to do this.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">More</dt>
+<dd>
+<p><a href="secure-sgw-access.html" class="page">Secure Sync Gateway Access</a></p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect3">
-<h4 id="configuration-using-environment-variables"><a class="anchor" href="#configuration-using-environment-variables"></a>Configuration using Environment Variables</h4>
+<h4 id="secure-remote-administration"><a class="anchor" href="#secure-remote-administration"></a>Secure Remote Administration</h4>
 <div class="paragraph">
-<p>Sync Gateway configuration is extended to allow the use of defined <em>environment variables</em> as substitution values inside the configuration file.
-This allows users to determine, pick-up and substitute appropriate values during Sync Gateway start-up.</p>
+<p><em>This major enhancement complements the introduction of the centralized persistent configuration by introducing secure administration of a cluster through the Admin REST API.</em></p>
+</div>
+<div class="paragraph">
+<p>The Admin REST API now enforces authentication and role-based access control by default.</p>
+</div>
+<div class="paragraph">
+<p>All Admin API traffic must be conducted using existing, valid, Couchbase Server RBAC user credentials.
+These users must be set-up with specific sync gateway roles.</p>
+</div>
+<div class="paragraph">
+<p>A similar approach is also adopted for users of the Metrics API.
+Public API users are not impacted by the change.
+With authentication support, the admin API can be securely accessed from external clients without the need for network infrastructure based access control mechanisms such as SSH tunneling or firewall rules to restrict access to certain subnets or machine(s). Remote administration is particularly important in distributed cloud deployments.Remote administration is essential in many cases. Backend server applications such as identity servers may require programmatic access to the admin REST API for configuring sync gateway users. With the new release, database administration and sync function updates can be securely handled via the REST endpoint.
+User-level access restrictions offer more flexibility than network-level firewalls. For instance, administrators may require temporary access to the Sync Gateway’s admin APIs from a network that is not in the allow-list per firewall policies.
+Different applications have different purposes and different users. With this enhancement, only users with a specific Sync Gateway role will be able to administer the Sync Gateway through the admin REST endpoint. Future releases of Couchbase Server will include support for finer grained Sync Gateway roles that would allow more granular control over the admin functionality. So stay tuned!</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">More</dt>
+<dd>
+<p><a href="rest-api-access.html" class="page">REST API Access</a></p>
+</dd>
+</dl>
 </div>
 </div>
 <div class="sect3">
-<h4 id="external-javascript-functions-in-config-file"><a class="anchor" href="#external-javascript-functions-in-config-file"></a>External Javascript Functions in Config File</h4>
+<h4 id="user-defined-extended-attributesxattrs-for-access-control-metadata"><a class="anchor" href="#user-defined-extended-attributesxattrs-for-access-control-metadata"></a>User Defined Extended Attributes(XAttrs) for Access Control Metadata</h4>
 <div class="paragraph">
-<p>Introduce and describe the key changes and benefits</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="extended-attribute-access-grants"><a class="anchor" href="#extended-attribute-access-grants"></a>Extended Attribute Access Grants</h4>
-<div class="paragraph">
-<p>You can now use Extended Attributes (XATTRs) to specify channel access grants outside of the document body.
-This key architectural enhancement enforces separation of concerns.
-It ensures that changes to access grants do not impact document body content and are not propagated to the clients.</p>
+<p><em>Use extended attributes (metadata) to avoid the need to embed sensitive access grant information such as channels and roles within document bodies.</em></p>
 </div>
 <div class="paragraph">
-<p><em>Key benefits</em>: Bandwidth savings; Addresses privacy concerns; Avoids changes to existing data models.</p>
+<p>This key architectural enhancement enforces separation of concerns by providing you the option to use Extended Attributes (XATTRs) to specify channel access grants outside of your document bodies.</p>
+</div>
+<div class="paragraph">
+<p>In addition to addressing privacy concerns, this feature can result in bandwidth savings as it ensures that changes to access grants do not impact document body content and so are no longer propagated to clients.</p>
+</div>
+<div class="paragraph">
+<p>The separation of access grant metadata from document body is logical and offers several benefits:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Embedding access grant metadata within the document body implies that changes to the access grants associated with a document will result in a corresponding update to the document body. The document update in turn will trigger a document replication to the clients. Access grant changes are irrelevant to clients resulting in “noise”. More importantly, if the channel list is large, then the document replications could result in significant bandwidth usage.</p>
+</li>
+<li>
+<p>Embedding channel access grants within the document body will make that information accessible to all users who are syncing that document. This may raise certain privacy concerns. For example, if channel names correspond to user IDs, then a user replicating a document would have knowledge of other users who have access to the document.</p>
+</li>
+<li>
+<p>The data model of existing documents do not have to be modified in order to retrofit access grant data with a dedicated property. So existing processes and applications do not have to be modified to use Sync Gateway for data sync.
+Of course, we recognize that there are instances where deriving the channel or access grant information based on contents of the document body is the best option. So that option will continue to be supported.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">More</dt>
+<dd>
+<p><a href="access-control-how-use-xattrs-for-access-grants.html" class="page">Use XATTRs for Access Grants</a></p>
+</dd>
+</dl>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><em>This enhancement to inter-Sync Gateway replication technology helps with the enforcement of data privacy and governance in complex workflows.</em></p>
+</div>
+<div class="paragraph">
+<p>Sync&#160;gateway nodes can replicate data with each other using
+<a href="sync-inter-syncgateway-overview.html" class="page">inter-Sync Gateway replication</a> technology.</p>
+</div>
+<div class="paragraph">
+<p>When a user loses access to a channel (and therefore the documents in it) you can opt to enable the initiating sync&#160;gateway cluster to auto-purge those documents in the revoked channel.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">More</dt>
+<dd>
+<p><a href="auto-purge-channel-access-revocation.html" class="page">Auto-purge on Channel Access Revocation</a></p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="improvements-300"><a class="anchor" href="#improvements-300"></a>Enhancements</h3>
+<h3 id="improvements-300"><a class="anchor" href="#improvements-300"></a>Other Enhancements</h3>
 <div class="sect3">
 <h4 id="configuration-changes"><a class="anchor" href="#configuration-changes"></a>Configuration Changes</h4>
 <div class="sect4">
@@ -2064,7 +2182,24 @@ It ensures that changes to access grants do not impact document body content and
 </div>
 <div class="sect4">
 <h5 id="environment-variables"><a class="anchor" href="#environment-variables"></a>Environment Variables</h5>
-
+<div class="paragraph">
+<p>Sync Gateway configuration is extended to allow the use of defined <em>environment variables</em> as substitution values inside the configuration file.
+This allows users to determine, pick-up and substitute appropriate values during Sync Gateway start-up.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">More</dt>
+<dd>
+<p><a href="configuration-environment-variables.html" class="page">Configuration Environment Variables</a></p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="external-javascript-functions-in-config-file"><a class="anchor" href="#external-javascript-functions-in-config-file"></a>External Javascript Functions in Config File</h4>
+<div class="paragraph">
+<p>Introduce and describe the key changes and benefits</p>
 </div>
 <div class="sect4">
 <h5 id="external-javascript"><a class="anchor" href="#external-javascript"></a>External Javascript</h5>
