@@ -7,7 +7,7 @@
 <link rel="canonical" href="https://ibsoln.github.io/stage/stage300/sync-gateway/current/secure-sgw-access.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Couchbase Sync Gateway TLS Authentication">
+<meta name="description" content="Couchbase Sync Gateway TLS encryption and verification">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="3.0">
@@ -1995,7 +1995,7 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Couchbase Sync Gateway TLS Authentication<br></p>
+<p>Couchbase Sync Gateway TLS encryption and verification<br></p>
 </div>
 </blockquote>
 </div>
@@ -2008,11 +2008,11 @@
 <h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>From <em>Sync&#160;Gateway</em> 3.0, TLS is enabled by default on sync&#160;gateway.
+<p>From <em>Sync&#160;Gateway</em> 3.0, TLS is required by default for all communications with Couchbase Server.
 TLS v1.3 is supported as the default protocol.</p>
 </div>
 <div class="paragraph">
-<p>This approach means  (unless you disable the feature) that all endpoints communicating with sync&#160;gateway must be encrypted, including:</p>
+<p>This approach means that that all endpoints communicating with sync&#160;gateway must also be encrypted, including:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2022,97 +2022,27 @@ TLS v1.3 is supported as the default protocol.</p>
 <li>
 <p>Replication and client side network traffic, for example through Couchbase Lite replications</p>
 </li>
-<li>
-<p>Couchbase Server</p>
-</li>
 </ul>
-</div>
-<div class="paragraph">
-<p>The Admin and Metrics API require authorization using Couchbase Server RBAC user account credentials&#8201;&#8212;&#8201;see <a href="#lbl-rest-api-access">REST API Access</a>.
-The Public API is unchanged, with authentication using sync&#160;gateway user credentials.</p>
 </div>
 <div class="paragraph">
 <p>We strongly recommend always having TLS enabled, although this can be over-ridden for <strong>development and testing only</strong>.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-rest-api-access"><a class="anchor" href="#lbl-rest-api-access"></a>REST API Access</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="admin-and-metrics-api"><a class="anchor" href="#admin-and-metrics-api"></a>Admin and Metrics API</h3>
 <div class="paragraph">
-<p>Administrators typically use the Admin REST API to manage sync&#160;gateway.
-From 3.0 they will need to use Couchbase Server <em>RBAC user</em>  credentials; not sync&#160;gateway user credentials to do so.
-This applies also to users of the Metrics REST API</p>
-</div>
-<div class="paragraph">
-<p>Couchbase Server <em>RBAC user</em> credentials are required to authenticate and authorize access to the Admin and Metrics API.
-You will need to create these users on Couchbase server in order to enable access&#8201;&#8212;&#8201;see: <a href="get-started-prepare.html#step-2create-rbac-user" class="page">Create RBAC users</a> for how to and <a href="../../server/current/learn/security/authorization-overview.html" class="page">Security Authorization Overview</a> for more on RBAC user authentication.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="public-rest-api"><a class="anchor" href="#public-rest-api"></a>Public REST API</h3>
-<div class="paragraph">
-<p>Users of the public REST API can continue to authenticate using Sync Gateway user credentials for basic authentication.
-The role and the user assigned to it can be created using the ADMIN API endpoints.
-Then, the Sync Function&#8217;s <a href="sync-function-api-require-role-cmd.html" class="page">requireRole()</a> helper function can be used to allow certain operations only if the user has that role.</p>
-</div>
-<div class="paragraph">
-<p>The GUEST mode can be enabled if required (for development and testing purposes only) to override the requirement for specific user credentials.</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">More</dt>
-<dd>
-<p><a href="rest-api-access.html" class="page">REST API Access</a></p>
-</dd>
-</dl>
-</div>
-</div>
-<div class="sect2">
-<h3 id="behavior"><a class="anchor" href="#behavior"></a>Behavior</h3>
-<table id="tbl-restapi-behavior" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. sync&#160;gateway &#8592;&#8594; REST API</caption>
-<colgroup>
-<col style="width: 33.3333%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3334%;">
-</colgroup>
-<tbody>
-<tr>
-<th class="tableblock halign-left valign-bottom"><p class="tableblock">Configuration Properties</p></th>
-<th class="tableblock halign-left valign-bottom"><p class="tableblock">Default Behavior</p></th>
-<th class="tableblock halign-left valign-bottom"><p class="tableblock">Opt-Out Trigger</p></th>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="configuration-schema-bootstrap.html#api-https-tls_cert_path" class="page">api.https.tls_cert_path</a><br>
-<a href="configuration-schema-bootstrap.html#api-https-tls_key_path" class="page">api.https.tls_key_path</a></p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TLS encryption is enabled by default, unless the opt-out is triggered</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Omit the key and certificate path properties from the configuration</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
+<p>Additionally, the <em>Admin</em> and <em>Metrics REST API</em> security is also enhanced by the use of <em>Couchbase Server RBAC user</em> credentials to authenticate and authorize access&#8201;&#8212;&#8201;see: <a href="rest-api-access.html" class="page">REST API Access</a></p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="replication"><a class="anchor" href="#replication"></a>Replication</h2>
+<h2 id="syncgateway-couchbase-lite-sync"><a class="anchor" href="#syncgateway-couchbase-lite-sync"></a>Sync&#160;Gateway-Couchbase Lite Sync</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Couchbase Lite client applications must be updated to use TLS when connecting to sync&#160;gateway nodes running in default mode.</p>
 </div>
-<div class="sect2">
-<h3 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h3>
 <div class="paragraph">
-<p>The content in <a href="#tbl-tls-config-options">Table 2</a> shows the configuration options used to control this for replication.</p>
+<p><a href="#tbl-tls-config-options">Table 1</a> shows the TLS configuration options, whilst <a href="#tbl-replication-behavior">Table 2</a> shows the default and opt-out behavior.</p>
 </div>
 <table id="tbl-tls-config-options" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Configuration options controlling TLS-encryption</caption>
+<caption class="title">Table 1. TLS configuration options</caption>
 <colgroup>
 <col style="width: 18.1818%;">
 <col style="width: 31.8181%;">
@@ -2159,11 +2089,8 @@ Then, the Sync Function&#8217;s <a href="sync-function-api-require-role-cmd.html
 <div class="paragraph">
 <p>Omit both options to use <em>plaintext</em>&#8201;&#8212;&#8201;for development and-or testing <strong>only</strong>&#8201;&#8212;&#8201;see the <a href="configuration-schema-bootstrap.html" class="page">Bootstrap Configuration Schema</a>.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="behavior-2"><a class="anchor" href="#behavior-2"></a>Behavior</h3>
 <table id="tbl-replication-behavior" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. sync&#160;gateway &#8592;&#8594; Replicator behavior</caption>
+<caption class="title">Table 2. TLS behavior</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 33.3333%;">
@@ -2180,14 +2107,13 @@ Then, the Sync Function&#8217;s <a href="sync-function-api-require-role-cmd.html
 <p><a href="configuration-schema-bootstrap.html#api-https-tls_cert_path" class="page">api.https.tls_cert_path</a><br>
 <a href="configuration-schema-bootstrap.html#api-https-tls_key_path" class="page">api.https.tls_key_path</a></p>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">TLS encryption is enabled by default, unless the opt-out is triggered</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TLS verification and encryption is enabled by default, unless the opt-out is triggered</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Provide nil values for the key and certificate paths</p>
 </div></div></td>
 </tr>
 </tbody>
 </table>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -2201,22 +2127,22 @@ Then, the Sync Function&#8217;s <a href="sync-function-api-require-role-cmd.html
 But, this must only be done for testing or development purposes.</p>
 </div>
 <div class="paragraph">
-<p>The content in <a href="#tbl-tls-config-options">Table 2</a> shows the configuration options used to control authentication requirements between {sgw) and Couchbase Server.
-The options include flags that will allow you to override the requirement to use TLS in testing and-or development environments <strong>only</strong>.</p>
+<p>The content in <a href="#tbl-tls-config-options">Table 1</a> shows the TLS configuration options for {sgw)-Couchbase Server communication.
+The options include flags that will allow you to override the requirement to use TLS&#8201;&#8212;&#8201;for use in testing and-or development environments <strong>only</strong>.</p>
 </div>
 <table id="tbl-tls-config-options" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. Configuration options sync&#160;gateway &#8592;&#8594;Couchbase Server</caption>
+<caption class="title">Table 3. Configuration options sync&#160;gateway &#8592;&#8594;Couchbase Server</caption>
 <colgroup>
-<col style="width: 45%;">
-<col style="width: 5%;">
-<col style="width: 50%;">
+<col style="width: 40%;">
+<col style="width: 30%;">
+<col style="width: 30%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-top">Bootstrap Configuration /<br>
 Command-line flag</th>
-<th class="tableblock halign-center valign-top">Default</th>
-<th class="tableblock halign-left valign-top">Purpose</th>
+<th class="tableblock halign-left valign-top">Default Behavior</th>
+<th class="tableblock halign-left valign-top">Opt-out</th>
 </tr>
 </thead>
 <tbody>
@@ -2225,12 +2151,11 @@ Command-line flag</th>
 <p><code>bootstrap.use_tls_server</code><br>
 CLI: <code>-bootstrap.use_tls_server</code></p>
 </div></div></td>
-<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
-<p><code>true</code></p>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>TLS enabled<br></p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Default: TLS enabled<br>
-Set this <code>false</code> to allow use of non-secure protocols (<code>couchbase://</code> instead of <code>couchbases://</code>)&#8201;&#8212;&#8201;<strong>development and testing only</strong></p>
+<p>Omit from bootstrap file or set this <code>false</code> in CLI to turn-off off TLS completely&#8201;&#8212;&#8201;<strong>development and testing only</strong></p>
 </div></div></td>
 </tr>
 <tr>
@@ -2238,12 +2163,21 @@ Set this <code>false</code> to allow use of non-secure protocols (<code>couchbas
 <p><code>bootstrap.server_tls_skip_verify</code><br>
 CLI: <code>-bootstrap.server_tls_skip_verify</code></p>
 </div></div></td>
-<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
-<p><code>false</code></p>
-</div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Default: TLS enabled<br>
-Set this <code>true</code> to skip validation of any certificates received from the server with the CA certificate&#8201;&#8212;&#8201;<strong>development and testing only</strong></p>
+<p>TLS enabled unless <code>use_tls_server</code> opt-out used</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>Omit from bootstrap file or set this <code>true</code> in CLI to skip server verification of certificates (self- or CA-signed) but leave encryption enabled.<br></p>
+</li>
+<li>
+<p>Do not provide <code>ca_cert_path</code>, <code>x509_cert_path</code>, or <code>x509_cert_path</code></p>
+</li>
+<li>
+<p>Use for <strong>development and testing only</strong></p>
+</li>
+</ul>
 </div></div></td>
 </tr>
 <tr>
@@ -2251,13 +2185,10 @@ Set this <code>true</code> to skip validation of any certificates received from 
 <p><code>bootstrap.ca_cert_path</code><br>
 CLI: <code>-bootstrap.ca_cert_path</code></p>
 </div></div></td>
-<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
-<p>CA Root Pool</p>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Provides the path to the root CA certificate to verify the certificate chain and hostname of the Couchbase Server cluster</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Provide the path to the root CA certificate to verify the certificate chain and hostname of the Couchbase Server cluster</p>
-</div>
-<div class="paragraph">
 <p>Omit if not required</p>
 </div></div></td>
 </tr>
@@ -2266,14 +2197,8 @@ CLI: <code>-bootstrap.ca_cert_path</code></p>
 <p><code>bootstrap.x509_cert_path</code><br>
 CLI: <code>-bootstrap.x509_cert_path</code></p>
 </div></div></td>
-<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
-<p>-</p>
-</div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Provide the path to the client&#8217;s certificate to authenticate against Couchbase Server <sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
-</div>
-<div class="paragraph">
-<p>Omit if not required</p>
+<p>Provides the path to the client&#8217;s certificate to authenticate against Couchbase Server <sup class="footnote">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></p>
 </div>
 <div id="footnotes">
 <hr>
@@ -2281,20 +2206,17 @@ CLI: <code>-bootstrap.x509_cert_path</code></p>
 <a href="#_footnoteref_2">2</a>. 5.5 or above
 </div>
 </div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Omit if not required</p>
+</div></div></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p><code>bootstrap.x509_key_path</code><br>
 CLI: <code>-bootstrap.x509_key_path</code></p>
 </div></div></td>
-<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
-<p>-</p>
-</div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Provide the path to the the client&#8217;s private key to authenticate against Couchbase Server <sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnotedef_3" title="View footnote.">3</a>]</sup></p>
-</div>
-<div class="paragraph">
-<p>Omit if not required</p>
+<p>Provides the path to the the client&#8217;s private key to authenticate against Couchbase Server <sup class="footnote">[<a id="_footnoteref_3" class="footnote" href="#_footnotedef_3" title="View footnote.">3</a>]</sup></p>
 </div>
 <div id="footnotes">
 <hr>
@@ -2302,13 +2224,16 @@ CLI: <code>-bootstrap.x509_key_path</code></p>
 <a href="#_footnoteref_3">3</a>. 5.5 or above
 </div>
 </div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Omit if not required</p>
+</div></div></td>
 </tr>
 </tbody>
 </table>
 <div class="sect2">
-<h3 id="behavior-3"><a class="anchor" href="#behavior-3"></a>Behavior</h3>
+<h3 id="behavior"><a class="anchor" href="#behavior"></a>Behavior</h3>
 <table id="tbl-server-behavior" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. Sync Gateway &#8592;&#8594; Couchbase Server behavior</caption>
+<caption class="title">Table 4. Sync Gateway &#8592;&#8594; Couchbase Server behavior</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 44.4444%;">
@@ -2316,7 +2241,7 @@ CLI: <code>-bootstrap.x509_key_path</code></p>
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-bottom">Required Configyuration</th>
+<th class="tableblock halign-left valign-bottom">Required Configuration</th>
 <th class="tableblock halign-left valign-bottom">Default Behavior</th>
 <th class="tableblock halign-left valign-bottom">Opt-Out Trigger</th>
 </tr>
@@ -2354,19 +2279,20 @@ Set the certificate and key path:</p>
 <ul>
 <li>
 <p>If <code>server_skip_tls_verify=true</code><br>
-Then sync&#160;gateway will skip validation of any server cert.
+Then sync&#160;gateway will skip validation of any server cert, but still require encryption.
 This includes skipping validation of certs that are from a trusted/well known CA</p>
 </li>
 <li>
 <p>If <code>server_skip_tls_verify=false</code><br>
-then only certificates from a trusted/well known CA will be accepted</p>
+Then only certificates from a trusted/well known CA will be accepted</p>
 </li>
 </ul>
 </div>
 </li>
 </ul>
 </div></div></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>use_tls_server=false</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>use_tls_server=false (or omitted)<br>
+server_skip_tls_verify=true (or included)</code></p></td>
 </tr>
 </tbody>
 </table>

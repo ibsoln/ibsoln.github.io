@@ -2024,25 +2024,22 @@ Shows how to access Sync Gateway APIs</p>
 This makes it easy to control their physical exposure, perhaps to keep the Admin REST API secure behind your firewall.</p>
 </div>
 <div class="paragraph">
-<p>Sync&#160;gateway 3.0 brings additional layers of security by <a href="secure-sgw-access.html" class="page">enforcing TLS encryption</a> for all API traffic and by requiring Couchbase Server Role-Based Access Control (RBAC) authentication for all <a href="#lbl-secure-users">Admin and Metrics API users</a>.</p>
+<p>Sync&#160;gateway 3.0 brings additional optional but default layers of security through <a href="secure-sgw-access.html" class="page">enforcing TLS encryption</a> for all API traffic and Couchbase Server Role-Based Access Control (RBAC) authorization and authentication for all <a href="#lbl-secure-users">Admin and Metrics API users</a>.</p>
 </div>
 <div class="paragraph">
-<p>RBAC user authentication enables secure remote administration of sync&#160;gateway clusters.
+<p>RBAC user authentication enables <a href="#lbl-secure-users">Secure Remote Administrations</a> of sync&#160;gateway clusters.
 This is critical in cloud native deployments.
 It provides secure and fine-grained access control.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="basic-authentication"><a class="anchor" href="#basic-authentication"></a>Basic Authentication</h2>
+<h2 id="tls"><a class="anchor" href="#tls"></a>TLS</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>In 3.0, TLS is enabled by default.
-It will use the use credentials provided with the request for authentication.
-That will be the sync&#160;gateway user on the Public REST API and the appropriated Couchbase Server RBAC-user credentials for Metrics and Admin APIs.</p>
-</div>
-<div class="paragraph">
-<p>The only exception to this is the use of the Public REST API&#8217;s <em>GUEST</em> mode; which is for use in testing and-or development environments only.</p>
+It uses credentials provided with the request for authentication.
+The only exception to this is the use of the Public REST API&#8217;s <em>GUEST</em> mode; which is for use in testing and-or development environments only.</p>
 </div>
 <div class="paragraph">
 <p>For more on TLS, see: <a href="secure-sgw-access.html" class="page">enforcing TLS encryption</a>.</p>
@@ -2050,107 +2047,21 @@ That will be the sync&#160;gateway user on the Public REST API and the appropria
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-secure-users"><a class="anchor" href="#lbl-secure-users"></a>RBAC Users</h2>
+<h2 id="lbl-secure-users"><a class="anchor" href="#lbl-secure-users"></a>Secure Remote Administration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In order to submit Admin or Metrics REST API requests you must create specific Couchbase Server users for that purpose.
+<p>Secure Remote Administration is <strong>on</strong> by default.</p>
+</div>
+<div class="paragraph">
+<p>In order to submit Admin or Metrics REST API requests you should create specific Couchbase Server users for that purpose.
 You will then provide a valid set of Couchbase Server credentials for these RBAC-users in each API request.</p>
 </div>
 <div class="paragraph">
-<p>This authentication requirement is switched <strong>on</strong> by default.
-You can disable it using the bootstrap configuration settings or CLI flags:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Bootstrap file:</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>api.admin_interface_authentication</code></p>
-</li>
-<li>
-<p><code>api.metrics_interface_authentication</code></p>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>CLI flags</p>
-<div class="ulist">
-<ul>
-<li>
-<p><code>-admin_interface_authentication=false</code>.</p>
-</li>
-<li>
-<p><code>-metrics_interface_authentication=false</code>.</p>
-</li>
-</ul>
-</div>
-</li>
-</ul>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Authentication against an external system such as LDAP via Couchbase Server can increase the risk of performance and or connection issues&#8201;&#8212;&#8201;for more on this see the Couchbase Server documentation <a href="../../server/current/learn/security/authentication-domains.html#ldap-users-and-applications" class="page">LDAP Users and Authentication</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Authenticated users will have full access to admin API functionality, application data and configuration settings, depending upon the selected role.
-Currently available roles include:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Full Admin</p>
-</li>
-<li>
-<p>Read-Only Admin</p>
-</li>
-<li>
-<p>Application Access</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a> users can exert finer-grained control over functionality by using  <a href="#lbl-rbac-roles">RBAC Roles</a></p>
-</div>
-<div class="paragraph">
-<p>For more on creating Couchbase Server users see the Couchbase Server content here <a href="../../server/current/manage/manage-security/manage-users-and-roles.html" class="page">Server&#8201;&#8212;&#8201;Manage Users and Roles</a>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-rbac-roles"><a class="anchor" href="#lbl-rbac-roles"></a>RBAC Roles</h2>
-<div class="sectionbody">
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-This content relates only to <a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>You can assign your Couchbase Server users a sync&#160;gateway role appropriate for the activities required of the specific user.
-This allows for fine-grained control, perhaps limiting database creation and configuration activities to specific user(s).</p>
-</div>
-<div class="paragraph">
-<p>The roles available for assignment vary by Couchbase Server release&#8201;&#8212;&#8201;see <a href="#tbl-ee-svr-sgw-roles">Table 1</a></p>
+<p>Authenticated users will have access to Admin and-or Metrics API functionality, application data and configuration settings.
+The access-level will depend on the selected role. Currently available roles may vary depending on the Couchbase Server release version&#8201;&#8212;&#8201;see <a href="#tbl-ee-svr-sgw-roles">Table 1</a>.<br></p>
 </div>
 <table id="tbl-ee-svr-sgw-roles" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. <em>Sync&#160;Gateway</em> role availability</caption>
+<caption class="title">Table 1. Sync&#160;gateway role availability by release</caption>
 <colgroup>
 <col style="width: 33.3333%;">
 <col style="width: 16.6666%;">
@@ -2160,18 +2071,18 @@ This allows for fine-grained control, perhaps limiting database creation and con
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top"></th>
-<th class="tableblock halign-center valign-top" colspan="3">Couchbase Server Versions</th>
-<th class="tableblock halign-center valign-top">CE</th>
+<th class="tableblock halign-left valign-top">Couchbase Server</th>
+<th class="tableblock halign-center valign-top" colspan="3"><a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a> Versions</th>
+<th class="tableblock halign-center valign-top"><a href="https://www.couchbase.com/products/editions">COMMUNITY EDITION</a> Versions</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<th class="tableblock halign-left valign-top"><p class="tableblock">Roles</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Available Roles</p></th>
 <th class="tableblock halign-center valign-top"><p class="tableblock">6.1 - 7.0</p></th>
 <th class="tableblock halign-center valign-top"><p class="tableblock">5.5 - 6.0</p></th>
 <th class="tableblock halign-center valign-top"><p class="tableblock">5.1</p></th>
-<th class="tableblock halign-center valign-top"><p class="tableblock">All</p></th>
+<th class="tableblock halign-center valign-top"><p class="tableblock">All Versions</p></th>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">sync-gateway role</p></td>
@@ -2203,13 +2114,65 @@ This allows for fine-grained control, perhaps limiting database creation and con
 </tr>
 </tbody>
 </table>
+<div class="paragraph">
+<p>For more on creating Couchbase Server users see the Couchbase Server content here <a href="../../server/current/manage/manage-security/manage-users-and-roles.html" class="page">Server&#8201;&#8212;&#8201;Manage Users and Roles</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-optout"><a class="anchor" href="#lbl-optout"></a>Secure Remote Authentication Opt-out</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can choose to disable secure remote authentication&#8201;&#8212;&#8201;for development and testing purposes <strong>only</strong>&#8201;&#8212;&#8201;by using these bootstrap configuration settings or CLI flags:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Bootstrap file:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>api.admin_interface_authentication</code></p>
+</li>
+<li>
+<p><code>api.metrics_interface_authentication</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>CLI flags</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>-admin_interface_authentication=false</code>.</p>
+</li>
+<li>
+<p><code>-metrics_interface_authentication=false</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ldap-authentication"><a class="anchor" href="#ldap-authentication"></a>LDAP Authentication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Authentication against an external system such as LDAP is possible through Couchbase Server.</p>
+</div>
+<div class="paragraph">
+<p>However, this can increase the risk of performance and or connection issues&#8201;&#8212;&#8201;for more on this see the Couchbase Server documentation <a href="../../server/current/learn/security/authentication-domains.html#ldap-users-and-applications" class="page">LDAP Users and Authentication</a></p>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="lbl-port-cfg"><a class="anchor" href="#lbl-port-cfg"></a>Port Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Change the ports used for any of the interface types by editing the bootstrap configuration&#8201;&#8212;&#8201;as shown in <a href="#ex-port-cfg">Example 1</a>&#8201;&#8212;&#8201;and restarting the sync&#160;gateway node.
+<p>You can change the ports used for any of the interface types by editing the bootstrap configuration&#8201;&#8212;&#8201;as shown in <a href="#ex-port-cfg">Example 1</a>&#8201;&#8212;&#8201;and restarting the sync&#160;gateway node.
 The default ports are shown in <a href="#network-ports">Table 2</a>.</p>
 </div>
 <div id="ex-port-cfg" class="exampleblock">
