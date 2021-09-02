@@ -2067,7 +2067,7 @@ You will have successfully completed installation and can now build on this with
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "bootstrap": {
-    "server": "couchbase://localhost", <i class="conum" data-value="1"></i><b>(1)</b>
+    "server": "couchbases://localhost", <i class="conum" data-value="1"></i><b>(1)</b>
     "username": "sync_gateway", <i class="conum" data-value="2"></i><b>(2)</b>
     "password": "password", //
     "server_tls_skip_verify": true, <i class="conum" data-value="3"></i><b>(3)</b>
@@ -2090,7 +2090,7 @@ You will have successfully completed installation and can now build on this with
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we point to the Couchbase Server cluster</td>
+<td>Here we point to the Couchbase Server cluster using secure connection. Server ships with self signed certs that work out of the box, as long as <code>server_tls_skip_verify</code> is set, as it is below.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
@@ -2098,18 +2098,22 @@ You will have successfully completed installation and can now build on this with
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Here we allow non-TLS plaintext access to the Couchbase Server for test purposes</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Define your logging requirements:<br>
-Here we set general diagnostic console logs on.
-If you&#8217;re having issues then refer to <a href="logging.html" class="page">Logging</a> for how to tune diagnostics to provide additional troubleshooting help</td>
+<td>Here we opt to ignore CA Cert verification of the certificate presented by the server; allowing for example use of self-signed certificate. The connection is unverified but encrypted.</td>
 </tr>
 </table>
 </div>
 </dd>
 </dl>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Define your logging requirements:<br>
+Here we set general diagnostic console logs on.
+If you&#8217;re having issues then refer to <a href="logging.html" class="page">Logging</a> for how to tune diagnostics to provide additional troubleshooting help</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -2193,7 +2197,7 @@ It adds a role called <code>stdrole</code>.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre>curl --location --request PUT 'http://127.0.0.1:4985/travel25/_role/stdrole' \ <i class="conum" data-value="1"></i><b>(1)</b>
+<pre>curl --location --request PUT 'http://127.0.0.1:4985/traveldb/_role/stdrole' \ <i class="conum" data-value="1"></i><b>(1)</b>
 --header 'Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -2230,7 +2234,7 @@ It adds a user called <code>sgwuser1</code>.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre>curl --location --request PUT 'http://127.0.0.1:4985/travel25/_user/sgwuser1' \ <i class="conum" data-value="1"></i><b>(1)</b>
+<pre>curl --location --request PUT 'http://127.0.0.1:4985/traveldb/_user/sgwuser1' \ <i class="conum" data-value="1"></i><b>(1)</b>
 --header 'Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -2356,7 +2360,7 @@ If Sync Gateway is behind a load balancer then check the websockets configuratio
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://localhost:4985/travel25/hotel_88801' \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://localhost:4985/traveldb/hotel_88801' \
 --header 'Authorization: Basic c2d3dXNlcjE6cGFzc3dvcmQ=' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -2424,7 +2428,7 @@ The document should include any changes made through Sync Gateway, including the
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request GET 'http://localhost:4985/travel25/hotel_88801' \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request GET 'http://localhost:4985/traveldb/hotel_88801' \
 --header 'Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk'</code></pre>
 </div>
 </div>
@@ -2449,7 +2453,7 @@ The document should include any changes made through Sync Gateway, including the
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location -g --request PUT 'http://localhost:4985/travel25/hotel_88801?new_edits=true&amp;rev=1-f28b5cc13a38892f4f85913d4e654270' \  <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location -g --request PUT 'http://localhost:4985/traveldb/hotel_88801?new_edits=true&amp;rev=1-f28b5cc13a38892f4f85913d4e654270' \  <i class="conum" data-value="1"></i><b>(1)</b>
 --header 'Accept: application/json' \
 --header 'Content-Type: application/json' \
 --data-raw '{
@@ -2561,7 +2565,7 @@ You should see the change you made in Couchbase Server reflected in the response
 <div class="listingblock">
 <div class="title">Request</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location -g --request DELETE 'http://localhost:4985/travel25/88801?rev=3-cc2e758ef63b0daf5b01b2baf98c72b6' <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location -g --request DELETE 'http://localhost:4985/traveldb/88801?rev=3-cc2e758ef63b0daf5b01b2baf98c72b6' <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">

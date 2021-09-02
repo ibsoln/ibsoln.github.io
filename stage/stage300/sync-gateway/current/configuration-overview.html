@@ -2039,11 +2039,11 @@ Configuration changes made to a node through the API endpoints are propagated to
 </li>
 <li>
 <p><strong>Persistent Updates</strong><br>
-Any database changes made using the API endpoints are persisted and survive sync&#160;gateway node restarts (this does note apply when running in file-base configuration mode).</p>
+Any database changes made using the API endpoints are persisted and survive sync&#160;gateway node restarts (this does not apply when running in file-based configuration mode).</p>
 </li>
 <li>
 <p><strong>Secure REST API</strong><br>
-by default the REST API requires TLS authentication&#8201;&#8212;&#8201;see <a href="secure-sgw-access.html" class="page">Secure Sync Gateway Access</a>.
+by default the REST API requires authentication and authorization using Couchbase Server RBAC-user credentials&#8201;&#8212;&#8201;see <a href="secure-sgw-access.html" class="page">Secure Sync Gateway Access</a>.
 This can be disabled for test purposes only.</p>
 </li>
 <li>
@@ -2058,7 +2058,7 @@ Your existing pre-3.x configuration files will (optionally) be automatically con
 <h2 id="workflow"><a class="anchor" href="#workflow"></a>Workflow</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In the <em>Sync&#160;Gateway</em> {ec-l} ecosphere you provide a minimal bootstrap configuration to get Sync Gateway started, then add users, roles, database and replications using the REST API.</p>
+<p>In the <em>Centralized&#160;Persistent&#160;Modular&#160;Configuration</em> ecosphere you provide a minimal bootstrap configuration to get Sync Gateway started, then add users, roles, database and replications using the REST API.</p>
 </div>
 <div class="imageblock">
 <div class="content">
@@ -2105,6 +2105,13 @@ Use the <a href="rest-api-admin-isgr.html" class="page">inter-sync&#160;gateway 
 </li>
 </ol>
 </div>
+<div class="sect2">
+<h3 id="opt-out"><a class="anchor" href="#opt-out"></a>Opt-out</h3>
+<div class="paragraph">
+<p>To continue using the pre-3.x configuration mode ensure that you use the command-line interface option <code>disable_persistent_config=true</code>.
+This ensures you can use the <a href="configuration-properties.html" class="page">File-based Configuration Schema</a> and that <strong>no</strong> Admin REST API  changes are persisted across sync&#160;gateway restarts.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2135,16 +2142,6 @@ Use the <a href="rest-api-admin-isgr.html" class="page">inter-sync&#160;gateway 
 <td class="tableblock halign-left valign-top"><p class="tableblock">A group of sync&#160;gateway nodes within a sync&#160;gateway cluster sharing common configuration.
 Each node in the group will continue to have node-specific config.</p></td>
 </tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Static</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">In a configuration context, this term is used to identify changes requiring a sync&#160;gateway node restart to take effect.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Dynamic</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">In a configuration context, this term is used to identify changes requiring NO sync&#160;gateway restart.
-So, for example, anything modifiable using REST API endpoint is a dynamic configuration property.</p>
-<p class="tableblock">Note that, in some cases, such changes may require the database be taken offline/online before it takes effect.</p></td>
-</tr>
 </tbody>
 </table>
 </div>
@@ -2153,7 +2150,7 @@ So, for example, anything modifiable using REST API endpoint is a dynamic config
 <h2 id="configuration-levels"><a class="anchor" href="#configuration-levels"></a>Configuration Levels</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>All the configuration properties, whether defined in the bootstrap configuration file or by the REST API endpoint belong to one of three core 'levels': <em>node</em>, <em>database</em>  or <em>replication</em>&#8201;&#8212;&#8201;see <a href="#tbl-cfg-levels">Table 1</a></p>
+<p>All the configuration properties, whether defined in the bootstrap configuration file or by the Admin REST API endpoint belong to one of two core 'levels': <em>node</em> or <em>database</em>&#8201;&#8212;&#8201;see <a href="#tbl-cfg-levels">Table 1</a></p>
 </div>
 <table id="tbl-cfg-levels" class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. Configuration levels in centralized persistent modular configuration</caption>
@@ -2169,64 +2166,66 @@ So, for example, anything modifiable using REST API endpoint is a dynamic config
 <th class="tableblock halign-left valign-top" colspan="2">Level</th>
 <th class="tableblock halign-left valign-top">Use</th>
 <th class="tableblock halign-left valign-top">Scope</th>
-<th class="tableblock halign-left valign-top">Requires</th>
+<th class="tableblock halign-left valign-top">Changeable?</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top" rowspan="3"><p class="tableblock">Node</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Bootstrap properties</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Couchbase Server connection</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Minimal set of configuration properties required for connection to Couchbase Server bucket, for example server credentials, and group id</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Node-specific; unshared</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Restart required</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes, file-edit<br>
+Restart required</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Static system properties</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Static node level properties including, for example, <code>api.tls.cert_path</code> and <code>max_file_descriptors</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">System properties</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node level system properties including, for example, <code>api.tls.cert_path</code> and <code>max_file_descriptors</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Node-specific; unshared</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Restart required</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes, file-edit<br>
+Restart required</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Dynamic system properties</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">All logging-related properties are dynamic</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Node-specific; unshared; not persisted</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">No restart</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Logging properties</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Logging-related properties</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Node-specific; unshared</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes by the Admin REST API<br>
+No restart, but <strong>not persisted</strong></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">Database</p></td>
+<td class="tableblock halign-left valign-top" rowspan="2"><p class="tableblock">Database</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">DB properties</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Database configuration properties including, for example, <code>bucket</code>, or access control policies such as <code>users</code> and <code>sync</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">May be node-specific, but typically shared across nodes in same group</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Restart initiated as needed</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes, by Admin REST API<br>
+Restart initiated as needed</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top" colspan="2"><p class="tableblock">Replication</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Replication properties</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">inter-sync&#160;gateway replication properties</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Shared across all participating replication nodes</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Restart initiated as needed</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes, by Admin REST API<br>
+Restart initiated as needed</p></td>
 </tr>
 </tbody>
 </table>
-<div class="paragraph">
-<p>To continue operating in this mode ensure that you use the command-line interface option <code>disable_persistent_config=true</code>.
-This ensures the pre-3.0 configuration approach is continued.</p>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-auth"><a class="anchor" href="#lbl-auth"></a>Authenticated API Access</h2>
+<h2 id="lbl-auth"><a class="anchor" href="#lbl-auth"></a>Secure Remote Administration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Secure TLS access (<em>https</em> and-or <em>wss</em>) to the sync&#160;gateway ADMIN API is enabled by default.
-You can disable it, for testing purposes <strong>ONLY</strong>, by omitting the <a href="configuration-schema-bootstrap.html#api-https-tls_key_path" class="page">api.https.tls_key_path</a> and <a href="configuration-schema-bootstrap.html#api-https-tls_cert_path" class="page">api.https.tls_cert_path</a> options from the bootstrap config.</p>
+<p>Secure Remote Administration is <strong>on</strong> by default.</p>
 </div>
 <div class="paragraph">
-<p>To use the <em>Centralized&#160;Persistent&#160;Modular&#160;Configuration</em> you need to create an RBAC-user on Couchbase Server
-with an appropriate sync&#160;gateway role.
-The user/TLS credentials are then declared in the bootstrap configuration.
-This node-level user is used when connecting to database by default; unless over-ridden in the database configuration.</p>
+<p>In order to submit Admin or Metrics REST API requests you should create specific Couchbase Server users for that purpose.
+You will then provide a valid set of Couchbase Server credentials for these RBAC-users in each API request.</p>
 </div>
 <div class="paragraph">
-<p>Cluster connection failures are subject to retries.</p>
+<p>Authenticated users will have access to Admin and-or Metrics API functionality, application data and configuration settings.</p>
+</div>
+<div class="paragraph">
+<p>For more see: <a href="rest-api-access.html" class="page">REST API Access</a></p>
 </div>
 </div>
 </div>
@@ -2234,7 +2233,7 @@ This node-level user is used when connecting to database by default; unless over
 <h2 id="lbl-config-grp"><a class="anchor" href="#lbl-config-grp"></a>Configuration Groups</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can group sync&#160;gateway nodes into homogenous clusters using the <code>Config-Group-ID</code> property (<a href="configuration-schema-bootstrap.html#bootstrap-group_id" class="page">group_id</a>).
+<p>You can group sync&#160;gateway nodes into homogenous clusters using the <code>Config-Group-ID</code> property (<a href="configuration-schema-bootstrap.html#bootstrap-group_id" class="page">bootstrap.group_id</a>).
 This defines the database configuration group to which a node belongs.</p>
 </div>
 <div class="paragraph">
