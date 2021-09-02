@@ -2028,7 +2028,15 @@ The following example shows how to retrieve an attachment that was created in a 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">Unresolved include directive in modules/clang/pages/dep-upgrade.adoc - include::clang:example$code_snippets/SampleCodeTest.cc[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/main.c#L281-L289">// NOTE: No error handling, for brevity (see getting started)
+
+CBLError err;
+FLDict properties = CBLDocument_Properties(document);
+FLDict attachments = FLValue_AsDict(FLDict_Get(properties, FLSTR("_attachments")));
+const CBLBlob* avatar = FLDict_GetBlob(FLValue_AsDict(FLDict_Get(attachments, FLSTR("avatar"))));
+FLSliceResult content = CBLBlob_Content(avatar, &amp;err);
+
+FLSliceResult_Release(content);</code></pre>
 </div>
 </div>
 </div>

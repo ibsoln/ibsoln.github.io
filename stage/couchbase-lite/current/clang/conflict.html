@@ -2202,21 +2202,24 @@ While this is true of any user defined functions, app developers must be strongl
 <div class="tab-pane" aria-labelledby="tabset1_local-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::clang:example$code_snippets/SampleCodeTest.cc[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
+    const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
+    return localDocument;
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_remote-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::clang:example$code_snippets/SampleCodeTest.cc[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang"></code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_merge">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::clang:example$code_snippets/SampleCodeTest.cc[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang"></code></pre>
 </div>
 </div>
 </div>
@@ -2316,7 +2319,20 @@ When the value is <code>null</code>, the default conflict resolution will be app
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::clang:example$code_snippets/SampleCodeTest.cc[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/main.c">// NOTE: No error handling, for brevity (see getting started)
+
+CBLError err;
+CBLEndpoint* target = CBLEndpoint_CreateWithURL(FLSTR("ws://localhost:4984/mydatabase"), &amp;err);
+
+CBLReplicatorConfiguration replConfig;
+memset(&amp;replConfig, 0, sizeof(replConfig));
+replConfig.database = database;
+replConfig.endpoint = target;
+replConfig.conflictResolver = local_win_conflict_resolver;
+
+CBLReplicator* replicator = CBLReplicator_Create(&amp;replConfig, &amp;err);
+CBLEndpoint_Free(target);
+CBLReplicator_Start(replicator, false);</code></pre>
 </div>
 </div>
 </div>
@@ -2437,13 +2453,38 @@ In the event of conflicting keys, it will pick the key value from <code>new</cod
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::clang:example$code_snippets/SampleCodeTest.cc[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/main.c">// NOTE: No error handling, for brevity (see getting started)
+
+CBLError err;
+CBLDocument* mutableDocument = CBLDatabase_GetMutableDocument(database, FLSTR("xyz"), &amp;err);
+FLDict properties = CBLDocument_MutableProperties(mutableDocument);
+
+/*
+static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved, 
+    const CBLDocument* conflictingDocument) {
+    FLDict currentProps = CBLDocument_Properties(conflictingDocument);
+    FLDict updatedProps = CBLDocument_Properties(documentBeingSaved);
+    FLMutableDict newProps = FLDict_MutableCopy(updatedProps, kFLDefaultCopy);
+
+    FLDictIterator d;
+    FLDictIterator_Begin(currentProps, &amp;d);
+    FLSlice currentKey = FLDictIterator_GetKeyString(&amp;d);
+    for(; currentKey.buf; currentKey = FLDictIterator_GetKeyString(&amp;d)) {
+        if(FLDict_Get(newProps, currentKey)) {
+            continue;
+        }
+
+        FLValue currentValue = FLDictIterator_GetValue(&amp;d);
+        FLMutableDict_SetValue(newProps, currentKey, currentValue);
+    }
+
+    return true;
+}
+*/
+CBLDatabase_SaveDocumentWithConflictHandler(database, mutableDocument, custom_conflict_handler, NULL, &amp;err);</code></pre>
 </div>
 </div>
 </div>
-</div>
-<div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::clang:example$code_snippets/SampleCodeTest.cc[]</p>
 </div>
 </div>
 </div>
@@ -2489,13 +2530,9 @@ In the event of conflicting keys, it will pick the key value from <code>new</cod
 <a href="https://blog.couchbase.com/">Blog</a> |
  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
 </div>
-<div class="ulist">
+<div class="paragraph">
 <div class="title"></div>
-<ul>
-<li>
 <p><a href="#tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc" class="page unresolved">Getting Started with Peer-to-Peer Synchronization</a></p>
-</li>
-</ul>
 </div>
 </div>
 </div>

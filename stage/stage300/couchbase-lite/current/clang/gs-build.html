@@ -2020,7 +2020,7 @@
 <p>Now you have <em>Couchbase Lite for C</em> installed, you can verify that your apps build correctly.</p>
 </div>
 <div class="paragraph">
-<p>Enter the C code in <a href="#ex-clang-starter">Example 1</a> into your editor of choice and build it.</p>
+<p>Enter the C code from <a href="#ex-clang-starter">Example 1</a> into your editor of choice and build it.</p>
 </div>
 <div class="paragraph">
 <p>Running it will create a database, add a document, retrieve the document, update the document and then delete the document.</p>
@@ -2030,54 +2030,125 @@
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">#include &lt;stdio.h&gt;
-#include "cbl/CBLDatabase.h"
-#include "cbl/CBLDocument.h"
-#include "cbl/CBLQuery.h"
-#include "fleece/Fleece+CoreFoundation.h"
+<pre class="highlightjs highlight"><code class="language-clang hljs" data-lang="clang" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/clang/examples/code_snippets/main.c#L23-L141">// Get the database (and create it if it doesn't exist)
+CBLError err;
+CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &amp;err);
+if(!database) {
+    // Error handling.  For brevity, this is truncated in the rest of the snippet
+    // and omitted in other doc code snippets
+    fprintf(stderr, "Error opening database (%d / %d)", err.domain, err.code);
+    FLSliceResult msg = CBLError_Message(&amp;err);
+    fprintf(stderr, "%.*s", (int)msg.size, (const char *)msg.buf);
+    FLSliceResult_Release(msg);
+    return;
+}
 
-int main(int argc, const char * argv[]) {
+// The lack of 'const' indicates this document is mutable
+// Create a new document (i.e. a record) in the database
+CBLDocument* mutableDoc = CBLDocument_Create();
+FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
+FLMutableDict_SetFloat(properties, FLSTR("version"), 3.0f);
 
-    const FLSlice dbnm = FLStr("mydb");
-    bool success = false;
+// Save it to the database
+if(!CBLDatabase_SaveDocument(database, mutableDoc, &amp;err)) {
+    // Failed to save, do error handling as above
+    return;
+}
 
-    // Open DB
-    CBLError error;
-    CBLDatabaseConfiguration config = {"/tmp"};
-    CBLDatabase* db = CBLDatabase_Open(dbnm, &amp;config, &amp;error);
+// Since we will release the document, make a copy of the ID since it
+// is an internal pointer.  Whenever we create or get an FLSliceResult
+// or FLStringResult we will need to free it later too!
+FLStringResult id = FLSlice_Copy(CBLDocument_ID(mutableDoc));
+CBLDocument_Release(mutableDoc);
 
-    // Create document
-    CBLDocument* doc = CBLDocument_CreateWithID(FLStr("1000"));
-    FLMutableDict props = CBLDocument_MutableProperties(doc);
-    FLSlot_SetString(FLMutableDict_Set(props, FLStr("type")), FLStr("pet"));
-    FLSlot_SetString(FLMutableDict_Set(props, FLStr("name")), FLStr("Scooby Doo"));
-    FLSlot_SetString(FLMutableDict_Set(props, FLStr("owner")), FLStr("Shaggy"));
+// Update a document
+mutableDoc = CBLDatabase_GetMutableDocument(database, FLSliceResult_AsSlice(id), &amp;err);
+if(!mutableDoc) {
+    // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
+    // the document does not exist.
+    return;
+}
 
-    // Save document
-    success = CBLDatabase_SaveDocument( db, doc, &amp;error);
-    CBLDocument_Release(doc);
+properties = CBLDocument_MutableProperties(mutableDoc);
+FLMutableDict_SetString(properties, FLSTR("language"), FLSTR("C"));
+if(!CBLDatabase_SaveDocument(database, mutableDoc, &amp;err)) {
+    // Failed to save, do error handling as above
+    return;
+}
 
-    // Retrieve document
-    const CBLDocument *readDoc = CBLDatabase_GetDocument(db, FLStr("1000"), &amp;error);
-    FLDict readProps = CBLDocument_Properties(readDoc);
-    FLSlice petname = FLValue_AsString( FLDict_Get(readProps, FLStr("name")) );
-    CBLDocument_Release(readDoc);
+// Note const here, means readonly
+const CBLDocument* docAgain = CBLDatabase_GetDocument(database, FLSliceResult_AsSlice(id), &amp;err);
+if(!docAgain) {
+    // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
+    // the document does not exist.
+    return;
+}
 
-    // Update document
-    CBLDocument  *updtDoc = CBLDatabase_GetMutableDocument(db, FLStr("1000"), &amp;error);
-    FLMutableDict updtDocProps = CBLDocument_MutableProperties(updtDoc);
-    FLSlot_SetString(FLMutableDict_Set(updtDocProps, FLStr("name")), FLStr("Scrappy Doo"));
-    success = CBLDatabase_SaveDocument( db, updtDoc, &amp;error);
-    CBLDocument_Release(updtDoc);
+// No copy this time, so no release later (notice it is not FLStringResult this time)
+FLString retrievedID = CBLDocument_ID(docAgain);
+FLDict retrievedProperties = CBLDocument_Properties(docAgain);
+FLString retrievedLanguage = FLValue_AsString(FLDict_Get(retrievedProperties, FLSTR("language")));
+printf("Document ID :: %.*s", (int)retrievedID.size, (const char *)retrievedID.buf);
+printf("Learning %.*s", (int)retrievedLanguage.size, (const char *)retrievedLanguage.buf);
 
-    // Delete document
-    CBLDocument  *delDoc = CBLDatabase_GetMutableDocument(db, FLStr("1000"), &amp;error);
-    success = CBLDatabase_DeleteDocument(db, delDoc, &amp;error);
-    CBLDocument_Release(delDoc);
+CBLDocument_Release(mutableDoc);
+CBLDocument_Release(docAgain);
+FLSliceResult_Release(id);
 
-    return 0;
+// Create a query to fetch documents of type SDK
+int errorPos;
+CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &amp;errorPos, &amp;err);
+if(!query) {
+    // Failed to create query, do error handling as above
+    // Note that errorPos will contain the position in the N1QL string
+    // that the parse failed, if applicable
+    return;
+}
 
-}</code></pre>
+CBLResultSet* result = CBLQuery_Execute(query, &amp;err);
+if(!result) {
+    // Failed to run query, do error handling as above
+    return;
+}
+
+// TODO: Result set count?
+CBLResultSet_Release(result);
+CBLQuery_Release(query);
+
+// Create replicator to push and pull changes to and from the cloud
+CBLEndpoint* targetEndpoint = CBLEndpoint_CreateWithURL(FLSTR("ws://localhost:4984/getting-started-db"), &amp;err);
+if(!targetEndpoint) {
+    // Failed to create endpoint, do error handling as above
+    return;
+}
+
+CBLReplicatorConfiguration replConfig;
+CBLAuthenticator* basicAuth = CBLAuth_CreatePassword(FLSTR("john"), FLSTR("pass"));
+memset(&amp;replConfig, 0, sizeof(replConfig));
+replConfig.database = database;
+replConfig.endpoint = targetEndpoint;
+replConfig.authenticator = basicAuth;
+
+CBLReplicator* replicator = CBLReplicator_Create(&amp;replConfig, &amp;err);
+CBLAuth_Free(basicAuth);
+CBLEndpoint_Free(targetEndpoint);
+if(!replicator) {
+    // Failed to create replicator, do error handling as above
+    return;
+}
+
+// Assume a function like the simple following
+//
+// static void getting_started_change_listener(void* context, CBLReplicator* repl, const CBLReplicatorStatus* status) {
+//     if(status-&gt;error.code != 0) {
+//         printf("Error %d / %d", status-&gt;error.domain, status-&gt;error.code);
+//     }
+// }
+
+CBLListenerToken* token = CBLReplicator_AddChangeListener(replicator, getting_started_change_listener, NULL);
+CBLReplicator_Start(replicator, false);
+
+// Later, stop and release the replicator</code></pre>
 </div>
 </div>
 </div>
