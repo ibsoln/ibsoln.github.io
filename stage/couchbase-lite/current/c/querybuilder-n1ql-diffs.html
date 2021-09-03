@@ -475,17 +475,6 @@
     <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c">API&#160;References</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="dep-upgrade.html">Upgrade</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <span class="menu_title menu_text">Troubleshooting
-Unresolved include directive in modules/ROOT/pages/_partials/nav-skeleton.adoc - include::ROOT:partial$nav-skeleton-troubleshooting-c.adoc[]</span>
-  </span>
-</li>
 <li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
     <span class="in-toggle"></span>
@@ -2010,29 +1999,180 @@ Related Content&#8201;&#8212;&#8201;<a href="#couchbase-lite:c:querybuilder.adoc
 </div>
 </blockquote>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>There are several minor but notable behavior differences between N1QL queries on Couchbase Lite and N1QL on Couchbase Server.</p>
+<p>There are several minor but notable behavior differences between N1QL queries on Couchbase Lite and N1QL on Couchbase Server, ashown in  <a href="#tbl-diffs">Table 1</a>.</p>
 </div>
 <div class="paragraph">
 <p>In some instance you can, if required, force Couchbase Lite to work in the same way as Couchbase Server. These instances are noted in the content below.</p>
 </div>
-<div class="sect2">
-<h3 id="orderby"><a class="anchor" href="#orderby"></a>OrderBy</h3>
-<div class="paragraph">
-<p>In Couchbase Lite N1QL, result sequencing is based on the SQLite ordering described in <a href="https://sqlite.org/lang_select.html">SQLite select overview</a></p>
+<table id="tbl-diffs" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. N1QL Query Comparison (Couchbase Server <em>cf</em> Couchbase Lite)</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"></td>
+<th class="tableblock halign-center valign-top" colspan="2"><p class="tableblock">N1QL Comparison</p></th>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock">Feature</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Couchbase Server</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Couchbase Lite</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">USE KEYS</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT fname, email FROM tutorial USE KEYS ["dave", "ian"];</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT fname, email FROM tutorial WHERE meta().id IN ["dave", "ian"];</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">ON KEYS</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT * FROM user u<br>
+JOIN orders o ON KEYS ARRAY s.order_id FOR s IN u.order_history END;</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT * FROM user u, u.order_history s<br>
+JOIN orders o ON s.order_id = meta(o).id;</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">ON KEY</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT * FROM user u<br>
+JOIN orders o ON KEY o.user_id FOR u;</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT * FROM user u<br>
+JOIN orders o ON meta(u).id = o.user_id;</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">NEST</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT * FROM user u<br>
+NEST orders orders<br>
+ON KEYS ARRAY s.order_id FOR s IN u.order_history END;</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT u, orders FROM users u<br>
+LET orders=(SELECT VALUE o FROM u.order_history s, orders o WHERE meta(o).id = s.order_id)<br>
+WHERE EXISTS orders;</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">LEFT OUTER NEST</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT * FROM user u<br>
+LEFT OUTER NEST orders orders<br>
+ON KEYS ARRAY s.order_id FOR s IN u.order_history END;</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT u, (SELECT VALUE o FROM u.order_history s, orders o WHERE meta(o).id = s.order_id) orders<br>
+FROM users u;</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">ARRAY</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ARRAY i FOR i IN [1, 2] END</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>(SELECT VALUE i FROM [1, 2] AS i)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">ARRAY FIRST</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>ARRAY FIRST arr</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>arr[0]</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">LIMIT l OFFSET o</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Allows OFFSET without LIMIT</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Doesn&#8217;t support OFFSET without LIMIT</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">UNION, INTERSECT, and EXCEPT</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>All three are supported (with ALL and DISTINCT variants)</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Only UNION ALL is supported (and necessary for query expressability)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">OUTER JOIN</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Both LEFT and RIGHT OUTER JOIN supported</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Only LEFT OUTER JOIN supported (and necessary for query expressability)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">&lt;, &lt;=, =, etc. operators</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Can compare either complex values or scalar values</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Only scalar values may be compared</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">ORDER BY</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Result sequencing is based on specific rules described in <a href="../../../server/current/n1ql/n1ql-language-reference/orderby.html" class="page">N1QL (server) OrderBy clause</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Result sequencing is based on the SQLite ordering described in <a href="https://sqlite.org/lang_select.html">SQLite select overview</a></p>
 </div>
 <div class="paragraph">
 <p>The ordering of <em>Dictionary</em> and <em>Array</em> objects is based on binary ordering.</p>
-</div>
-<div class="paragraph">
-<p>For Couchbase Server, result sequencing is based on specific rules described in <a href="../../../server/current/n1ql/n1ql-language-reference/orderby.html" class="page">N1QL (server) OrderBy clause</a></p>
-</div>
-</div>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">SELECT DISTINCT</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Supported</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>SELECT DISTINCT VALUE is supported when the returned values are scalars</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">CREATE INDEX</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Supported</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Supported but different (e.g., typed)</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock">INSERT/UPSERT/DELETE</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Supported</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Unsupported (by design)</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
@@ -2099,10 +2239,10 @@ Related Content&#8201;&#8212;&#8201;<a href="#couchbase-lite:c:querybuilder.adoc
 </div>
 <div class="paragraph">
 <p>In Couchbase Lite N1QL&#8201;&#8212;&#8201;unlike Couchbase Server N1QL&#8201;&#8212;&#8201;<code>NULL</code> is implicitly converted to <code>FALSE</code> before evaluating logical operations.
-<a href="#tbl-logops">Table 1</a> summarizes the result of logical operations with different operand values and also shows where the Couchbase Server behavior differs.</p>
+<a href="#tbl-logops">Table 2</a> summarizes the result of logical operations with different operand values and also shows where the Couchbase Server behavior differs.</p>
 </div>
 <table id="tbl-logops" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Logical Operations Comparison</caption>
+<caption class="title">Table 2. Logical Operations Comparison</caption>
 <colgroup>
 <col style="width: 14.2857%;">
 <col style="width: 14.2857%;">
