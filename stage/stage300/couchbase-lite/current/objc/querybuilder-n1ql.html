@@ -152,6 +152,11 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/api-changes.html">API Changes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
     <a class="menu_title menu_link" href="../android/kotlin.html">Kotlin</a>
   </span>
 </li>
@@ -531,6 +536,11 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
+    <a class="menu_title menu_link" href="../csharp/api-changes.html">API Changes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
     <a class="menu_title menu_link" href="../csharp/database.html">Databases</a>
   </span>
 </li>
@@ -727,6 +737,11 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/api-changes.html">API Changes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
     <a class="menu_title menu_link" href="../java/database.html">Databases</a>
   </span>
 </li>
@@ -920,6 +935,11 @@
   </span>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="api-changes.html">API Changes</a>
+  </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1121,6 +1141,11 @@
   </span>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/api-changes.html">API Changes</a>
+  </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -2160,7 +2185,7 @@ columnAlias = IDENTIFIER</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>The optional <code>ALL</code> argument is used to specify tha the query should return ALL results (the default)</p>
+<p>The optional <code>ALL</code> argument is used to specify that the query should return ALL results (the default)</p>
 </li>
 <li>
 <p>The optional <code>DISTINCT</code> argument specifies that the query should remove duplicated results.</p>
@@ -2172,12 +2197,68 @@ columnAlias = IDENTIFIER</code></pre>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>selectResults is a list of columns projected in the query result. Each column is an expression which could be a property expression or any expressions or functions.</td>
+<td>selectResults is a list of columns projected in the query result.
+Each column is an expression which could be a property expression or any expressions or functions.
+You can use the wildcard <strong>*</strong> to select all columns&#8201;&#8212;&#8201;see <a href="#select-wildcard">Select Wildcard</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Use the optional <code>AS</code> argument to provides an alias name for a property. Each property can be aliased by putting the <code>AS &lt;alias name&gt;</code> after the column name.</td>
 </tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="select-wildcard"><a class="anchor" href="#select-wildcard"></a>Select Wildcard</h4>
+<div class="paragraph">
+<p>When using the <code>SELECT *</code> option the column name (key) of the N1QL string is one of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The alias name if one was specified</p>
+</li>
+<li>
+<p>The data source name (or its alias if provided) as specified in the <code>FROM</code> clause.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This behavior is inline with that of Couchbase Server N1QL&#8201;&#8212;&#8201;see example in <a href="#tbl-selstar">Table 1</a>.</p>
+</div>
+<table id="tbl-selstar" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Example Column Names for SELECT <strong>*</strong></caption>
+<colgroup>
+<col style="width: 60%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Query</th>
+<th class="tableblock halign-left valign-top">Column Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SELECT * AS data FROM _</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>data</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SELECT * FROM _</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>_</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SELECT * FROM _default</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>_default</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SELECT * FROM db</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>db</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>SELECT * FROM db AS store</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>store</code></p></td>
+</tr>
+</tbody>
 </table>
 </div>
 </div>
@@ -2226,7 +2307,7 @@ SELECT DISTINCT address.city <i class="conum" data-value="5"></i><b>(5)</b></cod
 </div>
 </div>
 <div class="paragraph">
-<p>See: <a href="#lbl-resultsets">[lbl-resultsets]</a> for more on processing query results.</p>
+<p>See: <a href="query-resultsets.html" class="page">Query Resultsets</a> for more on processing query results.</p>
 </div>
 </div>
 </div>
@@ -3241,7 +3322,7 @@ SELECT *
 <div class="sect3">
 <h4 id="lbl-ops-maths"><a class="anchor" href="#lbl-ops-maths"></a>Maths</h4>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Maths Operators</caption>
+<caption class="title">Table 2. Maths Operators</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 40%;">
@@ -3295,7 +3376,7 @@ This differs from Server N1QL, which performs float division regardless. Use <co
 <p>The <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLQueryExpression.html#/Comparison%20operators:">Expression Comparators</a> can be used in the WHERE statement to specify on which property to match documents.</p>
 </div>
 <table id="tbl-ops-comp" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 2. Comparison Operators</caption>
+<caption class="title">Table 3. Comparison Operators</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 40%;">
@@ -3425,7 +3506,7 @@ WHERE name LIKE ‘aldo’</code></p></td>
 This is different from QueryBuilder, in which they operate as equivalents of <code>==</code> and <code>!=</code>.</p>
 </div>
 <table id="tbl-ops-isnot" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 3. Comparing NULL and MISSING values using IS.</caption>
+<caption class="title">Table 4. Comparing NULL and MISSING values using IS.</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3553,7 +3634,7 @@ Use TOBOOLEAN(expr) function to convert a value based on Server N1QL boolean val
 </table>
 </div>
 <table id="tbl-ops-logical" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 4. Logical Operators</caption>
+<caption class="title">Table 5. Logical Operators</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 40%;">
@@ -3584,7 +3665,7 @@ Use TOBOOLEAN(expr) function to convert a value based on Server N1QL boolean val
 </tbody>
 </table>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 5. Logical Operation Table</caption>
+<caption class="title">Table 6. Logical Operation Table</caption>
 <colgroup>
 <col style="width: 25%;">
 <col style="width: 25%;">
@@ -3712,7 +3793,7 @@ This differs from Server N1QL in the following instances:<br>
 It enables string concatenation.</p>
 </div>
 <table id="tbl-ops-logical" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 6. String Operators</caption>
+<caption class="title">Table 7. String Operators</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 40%;">
@@ -3755,7 +3836,7 @@ They operate by modifying an expression, making it numerically positive or negat
 </div>
 </div>
 <table id="tbl-ops-logical" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 7. Unary Operators</caption>
+<caption class="title">Table 8. Unary Operators</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 40%;">
@@ -3792,7 +3873,7 @@ NOT operation on NULL value returns NULL.<br>
 NOT operation on MISSING value returns MISSING.</p>
 </div>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 8. NOT Operation TABLE</caption>
+<caption class="title">Table 9. NOT Operation TABLE</caption>
 <colgroup>
 <col style="width: 50%;">
 <col style="width: 50%;">
@@ -4059,7 +4140,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'</code></pre>
 <div class="sect2">
 <h3 id="lbl-func-agg"><a class="anchor" href="#lbl-func-agg"></a>Aggregation Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 9. Aggregation Functions</caption>
+<caption class="title">Table 10. Aggregation Functions</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
@@ -4097,7 +4178,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'</code></pre>
 <div class="sect2">
 <h3 id="lbl-func-array"><a class="anchor" href="#lbl-func-array"></a>Array Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 10. Array Functions</caption>
+<caption class="title">Table 11. Array Functions</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
@@ -4151,7 +4232,7 @@ parenExprs = '(' ( expression (_ ',' _ expression )* )? ')'</code></pre>
 <div class="sect2">
 <h3 id="lbl-func-cond"><a class="anchor" href="#lbl-func-cond"></a>Conditional Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 11. Conditional Functions</caption>
+<caption class="title">Table 12. Conditional Functions</caption>
 <colgroup>
 <col style="width: 40%;">
 <col style="width: 60%;">
@@ -4193,7 +4274,7 @@ Returns <code>NULL</code> if either or both expressions are <code>NULL</code>.+<
 <div class="sect2">
 <h3 id="lbl-func-date"><a class="anchor" href="#lbl-func-date"></a>Date and Time Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 12. Date and Time Functions</caption>
+<caption class="title">Table 13. Date and Time Functions</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
@@ -4227,7 +4308,7 @@ Returns <code>NULL</code> if either or both expressions are <code>NULL</code>.+<
 <div class="sect2">
 <h3 id="lbl-func-fts"><a class="anchor" href="#lbl-func-fts"></a>Full Text Search Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 13. FTS Functions</caption>
+<caption class="title">Table 14. FTS Functions</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 40%;">
@@ -4257,7 +4338,7 @@ Returns <code>NULL</code> if either or both expressions are <code>NULL</code>.+<
 <div class="sect2">
 <h3 id="lbl-func-maths"><a class="anchor" href="#lbl-func-maths"></a>Maths Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 14. Maths Functions</caption>
+<caption class="title">Table 15. Maths Functions</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
@@ -4382,7 +4463,7 @@ The function uses <code>Rounding Away From Zero</code> convention to round midpo
 <div class="sect2">
 <h3 id="lbl-func-meta"><a class="anchor" href="#lbl-func-meta"></a>Metadata Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 15. Metadata Functions</caption>
+<caption class="title">Table 16. Metadata Functions</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 40%;">
@@ -4431,7 +4512,7 @@ To access a specific metadata property, use the dot expression.</p>
 <div class="sect2">
 <h3 id="lbl-func-pattern"><a class="anchor" href="#lbl-func-pattern"></a>Pattern Searching Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 16. Pattern Searching Functions</caption>
+<caption class="title">Table 17. Pattern Searching Functions</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
@@ -4465,7 +4546,7 @@ To access a specific metadata property, use the dot expression.</p>
 <div class="sect2">
 <h3 id="lbl-func-string"><a class="anchor" href="#lbl-func-string"></a>String Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 17. String Functions</caption>
+<caption class="title">Table 18. String Functions</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
@@ -4511,7 +4592,7 @@ To access a specific metadata property, use the dot expression.</p>
 <div class="sect2">
 <h3 id="lbl-func-typecheck"><a class="anchor" href="#lbl-func-typecheck"></a>Type Checking Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 18. Type Checking Functions</caption>
+<caption class="title">Table 19. Type Checking Functions</caption>
 <colgroup>
 <col style="width: 20%;">
 <col style="width: 80%;">
@@ -4587,7 +4668,7 @@ To access a specific metadata property, use the dot expression.</p>
 <div class="sect2">
 <h3 id="lbl-func-typeconv"><a class="anchor" href="#lbl-func-typeconv"></a>Type Conversion Functions</h3>
 <table class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 19. Type Conversion Functions</caption>
+<caption class="title">Table 20. Type Conversion Functions</caption>
 <colgroup>
 <col style="width: 30%;">
 <col style="width: 70%;">
@@ -4716,10 +4797,10 @@ To access a specific metadata property, use the dot expression.</p>
 <h2 id="querybuilder-differences"><a class="anchor" href="#querybuilder-differences"></a>QueryBuilder Differences</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Couchbase Lite N1QL Query supports all QueryBuilder features, except <em>Predictive Query</em> and <em>Index</em>. See <a href="#tbl-qbldr-diffs">Table 20</a> for the features supported by N1QL but not by QueryBuilder.</p>
+<p>Couchbase Lite N1QL Query supports all QueryBuilder features, except <em>Predictive Query</em> and <em>Index</em>. See <a href="#tbl-qbldr-diffs">Table 21</a> for the features supported by N1QL but not by QueryBuilder.</p>
 </div>
 <table id="tbl-qbldr-diffs" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 20. QueryBuilder Differences</caption>
+<caption class="title">Table 21. QueryBuilder Differences</caption>
 <colgroup>
 <col style="width: 40%;">
 <col style="width: 60%;">
