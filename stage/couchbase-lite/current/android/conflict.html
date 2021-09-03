@@ -2203,21 +2203,36 @@ While this is true of any user defined functions, app developers must be strongl
 <div class="tab-pane" aria-labelledby="tabset2_local-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new LocalWinConflictResolver());
+internal class LocalWinConflictResolver : ConflictResolver {
+    fun resolve(conflict: Conflict): Document {
+        return conflict.getLocalDocument()
+    }</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_remote-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
+internal class RemoteWinConflictResolver : ConflictResolver {
+    fun resolve(conflict: Conflict): Document {
+        return conflict.getRemoteDocument()
+    }</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_merge">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new MergeConflictResolver());
+internal class MergeConflictResolver : ConflictResolver {
+    fun resolve(conflict: Conflict): Document {
+        val merge: MutableMap&lt;String, Any&gt; =
+            conflict.getLocalDocument().toMap()
+        merge.putAll(conflict.getRemoteDocument().toMap())
+        return MutableDocument(conflict.getDocumentId(), merge)
+    }</code></pre>
 </div>
 </div>
 </div>
@@ -2255,7 +2270,11 @@ class LocalWinConflictResolver implements ConflictResolver {
 <div class="tab-pane" aria-labelledby="tabset3_remote-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt#L1431-L1435">// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
+internal class RemoteWinConflictResolver : ConflictResolver {
+    fun resolve(conflict: Conflict): Document {
+        return conflict.getRemoteDocument()
+    }</code></pre>
 </div>
 </div>
 </div>
@@ -2385,7 +2404,11 @@ When the value is <code>null</code>, the default conflict resolution will be app
 <div class="tab-pane" aria-labelledby="tabset4_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt">val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
+val config = ReplicatorConfiguration(database, target)
+config.setConflictResolver(LocalWinConflictResolver())
+val replication = Replicator(config)
+replication.start()</code></pre>
 </div>
 </div>
 </div>
@@ -2535,7 +2558,21 @@ In the event of conflicting keys, it will pick the key value from <code>new</cod
 <div class="tab-pane" aria-labelledby="tabset5_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt">val doc: Document = database.getDocument("xyz") ?: return
+val mutableDocument: MutableDocument = doc.toMutable()
+mutableDocument.setString("name", "apples")
+database.save(
+    mutableDocument,
+    { newDoc, curDoc -&gt;  <i class="conum" data-value="1"></i><b>(1)</b>
+        if (curDoc == null) {
+            return@save false
+        } <i class="conum" data-value="2"></i><b>(2)</b>
+        val dataMap: MutableMap&lt;String, Any&gt; =
+            curDoc.toMap()
+        dataMap.putAll(newDoc.toMap()) <i class="conum" data-value="3"></i><b>(3)</b>
+        newDoc.setData(dataMap)
+        true <i class="conum" data-value="4"></i><b>(4)</b>
+    }) <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2563,8 +2600,30 @@ database.save(
 </div>
 </div>
 </div>
-<div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The conflict handler code is provided as a lambda.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If the handler cannot resolve a conflict, it can return false.
+In this case, the save method will cancel the save operation and return false the same way as using the save() method with the failOnConflict concurrency control.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Within the conflict handler, you can modify the document parameter which is the same instance of Document that is passed to the save() method. So in effect, you will be directly modifying the document that is being saved.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>When handling is done, the method must return true (for  successful resolution) or false (if it was unable to resolve the conflict).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>If there is an exception thrown in the handle() method, the exception will be caught and re-thrown in the save() method</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
