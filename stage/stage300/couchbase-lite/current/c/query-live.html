@@ -2021,7 +2021,19 @@ This helps your app feel quick and responsive.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">/*
+static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
+    CBLError err;
+    CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        // Update UI
+    }
+}
+*/
+
+query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+    FLSTR("SELECT * FROM _"), NULL, &amp;err);
+CBLListenerToken* token = CBLQuery_AddChangeListener(query, query_change_listener, NULL);</code></pre>
 </div>
 </div>
 </div>
@@ -2050,7 +2062,8 @@ When a change is detected the query automatically runs, and posts the new query 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">CBLListener_Remove(token); // The token received from AddChangeListener
+CBLQuery_Release(query);</code></pre>
 </div>
 </div>
 </div>
