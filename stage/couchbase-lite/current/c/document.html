@@ -2434,7 +2434,7 @@ for(int i = 0; i &lt; 10; i++) {
     FLMutableDict_SetBool(properties, FLSTR("admin"), false);
     CBLDatabase_SaveDocument(db, doc, &amp;err);
     CBLDocument_Release(doc);
-    printf("Saved user document %s", buffer);
+    printf("Saved user document %s\n", buffer);
 }
 
 CBLDatabase_EndTransaction(db, true, &amp;err);</code></pre>
@@ -2469,7 +2469,7 @@ static void document_listener(void* context, const CBLDatabase* db, FLString id)
     const CBLDocument* doc = CBLDatabase_GetDocument(db, id, &amp;err);
     FLDict properties = CBLDocument_Properties(doc);
     FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account")));
-    printf("Status :: %.*s", (int)verified_account.size, (const char *)verified_account.buf);
+    printf("Status :: %.*s\n", (int)verified_account.size, (const char *)verified_account.buf);
     CBLDocument_Release(doc);
 }
 */
@@ -2498,7 +2498,30 @@ The purge will not be replicated to Sync Gateway.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// Purge the document one day from now
+
+// Overly simplistic for example purposes
+// NOTE: API takes milliseconds
+// NOTE: No error handling, for brevity (see getting started)
+time_t ttl = time(NULL) + 24 * 60 * 60;
+ttl *= 1000;
+
+CBLError err;
+CBLDatabase_SetDocumentExpiration(db, FLSTR("doc123"), ttl, &amp;err);
+
+// Reset expiration
+CBLDatabase_SetDocumentExpiration(db, FLSTR("doc1"), 0, &amp;err);
+
+// Query documents that will be expired in less than five minutes
+time_t fiveMinutesFromNow = time(NULL) + 5 * 60;
+fiveMinutesFromNow *= 1000;
+FLMutableDict parameters = FLMutableDict_New();
+FLMutableDict_SetInt(parameters, FLSTR("five_minutes"), fiveMinutesFromNow);
+
+CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+    FLSTR("SELECT meta().id FROM _ WHERE meta().expiration &lt; $five_minutes"), NULL, &amp;err);
+CBLQuery_SetParameters(query, parameters);
+FLMutableDict_Release(parameters);</code></pre>
 </div>
 </div>
 </div>
