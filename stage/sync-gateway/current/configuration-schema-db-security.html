@@ -3,15 +3,15 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Admin REST API | Couchbase Docs</title>
-<link rel="canonical" href="https://ibsoln.github.io/stage/stage300/sync-gateway/current/rest-api-admin%20copy.html">
+<title>Database Security Configuration | Couchbase Docs</title>
+<link rel="canonical" href="http://127.0.0.1:5000/sync-gateway/current/configuration-schema-db-security.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Description of the Sync Gateway Admin REST API">
+<meta name="description" content="Using Sync Gateway&#x27;s Admin REST API to configure users and roles">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="3.0">
-<meta name="page-url" content="/sync-gateway/current/rest-api-admin%20copy.html">
+<meta name="page-url" content="/sync-gateway/current/configuration-schema-db-security.html">
 <meta name="generator" content="Antora 3.0.0-alpha.6">
 <link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
 </head>
@@ -27,7 +27,7 @@
                   </a>
                 </li>
                 <li>
-                  <a class="navbar-brand cb-documentation" href="https://ibsoln.github.io/stage/stage300/home/index.html">
+                  <a class="navbar-brand cb-documentation" href="http://127.0.0.1:5000/home/index.html">
                     <img src="../../_/img/cb-documentation.svg" alt="Couchbase Documentation" class="cb-docs" />
                     <img src="../../_/img/cb-docs-hover.svg" alt="Couchbase Documentation" class="hide cb-hover-docs" />
                   </a>
@@ -49,7 +49,7 @@
               <div class="navbar-collapse collapse" id="navbar2">
                 <ul class="navbar-nav w-100 justify-content-start">
                   <li class="nav-item">
-                    <a href="https://ibsoln.github.io/stage/stage300/home/index.html" class="nav-link">
+                    <a href="http://127.0.0.1:5000/home/index.html" class="nav-link">
                       <i class="fas fa-home"></i>
                     </a>
                   </li>
@@ -1386,22 +1386,27 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="rest-api-admin-database.html">Database schema</a>
+    <a class="menu_title menu_link" href="configuration-schema-database.html">Database schema</a>
+  </span>
+</li>
+<li class="menu_list is-current-page" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link is-current-page" href="configuration-schema-db-security.html">Database Security schema</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="rest-api-admin-db-security.html">Database Security schema</a>
+    <a class="menu_title menu_link" href="configuration-schema-access-control.html">Access Control schema</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="rest-api-admin-access-control.html">Access Control schema</a>
+    <a class="menu_title menu_link" href="configuration-schema-import-filter.html">Import Filter schema</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="rest-api-admin-isgr.html">Inter-Sync&#160;Gateway Replication schema</a>
+    <a class="menu_title menu_link" href="configuration-schema-isgr.html">Inter-Sync&#160;Gateway Replication schema</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -1910,7 +1915,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/rest-api-admin%20copy.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/configuration-schema-db-security.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -1969,42 +1974,430 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb"><a href="rest-api-admin%20copy.html">Admin REST API</a></li>
+<li class="crumb">Configuration</li>
+<li class="crumb"><a href="configuration-schema-db-security.html">Database Security schema</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Admin REST API</h1>
+<h1 class="page">Database Security Configuration</h1>
+<div class="labels">
+<ul>
+<li class="edition"><a href="https://www.couchbase.com/products/editions">3.0</a></li>
+<li class="status"><span>BETA</span></li>
+</ul>
+</div>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div id="preamble">
+</div><div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
-<div class="quoteblock abstract">
-<blockquote>
 <div class="paragraph">
-<p>Description of the Sync Gateway Admin REST API<br>
-Use the API explorer to find out more about Sync Gateway&#8217;s endpoints by functionality.</p>
-</div>
-</blockquote>
-</div>
-<div class="paragraph">
-<p>Related <em>REST API</em> topics: <a href="rest-api.html" class="page">Public REST API</a>  |  <a href="rest-api-metrics.html" class="page">Metrics REST API</a>  |  <a href="rest-api-client-app.html" class="page">Use the REST API?</a></p>
+<p>In 3.0 it is possible to use the Admin REST API to provision persistent configuration changes.
+This content introduces the <a href="#lbl-upsert-role">Create or Update a Role</a> and <a href="#lbl-upsert-user">Create or Update a User</a> endpoints for convenience&#8201;&#8212;&#8201;see <a href="rest-api-admin.html#/Database_Security" class="page">Database Security</a> for a full description of the endpoints available.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="api-explorer"><a class="anchor" href="#api-explorer"></a>API Explorer</h2>
+<h2 id="lbl-upsert-role"><a class="anchor" href="#lbl-upsert-role"></a>Create or Update a Role</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre>PUT /{db}/_role/{name}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use this convenience endpoint to upsert a Sync Gateway role for the specified database.</p>
+</div>
+<div class="sect2">
+<h3 id="parameters"><a class="anchor" href="#parameters"></a>Parameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 11.1111%;">
+<col style="width: 16.6666%;">
+<col style="width: 50%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>db</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Database name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>name</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Role name, may contain any combination of the characters <code>[a-z A-Z 0-9 - + . @ %]</code>, when creating a role any other characters must be percent encoded, see: <a href="https://en.wikipedia.org/wiki/Percent-encoding" class="bare">https://en.wikipedia.org/wiki/Percent-encoding</a>.</p>
+</div>
+<div class="paragraph">
+<p>When passing a role name in a URL path it must be escaped again using percent encoding e.g. if a role is created with the name "0|59", the '|' character must first be percent-encoded resulting in "0%7C59". When using the same role name in a URL path it must be percent-encoded a second time resulting in "0%257C59"</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Body</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>role</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>The message body is a JSON document that contains the following objects.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><a href="#_role_configuration_model">role_configuration_model</a></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="responses"><a class="anchor" href="#responses"></a>Responses</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>200</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>200 OK – The role was updated successfully</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>No Content</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>201</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>201 Created – The role was created successfully</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>No Content</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="example"><a class="anchor" href="#example"></a>Example</h3>
+<div class="exampleblock">
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_curl"></a>Curl</p>
+</li>
+<li>
+<p><a id="tabset1_http"></a>HTTP</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_curl">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://127.0.0.1:4985/travel25/_role/newrole' \ <i class="conum" data-value="1"></i><b>(1)</b>
+--header 'Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk' \ <i class="conum" data-value="2"></i><b>(2)</b>
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "name": "newrole",
+    "admin_channels": ["newrolechannel"]
+}'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_http">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">PUT /travel25/_role/newrole HTTP/1.1 <i class="conum" data-value="1"></i><b>(1)</b>
+Host: 127.0.0.1:4985
+Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk <i class="conum" data-value="2"></i><b>(2)</b>
+Content-Type: application/json
+Content-Length: 67
+
+{
+    "name": "newrole",
+    "admin_channels": ["newrolechannel"]
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Add role <code>newrole</code> to the <code>travel25</code> database</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Note we are using Basic Auth to authenticate to an existing RBAC user</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-upsert-user"><a class="anchor" href="#lbl-upsert-user"></a>Create or Update a User</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre>PUT /{db}/_user/{username} <i class="conum" data-value="1"></i><b>(1)</b></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>where <code>{db}</code> is the Sync Gateway database and <code>{username}</code> is the name for the new user</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Use the <code>\_user</code> endpoint to create or update a Sync Gateway user for the specified database.</p>
+</div>
+<div class="sect2">
+<h3 id="parameters-2"><a class="anchor" href="#parameters-2"></a>Parameters</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 11.1111%;">
+<col style="width: 16.6666%;">
+<col style="width: 50%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>db</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Database name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>name</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>User&#8217;s name, may contain contain any combination of the characters <code>[a-z A-Z 0-9 - + . @ %]</code>, when creating a user any other characters must be percent encoded, see: <a href="https://en.wikipedia.org/wiki/Percent-encoding" class="bare">https://en.wikipedia.org/wiki/Percent-encoding</a>.</p>
+</div>
+<div class="paragraph">
+<p>When passing a user name in a URL path it must be escaped again using percent encoding e.g. if a user is created with the name "0|59", the '|' character must first be percent-encoded resulting in "0%7C59". When using the same user name in a URL path it must be percent-encoded a second time resulting in "0%257C59"</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Body</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>body</strong><br>
+<em>optional</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Request body</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><a href="#_user_configuration_model">user_configuration_model</a></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="responses-2"><a class="anchor" href="#responses-2"></a>Responses</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>200</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>200 OK – The user record was updated successfully</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>No Content</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>201</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>201 Created – The user record was created successfully</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>No Content</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="example-2"><a class="anchor" href="#example-2"></a>Example</h3>
+<div class="exampleblock">
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_curl"></a>Curl</p>
+</li>
+<li>
+<p><a id="tabset2_http"></a>HTTP</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_curl">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://127.0.0.1:4985/travel25/_user/newuser' \ <i class="conum" data-value="1"></i><b>(1)</b>
+--header 'Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk' \ <i class="conum" data-value="2"></i><b>(2)</b>
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "password": "pass",
+    "admin_channels": ["newrole"]
+}
+'</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_http">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">PUT /travel25/_user/newuser HTTP/1.1 <i class="conum" data-value="1"></i><b>(1)</b>
+Host: 127.0.0.1:4985
+Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk
+Content-Type: application/json
+Content-Length: 63
+
+{
+    "password": "pass",
+    "admin_channels": ["newrole"]
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Add user <code>newuser</code> to the <code>travel25</code> database</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Note we are using Basic Auth to authenticate to an existing RBAC user</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_role_configuration_model"><a class="anchor" href="#_role_configuration_model"></a>Schema</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The API explorer below groups all the endpoints by functionality.
-You can click on a label to expand the list of endpoints and also generate a curl request for each endpoint.</p>
+<p>This section shows Sync Gateway&#8217;s database security configuration settings in schema format for convenience in constructing JSON models for use in the Admin REST API.</p>
+</div>
+<div class="paragraph">
+<p>The configuration settings described here are provisioned through the Admin REST API&#8201;&#8212;&#8201;see as shown in <a href="rest-api-admin.html#/Database_Security" class="page">Database Security</a>.</p>
 </div>
 <div id="swagger-ui"></div>
 <hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id=""><a class="anchor" href="#"></a></h2>
+<div class="sectionbody">
+
 </div>
 </div>
 <div class="sect1">
@@ -2012,7 +2405,7 @@ You can click on a label to expand the list of endpoints and also generate a cur
 <div class="sectionbody">
 <div class="card-row three-column-row">
 <div class="sect5 column">
-<h6 id=""><a class="anchor" href="#"></a></h6>
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
 <div class="ulist">
 <div class="title">API Topics</div>
 <ul>
@@ -2032,7 +2425,7 @@ You can click on a label to expand the list of endpoints and also generate a cur
 </div>
 </div>
 <div class="sect5 column">
-<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
 <div class="ulist">
 <div class="title">Reference</div>
 <ul>
@@ -2043,7 +2436,7 @@ You can click on a label to expand the list of endpoints and also generate a cur
 </div>
 </div>
 <div class="sect5 column">
-<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<h6 id="-4"><a class="anchor" href="#-4"></a></h6>
 <div class="ulist">
 <div class="title">Community</div>
 <ul>
@@ -2127,59 +2520,15 @@ You can click on a label to expand the list of endpoints and also generate a cur
   </div>
 </footer>
 <script id="site-script" src="../../_/js/site.js"></script>
-<link rel="stylesheet" href="https://couchbase-docs.s3.amazonaws.com/assets/swagger-ui-3.7/swagger-ui.css">
-<script src="https://couchbase-docs.s3.amazonaws.com/assets/swagger-ui-3.7/swagger-ui-bundle.js"></script>
-<script src="https://couchbase-docs.s3.amazonaws.com/assets/swagger-ui-3.7/swagger-ui-standalone-preset.js"></script>
+<link rel="stylesheet" href="https://couchbase-docs.s3.amazonaws.com/assets/json-config-ui/json-config-ui.css">
+<script src="https://couchbase-docs.s3.amazonaws.com/assets/json-config-ui/json-config-ui-bundle.js"></script>
 <script>
-;(function () {
-  var initialHash = window.location.hash
-  var jumpToAnchorOnLoad = function () {
-    if (this.querySelector('.swagger-ui .swagger-ui')) {
-      var targetHash, targetId
-      if (initialHash.charAt(1) === '/') {
-        targetId = 'operations' + (initialHash.lastIndexOf('/') === 1 ? '-tag' : '') + initialHash.slice(1).replace(/\//g, '-')
-      } else {
-        targetHash = initialHash
-      }
-      Array.prototype.slice.call(this.querySelectorAll('.opblock-tag[id], .opblock[id]')).forEach(function (el) {
-        var id = el.id
-        el.removeAttribute('id')
-        if (targetId === id) targetHash = '#' + targetId
-        if (el.tagName === 'H4') {
-          el.parentNode.id = id
-        } else {
-          var wrapper = document.createElement('div')
-          wrapper.id = id
-          el.parentNode.insertBefore(wrapper, el)
-          wrapper.appendChild(el)
-        }
-      })
-      if (targetHash) {
-        setTimeout(function () {
-          window.location.hash = targetHash
-          if (targetId) window.history.pushState(null, null, initialHash)
-        }, 1250)
-      }
-    } else {
-      requestAnimationFrame(jumpToAnchorOnLoad)
-    }
-  }.bind(document.getElementById('swagger-ui'))
-  SwaggerUIBundle({
-    url: '_attachments/rest-api-admin-database.yaml',
-    dom_id: '#swagger-ui',
-    deepLinking: true,
-    presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-    plugins: [SwaggerUIBundle.plugins.DownloadUrl],
-    layout: 'StandaloneLayout',
-    tagsSorter: 'alpha',
-    operationsSorter: 'alpha',
-    docExpansion: 'none',
+;(function (url, version) {
+  JSONConfigUIBundle({
+    specs: [{ version: version, url: url }],
+    current: version
   })
-  if (initialHash && (initialHash.charAt(1) !== '/' || initialHash.length > 2)) {
-    if (initialHash.charAt(1) !== '/') window.location.hash = ''
-    jumpToAnchorOnLoad()
-  }
-})()
+})('_attachments/sg-db-security.yaml', 'undefined')
 </script>
 <script async src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
 <script async src="../../_/js/vendor/fontawesome.js"></script>

@@ -7,7 +7,7 @@
 <link rel="canonical" href="http://127.0.0.1:5000/sync-gateway/current/configuration-schema-access-control.html">
 <link rel="stylesheet" href="../../_/css/site.css">
 <script src="../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="This content describes Sync Gateway&#x27;s configuration schema. It provides parameter explanations and examples of use">
+<meta name="description" content="Using Sync Gateway&#x27;s Admin REST API and the Sync function to configure access">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="3.0">
@@ -1386,22 +1386,27 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="rest-api-admin-database.html">Database schema</a>
+    <a class="menu_title menu_link" href="configuration-schema-database.html">Database schema</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="rest-api-admin-db-security.html">Database Security schema</a>
+    <a class="menu_title menu_link" href="configuration-schema-db-security.html">Database Security schema</a>
+  </span>
+</li>
+<li class="menu_list is-current-page" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link is-current-page" href="configuration-schema-access-control.html">Access Control schema</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="rest-api-admin-access-control.html">Access Control schema</a>
+    <a class="menu_title menu_link" href="configuration-schema-import-filter.html">Import Filter schema</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="rest-api-admin-isgr.html">Inter-Sync&#160;Gateway Replication schema</a>
+    <a class="menu_title menu_link" href="configuration-schema-isgr.html">Inter-Sync&#160;Gateway Replication schema</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -1969,7 +1974,8 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
-<li class="crumb"><a href="configuration-schema-access-control.html">Access Control Configuration</a></li>
+<li class="crumb">Configuration</li>
+<li class="crumb"><a href="configuration-schema-access-control.html">Access Control schema</a></li>
 </ul>
 </nav>
 </div>
@@ -1979,6 +1985,7 @@
 <div class="labels">
 <ul>
 <li class="edition"><a href="https://www.couchbase.com/products/editions">3.0</a></li>
+<li class="status"><span>BETA</span></li>
 </ul>
 </div>
 </div>
@@ -1986,38 +1993,127 @@
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div id="preamble">
-<div class="sectionbody">
-<div class="quoteblock abstract">
-<blockquote>
-<div class="paragraph">
-<p>This content describes Sync Gateway&#8217;s configuration schema. It provides parameter explanations and examples of use<br></p>
-</div>
-</blockquote>
-</div>
-<div class="paragraph">
-<p><em>Related  topics</em>:  <a href="configuration-overview.html" class="page">Overview</a>  |  <a href="configuration-schema-bootstrap.html" class="page">Bootstrap Schema</a>  |  <a href="configuration-schema-database.html" class="page">Database Configuration Schema</a>  |  <a href="configuration-javascript-functions.html" class="page">External Javascript Functions</a>  |  <a href="configuration-environment-variables.html" class="page">Environment Variables</a> |  {topic-6&#8212;&#8203;xref}</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+</div><div class="sect1">
+<h2 id="upsert-sync-function"><a class="anchor" href="#upsert-sync-function"></a>Upsert Sync Function</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Sync Gateway&#8217;s access control configuration settings are shown in the <a href="#lbl-schema">Access Control Configuration Reference</a>. The settings are provisioned through the REST API/&#8201;&#8212;&#8201;see: <a href="rest-api-admin.html#/user/put__db___user__name_" class="page">{db}/_user/{name}</a></p>
+<p>The sync function is crucial to the security of your application.
+It is in charge of data validation, access control and routing.
+The function executes every time a new revision/update is made to a document.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-schema"><a class="anchor" href="#lbl-schema"></a>Access Control Configuration Reference</h2>
-<div class="sectionbody">
-<div class="openblock">
-<div class="title">Configuration Schema</div>
+<div class="listingblock">
 <div class="content">
+<pre>https:://{sgw-uri}/{db}/_config/</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use this convenience endpoint to create and-or update the <code>Sync</code> Function for this database</p>
+</div>
+<div class="paragraph">
+<p>For more on the Sync Function and access control see: <a href="sync-function-overview.html" class="page">Sync Function Overview</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="parameters"><a class="anchor" href="#parameters"></a>Parameters</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 11.1111%;">
+<col style="width: 16.6666%;">
+<col style="width: 50%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Path</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>db</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>Database name</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>string</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>Body</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>sync</strong><br>
+<em>required</em></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><a href="#_sync_function_model">sync_function_model</a></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="responses"><a class="anchor" href="#responses"></a>Responses</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><strong>200</strong></p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p>OK</p>
+</div></div></td>
+<td class="tableblock halign-left valign-middle"><div class="content"><div class="paragraph">
+<p><a href="#_200-sync">200-sync</a></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_sync_function_model"><a class="anchor" href="#_sync_function_model"></a>Schema</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This section shows Sync Gateway&#8217;s access control configuration settings in schema format for convenience in constructing JSON models for use in the Admin REST API.</p>
+</div>
+<div class="paragraph">
+<p>The configuration settings described here are provisioned through the <a href="rest-api-admin.html#/Access_Control" class="page">Access Control</a> endpoints.</p>
+</div>
 <div id="swagger-ui"></div>
-</div>
-</div>
 <hr>
+</div>
+</div>
+<div class="sect1">
+<h2 id=""><a class="anchor" href="#"></a></h2>
+<div class="sectionbody">
+
 </div>
 </div>
 <div class="sect1">
@@ -2025,7 +2121,7 @@
 <div class="sectionbody">
 <div class="card-row three-column-row">
 <div class="sect5 column">
-<h6 id=""><a class="anchor" href="#"></a></h6>
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
 <div class="ulist">
 <div class="title">API Topics</div>
 <ul>
@@ -2045,7 +2141,7 @@
 </div>
 </div>
 <div class="sect5 column">
-<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
 <div class="ulist">
 <div class="title">Reference</div>
 <ul>
@@ -2056,7 +2152,7 @@
 </div>
 </div>
 <div class="sect5 column">
-<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<h6 id="-4"><a class="anchor" href="#-4"></a></h6>
 <div class="ulist">
 <div class="title">Community</div>
 <ul>
