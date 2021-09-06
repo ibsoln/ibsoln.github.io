@@ -2091,6 +2091,13 @@ This behavior is the <strong>reverse</strong> of that between Sync&#160;Gateway 
 <div class="paragraph">
 <p>Documents will then <strong>be</strong> auto-purged&#8201;&#8212;&#8201;on active Sync Gateway nodes that have opted-in&#8201;&#8212;&#8201;if they do not belong to <strong>any</strong> of the replicating user’s <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> channels&#8201;&#8212;&#8201;see: <a href="#lbl-isgr-revoke-behaviors">Example 1</a>.</p>
 </div>
+<div class="paragraph">
+<p>At the point his option is turned on it only applies to revocations that occur after the point the replication is up to.</p>
+</div>
+<div class="paragraph">
+<p>If you turn it on during an existing replication, <strong>no</strong> revocations occurring prior to that point are retro-actively purged.
+To have this done, execute a reset for ISGR (on Couchbase Lite a reset checkpoint must be carried out).</p>
+</div>
 <div id="lbl-isgr-revoke-behaviors" class="exampleblock">
 <div class="title">Example 1. Access Revocation behavior</div>
 <div class="content">
@@ -2133,7 +2140,8 @@ This behavior is the <strong>reverse</strong> of that between Sync&#160;Gateway 
 <p>User revoked access to channel</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Previously synced documents are auto purged on local</p>
+<p>Revocation has no impact during a 'push'.
+No purging will occur.</p>
 </div></div></td>
 </tr>
 <tr>
