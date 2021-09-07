@@ -2043,7 +2043,6 @@ static void getting_started_change_listener(void* context, CBLReplicator* repl, 
 }
 
 static void getting_started() {
-    // tag::getting-started[]
     // Get the database (and create it if it doesn't exist)
     CBLError err;
     CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &amp;err);
@@ -2109,7 +2108,6 @@ static void getting_started() {
     CBLDocument_Release(docAgain);
     FLSliceResult_Release(id);
 
-    // tag::query-syntax-n1ql-params[]
     // Create a query to fetch documents of type SDK
     int errorPos;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &amp;errorPos, &amp;err);
@@ -2125,7 +2123,6 @@ static void getting_started() {
         // Failed to run query, do error handling as above
         return;
     }
-    // end::query-syntax-n1ql-params[]
 
     // TODO: Result set count?
     CBLResultSet_Release(result);
@@ -2165,22 +2162,18 @@ static void getting_started() {
     CBLReplicator_Start(replicator, false);
 
     // Later, stop and release the replicator
-    // end::getting-started[]
 
     kReplicator = replicator;
 }
 
-// tag::local-win-conflict-resolver[]
 static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
     const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
     return localDocument;
 }
-// end::local-win-conflict-resolver[]
 
 static void test_replicator_conflict_resolve() {
     CBLDatabase* database = kDatabase;
 
-    // tag::replication-conflict-resolver[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2196,7 +2189,6 @@ static void test_replicator_conflict_resolve() {
     CBLEndpoint_Free(target);
     CBLReplicator_Start(replicator, false);
 
-    // end::replication-conflict-resolver[]
 }
 
 static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved,
@@ -2224,7 +2216,6 @@ static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSav
 static void test_save_with_conflict_handler() {
     CBLDatabase* database = kDatabase;
 
-    // tag::update-document-with-conflict-handler[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2255,13 +2246,11 @@ static void test_save_with_conflict_handler() {
     */
     CBLDatabase_SaveDocumentWithConflictHandler(database, mutableDocument, custom_conflict_handler, NULL, &amp;err);
 
-    // end::update-document-with-conflict-handler[]
 }
 
 static void use_encryption() {
     #ifdef COUCHBASE_ENTERPRISE
 
-    // tag::database-encryption[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLDatabaseConfiguration config = CBLDatabaseConfiguration_Default();
@@ -2279,7 +2268,6 @@ static void use_encryption() {
 
     // Remove encryption
     CBLDatabase_ChangeEncryptionKey(db, NULL, &amp;err);
-    // end::database-encryption[]
 
     #endif
 }
@@ -2293,10 +2281,8 @@ static void reset_replicator_checkpoint() {
     CBLReplicator* replicator = CBLReplicator_Create(&amp;config, NULL);
     CBLEndpoint_Free(target);
 
-    // tag::replication-reset-checkpoint[]
     // replicator is a CBLReplicator* instance
     CBLReplicator_Start(replicator, true);
-    // end::replication-reset-checkpoint[]
 
     CBLReplicator_Release(replicator);
 }
@@ -2304,7 +2290,6 @@ static void reset_replicator_checkpoint() {
 static void read_1x_attachment() {
     CBLDocument* document = CBLDocument_Create();
 
-    // tag::1x-attachment[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2314,46 +2299,38 @@ static void read_1x_attachment() {
     FLSliceResult content = CBLBlob_Content(avatar, &amp;err);
 
     FLSliceResult_Release(content);
-    // end::1x-attachment[]
 
     CBLDocument_Release(document);
 }
 
 static void create_new_database() {
-    // tag::new-database[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     CBLDatabase* db = CBLDatabase_Open(FLSTR("my-database"), NULL, &amp;err);
-    // end::new-database[]
 
     kDatabase = db;
 }
 
 static void close_database() {
     CBLDatabase* db = kDatabase;
-    // tag::close-database[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     CBLDatabase_Close(db, &amp;err);
-    // end::close-database[]
 }
 
 static void change_logging() {
-    // tag::logging[]
     // For output to stdout
     CBLLog_SetConsoleLevel(kCBLLogVerbose);
 
     // For output to custom logging
     CBLLog_SetCallbackLevel(kCBLLogVerbose);
-    // end::logging[]
 }
 
 static void load_prebuilt() {
     CBL_DeleteDatabase(FLSTR("travel-sample.cblite2"), kFLSliceNull, NULL);
 
-    // tag::prebuilt-database[]
     // Note: Getting the path to a database is platform-specific.  For desktop (including RPi)
     // this can be a simple filesystem path.  For iOS you need to get the path from the
     // main bundle.  For Android you need to extract it from your assets to a temporary directory
@@ -2366,7 +2343,6 @@ static void load_prebuilt() {
     if(!CBL_DatabaseExists(FLSTR("travel-sample.cblite2"), kFLSliceNull)) {
         CBL_CopyDatabase(FLStr(path), FLSTR("travel-sample"), NULL, &amp;err);
     }
-    // end::prebuilt-database[]
 
     CBLDatabase_Close(kDatabase, NULL);
     CBLDatabase_Release(kDatabase);
@@ -2376,14 +2352,12 @@ static void load_prebuilt() {
 static void query_deleted_document() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-deleted-documents[]
     // Query documents that have been deleted
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
     CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT meta().id FROM _ WHERE meta().deleted"), NULL, &amp;err);
-    // end::query-deleted-documents[]
 
     CBLQuery_Release(query);
 }
@@ -2391,7 +2365,6 @@ static void query_deleted_document() {
 static void create_document() {
     CBLDatabase* db = kDatabase;
 
-    // tag::initializer[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLDocument* newTask = CBLDocument_CreateWithID(FLSTR("xyz"));
@@ -2405,13 +2378,11 @@ static void create_document() {
     CBLError err;
     CBLDatabase_SaveDocument(db, newTask, &amp;err);
     CBLDocument_Release(newTask);
-    // end::initializer[]
 }
 
 static void update_document() {
     CBLDatabase* db = kDatabase;
 
-    // tag::update-document[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2420,7 +2391,6 @@ static void update_document() {
     FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
     CBLDatabase_SaveDocument(db, mutableDocument, &amp;err);
     CBLDocument_Release(mutableDocument);
-    // end::update-document[]
 }
 
 // Note use_typed_accessors not applicable
@@ -2428,7 +2398,6 @@ static void update_document() {
 static void do_batch_operation() {
     CBLDatabase* db = kDatabase;
 
-    // tag::batch[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2447,7 +2416,6 @@ static void do_batch_operation() {
     }
 
     CBLDatabase_EndTransaction(db, true, &amp;err);
-    // end::batch[]
 }
 
 static void document_listener(void* context, const CBLDatabase* db, FLString id) {
@@ -2462,7 +2430,6 @@ static void document_listener(void* context, const CBLDatabase* db, FLString id)
 static void database_change_listener() {
     CBLDatabase* db = kDatabase;
 
-    // tag::document-listener[]
     /*
     static void document_listener(void* context, const CBLDatabase* db, FLString id) {
         CBLError err;
@@ -2476,13 +2443,11 @@ static void database_change_listener() {
 
     CBLListenerToken* token = CBLDatabase_AddDocumentChangeListener(db, FLSTR("user.john"),
         document_listener, NULL);
-    // end::document-listener[]
 }
 
 static void document_expiration() {
     CBLDatabase* db = kDatabase;
 
-    // tag::document-expiration[]
     // Purge the document one day from now
 
     // Overly simplistic for example purposes
@@ -2507,7 +2472,6 @@ static void document_expiration() {
         FLSTR("SELECT meta().id FROM _ WHERE meta().expiration &lt; $five_minutes"), NULL, &amp;err);
     CBLQuery_SetParameters(query, parameters);
     FLMutableDict_Release(parameters);
-    // end::document-expiration[]
 }
 
 static void use_blob() {
@@ -2515,7 +2479,6 @@ static void use_blob() {
 
     CBLDocument* newTask = CBLDocument_Create();
 
-    // tag::blob[]
     // Note: Reading the data is implementation dependent, as with prebuilt databases
     // NOTE: No error handling, for brevity (see getting started)
 
@@ -2532,7 +2495,6 @@ static void use_blob() {
     FLMutableDict properties = CBLDocument_MutableProperties(newTask);
     FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
     CBLDatabase_SaveDocument(db, newTask, &amp;err);
-    // end::blob[]
 
     CBLDocument_Release(newTask);
     CBLBlob_Release(blob);
@@ -2541,7 +2503,6 @@ static void use_blob() {
 static void create_index() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-index[]
     // For value types, this is optional but provides performance enhancements
     // NOTE: No error handling, for brevity (see getting started)
 
@@ -2554,13 +2515,11 @@ static void create_index() {
 
     CBLError err;
     CBLDatabase_CreateValueIndex(db, FLSTR("TypeNameIndex"), config, &amp;err);
-    // end::query-index[]
 }
 
 static void select_meta() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-select-meta[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2576,7 +2535,6 @@ static void select_meta() {
 
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
-    // end::query-select-meta[]
 }
 
 static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
@@ -2590,7 +2548,6 @@ static void query_change_listener(void* context, CBLQuery* query, CBLListenerTok
 static void select_all() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-select-all[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2599,9 +2556,7 @@ static void select_all() {
 
     // All results will be available from the above query
     CBLQuery_Release(query);
-    // end::query-select-all[]
 
-    // tag::live-query[]
     /*
     static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
         CBLError err;
@@ -2615,18 +2570,14 @@ static void select_all() {
     query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
         FLSTR("SELECT * FROM _"), NULL, &amp;err);
     CBLListenerToken* token = CBLQuery_AddChangeListener(query, query_change_listener, NULL);
-    // end::live-query[]
 
-    // tag::stop-live-query[]
     CBLListener_Remove(token); // The token received from AddChangeListener
     CBLQuery_Release(query);
-    // end::stop-live-query[]
 }
 
 static void select_where() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-where[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2641,13 +2592,11 @@ static void select_where() {
 
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
-    // end::query-where[]
 }
 
 static void use_collection_contains() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-collection-operator-contains[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2665,13 +2614,11 @@ static void use_collection_contains() {
 
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
-    // end::query-collection-operator-contains[]
 }
 
 static void use_collection_in() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-collection-operator-in[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2689,13 +2636,11 @@ static void use_collection_in() {
 
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
-    // end::query-collection-operator-in[]
 }
 
 static void select_like() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-like-operator[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2712,13 +2657,11 @@ static void select_like() {
 
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
-    // end::query-like-operator[]
 }
 
 static void select_wildcard_like() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-like-operator-wildcard-match[]
     // NOTE: No error handling, for brevity (see getting started)
 
      CBLError err;
@@ -2735,13 +2678,11 @@ static void select_wildcard_like() {
 
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
-    // end::query-like-operator-wildcard-match[]
 }
 
 static void select_wildcard_character_like() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-like-operator-wildcard-character-match[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2758,13 +2699,11 @@ static void select_wildcard_character_like() {
 
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
-    // end::query-like-operator-wildcard-character-match[]
 }
 
 static void select_regex() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-regex-operator[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2781,13 +2720,11 @@ static void select_regex() {
 
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
-    // end::query-regex-operator[]
 }
 
 static void select_join() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-join[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2805,13 +2742,11 @@ static void select_join() {
 
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
-    // end::query-join[]
 }
 
 static void group_by() {
     CBLDatabase* db = kDatabase;
 
-    // tag::query-groupby[]
     // NOTE: No error handling, for brevity (see getting started)
 
     CBLError err;
@@ -2831,7 +2766,6 @@ static void group_by() {
 
     CBLResultSet_Release(results);
     CBLQuery_Release(query);
-    // end::query-groupby[]
 }
 
 int main(int argc, char** argv) {
@@ -2839,27 +2773,17 @@ int main(int argc, char** argv) {
 }
 
 
-// tag::console-logging-db[]
 Placeholder for code to increase level of console logging for kCBLLogDomainDatabase domain
-// end::console-logging-db[]
 
-// tag::console-logging[]
 Placeholder for code to increase level of console logging for all domains
-// end::console-logging[]
 
-// tag::date-getter[]
 Placeholder for Date accessors.
 
-// end::date-getter[]
 
 
-// tag::query-index[]
 // placeholder
-// end::query-index[]
 
-// tag::fts-index[]
-// placeholder
-// end::fts-index[]</code></pre>
+// placeholder</code></pre>
 </div>
 </div>
 <div class="exampleblock">

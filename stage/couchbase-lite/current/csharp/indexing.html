@@ -2071,7 +2071,6 @@ namespace api_walkthrough
 
         private static void GettingStarted()
         {
-            // tag::getting-started[]
             // Get the database (and create it if it doesn't exist)
             var database = new Database("mydb");
             // Create a new document (i.e. a record) in the database
@@ -2127,24 +2126,20 @@ namespace api_walkthrough
             _Replicator.Start();
 
             // Later, stop and dispose the replicator *before* closing/disposing the database
-            // end::getting-started[]
         }
 
         private static void TestReplicatorConflictResolver()
         {
-            // tag::replication-conflict-resolver[]
             var target = new URLEndpoint(new Uri("ws://localhost:4984/mydatabase"));
             var replConfig = new ReplicatorConfiguration(database, target);
             replConfig.ConflictResolver = new LocalWinConflictResolver();
 
             var replicator = new Replicator(replConfig);
             replicator.Start();
-            // end::replication-conflict-resolver[]
         }
 
         private static void TestSaveWithConflictHandler()
         {
-            // tag::update-document-with-conflict-handler[]
             using (var document = database.GetDocument("xyz"))
             using (var mutableDocument = document.ToMutable()) {
                 mutableDocument.SetString("name", "apples");
@@ -2159,7 +2154,6 @@ namespace api_walkthrough
                     return true;
                 });
             }
-            // end::update-document-with-conflict-handler[]
         }
 
         private static bool IsValidCredential(string name, SecureString password) { return true;  } // helper
@@ -2168,7 +2162,6 @@ namespace api_walkthrough
             var db = new Database("other-database");
             _Database = db;
 
-            // tag::init-urllistener[]
             var config = new URLEndpointListenerConfiguration(_Database);
             config.TlsIdentity = null; // Use with anonymous self-signed cert
             config.Authenticator = new ListenerPasswordAuthenticator((sender, username, password) =&gt;
@@ -2181,23 +2174,18 @@ namespace api_walkthrough
             });
 
             _listener = new URLEndpointListener(config);
-            // end::init-urllistener[]
         }
 
         private static void TestListenerStart()
         {
-            // tag::start-urllistener[]
             // CouchbaseLiteException will be thrown when the listener cannot be started. The most common error
             // would be that the configured port has already been used.
             _listener.Start();
-            // end::start-urllistener[]
         }
 
         private static void TestListenerStop()
         {
-            // tag::stop-urllistener[]
             _listener.Stop();
-            // end::stop-urllistener[]
         }
 
         private static void TestCreateSelfSignedCert()
@@ -2209,8 +2197,6 @@ namespace api_walkthrough
               // storage using the given label.
             DateTimeOffset fiveMinToExpireCert = DateTimeOffset.UtcNow.AddMinutes(5);
 
-            // tag::create-self-signed-cert[]
-            // tag::listener-config-tls-id-SelfSigned[]
             identity = TLSIdentity.CreateIdentity(true, /* isServer */
                 new Dictionary&lt;string, string&gt;() { { Certificate.CommonNameAttribute, "Couchbase Inc" } },
                     // The common name attribute is required
@@ -2225,8 +2211,6 @@ namespace api_walkthrough
                         // If null, the same default directory
                         // for a Couchbase Lite db is used for map.
 
-            // end::listener-config-tls-id-SelfSigned[]
-            // end::create-self-signed-cert[]
         }
 
         private static void TestImportTLSIdentity()
@@ -2235,8 +2219,6 @@ namespace api_walkthrough
             X509Store _store = new X509Store(StoreName.My); // The identity will be stored in the secure storage using the given label
             byte[] data = File.ReadAllBytes("C:\\client.p12"); // PKCS12 data containing private key, public key, and certificates
 
-            // tag::import-tls-identity[]
-            // tag::listener-config-tls-id-caCert[]
             identity = TLSIdentity.ImportIdentity(_store,
                 data,
                 "123", // The password that is needed to access the certificate data
@@ -2244,8 +2226,6 @@ namespace api_walkthrough
                 null);  // The key label to get cert in certificate map.
                         // If null, the same default directory
                         // for a Couchbase Lite db is used for map.
-            // end::listener-config-tls-id-caCert[]
-            // end::import-tls-identity[]
         }
 
           private static void TestClientCertAuthenticatorRootCerts()
@@ -2256,7 +2236,6 @@ namespace api_walkthrough
             X509Store _store = new X509Store(StoreName.My);
             TLSIdentity identity;
 
-            // tag::client-cert-authenticator-root-certs[]
             byte[] caData, clientData;
             clientData = File.ReadAllBytes("C:\\client.p12"); // PKCS12 data containing private key, public key, and certificates
             caData = File.ReadAllBytes("C:\\client-ca.der");
@@ -2313,7 +2292,6 @@ namespace api_walkthrough
             X509Store _store = new X509Store(StoreName.My);
             TLSIdentity identity;
 
-            // tag::client-cert-authenticator[]
 
             // Create Listener Certificate Authenticator
             var auth = new ListenerCertificateAuthenticator((sender, cert) =&gt;
@@ -2363,14 +2341,12 @@ namespace api_walkthrough
 
             // Stop listener after replicator is stopped
             _listener.Stop();
-            // end::client-cert-authenticator[]
         }
 
         private static void UseEncryption()
         {
             // Enterprise edition only
 
-            // tag::database-encryption[]
             // Create a new, or open an existing database with encryption enabled
             var config = new DatabaseConfiguration
             {
@@ -2385,7 +2361,6 @@ namespace api_walkthrough
                 // Remove encryption
                 db.ChangeEncryptionKey(null);
             }
-            // end::database-encryption[]
         }
 
         private static void ResetReplicatorCheckpoint()
@@ -2395,11 +2370,9 @@ namespace api_walkthrough
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(database, target);
             using (var replicator = new Replicator(config)) {
-                // tag::replication-reset-checkpoint[]
                 // replicator is a Replicator instance
                 replicator.ResetCheckpoint();
                 replicator.Start();
-                // end::replication-reset-checkpoint[]
             }
         }
 
@@ -2407,42 +2380,33 @@ namespace api_walkthrough
         {
             var db = _Database;
             using (var document = new MutableDocument()) {
-                // tag::1x-attachment[]
                 var attachments = document.GetDictionary("_attachments");
                 var avatar = attachments.GetBlob("avatar");
                 var content = avatar?.Content;
-                // end::1x-attachment[]
             }
         }
 
         private static void CreateNewDatabase()
         {
-            // tag::new-database[]
             var db = new Database("my-database");
-            // end::new-database[]
 
             _Database = db;
         }
 
         private static void CloseDatabase()
         {
-          // tag::close-database[]
           database.close()
 
-          // end::close-database[]
         }
 
         private static void ChangeLogging()
         {
-            // tag::logging[]
             Database.SetLogLevel(LogDomain.Replicator, LogLevel.Verbose);
             Database.SetLogLevel(LogDomain.Query, LogLevel.Verbose);
-            // end::logging[]
         }
 
         private static void LoadPrebuilt()
         {
-            // tag::prebuilt-database[]
             // Note: Getting the path to a database is platform-specific.  For .NET Core / .NET Framework this
             // can be a simple filesystem path.  For UWP, you will need to get the path from your assets.  For
             // iOS you need to get the path from the main bundle.  For Android you need to extract it from your
@@ -2452,7 +2416,6 @@ namespace api_walkthrough
                 _NeedsExtraDocs = true;
                 Database.Copy(path, "travel-sample", null);
             }
-            // end::prebuilt-database[]
 
             _Database.Close();
             _Database = new Database("travel-sample");
@@ -2460,19 +2423,16 @@ namespace api_walkthrough
 
         private static void QueryDeletedDocuments()
         {
-            // tag::query-deleted-documents[]
             // Query documents that have been deleted
             var query = QueryBuilder
                 .Select(SelectResult.Expression(Meta.ID))
                 .From(DataSource.Database(db))
                 .Where(Meta.IsDeleted);
-            // end::query-deleted-documents[]
         }
 
         private static void CreateDocument()
         {
             var db = _Database;
-            // tag::initializer[]
             using (var newTask = new MutableDocument("xyz")) {
                 newTask.SetString("type", "task")
                     .SetString("owner", "todo")
@@ -2480,28 +2440,23 @@ namespace api_walkthrough
 
                 db.Save(newTask);
             }
-            // end::initializer[]
         }
 
         private static void UpdateDocument()
         {
             var db = _Database;
-            // tag::update-document[]
             using(var document = db.GetDocument("xyz"))
             using (var mutableDocument = document.ToMutable()) {
                 mutableDocument.SetString("name", "apples");
                 db.Save(mutableDocument);
             }
-            // end::update-document[]
         }
 
         private static void UseTypedAccessors()
         {
             using (var newTask = new MutableDocument()) {
-                // tag::date-getter[]
                 newTask.SetValue("createdAt", DateTimeOffset.UtcNow);
                 var date = newTask.GetDate("createdAt");
-                // end::date-getter[]
 
                 Console.WriteLine(date);
             }
@@ -2510,7 +2465,6 @@ namespace api_walkthrough
         private static void DoBatchOperation()
         {
             var db = _Database;
-            // tag::batch[]
             db.InBatch(() =&gt;
             {
                 for (var i = 0; i &lt; 10; i++) {
@@ -2523,28 +2477,24 @@ namespace api_walkthrough
                     }
                 }
             });
-            // end::batch[]
         }
 
         private static void DatabaseChangeListener()
         {
             var db = _Database;
 
-            // tag::document-listener[]
             db.AddDocumentChangeListener("user.john", (sender, args) =&gt;
             {
                 using (var doc = Db.GetDocument(args.DocumentID)) {
                     Console.WriteLine($"Status :: {doc.GetString("verified_account")}");
                 }
             });
-            // end::document-listener[]
         }
 
         private static void DocumentExpiration()
         {
             var db = _Database;
 
-            // tag::document-expiration[]
             // Purge the document one day from now
             var ttl = DateTimeOffset.UtcNow.AddDays(1);
             db.SetDocumentExpiration("doc123", ttl);
@@ -2558,20 +2508,17 @@ namespace api_walkthrough
                 .Select(SelectResult.Expression(Meta.ID))
                 .From(DataSource.Database(db))
                 .Where(Meta.Expiration.LessThan(Expression.Double(fiveMinutesFromNow)));
-            // end::document-expiration[]
         }
 
         private static void UseBlob()
         {
             var db = _Database;
             using (var newTask = new MutableDocument()) {
-                // tag::blob[]
                 // Note: Reading the data is implementation dependent, as with prebuilt databases
                 var image = File.ReadAllBytes("avatar.jpg");
                 var blob = new Blob("image/jpeg", image);
                 newTask.SetBlob("avatar", blob);
                 db.Save(newTask);
-                // end::blob[]
 
                 var taskBlob = newTask.GetBlob("avatar");
                 using (var bitmap = SKBitmap.Decode(taskBlob.ContentStream)) {
@@ -2584,13 +2531,11 @@ namespace api_walkthrough
         {
             var db = _Database;
 
-            // tag::query-index[]
             // For value types, this is optional but provides performance enhancements
             var index = IndexBuilder.ValueIndex(
                 ValueIndexItem.Expression(Expression.Property("type")),
                 ValueIndexItem.Expression(Expression.Property("name"))); <i class="conum" data-value="1"></i><b>(1)</b>
             db.CreateIndex("TypeNameIndex", index);
-            // end::query-index[]
         }
 
         private static void SelectMeta()
@@ -2598,7 +2543,6 @@ namespace api_walkthrough
             Console.WriteLine("Select Meta");
             var db = _Database;
 
-            // tag::query-select-meta[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("type"),
@@ -2609,21 +2553,17 @@ namespace api_walkthrough
                     Console.WriteLine($"Document Name :: {result.GetString("name")}");
                 }
             }
-            // end::query-select-meta[]
         }
 
         private static void SelectAll()
         {
             var db = _Database;
 
-            // tag::query-select-all[]
             using (var query = QueryBuilder.Select(SelectResult.All())
                 .From(DataSource.Database(db))) {
                 // All user properties will be available here
             }
-            // end::query-select-all[]
 
-            // tag::live-query[]
             var query = QueryBuilder
                 .Select(SelectResult.All())
                 .From(DataSource.Database(db));
@@ -2641,12 +2581,9 @@ namespace api_walkthrough
 
             // Start live query.
             query.Execute(); <i class="conum" data-value="1"></i><b>(1)</b>
-            // end::live-query[]
 
-            // tag::stop-live-query[]
             query.RemoveChangeListener(token);
             query.Dispose();
-            // end::stop-live-query[]
         }
 
         private static void SelectWhere()
@@ -2654,7 +2591,6 @@ namespace api_walkthrough
             Console.WriteLine("Where");
             var db = _Database;
 
-            // tag::query-where[]
             using (var query = QueryBuilder.Select(SelectResult.All())
                 .From(DataSource.Database(db))
                 .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
@@ -2664,7 +2600,6 @@ namespace api_walkthrough
                     Console.WriteLine($"Document Name :: {dict?.GetString("name")}");
                 }
             }
-            // end::query-where[]
         }
 
         private static void UseCollectionContains()
@@ -2672,7 +2607,6 @@ namespace api_walkthrough
             Console.WriteLine("Collection Operator CONTAINS");
             var db = _Database;
 
-            // tag::query-collection-operator-contains[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"),
@@ -2687,7 +2621,6 @@ namespace api_walkthrough
                     Console.WriteLine($"Public Likes :: {jsonString}");
                 }
             }
-            // end::query-collection-operator-contains[]
         }
 
         private static void UseCollectionIn()
@@ -2695,7 +2628,6 @@ namespace api_walkthrough
             Console.WriteLine("Collection Operator IN");
             var db = _Database;
 
-            // tag::query-collection-operator-in[]
             var values = new IExpression[]
                 { Expression.Property("first"), Expression.Property("last"), Expression.Property("username") };
 
@@ -2709,7 +2641,6 @@ namespace api_walkthrough
                     Console.WriteLine($"In results :: {jsonString}");
                 }
             }
-            // end::query-collection-operator-in[]
         }
 
         private static void SelectLike()
@@ -2717,7 +2648,6 @@ namespace api_walkthrough
             Console.WriteLine("Like");
             var db = _Database;
 
-            // tag::query-like-operator[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
@@ -2729,7 +2659,6 @@ namespace api_walkthrough
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
                 }
             }
-            // end::query-like-operator[]
         }
 
         private static void SelectWildcardLike()
@@ -2737,7 +2666,6 @@ namespace api_walkthrough
             Console.WriteLine("Wildcard Like");
             var db = _Database;
 
-            // tag::query-like-operator-wildcard-match[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
@@ -2749,7 +2677,6 @@ namespace api_walkthrough
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
                 }
             }
-            // end::query-like-operator-wildcard-match[]
         }
 
         private static void SelectWildcardCharacterLike()
@@ -2757,7 +2684,6 @@ namespace api_walkthrough
             Console.WriteLine("Wildchard Characters");
             var db = _Database;
 
-            // tag::query-like-operator-wildcard-character-match[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
@@ -2769,7 +2695,6 @@ namespace api_walkthrough
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
                 }
             }
-            // end::query-like-operator-wildcard-character-match[]
         }
 
         private static void SelectRegex()
@@ -2777,7 +2702,6 @@ namespace api_walkthrough
             Console.WriteLine("Regex");
             var db = _Database;
 
-            // tag::query-regex-operator[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("name"))
@@ -2789,7 +2713,6 @@ namespace api_walkthrough
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
                 }
             }
-            // end::query-regex-operator[]
         }
 
         private static void SelectJoin()
@@ -2797,7 +2720,6 @@ namespace api_walkthrough
             Console.WriteLine("Join");
             var db = _Database;
 
-            // tag::query-join[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Expression.Property("name").From("airline")),
                     SelectResult.Expression(Expression.Property("callsign").From("airline")),
@@ -2814,7 +2736,6 @@ namespace api_walkthrough
                     Console.WriteLine($"Name Property :: {result.GetString("name")}");
                 }
             }
-            // end::query-join[]
         }
 
         private static void GroupBy()
@@ -2822,7 +2743,6 @@ namespace api_walkthrough
             Console.WriteLine("GroupBy");
             var db = _Database;
 
-            // tag::query-groupby[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Function.Count(Expression.All())),
                     SelectResult.Property("country"),
@@ -2836,7 +2756,6 @@ namespace api_walkthrough
                         $"There are {result.GetInt("$1")} airports in the {result.GetString("tz")} timezone located in {result.GetString("country")} and above 300 ft");
                 }
             }
-            // end::query-groupby[]
         }
 
         private static void OrderBy()
@@ -2844,7 +2763,6 @@ namespace api_walkthrough
             Console.WriteLine("OrderBy");
             var db = _Database;
 
-            // tag::query-orderby[]
             using (var query = QueryBuilder.Select(
                     SelectResult.Expression(Meta.ID),
                     SelectResult.Property("title"))
@@ -2856,7 +2774,6 @@ namespace api_walkthrough
                     Console.WriteLine($"Title :: {result.GetString("title")}");
                 }
             }
-            // end::query-orderby[]
         }
 
       // ### EXPLAIN statement
@@ -2864,7 +2781,6 @@ namespace api_walkthrough
       // For Documentation
       {
         var db = _Database;
-          // tag::query-explain-all[]
         var query =
           QueryBuilder
             .Select(SelectResult.All())
@@ -2875,8 +2791,6 @@ namespace api_walkthrough
 
           Console.WriteLine(query.Explain()); <i class="conum" data-value="4"></i><b>(4)</b>
 
-          // end::query-explain-all[]
-          // tag::query-explain-like[]
 var query =
   QueryBuilder
     .Select(SelectResult.All())
@@ -2885,8 +2799,6 @@ var query =
       .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="5"></i><b>(5)</b>
   Console.WriteLine(query.Explain());
 
-          // end::query-explain-like[]
-          // tag::query-explain-nopfx[]
 var query =
   QueryBuilder
     .Select(SelectResult.All())
@@ -2896,8 +2808,6 @@ var query =
 
   Console.WriteLine(query.Explain());
 
-          // end::query-explain-nopfx[]
-          // tag::query-explain-function[]
 var query =
   QueryBuilder
     .Select(SelectResult.All())
@@ -2906,8 +2816,6 @@ var query =
 
   Console.WriteLine(query.Explain());
 
-          // end::query-explain-function[]
-          // tag::query-explain-nofunction[]
         var query =
           QueryBuilder
             .Select(SelectResult.All())
@@ -2916,7 +2824,6 @@ var query =
 
           Console.WriteLine(query.Explain());
 
-          // end::query-explain-nofunction[]
       }
 
       // end query-explain
@@ -2939,10 +2846,8 @@ var query =
                 }
             }
 
-            // tag::fts-index[]
             var index = IndexBuilder.FullTextIndex(FullTextIndexItem.Property("name")).IgnoreAccents(false);
             db.CreateIndex("nameFTSIndex", index);
-            // end::fts-index[]
         }
 
         private static void FullTextSearch()
@@ -2950,7 +2855,6 @@ var query =
             Console.WriteLine("Full text search");
             var db = _Database;
 
-            // tag::fts-query[]
             var whereClause = FullTextExpression.Index("nameFTSIndex").Match("'buy'");
             using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
                 .From(DataSource.Database(db))
@@ -2959,7 +2863,6 @@ var query =
                     Console.WriteLine($"Document id {result.GetString(0)}");
                 }
             }
-            // end::fts-query[]
         }
         private static void StartReplication()
         {
@@ -2981,7 +2884,6 @@ var query =
              * }
              */
 
-            // tag::replication[]
             // Note: Android emulator needs to use 10.0.2.2 for localhost (10.0.3.2 for GenyMotion)
             var url = new Uri("ws://localhost:4984/db");
             var target = new URLEndpoint(url);
@@ -2992,37 +2894,29 @@ var query =
 
             var replicator = new Replicator(config);
             replicator.Start();
-            // end::replication[]
 
             _Replicator = replicator;
         }
 
         private static void VerboseReplicatorLogging()
         {
-            // tag::replication-logging[]
             // deprecated
             Database.SetLogLevel(LogDomain.Replicator, LogLevel.Verbose);
             Database.SetLogLevel(LogDomain.Network, LogLevel.Verbose);
-            // end::replication-logging[]
         }
 
         private static void ConsoleLogging()
         {
-            // tag::console-logging[]
             Database.Log.Console.Domains = LogDomain.All; <i class="conum" data-value="9"></i><b>(9)</b>
             Database.Log.Console.LogLevel = LogLevel.Verbose; <i class="conum" data-value="10"></i><b>(10)</b>
 
-            // end::console-logging[]
 
-            // tag::console-logging-db[]
             Database.Log.Console.Domains = LogDomain.Database;
 
-            // end::console-logging-db[]
         }
 
         private static void FileLogging()
         {
-            // tag::file-logging[]
             var tempFolder = Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), "cbllog");
             var config = new LogFileConfiguration(tempFolder) <i class="conum" data-value="11"></i><b>(11)</b>
             {
@@ -3033,45 +2927,35 @@ var query =
             Database.Log.File.Config = config; // Apply configuration
             Database.Log.File.Level = LogLevel.Info; <i class="conum" data-value="15"></i><b>(15)</b>
 
-            // end::file-logging[]
         }
 
         private static void EnableCustomLogging()
         {
-            // tag::set-custom-logging[]
             Database.Log.Custom = new LogTestLogger(); <i class="conum" data-value="16"></i><b>(16)</b>
             or
             Database.Log.Custom = new LogTestLogger { Level = LogLevel.Warning };
 
-            // end::set-custom-logging[]
         }
 
         private static void WriteConsoleLog()
         {
-            // tag::write-console-logmsg[]
             Database.Log.Console.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
-            // end::write-console-logmsg[]
         }
         private static void WriteCustomLog()
         {
-            // tag::write-custom-logmsg[]
             Database.Log.Custom?.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
-            // end::write-custom-logmsg[]
         }
 
 
         private static void WriteFileLog()
         {
-            // tag::write-file-logmsg[]
             Database.Log.File.Log(LogLevel.Warning, LogDomain.Replicator, "Any old log message");
-            // end::write-file-logmsg[]
         }
 
         private static void EnableBasicAuth()
         {
             var database = _Database;
 
-            // tag::basic-authentication[]
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(database, target);
@@ -3079,14 +2963,12 @@ var query =
 
             var replicator = new Replicator(config);
             replicator.Start();
-            // end::basic-authentication[]
         }
 
         private static void EnableSessionAuth()
         {
             var database = _Database;
 
-            // tag::session-authentication[]
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(database, target);
@@ -3094,21 +2976,18 @@ var query =
 
             var replicator = new Replicator(config);
             replicator.Start();
-            // end::session-authentication[]
         }
 
         private static void SetupReplicatorListener()
         {
             var replicator = _Replicator;
 
-            // tag::replication-status[]
             replicator.AddChangeListener((sender, args) =&gt;
             {
                 if (args.Status.Activity == ReplicatorActivityLevel.Stopped) {
                     Console.WriteLine("Replication stopped");
                 }
             });
-            // end::replication-status[]
         }
 
 
@@ -3117,20 +2996,17 @@ var query =
     //  BEGIN PendingDocuments IB -- 11/Feb/21 --
     private static void ReplicatorPendingDocuments()
     {
-        // tag::replication-pendingdocuments[]
         var url = new Uri("ws://localhost:4984/mydatabase");
         var target = new URLEndpoint(url);
         var database = new Database("myDB");
         var config = new ReplicatorConfiguration(database, target);
         config.ReplicatorType  = ReplicatorType.Push;
 
-        // tag::replication-push-pendingdocumentids[]
         var replicator = new Replicator(config);
 
         var mydocids =
           new HashSet &lt;string&gt; (replicator.GetPendingDocumentIDs()); <i class="conum" data-value="17"></i><b>(17)</b>
 
-        // end::replication-push-pendingdocumentids[]
 
         if (mydocids.Count &gt; 0)
         {
@@ -3142,17 +3018,14 @@ var query =
                 // iterate and report-on previously
                 // retrieved pending docids 'list'
                 foreach (var thisId in mydocids)
-                    // tag::replication-push-isdocumentpending[]
                     if (!replicator.IsDocumentPending(thisId)) <i class="conum" data-value="18"></i><b>(18)</b>
                     {
                         Console.WriteLine($"Doc ID {thisId} now pushed");
                     };
-                // end::replication-push-isdocumentpending[]
             });
 
             replicator.Start();
         }
-    // end::replication-pendingdocuments[]
     }
 
 
@@ -3164,7 +3037,6 @@ var query =
         {
             var replicator = _Replicator;
 
-            // tag::add-document-replication-listener[]
             var token = replicator.AddDocumentReplicationListener((sender, args) =&gt;
             {
                 var direction = args.IsPush ? "Push" : "Pull";
@@ -3182,11 +3054,8 @@ var query =
             });
 
             replicator.Start();
-            // end::add-document-replication-listener[]
 
-            // tag::remove-document-replication-listener[]
             replicator.RemoveChangeListener(token);
-            // end::remove-document-replication-listener[]
         }
 
         private static void SetupReplicatorErrorListener()
@@ -3196,14 +3065,12 @@ var query =
 
             var replicator = _Replicator;
 
-            // tag::replication-error-handling[]
             replicator.AddChangeListener((sender, args) =&gt;
             {
                 if (args.Status.Error != null) {
                     Console.WriteLine($"Error :: {args.Status.Error}");
                 }
             });
-            // end::replication-error-handling[]
         }
 
         private static void DatabaseReplica()
@@ -3211,7 +3078,6 @@ var query =
             var db = _Database;
             using (var database2 = new Database("backup")) {
                 // EE feature: This code will not compile on the community edition
-                // tag::database-replica[]
                 var targetDatabase = new DatabaseEndpoint(database2);
                 var config = new ReplicatorConfiguration(db, targetDatabase)
                 {
@@ -3220,7 +3086,6 @@ var query =
 
                 var replicator = new Replicator(config);
                 replicator.Start();
-                // end::database-replica[]
 
                 _Replicator?.Stop();
                 _Replicator = replicator;
@@ -3234,7 +3099,6 @@ var query =
             var target = new URLEndpoint(url);
             var db = _Database;
 
-            // tag::certificate-pinning[]
             // Note: `GetCertificate` is a fake method. This would be the platform-specific method
             // to find and load the certificate as an instance of `X509Certificate2`.
             // For .NET Core / .NET Framework this can be loaded from the filesystem path.
@@ -3246,7 +3110,6 @@ var query =
             {
                 PinnedServerCertificate = certificate
             };
-            // end::certificate-pinning[]
         }
 
         private static void ReplicationCustomHeaders()
@@ -3254,7 +3117,6 @@ var query =
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
 
-            // tag::replication-custom-header[]
             var config = new ReplicatorConfiguration(database, target)
             {
                 Headers = new Dictionary&lt;string, string&gt;
@@ -3262,12 +3124,10 @@ var query =
                     ["CustomHeaderName"] = "Value"
                 }
             };
-            // end::replication-custom-header[]
         }
 
         private static void PushWithFilter(Database database)
         {
-            // tag::replication-push-filter[]
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
 
@@ -3284,12 +3144,10 @@ var query =
             // Dispose() later
             var replicator = new Replicator(config);
             replicator.Start();
-            // end::replication-push-filter[]
         }
 
         private static void PullWithFilter(Database database)
         {
-            // tag::replication-pull-filter[]
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
 
@@ -3306,12 +3164,10 @@ var query =
             // Dispose() later
             var replicator = new Replicator(config);
             replicator.Start();
-            // end::replication-pull-filter[]
         }
 
         public void TestCustomRetryConfig()
         {
-        // tag::replication-retry-config[]
             var url = new Uri("ws://localhost:4984/mydatabase");
             var target = new URLEndpoint(url);
 
@@ -3319,47 +3175,33 @@ var query =
 
         //  other config as required . . .
 
-        // tag::replication-set-heartbeat[]
             config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="19"></i><b>(19)</b>
-        // end::replication-set-heartbeat[]
-        // tag::replication-set-maxretries[]
             config.MaxRetries = 20; //  <i class="conum" data-value="20"></i><b>(20)</b>
-        // end::replication-set-maxretries[]
-        // tag::replication-set-maxretrywaittime[]
             config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="21"></i><b>(21)</b>
-        // end::replication-set-maxretrywaittime[]
 
         //  other config as required . . .
 
             var repl = new Replicator(config);
 
-        // end::replication-retry-config[]
         }
 
 
         private static void UsePredictiveModel()
         {
             using (var db = new Database("mydb")) {
-                // tag::register-model[]
                 var model = new ImageClassifierModel();
                 Database.Prediction.RegisterModel("ImageClassifier", model);
-                // end::register-model[]
 
-                // tag::predictive-query-value-index[]
                 var index = IndexBuilder.ValueIndex(ValueIndexItem.Property("label"));
                 db.CreateIndex("value-index-image-classifier", index);
-                // end::predictive-query-value-index[]
 
-                // tag::unregister-model[]
                 Database.Prediction.UnregisterModel("ImageClassifier");
-                // end::unregister-model[]
             }
         }
 
         private static void UsePredictiveIndex()
         {
             using (var db = new Database("mydb")) {
-                // tag::predictive-query-predictive-index[]
                 var input = Expression.Dictionary(new Dictionary&lt;string, object&gt;
                 {
                     ["photo"] = Expression.Property("photo")
@@ -3367,14 +3209,12 @@ var query =
 
                 var index = IndexBuilder.PredictiveIndex("ImageClassifier", input);
                 db.CreateIndex("predictive-index-image-classifier", index);
-                // end::predictive-query-predictive-index[]
             }
         }
 
         private static void DoPredictiveQuery()
         {
             using (var db = new Database("mydb")) {
-                // tag::predictive-query[]
                 var input = Expression.Dictionary(new Dictionary&lt;string, object&gt;
                 {
                     ["photo"] = Expression.Property("photo")
@@ -3388,7 +3228,6 @@ var query =
                     var result = q.Execute();
                     Console.WriteLine($"Number of rows: {result.Count()}");
                 }
-                // end::predictive-query[]
             }
         }
 
@@ -3447,32 +3286,26 @@ var query =
         {
             var id = "";
 
-            // tag::message-endpoint[]
             var database = new Database("dbname");
 
             // The delegate must implement the `IMessageEndpointDelegate` protocol.
             var messageEndpointTarget = new MessageEndpoint(uid: "UID:123", target: "",
                 protocolType: ProtocolType.MessageStream, delegateObject: this);
-            // end::message-endpoint[]
 
-            // tag::message-endpoint-replicator[]
             var config = new ReplicatorConfiguration(database, messageEndpointTarget);
 
             // Create the replicator object
             var replicator = new Replicator(config);
             // Start the replicator
             replicator.Start();
-            // end::message-endpoint-replicator[]
         }
 
-        // tag::create-connection[]
         /* implementation of MessageEndpointDelegate */
         public IMessageEndpointConnection CreateConnection(MessageEndpoint endpoint)
         {
             var connection = new ActivePeerConnection(); /* implements MessageEndpointConnection */
             return connection;
         }
-        // end::create-connection[]
     }
 
     class ActivePeerConnection : IMessageEndpointConnection
@@ -3481,20 +3314,15 @@ var query =
 
         public void Disconnect()
         {
-            // tag::active-replicator-close[]
             _replicatorConnection?.Close(null);
-            // end::active-replicator-close[]
         }
 
         public void Receive(byte[] data)
         {
-            // tag::active-peer-receive[]
             var message = Message.FromBytes(data);
             _replicatorConnection?.Receive(message);
-            // end::active-peer-receive[]
         }
 
-        // tag::active-peer-close[]
         /* implementation of MessageEndpointConnection */
         public async Task Close(Exception error)
         {
@@ -3502,9 +3330,7 @@ var query =
             // throw MessagingException if something goes wrong (though
             // since it is "close" nothing special will happen)
         }
-        // end::active-peer-close[]
 
-        // tag::active-peer-open[]
         /* implementation of MessageEndpointConnection */
         public async Task Open(IReplicatorConnection connection)
         {
@@ -3512,9 +3338,7 @@ var query =
             // await socket.Open(), etc
             // throw MessagingException if something goes wrong
         }
-        // end::active-peer-open[]
 
-        // tag::active-peer-send[]
         /* implementation of MessageEndpointConnection */
         public async Task Send(Message message)
         {
@@ -3522,7 +3346,6 @@ var query =
             // await Socket.Send(), etc
             // throw MessagingException if something goes wrong
         }
-        // end::active-peer-send[]
     }
 
     /* ----------------------------------------------------------- */
@@ -3536,44 +3359,33 @@ var query =
 
         public void StartListener()
         {
-            // tag::listener[]
             var database = new Database("mydb");
             var config = new MessageEndpointListenerConfiguration(database, ProtocolType.MessageStream);
             _messageEndpointListener = new MessageEndpointListener(config);
-            // end::listener[]
         }
 
         public void StopListener()
         {
-            // tag::passive-stop-listener[]
             _messageEndpointListener?.CloseAll();
-            // end::passive-stop-listener[]
         }
 
         public void AcceptConnection()
         {
-            // tag::advertizer-accept[]
             var connection = new PassivePeerConnection(); /* implements MessageEndpointConnection */
             _messageEndpointListener?.Accept(connection);
-            // end::advertizer-accept[]
         }
 
         public void Disconnect()
         {
-            // tag::passive-replicator-close[]
             _replicatorConnection?.Close(null);
-            // end::passive-replicator-close[]
         }
 
         public void Receive(byte[] data)
         {
-            // tag::passive-peer-receive[]
             var message = Message.FromBytes(data);
             _replicatorConnection?.Receive(message);
-            // end::passive-peer-receive[]
         }
 
-        // tag::passive-peer-close[]
         /* implementation of MessageEndpointConnection */
         public async Task Close(Exception error)
         {
@@ -3581,9 +3393,7 @@ var query =
             // throw MessagingException if something goes wrong (though
             // since it is "close" nothing special will happen)
         }
-        // end::passive-peer-close[]
 
-        // tag::passive-peer-open[]
         /* implementation of MessageEndpointConnection */
         public Task Open(IReplicatorConnection connection)
         {
@@ -3591,9 +3401,7 @@ var query =
             // socket should already be open on the passive side
             return Task.FromResult(true);
         }
-        // end::passive-peer-open[]
 
-        // tag::passive-peer-send[]
         /* implementation of MessageEndpointConnection */
         public async Task Send(Message message)
         {
@@ -3601,10 +3409,8 @@ var query =
             // await Socket.Send(), etc
             // throw MessagingException if something goes wrong
         }
-        // end::passive-peer-send[]
     }
 
-    // tag::predictive-model[]
     // `TensorFlowModel` is a fake implementation
     // this would be the implementation of the ml model you have chosen
     class TensorFlowModel
@@ -3632,9 +3438,7 @@ var query =
             return new MutableDictionaryObject(modelOutput); <i class="conum" data-value="1"></i><b>(1)</b>
         }
     }
-    // end::predictive-model[]
 
-    // tag::custom-logging[]
     private class LogTestLogger : ILogger
     {
         public LogLevel Level { get; set; }
@@ -3650,9 +3454,7 @@ var query =
             // a third party framework
         }
     }
-    // end::custom-logging[]
 
-    // tag::local-win-conflict-resolver[]
     class LocalWinConflictResolver : IConflictResolver
     {
         Document Resolve(Conflict conflict)
@@ -3660,9 +3462,7 @@ var query =
             return conflict.LocalDocument;
         }
     }
-    // end::local-win-conflict-resolver[]
 
-    // tag::remote-win-conflict-resolver[]
     class RemoteWinConflictResolver : IConflictResolver
     {
         public Document Resolve(Conflict conflict)
@@ -3670,9 +3470,7 @@ var query =
             return conflict.RemoteDocument;
         }
     }
-    // end::remote-win-conflict-resolver[]
 
-    // tag::merge-conflict-resolver[]
     class MergeConflictResolver : IConflictResolver
     {
         public Document Resolve(Conflict conflict)
@@ -3685,7 +3483,6 @@ var query =
             return new MutableDocument(conflict.DocumentID, result);
         }
     }
-    // end::merge-conflict-resolver[]
 
 
 // N1QL QUERY
@@ -3697,7 +3494,6 @@ var query =
       DatabaseConfiguration dbCfg = new DatabaseConfiguration();
       dbCfg.Directory =
           Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
-      // tag::query-syntax-n1ql[]
       Database thisDb = new Database(dbName, dbCfg);
 
       var thisQuery =
@@ -3710,16 +3506,11 @@ var query =
       var results = thisQuery.Execute().AllResults();
 
       return results;
-      // end::query-syntax-n1ql[]
   }
 
-    // tag::query-syntax-n1ql-params[]
     tbd
-    // end::query-syntax-n1ql-params[]
 
-    // tag::query-access-n1ql[]
     tbd
-    // end::query-access-n1ql[]
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
@@ -3735,16 +3526,13 @@ var query =
         string thisDocsCity;
         Dictionary&lt;string,object&gt; hotel = new Dictionary&lt;string,object&gt;();
 
-        // tag::query-syntax-all[]
         var this_Db = new Database("hotels") ;
 
         var query = QueryBuilder
               .Select(SelectResult.All())
               .From(DataSource.Database(this_Db));
 
-        // end::query-syntax-all[]
 
-        // tag::query-access-all[]
         var results = query.Execute().AllResults();
 
         if (results?.Count &gt; 0)
@@ -3767,9 +3555,7 @@ var query =
 
             }
         }
-        // end::query-access-all[]
 
-    // tag::query-access-json[]
 
     foreach (var result in query.Execute().AsEnumerable()) {
 
@@ -3801,7 +3587,6 @@ var query =
                 this_hotel);
 
     } // end foreach result
-    // end::query-access-json[]
   }
 
 
@@ -3814,7 +3599,6 @@ var query =
         string thisDocsName;
         string thisDocsType;
         string thisDocsCity;
-        // tag::query-syntax-props[]
         var this_Db = new Database("hotels") ;
 
         Dictionary&lt;string, object&gt; hotel = new Dictionary&lt;string, object&gt;();
@@ -3825,9 +3609,7 @@ var query =
                 SelectResult.Property("type"),
                 SelectResult.Property("name"),
                 SelectResult.Property("city")).From(DataSource.Database(this_Db));
-        // end::query-syntax-props[]
 
-        // tag::query-access-props[]
         var results = query.Execute().AllResults();
         foreach (var result in results)
         {
@@ -3845,7 +3627,6 @@ var query =
 
         }
 
-    // end::query-access-props[]
     } // test-query-access-props
 
 
@@ -3859,7 +3640,6 @@ var query =
         Dictionary&lt;string, object&gt; hotel = new Dictionary&lt;string, object&gt;();
         List&lt;Dictionary&lt;string, object&gt;&gt; hotels = new List&lt;Dictionary&lt;string, object&gt;&gt;();
 
-        // tag::query-syntax-count-only[]
         var this_Db = new Database("hotels") ;
 
         var query =
@@ -3867,10 +3647,8 @@ var query =
             .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) <i class="conum" data-value="29"></i><b>(29)</b>
             .From(DataSource.Database(this_Db));
 
-        // end::query-syntax-count-only[]
 
 
-        // tag::query-access-count-only[]
 
         var results = query.Execute().AllResults();
 
@@ -3881,7 +3659,6 @@ var query =
 
         }
 
-        // end::query-access-count-only[]
     }
 
 
@@ -3898,17 +3675,14 @@ var query =
         List&lt;Dictionary&lt;string, object&gt;&gt; hotels = new List&lt;Dictionary&lt;string, object&gt;&gt;();
 
 
-        // tag::query-syntax-id[]
         var this_Db = new Database("hotels") ;
 
         var query = QueryBuilder
                 .Select(SelectResult.Expression(Meta.ID).As("this_ID"))
                 .From(DataSource.Database(this_Db));
 
-        // end::query-syntax-id[]
 
 
-        // tag::query-access-id[]
         var results = query.Execute().AllResults();
         foreach (var result in results)
         {
@@ -3917,18 +3691,15 @@ var query =
             var doc = this_Db.GetDocument(thisDocsID);
         }
 
-        // end::query-access-id[]
     }
 
 
-// tag::query-syntax-pagination-all[]
     private static void testQueryPagination()
     {
       // For Documentation
       var dbName = "travel-sample";
       // var this_Db = new Database(dbName);
 
-    // tag::query-syntax-pagination[]
       var this_Db = new Database("hotels") ;
 
       var thisLimit = 20;
@@ -3964,8 +3735,6 @@ var query =
 
       } // end while
 
-// end::query-syntax-pagination[]
-// end::query-syntax-pagination-all[]
     }
 
     // JSONAPIMETHODS
@@ -3975,7 +3744,6 @@ var query =
         public void JsonApiDocument()
         {
 
-            // tag::tojson-document[]
             Database this_DB = new Database("travel-sample");
             Database newDb = new Database("ournewdb");
 
@@ -4017,10 +3785,8 @@ var query =
             var thatDoc = newDb.GetDocument("2001").ToJSON(); <i class="conum" data-value="35"></i><b>(35)</b>
             System.Console.Write(thatDoc);
 
-            // end::tojson-document[]
 
 
-        //    // tag::tojson-document-output[]
         //    JSON String = { "description":"Very good and central","id":"1000","country":"France","name":"Hotel Ted","type":"hotel","city":"Paris"}
         //             type = hotel
         //             id = 1000
@@ -4028,7 +3794,6 @@ var query =
         //             city = Paris
         //             description = Very good and central
         //             name = Hotel Ted
-        //        // end::tojson-document-output[]
         //         */
 
         } // End JSONAPIDocument
@@ -4045,7 +3810,6 @@ var query =
                 Database.Delete(ourdbname, "/");
             }
 
-        // tag::tojson-array[]
 
             Database dbNew = new Database(ourdbname);
 
@@ -4079,7 +3843,6 @@ var query =
             }
             var featuresJSON = extendedDoc.GetArray("features").ToJSON(); <i class="conum" data-value="39"></i><b>(39)</b>
 
-            // end::tojson-array[]
         }
 
 
@@ -4094,7 +3857,6 @@ var query =
             }
             Database dbNew = new Database(ourdbname);
 
-            // tag::tojson-dictionary[]
 
             // Get dictionary from JSONstring
             var aJSONstring = "{'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
@@ -4110,10 +3872,8 @@ var query =
                 System.Console.WriteLine("Data -- {0} = {1}", key, myDict.GetValue(key).ToString());
 
             }
-            // end::tojson-dictionary[]
 
             /*
-            // tag::tojson-dictionary-output[]
 
                 mono-stdout: Data -- id = 1002
                 mono-stdout: Data -- type = hotel
@@ -4123,7 +3883,6 @@ var query =
                 mono-stdout: Data -- description = Undefined description for Hotel Ned
                 mono-stdout: Data -- features = Couchbase.Lite.MutableArrayObject
 
-            // end::tojson-dictionary-output[]
             */
         } /* end of func */
 
@@ -4144,7 +3903,6 @@ var query =
             dbCfg.Directory=ourpath;
             Database dbNew = new Database(ourdbname,dbCfg);
 
-            // tag::tojson-blob[]
 
             // Initialize base document for blob from a JSON string
             var docId = "1002";
@@ -4189,7 +3947,6 @@ var query =
                Console.WriteLine("Its a Blob!!");
             }
 
-            // end::tojson-blob[]
             var datavalue = "";
             foreach (string key in myDoc.Keys)
             {
@@ -4220,7 +3977,6 @@ var query =
             //}
 
             /*
-            // tag::tojson-blob-output[]
 
 
                 Exception = Missing Digest Due To Blob Is Not Saved To Database yet.
@@ -4236,7 +3992,6 @@ var query =
 
                 blobAsJSONstring = {"digest":"sha1-sdCxeOeP3IZV4FEvVVlvtulpWA8=","length":2975,"content_type":"image/jpg","@type":"blob"}
 
-            // end::tojson-blob-output[]
             */
         } /* end of func */
 
@@ -4250,7 +4005,6 @@ var query =
 // p2p sync items
 
 
-// tag::listener-simple[]
 var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="47"></i><b>(47)</b>
 
 thisConfig.Authenticator =
@@ -4265,11 +4019,9 @@ _thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value
 
 _thisListener.Start(); <i class="conum" data-value="50"></i><b>(50)</b>
 
-// end::listener-simple[]
 
 
 
-// tag::replicator-simple[]
 var theListenerEndpoint = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="51"></i><b>(51)</b>
 
 var thisConfig = new ReplicatorConfiguration(thisDB, theListenerEndpoint); <i class="conum" data-value="52"></i><b>(52)</b>
@@ -4283,7 +4035,6 @@ var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="55
 
 thisReplicator.Start(); <i class="conum" data-value="56"></i><b>(56)</b>
 
-// end::replicator-simple[]
 
 
 
@@ -4340,36 +4091,21 @@ namespace api_walkthrough
   #region Private Methods
   private static void GettingStarted()
   {
-    // tag::listener-initialize[]
 
-    // tag::listener-config-db[]
     // Initialize the listener config
     var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="57"></i><b>(57)</b>
 
-    // end::listener-config-db[]
-    // tag::listener-config-port[]
     thisConfig.Port = 55990; <i class="conum" data-value="58"></i><b>(58)</b>
 
-    // end::listener-config-port[]
-    // tag::listener-config-netw-iface[]
     thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="59"></i><b>(59)</b>
 
-    // end::listener-config-netw-iface[]
-    // tag::listener-config-delta-sync[]
     thisConfig.EnableDeltaSync = true; <i class="conum" data-value="60"></i><b>(60)</b>
 
-    // end::listener-config-delta-sync[]
-    // tag::listener-config-tls-full[]
-    // tag::listener-config-tls-enable[]
     thisConfig.DisableTLS = false; <i class="conum" data-value="61"></i><b>(61)</b>
 
-    // end::listener-config-tls-enable[]
-    // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
     thisConfig.TlsIdentity = null; <i class="conum" data-value="62"></i><b>(62)</b>
 
-    // end::listener-config-tls-id-anon[]
-    // tag::listener-config-client-auth-pwd[]
     // Configure the client authenticator
     // Here we are using Basic Authentication) <i class="conum" data-value="63"></i><b>(63)</b>
     SecureString validPassword =  new SecureString(); /* example only */
@@ -4382,50 +4118,35 @@ namespace api_walkthrough
         }
       );
 
-    // end::listener-config-client-auth-pwd[]
-    // tag::listener-start[]
     // Initialize the listener
     _thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="64"></i><b>(64)</b>
 
     // Start the listener
     thisListener.Start(); <i class="conum" data-value="65"></i><b>(65)</b>
 
-    // end::listener-start[]
-    // end::listener-initialize[]
   }
 
-  // tag::old-listener-config-tls-disable[]
   thisConfig.disableTLS = true;
-  // end::old-listener-config-tls-disable[]
 
-  // tag::listener-config-tls-id-nil-2[]
 
   // Use “anonymous” cert. These are self signed certs created by the system
   thisConfig.TlsIdentity = null;
-  // end::listener-config-tls-id-nil-2[]
 
 
-  // tag::old-listener-config-delta-sync[]
   thisConfig.EnableDeltaSync = true;
-  // end::old-listener-config-delta-sync[]
 
 
-  // tag::listener-status-check[]
   int connectionCount = thisListener.Status.ConnectionCount; <i class="conum" data-value="66"></i><b>(66)</b>
   int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  <i class="conum" data-value="67"></i><b>(67)</b>
 
-  // end::listener-status-check[]
 
 
-  // tag::listener-stop[]
   thisListener.Stop();
 
-  // end::listener-stop[]
 
 // Additional snippets
 
 
-// tag::listener-get-network-interfaces[]
 foreach(NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
 {
   if(ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
@@ -4435,10 +4156,8 @@ foreach(NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
   }
 }
 
-// end::listener-get-network-interfaces[]
 
 
-// tag::listener-get-url-list[]
 var thisConfig = new URLEndpointListenerConfiguration(thisDB);
 _thisListener = new URLEndpointListener(thisConfig);
 
@@ -4446,22 +4165,15 @@ _thisListener.Start();
 
  Console.WriteLine("URLS are {0} ", thisListener.Urls;
 
-// end::listener-get-url-list[]
 
-    // tag::listener-config-tls-disable[]
     thisConfig.DisableTLS = true; <i class="conum" data-value="68"></i><b>(68)</b>
 
-    // end::listener-config-tls-disable[]
 
-    // tag::listener-local-db[]
     // . . . preceding application logic . . .
     // Get the database (and create it if it doesn't exist)
     var thisDB = new Database("mydb");
 
-    // end::listener-local-db[]
 
-    // tag::listener-config-tls-id-full[]
-    // tag::listener-config-tls-id-caCert[]
     // Use CA Cert
     // Create a TLSIdentity from an imported key-pair
     // . . . previously declared variables include ...
@@ -4474,7 +4186,6 @@ _thisListener.Start();
       File.ReadAllBytes("c:client.p12"); <i class="conum" data-value="69"></i><b>(69)</b>
     // . . . other user code . . .
 
-    // tag::import-tls-identity[]
     thisIdentity = TLSIdentity.ImportIdentity(
       _store,
       thisIdData, <i class="conum" data-value="70"></i><b>(70)</b>
@@ -4485,22 +4196,14 @@ _thisListener.Start();
         // default directory for a Couchbase Lite database
         // is used for map.
 
-    // end::import-tls-identity[]
-    // end::listener-config-tls-id-caCert[]
 
-    // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
     thisConfig.TlsIdentity = null; <i class="conum" data-value="71"></i><b>(71)</b>
 
-    // end::listener-config-tls-id-anon[]
-    // tag::listener-config-tls-id-set[]
     // Set the TLS Identity
     thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="72"></i><b>(72)</b>
 
-    // end::listener-config-tls-id-set[]
-    // end::listener-config-tls-id-full[]
 
-    // tag::listener-config-client-auth-root[]
     // Configure the client authenticator
     // to validate using ROOT CA
 
@@ -4521,8 +4224,6 @@ _thisListener.Start();
     // Initialize the listener using the config
     _listener = new URLEndpointListener(thisConfig);
 
-    // end::listener-config-client-auth-root[]
-    // tag::listener-config-client-auth-lambda[]
     // Configure the client authenticator
     // to validate using application logic
 
@@ -4546,7 +4247,6 @@ _thisListener.Start();
 
     thisConfig.Authenticator = thisAuth; <i class="conum" data-value="78"></i><b>(78)</b>
 
-    // end::listener-config-client-auth-lambda[]
 
 
 
@@ -4559,22 +4259,16 @@ _thisListener.Start();
 
 // Listener Callouts
 
-// tag::listener-callouts-full[]
 
-  // tag::listener-start-callouts[]
   &lt;.&gt; Initialize the listener instance using the configuration settings.
   &lt;.&gt; Start the listener, ready to accept connections and incoming data from active peers.
-  // end::listener-start-callouts[]
 
 
-  // tag::listener-status-check-callouts[]
 
   &lt;.&gt; `connectionCount` -- the total number of connections served by the listener
   &lt;.&gt; `activeConnectionCount` -- the number of active (BUSY) connections currently being served by the listener
   //
-  // end::listener-status-check-callouts[]
 
-// tag::listener-config-tls-id-caCert-callouts[]
   &lt;.&gt; Ensure TLS is enabled.
   &lt;.&gt; The identity will be stored in the secure storage using the given label
   &lt;.&gt; PKCS12 data containing private key, public key, and certificates
@@ -4584,9 +4278,7 @@ _thisListener.Start();
   &lt;.&gt; If null, the same default directory for a Couchbase Lite database is used for map
   &lt;.&gt; Use the TLSIdentity `thisIdentity.`
 
-// end::listener-config-tls-id-caCert-callouts[]
 
-  // tag::listener-config-tls-id-SelfSigned-callouts[]
   &lt;.&gt; Ensure TLS is enabled.
   &lt;.&gt; The identity will be stored in the secure storage using the given label
   &lt;.&gt; When creating a certificate, the common name attribute is required to create a CSR. If the common name is not present in the certificate an exception is thrown.
@@ -4595,9 +4287,6 @@ _thisListener.Start();
   &lt;.&gt; If null, the same default directory for a Couchbase Lite database is used for map
   &lt;.&gt; Use the TLSIdentity `thisIdentity.`
 
-  // end::listener-config-tls-id-SelfSigned-callouts[]
-
-// end::listener-callouts-full[]
 
 
 
@@ -4606,11 +4295,10 @@ _thisListener.Start();
 
 
 
-// tag::old-listener-config-client-auth-root[]
+
   // cert is a pre-populated object of type:SecCertificate representing a certificate
   // Work in progress. Code snippet to be provided.
 
-  // end::old-listener-config-client-auth-root[]
 
 
   // prev content of listener-config-client-auth-self-signed (for ios)
@@ -4624,12 +4312,9 @@ _thisListener.Start();
     }
     return false
   }
-  // tag::spare-listener-config-client-auth-self-signed[]
   // Work in progress. Code snippet to be provided.
 
-  // end::spare-listener-config-client-auth-self-signed[]
 
-// tag::p2p-ws-api-urlendpointlistener[]
 public class URLEndpointListener {
     // Properties <i class="conum" data-value="1"></i><b>(1)</b>
     public let config: URLEndpointListenerConfiguration
@@ -4643,16 +4328,13 @@ public class URLEndpointListener {
     public func start() throws
     public func stop()
 }
-// end::p2p-ws-api-urlendpointlistener[]
 
 
-// tag::p2p-ws-api-urlendpointlistener-constructor[]
 let config = URLEndpointListenerConfiguration.init(database: self.oDB)
 thisConfig.port = tls ? wssPort : wsPort
 thisConfig.disableTLS = !tls
 thisConfig.authenticator = auth
 self.listener = URLEndpointListener.init(config: config) <i class="conum" data-value="1"></i><b>(1)</b>
-// end::p2p-ws-api-urlendpointlistener-constructor[]
 
 
 // ACTIVE PEER STUFF
@@ -4694,54 +4376,37 @@ public class Examples {
 
   //@Test
   public void testActPeerSync() throws CouchbaseLiteException, URISyntaxException {
-// tag::p2p-act-rep-func[]
     // . . . preceding code. for example . . .
     private static ListenerToken _thisListenerToken;
     var Database thisDB;
     // . . . other code . . .
-    // tag::p2p-act-rep-initialize[]
     // initialize the replicator configuration
 
     var thisUrl = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="79"></i><b>(79)</b>
     var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
-    // end::p2p-act-rep-initialize[]
-    // tag::p2p-act-rep-config-type[]
 
     // Set replicator type
     thisConfig.ReplicatorType = ReplicatorType.PushAndPull;
 
-    // end::p2p-act-rep-config-type[]
-    // tag::autopurge-override[]
     // Set autopurge option
     // here we override its default
     thisConfig.EnableAutoPurge = false; <i class="conum" data-value="80"></i><b>(80)</b>
 
-    // end::autopurge-override[]
-    // tag::p2p-act-rep-config-cont[]
     // Configure Sync Mode
     thisConfig.Continuous = true; // default value
 
-    // end::p2p-act-rep-config-cont[]
-    // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
     thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="81"></i><b>(81)</b>
 
-    // end::p2p-act-rep-config-self-cert[]
     // Configure Client Security <i class="conum" data-value="82"></i><b>(82)</b>
-    // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
 
-    // end::p2p-act-rep-auth[]
-    // tag::p2p-act-rep-config-conflict-full[]
-    // tag::p2p-act-rep-config-conflict-builtin[]
     /* Optionally set a conflict resolver call back */ <i class="conum" data-value="83"></i><b>(83)</b>
     // Use built-in resolver
     thisConfig.ConflictResolver = new LocalWinConflictResolver();  //
 
-    // end::p2p-act-rep-config-conflict-builtin[]
-    // tag::p2p-act-rep-config-conflict-custom[]
     // optionally use custom resolver
     thisConfig.ConflictResolver = new ConflictResolver(
       (conflict) =&gt; {
@@ -4749,17 +4414,11 @@ public class Examples {
       }
     ); //
 
-    // end::p2p-act-rep-config-conflict-custom[]
-    // end::p2p-act-rep-config-conflict-full[]
-    // tag::p2p-act-rep-start-full[]
     // Initialize and start a replicator
     // Initialize replicator with configuration data
     var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="84"></i><b>(84)</b>
 
-    // tag::p2p-act-rep-add-change-listener[]
-    // tag::p2p-act-rep-add-change-listener-label[]
     //Optionally add a change listener <i class="conum" data-value="85"></i><b>(85)</b>
-    // end::p2p-act-rep-add-change-listener-label[]
     _thisListenerToken =
       thisReplicator.AddChangeListener((sender, args) =&gt;
         {
@@ -4768,38 +4427,24 @@ public class Examples {
           }
         });
 
-    // end::p2p-act-rep-add-change-listener[]
-    // tag::p2p-act-rep-start[]
     // Start replicator
     thisReplicator.Start(); <i class="conum" data-value="86"></i><b>(86)</b>
 
-    // end::p2p-act-rep-start[]
-// end::p2p-act-rep-start-full[]
-// end::p2p-act-rep-func[]         ***** End p2p-act-rep-func
 }
 
 // Additional snippets
 
-    // tag::p2p-act-rep-config-tls-full[]
-    // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA certs
     thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="87"></i><b>(87)</b>
 
-    // end::p2p-act-rep-config-cacert[]
-    // tag::p2p-act-rep-config-pinnedcert[]
 
     // Return the remote pinned cert (the listener's cert)
     byte returnedCert = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
-    // end::p2p-act-rep-config-pinnedcert[]
     // Configure Client Security <i class="conum" data-value="88"></i><b>(88)</b>
-    // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
 
-    // end::p2p-act-rep-auth[]
-    // end::p2p-act-rep-config-tls-full[]
 
-    // tag::p2p-act-rep-config-cacert-pinned[]
     // Only CA Certs accepted
     thisConfig.AcceptOnlySelfSignedServerCertificate =
       false; <i class="conum" data-value="89"></i><b>(89)</b>
@@ -4810,7 +4455,6 @@ public class Examples {
     thisConfig.PinnedServerCertificate =
       thisCert; <i class="conum" data-value="91"></i><b>(91)</b>
 
-    // end::p2p-act-rep-config-cacert-pinned[]
 
 
 
@@ -4832,7 +4476,6 @@ public class Examples {
           Log.i(TAG, "Replication Processing");
           Log.i(TAG, "It has completed " + thisReplicator.Status().getProgess().getTotal() + " changes");
       }
-    // tag::p2p-act-rep-status[]
     _thisReplicator.Stop();
     while (_thisReplicator.Status.Activity != ReplicatorActivityLevel.Stopped) {
         // Database cannot close until replicators are stopped
@@ -4840,12 +4483,9 @@ public class Examples {
         Thread.Sleep(200);
     }
     _thisDatabase.Close();
-    // end::p2p-act-rep-status[]
 
-      // tag::p2p-act-rep-stop[]
       // Stop replication.
       thisReplicator.Stop(); <i class="conum" data-value="92"></i><b>(92)</b>
-      // end::p2p-act-rep-stop[]
 
 
   }
@@ -4871,7 +4511,6 @@ public class Examples {
     }
 
 
-// tag::createTlsIdentity[]
 
 Map&lt;String, String&gt; X509_ATTRIBUTES = mapOf(
            TLSIdentity.CERT_ATTRIBUTE_COMMON_NAME to "Couchbase Demo",
@@ -4882,25 +4521,16 @@ Map&lt;String, String&gt; X509_ATTRIBUTES = mapOf(
 
 TLSIdentity thisIdentity = new TLSIdentity.createIdentity(true, X509_ATTRIBUTES, null, "test-alias");
 
-// end::createTlsIdentity[]
 
 
-// tag::p2p-tlsid-store-in-keychain[]
 . . . work in progress - GetHashCode snippet to be provided
-// end::p2p-tlsid-store-in-keychain[]
 
-// tag::deleteTlsIdentity[]
-// tag::p2p-tlsid-delete-id-from-keychain[]
 TLSIdentity.DeleteIdentity(_store, "alias-to-delete", null);
 
-// end::p2p-tlsid-delete-id-from-keychain[]
-// end::deleteTlsIdentity[]
 
-// tag::retrieveTlsIdentity[]
 // OPTIONALLY:: Retrieve a stored TLS identity using its alias/label
 
 TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
-// end::retrieveTlsIdentity[]
 
 
     // Configure the client authenticator (if using Basic Authentication)
@@ -4921,19 +4551,16 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 
 
 
-    // tag::old-p2p-act-rep-add-change-listener[]
     ListenerToken thisListener = new thisReplicator.addChangeListener(change -&gt; { <i class="conum" data-value="99"></i><b>(99)</b>
       if (change.Status().getError() != null) {
         Log.i(TAG, "Error code ::  " + change.Status().getError().getCode());
       }
     });
 
-    // end::old-p2p-act-rep-add-change-listener[]
 
 
 
 // g u b b i n s
-// tag::duff-p2p-tlsid-tlsidentity-with-label[]
 
 
     // Configure TLS Cert CA auth using key-stored cert id alias 'doc-sync-server'
@@ -4961,10 +4588,8 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
     thisAuthenticator.ClientCertificateAuthenticator(identity: thisIdentity )
     thisConfig.thisAuthenticator
 
-    // end::duff-p2p-tlsid-tlsidentity-with-label[]
 
 
-// tag::old-deleteTlsIdentity[]
 
 String thisAlias = "alias-to-delete";
 KeyStore thisKeystore = KeyStore.getInstance("PKCS12"); <i class="conum" data-value="100"></i><b>(100)</b>
@@ -4973,7 +4598,6 @@ if (thisAlias != null) {
    thisKeystore.deleteEntry(thisAlias);  <i class="conum" data-value="101"></i><b>(101)</b>
 }
 
-// end::old-deleteTlsIdentity[]
 
 
 // cert auth
@@ -4994,26 +4618,19 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
 // C A L L O U T S
 
-// tag::p2p-act-rep-config-cacert-pinned-callouts[]
 &lt;.&gt; Configure to accept only CA certs
 &lt;.&gt; Configure the pinned certificate using data from the byte array `cert`
 &lt;.&gt; Set the certificate to be compared with that provided by the server
-// end::p2p-act-rep-config-cacert-pinned-callouts[]
 
-// tag::??p2p-tlsid-tlsidentity-with-label-callouts[]
 &lt;.&gt; PKCS12 data containing private key, public key, and certificates
 &lt;.&gt; This is the default value and means that TLS is enabled
-// end::??p2p-tlsid-tlsidentity-with-label-callouts[]
 
-// tag::p2p-tlsid-tlsidentity-with-label-callouts[]
 &lt;.&gt; Refuse self-signed certificates
 &lt;.&gt; Get the identity
 &lt;.&gt; Set the Client Certificate Authenticator to require signed certificates with this identity
 
-// end::p2p-tlsid-tlsidentity-with-label-callouts[]
 
 
-    // tag::old-listener-config-client-root-ca[]
     // Configure the client authenticator
     // to validate using ROOT CA <i class="conum" data-value="102"></i><b>(102)</b>
     byte[] thisCaData; // byte array for CA data
@@ -5027,17 +4644,14 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
       new X509Certificate2Collection(thisRootCert)
     );
 
-    // end::old-listener-config-client-root-ca[]
 
 
 
-        // tag::p2p-tlsid-tlsidentity-with-label-per-sam[]
     var db = new Database("other-database");
     _Database = db;
     X509Store _store = new X509Store(StoreName.My);
     TLSIdentity thisIdentity;
 
-    // tag::client-cert-authenticator-root-certs[]
 
     // Configure the expected server-supplied
     // credentials -- only accept CA Certs
@@ -5054,7 +4668,6 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
     thisConfig.Authenticator =
       new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="105"></i><b>(105)</b>
 
-    // end::client-cert-authenticator-root-certs[]
 
 
 
@@ -5112,10 +4725,8 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
     // Stop listener after replicator is stopped
     _listener.Stop();
 
-    // end::p2p-tlsid-tlsidentity-with-label-per-sam[]
 
 
-        // tag::p2p-tlsid-tlsidentity-with-label[]
     // Client identity
     thisIdentity =
       TLSIdentity.ImportIdentity(_store,
@@ -5127,7 +4738,6 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
     thisConfig.Authenticator =
       new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="109"></i><b>(109)</b>
 
-    // end::p2p-tlsid-tlsidentity-with-label[]
 
 
 // For replications
@@ -5135,7 +4745,6 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 // BEGIN -- snippets --
 //    Purpose -- code samples for use in replication topic
 
-// tag::sgw-repl-pull[]
 public class MyClass
 {
     public Database Database { get; set; }
@@ -5155,23 +4764,17 @@ public class MyClass
     }
 }
 
-// end::sgw-repl-pull[]
 
-// tag::sgw-repl-pull-callouts[]
 &lt;1&gt; A replication is an asynchronous operation.
 To keep a reference to the `replicator` object, you can set it as an instance property.
 &lt;2&gt; The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
-// end::sgw-repl-pull-callouts[]
 
 
-    // tag::sgw-act-rep-initialize[]
     // initialize the replicator configuration
 
     var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); <i class="conum" data-value="110"></i><b>(110)</b>
-    var config = new ReplicatorConfiguration(thisDB, thisUrl);
-
-    // end::sgw-act-rep-initialize[]</code></pre>
+    var config = new ReplicatorConfiguration(thisDB, thisUrl);</code></pre>
 </div>
 </div>
 <div class="exampleblock">

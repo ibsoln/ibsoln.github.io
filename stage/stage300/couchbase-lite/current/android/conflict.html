@@ -2194,21 +2194,51 @@ While this is true of any user defined functions, app developers must be strongl
 <div class="tab-pane" aria-labelledby="tabset2_local-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new LocalWinConflictResolver());
+@Suppress("unused")
+object LocalWinsResolver : ConflictResolver {
+    override fun resolve(conflict: Conflict) = conflict.localDocument
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_remote-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
+@Suppress("unused")
+object RemoteWinsResolver : ConflictResolver {
+    override fun resolve(conflict: Conflict) = conflict.remoteDocument
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_merge">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new MergeConflictResolver());
+@Suppress("unused")
+object MergeConflictResolver : ConflictResolver {
+    override fun resolve(conflict: Conflict): Document {
+        val localDoc = conflict.localDocument?.toMap()
+        val remoteDoc = conflict.remoteDocument?.toMap()
+
+        val merge: MutableMap&lt;String, Any&gt;?
+        if (localDoc == null) {
+            merge = remoteDoc
+        } else {
+            merge = localDoc
+            if (remoteDoc != null) {
+                merge.putAll(remoteDoc)
+            }
+        }
+
+        return if (merge == null) {
+            MutableDocument(conflict.documentId)
+        } else {
+            MutableDocument(conflict.documentId, merge)
+        }
+    }</code></pre>
 </div>
 </div>
 </div>
@@ -2246,7 +2276,11 @@ class LocalWinConflictResolver implements ConflictResolver {
 <div class="tab-pane" aria-labelledby="tabset3_remote-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L85-L89">// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
+@Suppress("unused")
+object RemoteWinsResolver : ConflictResolver {
+    override fun resolve(conflict: Conflict) = conflict.remoteDocument
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2376,7 +2410,11 @@ When the value is <code>null</code>, the default conflict resolution will be app
 <div class="tab-pane" aria-labelledby="tabset4_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val target = URLEndpoint(URI("ws://localhost:4984/mydatabase"))
+val config = ReplicatorConfiguration(database, target)
+config.conflictResolver = LocalWinConflictResolver()
+val replication = Replicator(config)
+replication.start()</code></pre>
 </div>
 </div>
 </div>
@@ -2526,7 +2564,17 @@ In the event of conflicting keys, it will pick the key value from <code>new</cod
 <div class="tab-pane" aria-labelledby="tabset5_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val mutableDocument = database.getDocument("xyz")?.toMutable() ?: return
+mutableDocument.setString("name", "apples")
+database.save(mutableDocument) { newDoc, curDoc -&gt;  <i class="conum" data-value="1"></i><b>(1)</b>
+    if (curDoc == null) {
+        return@save false
+    } <i class="conum" data-value="2"></i><b>(2)</b>
+    val dataMap: MutableMap&lt;String, Any&gt; = curDoc.toMap()
+    dataMap.putAll(newDoc.toMap()) <i class="conum" data-value="3"></i><b>(3)</b>
+    newDoc.setData(dataMap)
+    true <i class="conum" data-value="4"></i><b>(4)</b>
+} <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2553,9 +2601,6 @@ database.save(
 </div>
 </div>
 </div>
-</div>
-<div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$snippets/app/src/main/kotlin/com/couchbase/code_snippets/Examples.kt[]</p>
 </div>
 </div>
 </div>
