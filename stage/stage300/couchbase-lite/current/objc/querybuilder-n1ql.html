@@ -424,18 +424,10 @@
     <a class="menu_title menu_link" href="../c/indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list is-parent closed" data-depth="1">
+<li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="../c/landing-replications.html">Data Sync</a>
+    <a class="menu_title menu_link" href="../c/replication.html">Sync</a>
   </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="2">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../c/replication.html">Remote Sync Gateway</a>
-  </span>
-</li>
-</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -2031,21 +2023,24 @@ Then run the query using the`.execute()` method&#8201;&#8212;&#8201;see <a href=
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">NSError *error;
 
-CBLDatabase *db = argDB;
+CBLDatabase *db == argDB;
 
-NSString *n1qlstr = "SELECT * FROM _ WHERE type = $type"; <i class="conum" data-value="1"></i><b>(1)</b>
+NSString *n1qlstr = "SELECT * FROM _ WHERE type = \"hotel\""; <i class="conum" data-value="1"></i><b>(1)</b>
 
 CBLQuery* thisQuery = [db createQuery: n1qlstr];
-
-CBLQueryParameters* n1qlparams = [[CBLQueryParameters alloc] init];
-[params setString: @"hotel" forName: @"type"]; <i class="conum" data-value="2"></i><b>(2)</b>
-
-thisQuery.parameters = n1qlparams;
 
 CBLQueryResultSet* resultset =  [thisQuery execute:&amp;error];</code></pre>
 </div>
 </div>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we are accessing th current database using the shorthand notation <strong><code>_</code></strong>&#8201;&#8212;&#8201;see the <a href="#lbl-from">FROM</a> clause for more on data source selection and <a href="#lbl-query-params">Query Parameters</a> for more on parameterized queries.</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -2462,7 +2457,7 @@ You can chain any number of Expressions in order to implement sophisticated filt
 </table>
 </div>
 <div class="paragraph">
-<p>See also&#8201;&#8212;&#8201;<a href="#lbl-operators">Operators</a> for more on building expressions</p>
+<p>See also&#8201;&#8212;&#8201;<a href="#lbl-operators">Operators</a> for more on building expressions and <a href="#lbl-query-params">Query Parameters</a> for more on parameterized queries.</p>
 </div>
 </div>
 <div class="sect2">
@@ -4851,6 +4846,52 @@ TOSTRING</code></p></td>
 </tr>
 </tbody>
 </table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-query-params"><a class="anchor" href="#lbl-query-params"></a>Query Parameters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can provide runtime parameters to yur N1QL query to make it more flexible.</p>
+</div>
+<div class="paragraph">
+<p>To specify substitutable parameters within your query string prefix the name with <strong><code>$</code></strong>, <code>$type</code>&#8201;&#8212;&#8201;see: <a href="#ex-sample-params">Example 18</a>.</p>
+</div>
+<div id="ex-sample-params" class="exampleblock">
+<div class="title">Example 18. Running a N1QL Query</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">NSError *error;
+
+CBLDatabase *db = argDB;
+
+NSString *n1qlstr = "SELECT * FROM _ WHERE type = $type"; <i class="conum" data-value="1"></i><b>(1)</b>
+
+CBLQuery* thisQuery = [db createQuery: n1qlstr];
+
+CBLQueryParameters* n1qlparams = [[CBLQueryParameters alloc] init];
+[params setString: @"hotel" forName: @"type"]; <i class="conum" data-value="2"></i><b>(2)</b>
+
+thisQuery.parameters = n1qlparams;
+
+CBLQueryResultSet* resultset =  [thisQuery execute:&amp;error];</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Define a parameter placeholder <code>$type</code></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Set the value of the <code>$type</code> parameter</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
