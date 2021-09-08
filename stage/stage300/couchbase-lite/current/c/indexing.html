@@ -423,10 +423,18 @@
     <a class="menu_title menu_link is-current-page" href="indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="replication.html">Sync</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="landing-replications.html">Data Sync</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1951,12 +1959,6 @@
 <article class="doc">
 <div class="page-heading-title">
 <h1 class="page">Indexing your Data</h1>
-<div class="labels">
-<ul>
-<li class="edition"><a href="https://www.couchbase.com/products/editions">{release}</a></li>
-<li class="status"><span>BETA</span></li>
-</ul>
-</div>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -1998,17 +2000,12 @@ You should only index with properties that you plan to use in the query.
 </tr>
 </table>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="creating-a-new-index"><a class="anchor" href="#creating-a-new-index"></a>Creating a new index</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><a href="#ex-create-index">Example 2</a> creates a new index for the <code>type</code> and <code>name</code> properties, shown in this data model:</p>
-</div>
 <div class="exampleblock">
-<div class="title">Example 1. Data Model</div>
+<div class="title">Example 1. Creating a new index</div>
 <div class="content">
+<div class="paragraph">
+<p>This example creates a new index for the <code>type</code> and <code>name</code> properties, shown in this data model:</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
@@ -2018,17 +2015,534 @@ You should only index with properties that you plan to use in the query.
 }</code></pre>
 </div>
 </div>
-</div>
-</div>
 <div class="paragraph">
 <p>The code to create the index will look something like this:</p>
 </div>
-<div id="ex-create-index" class="exampleblock">
-<div class="title">Example 2. Create index</div>
-<div class="content">
+</div>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">    // For value types, this is optional but provides performance enhancements
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">#include &lt;cbl/CouchbaseLite.h&gt;
+
+#include &lt;time.h&gt;
+#ifdef _MSC_VER
+#include &lt;direct.h&gt;
+#else
+#include &lt;unistd.h&gt;
+#endif
+
+static CBLDatabase* kDatabase;
+static CBLReplicator* kReplicator;
+static CBLListenerToken* kListenerToken;
+static bool kNeedsExtraDocs;
+
+static void getting_started_change_listener(void* context, CBLReplicator* repl, const CBLReplicatorStatus* status) {
+    if(status-&gt;error.code != 0) {
+        printf("Error %d / %d\n", status-&gt;error.domain, status-&gt;error.code);
+    }
+}
+
+static void getting_started() {
+    // tag::getting-started[]
+    // Get the database (and create it if it doesn't exist)
+    CBLError err;
+    CBLDatabase* database = CBLDatabase_Open(FLSTR("mydb"), NULL, &amp;err);
+    if(!database) {
+        // Error handling.  For brevity, this is truncated in the rest of the snippet
+        // and omitted in other doc code snippets
+        fprintf(stderr, "Error opening database (%d / %d)\n", err.domain, err.code);
+        FLSliceResult msg = CBLError_Message(&amp;err);
+        fprintf(stderr, "%.*s\n", (int)msg.size, (const char *)msg.buf);
+        FLSliceResult_Release(msg);
+        return;
+    }
+
+    // The lack of 'const' indicates this document is mutable
+    // Create a new document (i.e. a record) in the database
+    CBLDocument* mutableDoc = CBLDocument_Create();
+    FLMutableDict properties = CBLDocument_MutableProperties(mutableDoc);
+    FLMutableDict_SetFloat(properties, FLSTR("version"), 3.0f);
+
+    // Save it to the database
+    if(!CBLDatabase_SaveDocument(database, mutableDoc, &amp;err)) {
+        // Failed to save, do error handling as above
+        return;
+    }
+
+    // Since we will release the document, make a copy of the ID since it
+    // is an internal pointer.  Whenever we create or get an FLSliceResult
+    // or FLStringResult we will need to free it later too!
+    FLStringResult id = FLSlice_Copy(CBLDocument_ID(mutableDoc));
+    CBLDocument_Release(mutableDoc);
+
+    // Update a document
+    mutableDoc = CBLDatabase_GetMutableDocument(database, FLSliceResult_AsSlice(id), &amp;err);
+    if(!mutableDoc) {
+        // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
+        // the document does not exist.
+        return;
+    }
+
+    properties = CBLDocument_MutableProperties(mutableDoc);
+    FLMutableDict_SetString(properties, FLSTR("language"), FLSTR("C"));
+    if(!CBLDatabase_SaveDocument(database, mutableDoc, &amp;err)) {
+        // Failed to save, do error handling as above
+        return;
+    }
+
+    // Note const here, means readonly
+    const CBLDocument* docAgain = CBLDatabase_GetDocument(database, FLSliceResult_AsSlice(id), &amp;err);
+    if(!docAgain) {
+        // Failed to retrieve, do error handling as above.  NOTE: error code 0 simply means
+        // the document does not exist.
+        return;
+    }
+
+    // No copy this time, so no release later (notice it is not FLStringResult this time)
+    FLString retrievedID = CBLDocument_ID(docAgain);
+    FLDict retrievedProperties = CBLDocument_Properties(docAgain);
+    FLString retrievedLanguage = FLValue_AsString(FLDict_Get(retrievedProperties, FLSTR("language")));
+    printf("Document ID :: %.*s\n", (int)retrievedID.size, (const char *)retrievedID.buf);
+    printf("Learning %.*s\n", (int)retrievedLanguage.size, (const char *)retrievedLanguage.buf);
+
+    CBLDocument_Release(mutableDoc);
+    CBLDocument_Release(docAgain);
+    FLSliceResult_Release(id);
+
+    // tag::query-syntax-n1ql[]
+    // Create a query to fetch documents of type SDK
+    int errorPos;
+    CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &amp;errorPos, &amp;err);
+    if(!query) {
+        // Failed to create query, do error handling as above
+        // Note that errorPos will contain the position in the N1QL string
+        // that the parse failed, if applicable
+        return;
+    }
+
+    CBLResultSet* result = CBLQuery_Execute(query, &amp;err);
+    if(!result) {
+        // Failed to run query, do error handling as above
+        return;
+    }
+    // end::query-syntax-n1ql[]
+
+    // TODO: Result set count?
+    CBLResultSet_Release(result);
+    CBLQuery_Release(query);
+
+    // Create replicator to push and pull changes to and from the cloud
+    CBLEndpoint* targetEndpoint = CBLEndpoint_CreateWithURL(FLSTR("ws://localhost:4984/getting-started-db"), &amp;err);
+    if(!targetEndpoint) {
+        // Failed to create endpoint, do error handling as above
+        return;
+    }
+
+    CBLReplicatorConfiguration replConfig;
+    CBLAuthenticator* basicAuth = CBLAuth_CreatePassword(FLSTR("john"), FLSTR("pass"));
+    memset(&amp;replConfig, 0, sizeof(replConfig));
+    replConfig.database = database;
+    replConfig.endpoint = targetEndpoint;
+    replConfig.authenticator = basicAuth;
+
+    CBLReplicator* replicator = CBLReplicator_Create(&amp;replConfig, &amp;err);
+    CBLAuth_Free(basicAuth);
+    CBLEndpoint_Free(targetEndpoint);
+    if(!replicator) {
+        // Failed to create replicator, do error handling as above
+        return;
+    }
+
+    // Assume a function like the simple following
+    //
+    // static void getting_started_change_listener(void* context, CBLReplicator* repl, const CBLReplicatorStatus* status) {
+    //     if(status-&gt;error.code != 0) {
+    //         printf("Error %d / %d\n", status-&gt;error.domain, status-&gt;error.code);
+    //     }
+    // }
+
+    CBLListenerToken* token = CBLReplicator_AddChangeListener(replicator, getting_started_change_listener, NULL);
+    CBLReplicator_Start(replicator, false);
+
+    // Later, stop and release the replicator
+    // end::getting-started[]
+
+    kReplicator = replicator;
+}
+
+// tag::local-win-conflict-resolver[]
+static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
+    const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
+    return localDocument;
+}
+// end::local-win-conflict-resolver[]
+
+static void test_replicator_conflict_resolve() {
+    CBLDatabase* database = kDatabase;
+
+    // tag::replication-conflict-resolver[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(FLSTR("ws://localhost:4984/mydatabase"), &amp;err);
+
+    CBLReplicatorConfiguration replConfig;
+    memset(&amp;replConfig, 0, sizeof(replConfig));
+    replConfig.database = database;
+    replConfig.endpoint = target;
+    replConfig.conflictResolver = local_win_conflict_resolver;
+
+    CBLReplicator* replicator = CBLReplicator_Create(&amp;replConfig, &amp;err);
+    CBLEndpoint_Free(target);
+    CBLReplicator_Start(replicator, false);
+
+    // end::replication-conflict-resolver[]
+}
+
+static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved,
+    const CBLDocument* conflictingDocument) {
+    FLDict currentProps = CBLDocument_Properties(conflictingDocument);
+    FLDict updatedProps = CBLDocument_Properties(documentBeingSaved);
+    FLMutableDict newProps = FLDict_MutableCopy(updatedProps, kFLDefaultCopy);
+
+    FLDictIterator d;
+    FLDictIterator_Begin(currentProps, &amp;d);
+    FLValue currentValue;
+    while(currentValue = FLDictIterator_GetValue(&amp;d)) {
+        FLString currentKey = FLDictIterator_GetKeyString(&amp;d);
+        if(FLDict_Get(newProps, currentKey)) {
+            continue;
+        }
+
+        FLMutableDict_SetValue(newProps, currentKey, currentValue);
+        FLDictIterator_Next(&amp;d);
+    }
+
+    return true;
+}
+
+static void test_save_with_conflict_handler() {
+    CBLDatabase* database = kDatabase;
+
+    // tag::update-document-with-conflict-handler[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLDocument* mutableDocument = CBLDatabase_GetMutableDocument(database, FLSTR("xyz"), &amp;err);
+    FLDict properties = CBLDocument_MutableProperties(mutableDocument);
+
+    /*
+    static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved,
+        const CBLDocument* conflictingDocument) {
+        FLDict currentProps = CBLDocument_Properties(conflictingDocument);
+        FLDict updatedProps = CBLDocument_Properties(documentBeingSaved);
+        FLMutableDict newProps = FLDict_MutableCopy(updatedProps, kFLDefaultCopy);
+
+        FLDictIterator d;
+        FLDictIterator_Begin(currentProps, &amp;d);
+        FLSlice currentKey = FLDictIterator_GetKeyString(&amp;d);
+        for(; currentKey.buf; currentKey = FLDictIterator_GetKeyString(&amp;d)) {
+            if(FLDict_Get(newProps, currentKey)) {
+                continue;
+            }
+
+            FLValue currentValue = FLDictIterator_GetValue(&amp;d);
+            FLMutableDict_SetValue(newProps, currentKey, currentValue);
+        }
+
+        return true;
+    }
+    */
+    CBLDatabase_SaveDocumentWithConflictHandler(database, mutableDocument, custom_conflict_handler, NULL, &amp;err);
+
+    // end::update-document-with-conflict-handler[]
+}
+
+static void use_encryption() {
+    #ifdef COUCHBASE_ENTERPRISE
+
+    // tag::database-encryption[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLDatabaseConfiguration config = CBLDatabaseConfiguration_Default();
+
+    // This returns a boolean, so check it in production code
+    CBLEncryptionKey_FromPassword(&amp;config.encryptionKey, FLSTR("password"));
+
+    CBLError err;
+    CBLDatabase* db = CBLDatabase_Open(FLSTR("seekrit"), &amp;config, &amp;err);
+
+    // Change the encryption key (or add encryption if the DB is unencrypted)
+    CBLEncryptionKey betterKey;
+    CBLEncryptionKey_FromPassword(&amp;betterKey, FLSTR("betterpassw0rd"));
+    CBLDatabase_ChangeEncryptionKey(db, &amp;betterKey, &amp;err);
+
+    // Remove encryption
+    CBLDatabase_ChangeEncryptionKey(db, NULL, &amp;err);
+    // end::database-encryption[]
+
+    #endif
+}
+
+static void reset_replicator_checkpoint() {
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(FLSTR("ws://localhost:4984/db"), NULL);
+    CBLReplicatorConfiguration config;
+    memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
+    config.database = kDatabase;
+    config.endpoint = target;
+    CBLReplicator* replicator = CBLReplicator_Create(&amp;config, NULL);
+    CBLEndpoint_Free(target);
+
+    // tag::replication-reset-checkpoint[]
+    // replicator is a CBLReplicator* instance
+    CBLReplicator_Start(replicator, true);
+    // end::replication-reset-checkpoint[]
+
+    CBLReplicator_Release(replicator);
+}
+
+static void read_1x_attachment() {
+    CBLDocument* document = CBLDocument_Create();
+
+    // tag::1x-attachment[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    FLDict properties = CBLDocument_Properties(document);
+    FLDict attachments = FLValue_AsDict(FLDict_Get(properties, FLSTR("_attachments")));
+    const CBLBlob* avatar = FLDict_GetBlob(FLValue_AsDict(FLDict_Get(attachments, FLSTR("avatar"))));
+    FLSliceResult content = CBLBlob_Content(avatar, &amp;err);
+
+    FLSliceResult_Release(content);
+    // end::1x-attachment[]
+
+    CBLDocument_Release(document);
+}
+
+static void create_new_database() {
+    // tag::new-database[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLDatabase* db = CBLDatabase_Open(FLSTR("my-database"), NULL, &amp;err);
+    // end::new-database[]
+
+    kDatabase = db;
+}
+
+static void close_database() {
+    CBLDatabase* db = kDatabase;
+    // tag::close-database[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLDatabase_Close(db, &amp;err);
+    // end::close-database[]
+}
+
+static void change_logging() {
+    // tag::logging[]
+    // For output to stdout
+    CBLLog_SetConsoleLevel(kCBLLogVerbose);
+
+    // For output to custom logging
+    CBLLog_SetCallbackLevel(kCBLLogVerbose);
+    // end::logging[]
+}
+
+static void load_prebuilt() {
+    CBL_DeleteDatabase(FLSTR("travel-sample.cblite2"), kFLSliceNull, NULL);
+
+    // tag::prebuilt-database[]
+    // Note: Getting the path to a database is platform-specific.  For desktop (including RPi)
+    // this can be a simple filesystem path.  For iOS you need to get the path from the
+    // main bundle.  For Android you need to extract it from your assets to a temporary directory
+    // and then pass that path.
+
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    const char* path = "/path/to/travel-sample.cblite2";
+    if(!CBL_DatabaseExists(FLSTR("travel-sample.cblite2"), kFLSliceNull)) {
+        CBL_CopyDatabase(FLStr(path), FLSTR("travel-sample"), NULL, &amp;err);
+    }
+    // end::prebuilt-database[]
+
+    CBLDatabase_Close(kDatabase, NULL);
+    CBLDatabase_Release(kDatabase);
+    kDatabase = CBLDatabase_Open(FLSTR("travel-sample"), NULL, NULL);
+}
+
+static void query_deleted_document() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-deleted-documents[]
+    // Query documents that have been deleted
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id FROM _ WHERE meta().deleted"), NULL, &amp;err);
+    // end::query-deleted-documents[]
+
+    CBLQuery_Release(query);
+}
+
+static void create_document() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::initializer[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLDocument* newTask = CBLDocument_CreateWithID(FLSTR("xyz"));
+    FLMutableDict properties = CBLDocument_MutableProperties(newTask);
+    FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("task"));
+    FLMutableDict_SetString(properties, FLSTR("owner"), FLSTR("todo"));
+
+    // Storing time in millisecond, bluntly
+    FLMutableDict_SetUInt(properties, FLSTR("createdAt"), time(NULL) * 1000);
+
+    CBLError err;
+    CBLDatabase_SaveDocument(db, newTask, &amp;err);
+    CBLDocument_Release(newTask);
+    // end::initializer[]
+}
+
+static void update_document() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::update-document[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLDocument* mutableDocument = CBLDatabase_GetMutableDocument(db, FLSTR("xyz"), &amp;err);
+    FLMutableDict properties = CBLDocument_MutableProperties(mutableDocument);
+    FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
+    CBLDatabase_SaveDocument(db, mutableDocument, &amp;err);
+    CBLDocument_Release(mutableDocument);
+    // end::update-document[]
+}
+
+// Note use_typed_accessors not applicable
+
+static void do_batch_operation() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::batch[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLDatabase_BeginTransaction(db, &amp;err);
+    char buffer[7];
+    for(int i = 0; i &lt; 10; i++) {
+        CBLDocument* doc = CBLDocument_Create();
+        FLMutableDict properties = CBLDocument_MutableProperties(doc);
+        FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("user"));
+        sprintf(buffer, "user %d", i);
+        FLMutableDict_SetString(properties, FLSTR("name"), FLStr(buffer));
+        FLMutableDict_SetBool(properties, FLSTR("admin"), false);
+        CBLDatabase_SaveDocument(db, doc, &amp;err);
+        CBLDocument_Release(doc);
+        printf("Saved user document %s\n", buffer);
+    }
+
+    CBLDatabase_EndTransaction(db, true, &amp;err);
+    // end::batch[]
+}
+
+static void document_listener(void* context, const CBLDatabase* db, FLString id) {
+    CBLError err;
+    const CBLDocument* doc = CBLDatabase_GetDocument(db, id, &amp;err);
+    FLDict properties = CBLDocument_Properties(doc);
+    FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account")));
+    printf("Status :: %.*s\n", (int)verified_account.size, (const char *)verified_account.buf);
+    CBLDocument_Release(doc);
+}
+
+static void database_change_listener() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::document-listener[]
+    /*
+    static void document_listener(void* context, const CBLDatabase* db, FLString id) {
+        CBLError err;
+        const CBLDocument* doc = CBLDatabase_GetDocument(db, id, &amp;err);
+        FLDict properties = CBLDocument_Properties(doc);
+        FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account")));
+        printf("Status :: %.*s\n", (int)verified_account.size, (const char *)verified_account.buf);
+        CBLDocument_Release(doc);
+    }
+    */
+
+    CBLListenerToken* token = CBLDatabase_AddDocumentChangeListener(db, FLSTR("user.john"),
+        document_listener, NULL);
+    // end::document-listener[]
+}
+
+static void document_expiration() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::document-expiration[]
+    // Purge the document one day from now
+
+    // Overly simplistic for example purposes
+    // NOTE: API takes milliseconds
+    // NOTE: No error handling, for brevity (see getting started)
+    time_t ttl = time(NULL) + 24 * 60 * 60;
+    ttl *= 1000;
+
+    CBLError err;
+    CBLDatabase_SetDocumentExpiration(db, FLSTR("doc123"), ttl, &amp;err);
+
+    // Reset expiration
+    CBLDatabase_SetDocumentExpiration(db, FLSTR("doc1"), 0, &amp;err);
+
+    // Query documents that will be expired in less than five minutes
+    time_t fiveMinutesFromNow = time(NULL) + 5 * 60;
+    fiveMinutesFromNow *= 1000;
+    FLMutableDict parameters = FLMutableDict_New();
+    FLMutableDict_SetInt(parameters, FLSTR("five_minutes"), fiveMinutesFromNow);
+
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id FROM _ WHERE meta().expiration &lt; $five_minutes"), NULL, &amp;err);
+    CBLQuery_SetParameters(query, parameters);
+    FLMutableDict_Release(parameters);
+    // end::document-expiration[]
+}
+
+static void use_blob() {
+    CBLDatabase* db = kDatabase;
+
+    CBLDocument* newTask = CBLDocument_Create();
+
+    // tag::blob[]
+    // Note: Reading the data is implementation dependent, as with prebuilt databases
+    // NOTE: No error handling, for brevity (see getting started)
+
+    uint8_t buffer[128000];
+    FILE* avatar_file = fopen("avatar.jpg", "rb");
+    size_t read = fread(buffer, 1, 128000, avatar_file);
+
+    FLSliceResult avatar = FLSliceResult_CreateWith(buffer, read);
+    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar));
+    FLSliceResult_Release(avatar);
+
+    // TODO: Create shortcut blob method
+    CBLError err;
+    FLMutableDict properties = CBLDocument_MutableProperties(newTask);
+    FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
+    CBLDatabase_SaveDocument(db, newTask, &amp;err);
+    // end::blob[]
+
+    CBLDocument_Release(newTask);
+    CBLBlob_Release(blob);
+}
+
+static void create_index() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-index[]
+    // For value types, this is optional but provides performance enhancements
     // NOTE: No error handling, for brevity (see getting started)
 
     // Syntax for second argument is the same as taking from a N1QL SELECT
@@ -2040,11 +2554,349 @@ You should only index with properties that you plan to use in the query.
 
     CBLError err;
     CBLDatabase_CreateValueIndex(db, FLSTR("TypeNameIndex"), config, &amp;err);
-// placeholder</code></pre>
+    // end::query-index[]
+}
+
+static void select_meta() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-select-meta[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, type, name FROM _"), NULL, &amp;err);
+    CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        FLString id = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("id")));
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Document ID :: %.*s\n", (int)id.size, (const char *)id.buf);
+        printf("Document Name :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-select-meta[]
+}
+
+static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
+    CBLError err;
+    CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        // Update UI
+    }
+}
+
+static void select_all() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-select-all[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _"), NULL, &amp;err);
+
+    // All results will be available from the above query
+    CBLQuery_Release(query);
+    // end::query-select-all[]
+
+    // tag::live-query[]
+    /*
+    static void query_change_listener(void* context, CBLQuery* query, CBLListenerToken* token) {
+        CBLError err;
+        CBLResultSet* results = CBLQuery_CopyCurrentResults(query, token, &amp;err);
+        while(CBLResultSet_Next(results)) {
+            // Update UI
+        }
+    }
+    */
+
+    query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _"), NULL, &amp;err);
+    CBLListenerToken* token = CBLQuery_AddChangeListener(query, query_change_listener, NULL);
+    // end::live-query[]
+
+    // tag::stop-live-query[]
+    CBLListener_Remove(token); // The token received from AddChangeListener
+    CBLQuery_Release(query);
+    // end::stop-live-query[]
+}
+
+static void select_where() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-where[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE type = \"hotel\" LIMIT 10"), NULL, &amp;err);
+    CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        FLDict dict = FLValue_AsDict(CBLResultSet_ValueForKey(results, FLSTR("_")));
+        FLString name = FLValue_AsString(FLDict_Get(dict, FLSTR("name")));
+        printf("Document Name :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-where[]
+}
+
+static void use_collection_contains() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-collection-operator-contains[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, name, public_likes FROM _ WHERE type = \"hotel\" "
+              "AND ARRAY_CONTAINS(public_likes, \"Armani Langworth\""), NULL, &amp;err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        FLArray publicLikes = FLValue_AsArray(CBLResultSet_ValueForKey(results, FLSTR("public_likes")));
+        FLStringResult json = FLValue_ToJSON((FLValue)publicLikes);
+        printf("Public Likes :: %.*s\n", (int)json.size, (const char *)json.buf);
+        FLSliceResult_Release(json);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-collection-operator-contains[]
+}
+
+static void use_collection_in() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-collection-operator-in[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT * FROM _ WHERE \"Armani\" IN (first, last, username)"),
+        NULL, &amp;err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        FLDict body = FLValue_AsDict(CBLResultSet_ValueAtIndex(results, 0));
+        FLStringResult json = FLValue_ToJSON((FLValue)body);
+        printf("In results :: %.*s\n", (int)json.size, (const char *)json.buf);
+        FLSliceResult_Release(json);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-collection-operator-in[]
+}
+
+static void select_like() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-like-operator[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
+              "AND lower(name) LIKE \"Royal Engineers Museum\" LIMIT 10"),
+        NULL, &amp;err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Name Property :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-like-operator[]
+}
+
+static void select_wildcard_like() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-like-operator-wildcard-match[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+     CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
+              "AND lower(name) LIKE \"Eng%e%\" LIMIT 10"),
+        NULL, &amp;err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Name Property :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-like-operator-wildcard-match[]
+}
+
+static void select_wildcard_character_like() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-like-operator-wildcard-character-match[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
+              "AND lower(name) LIKE \"Royal Eng____rs Museum\" LIMIT 10"),
+        NULL, &amp;err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Name Property :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-like-operator-wildcard-character-match[]
+}
+
+static void select_regex() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-regex-operator[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT meta().id, name FROM _ WHERE type = \"landmark\" "
+              "AND regexp_like(name, \"\\bEng.*e\\b\") LIMIT 10"),
+        NULL, &amp;err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Name Property :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-regex-operator[]
+}
+
+static void select_join() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-join[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT airline.name, airline.callsign, route.destinationairport, route.stops, route.airline "
+              "FROM _ AS airline INNER JOIN _ AS route ON meta(airline).id = route.airlineid "
+              "WHERE route.type = \"route\" AND airline.type = \"airline\" AND route.sourceairport = \"RIX\""),
+        NULL, &amp;err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+        printf("Name Property :: %.*s\n", (int)name.size, (const char *)name.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-join[]
+}
+
+static void group_by() {
+    CBLDatabase* db = kDatabase;
+
+    // tag::query-groupby[]
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+        FLSTR("SELECT count(*), country, tz FROM _ WHERE type = \"airport\" AND geo.alt &gt;= 300 "
+              "GROUP BY country, tz"),
+        NULL, &amp;err);
+
+    CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+    while(CBLResultSet_Next(results)) {
+        int64_t count = FLValue_AsInt(CBLResultSet_ValueForKey(results, FLSTR("$1")));
+        FLString tz = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("tz")));
+        FLString country = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("country")));
+        printf("There are %lld airports in the %.*s timezone located in %.*s and above 300 ft\n",
+            count, (int)tz.size, (const char *)tz.buf, (int)country.size, (const char *)country.buf);
+    }
+
+    CBLResultSet_Release(results);
+    CBLQuery_Release(query);
+    // end::query-groupby[]
+}
+
+static void docsonly_N1QL_Params() {
+    /* Documentation Only query-syntax-n1ql-params
+        Declared elsewhere
+          CBLDatabase* database = kDatabase;
+    */
+
+    // tag::query-syntax-n1ql-params[]
+    int errorPos;
+
+    FLSTR n1qlstr = "SELECT * FROM _ WHERE type = $type";
+
+    n1qlparams = FLMutableDict_New();
+
+    FLSlot_SetString(FLMutableDict_Set(n1qlparams, "type"_sl), "hotel"_sl);
+
+    CBLQuery* query = CBLDatabase_CreateQuery(database,
+                          kCBLN1QLLanguage,
+                          n1qlstr,
+                          &amp;errorPos,
+                          &amp;err);
+
+    CBLQuery_SetParameters(query, n1qlparams);
+
+    if(!query) {
+        // Failed to create query, do error handling as above
+        // Note that errorPos will contain the position in the N1QL string
+        // that the parse failed, if applicable
+        return;
+    }
+
+    CBLResultSet* result = CBLQuery_Execute(query, &amp;err);
+    if(!result) {
+        // Failed to run query, do error handling as above
+        return;
+    }
+    // end::query-syntax-n1ql-params[]
+}
+
+int main(int argc, char** argv) {
+    return 0;
+}
+
+
+// tag::console-logging-db[]
+Placeholder for code to increase level of console logging for kCBLLogDomainDatabase domain
+// end::console-logging-db[]
+
+// tag::console-logging[]
+Placeholder for code to increase level of console logging for all domains
+// end::console-logging[]
+
+// tag::date-getter[]
+Placeholder for Date accessors.
+
+// end::date-getter[]
+
+// tag::fts-index[]
+// placeholder
+// end::fts-index[]</code></pre>
 </div>
 </div>
-</div>
-</div>
+<div class="exampleblock">
+<div class="content">
 <div class="paragraph">
 <p>When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:</p>
 </div>
@@ -2062,59 +2914,24 @@ You should only index with properties that you plan to use in the query.
 <p>So too many indexes may hurt performance.
 Optimal performance depends on designing and creating the <em>right</em> indexes to go along with your queries.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
-<div class="sectionbody">
-<div class="card-row three-column-row">
-<div class="sect5 column">
-<h6 id=""><a class="anchor" href="#"></a></h6>
-<div class="ulist">
-<div class="title">How to . . .</div>
-<ul>
-<li>
-<p><a href="gs-prereqs.html" class="page">Prerequisites</a></p>
-</li>
-<li>
-<p><a href="gs-install.html" class="page">Install</a></p>
-</li>
-<li>
-<p><a href="gs-build.html" class="page">Build and Run</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
-<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
-<div class="ulist">
-<div class="title">Learn more . . .</div>
-<ul>
-<li>
-<p><a href="database.html" class="page">Databases</a></p>
-</li>
-<li>
-<p><a href="document.html" class="page">Documents</a></p>
-</li>
-<li>
-<p><a href="blob.html" class="page">Blobs</a></p>
-</li>
-<li>
-<p><a href="replication.html" class="page">Remote Sync using Sync Gateway</a></p>
-</li>
-<li>
-<p><a href="conflict.html" class="page">Handling Data Conflicts</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect5 column">
-<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
 <div class="paragraph">
-<div class="title">Dive Deeper . . .</div>
-<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a> |
-<a href="https://blog.couchbase.com/">Blog</a> |
- <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+<p>== Related Content</p>
+</div>
+<div class="card-row three-column-row">
+<div class="paragraph column">
+<p>====== 
+.Learn more &#8230;&#8203;</p>
+</div>
+<div class="paragraph column">
+<div class="title"></div>
+<p>====== 
+.Reference material &#8230;&#8203;
+.</p>
+</div>
+<div class="paragraph column">
+<p>====== 
+.Community Resources &#8230;&#8203;</p>
+</div>
 </div>
 </div>
 </div>

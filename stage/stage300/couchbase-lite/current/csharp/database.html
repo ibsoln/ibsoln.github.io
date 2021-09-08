@@ -423,10 +423,18 @@
     <a class="menu_title menu_link" href="../c/indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../c/replication.html">Sync</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../c/landing-replications.html">Data Sync</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../c/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1972,7 +1980,7 @@ Related Content&#8201;&#8212;&#8201;<a href="blob.html" class="page">Blobs</a> |
 <h2 id="open-db"><a class="anchor" href="#open-db"></a>Create or Open Database</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can create a new database and-or open an existing database, using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-net/api/Couchbase.Lite.Database.html">Database</a> class.
+<p>You can create a new database and-or open and existing database, using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-net/api/Couchbase.Lite.Database.html">Database</a> class.
 Just pass in a database name and optionally a <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-net/api/Couchbase.Lite.DatabaseConfiguration.html">DatabaseConfiguration</a>&#8201;&#8212;&#8201;see <a href="#ex-dbopen">Example 1</a>.</p>
 </div>
 <div class="paragraph">
@@ -1980,6 +1988,9 @@ Just pass in a database name and optionally a <a href="https://ibsoln.github.io/
 </div>
 <div class="ulist">
 <ul>
+<li>
+<p>Opening/Creating a database is an asynchronous process</p>
+</li>
 <li>
 <p>If the named database does not exist in the specified, or default, location then a new one is created</p>
 </li>
@@ -2001,7 +2012,6 @@ Best Practice is to always specify the path to the database explicitly.
 </div>
 <div class="paragraph">
 <p>Typically, the default location for C#.Net is
-.
 a platform-dependant location:</p>
 </div>
 <div class="ulist">
@@ -2039,6 +2049,14 @@ Note that this sandbox gets deleted sometimes when debugging from inside Visual 
 </div>
 </div>
 </div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we are specifying the database directory path.</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2048,35 +2066,52 @@ Note that this sandbox gets deleted sometimes when debugging from inside Visual 
 <p>You are advised to incorporate the closing of all open databases into your application workflow.</p>
 </div>
 <div class="paragraph">
-<p>Closing a database is a simple, just use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Close">Database.Close()</a>&#8201;&#8212;&#8201;see: <a href="#ex-dbclose">Example 2</a>.
-This also closes
+<p>Closing a database is a simple, just use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-net/api/Couchbase.Lite.Database.html#Couchbase_Lite_Database_Close">Database.Close()</a>&#8201;&#8212;&#8201;see: <a href="#ex-dbclose">Example 2</a>.<br>
+However, there are a number of things to be aware of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Closing a database is a <strong>synchronous</strong> operation, it is effective immediately</p>
+</li>
+<li>
+<p>You cannot close a database that is not open.<br>
+Remember that opening (or creating) a database is asynchronous.
+So issuing a close immediately after initiating an open/create, may result in an error if that process has not completed.</p>
+</li>
+<li>
+<p>Closing a database
 <sup class="footnote" id="_footnote_fn28">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>
-active replications, listeners and-or live queries connected to the database.</p>
+ also closes any active replications, listeners and-or live queries attached to the database.<br>
+Closing a database immediately after kicking-off a replication could cause the sync to generate an exception.<br>
+For example:<br>
+<code>IllegalStateException: Attempt to perform an operation on a closed database</code>
+.Safely Closing a Database pre 2.8</p>
+</li>
+</ul>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Closing a database soon after starting a replication involving it can cause an exception as the asynchronous <code>replicator (start)</code> may not yet be <code>connected</code>.
-</td>
-</tr>
-</table>
+<div class="openblock">
+<div class="content">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Stop any active live queries&#8201;&#8212;&#8201;by removing the query&#8217;s change listener</p>
+</li>
+<li>
+<p>Remove any active replication change listeners</p>
+</li>
+<li>
+<p>Stop any active replications&#8201;&#8212;&#8201;this is an asynchronous operation</p>
+</li>
+<li>
+<p>Wait for all active replications to fully stop&#8201;&#8212;&#8201;for this you can monitor the replication status&#8201;&#8212;&#8201;see: {xref-cbl-pg-replication&#8212;&#8203;monitor-status}.</p>
+</li>
+<li>
+<p>Finally, close the database</p>
+</li>
+</ol>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="title">Safely Closing a Database pre 2.8</div>
-Before closing, check that any attached listeners (query/replication/change) indicate they are at least at <code>connected</code> status before closing&#8201;&#8212;&#8201;see for example: {xref-cbl-pg-replication&#8212;&#8203;monitor-status}.
-</td>
-</tr>
-</table>
+</div>
 </div>
 <div id="ex-dbclose" class="exampleblock">
 <div class="title">Example 2. Close a Database</div>
@@ -2143,7 +2178,7 @@ It is the application&#8217;s responsibility to manage the key and store it in a
 </div>
 <div class="paragraph">
 <p>An encrypted database can only be opened with the same language SDK that was used to encrypt it in the first place.
-So a database encrypted using the C#.Net SDK, and then exported, is readable only by the C#.Net SDK.</p>
+So a database encrypted using the Swift SDK, and then exported, is readable only by the Swift SDK.</p>
 </div>
 <div class="sect3">
 <h4 id="upgrading-from-1-x-when-encryption-is-enabled"><a class="anchor" href="#upgrading-from-1-x-when-encryption-is-enabled"></a>Upgrading from 1.x when Encryption is Enabled</h4>
@@ -2198,7 +2233,7 @@ Note that this sandbox gets deleted sometimes when debugging from inside Visual 
 <h2 id="cli-tool"><a class="anchor" href="#cli-tool"></a>Command Line Tool</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><code>cblite</code> is a command-line tool for inspecting and querying Couchbase Lite databases.</p>
+<p><code>cblite</code> is a command-line tool for inspecting and querying Couchbase Lite 2.x databases.</p>
 </div>
 <div class="paragraph">
 <p>You can download and build it from the couchbaselabs <a href="https://github.com/couchbaselabs/couchbase-mobile-tools/blob/master/README.cblite.md">GitHub repository</a>.

@@ -424,10 +424,18 @@
     <a class="menu_title menu_link" href="../c/indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../c/replication.html">Sync</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../c/landing-replications.html">Data Sync</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../c/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -2677,30 +2685,76 @@ public class TestQueries {
     public void testQueryPagination() throws CouchbaseLiteException {
 
 
-        try {
-          this_Db = new Database("hotels");
-        } catch (CouchbaseLiteException e) {
-          e.printStackTrace();
-        }
+      try {
+        this_Db = new Database("hotels");
+      } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+      }
 
-        int thisOffset = 0;
-        int thisLimit = 20;
+      int thisOffset = 0;
+      int thisLimit = 20;
 
-        Query listQuery =
-                QueryBuilder
-                        .select(SelectResult.all())
-                        .from(DataSource.database(this_Db))
-                        .limit(Expression.intValue(thisLimit),
-                                  Expression.intValue(thisOffset)); <i class="conum" data-value="32"></i><b>(32)</b>
+      Query listQuery =
+      QueryBuilder
+      .select(SelectResult.all())
+      .from(DataSource.database(this_Db))
+      .limit(Expression.intValue(thisLimit),
+      Expression.intValue(thisOffset)); <i class="conum" data-value="32"></i><b>(32)</b>
 
 
     }
 
 
 
+    public void docsonlyQuerySyntaxN1QL (
+      String argUser,
+      Database argDB)
+      throws CouchbaseLiteException  JSONException
+    {
+      /* For Documentation -- N1QL Query using parameters
+        *  Declared elsewhere:
+              var dbName = "travel-sample";
+              var username = "ian";
+      */
+      Database thisDb = argdb;
+      String thisUser = argUser;
+      String n1qlstr = "SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""; <i class="conum" data-value="33"></i><b>(33)</b>
 
+      Query thisQuery =
+          thisDb.CreateQuery( query = n1qlstr);
 
-    } // class</code></pre>
+      ResultSet results = thisQuery.Execute().AllResults();
+
+      return results;
+  }
+
+    public void docsonlyQuerySyntaxN1QLParams (
+      String argUser,
+      Database argDB)
+      throws CouchbaseLiteException  JSONException
+    {
+      /* For Documentation -- N1QL Query using parameters
+        *  Declared elsewhere:
+              var dbName = "travel-sample";
+              var username = "ian";
+      */
+      Database thisDb = argdb;
+      String thisUser = argUser;
+      String n1qlstr = "SELECT META().id AS thisId FROM _ WHERE type = $type"; <i class="conum" data-value="34"></i><b>(34)</b>
+
+      Query thisQuery =
+          thisDb.CreateQuery( query = n1qlstr);
+
+      thisQuery.Parameters.SetString(
+                      name = "type",
+                      value = "hotel"); <i class="conum" data-value="35"></i><b>(35)</b>
+
+      ResultSet results = thisQuery.Execute().AllResults();
+
+      return results;
+  }
+
+} // class</code></pre>
 </div>
 </div>
 <div class="colist arabic">

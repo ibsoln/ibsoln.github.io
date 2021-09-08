@@ -424,10 +424,18 @@
     <a class="menu_title menu_link" href="indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="replication.html">Sync</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="landing-replications.html">Data Sync</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -2021,9 +2029,22 @@ Then run the query using the`.execute()` method&#8201;&#8212;&#8201;see <a href=
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// Create a query to fetch documents of type SDK
-int errorPos;
-CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &amp;errorPos, &amp;err);
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">int errorPos;
+
+FLSTR n1qlstr = "SELECT * FROM _ WHERE type = $type";
+
+n1qlparams = FLMutableDict_New();
+
+FLSlot_SetString(FLMutableDict_Set(n1qlparams, "type"_sl), "hotel"_sl);
+
+CBLQuery* query = CBLDatabase_CreateQuery(database,
+                      kCBLN1QLLanguage,
+                      n1qlstr,
+                      &amp;errorPos,
+                      &amp;err);
+
+CBLQuery_SetParameters(query, n1qlparams);
+
 if(!query) {
     // Failed to create query, do error handling as above
     // Note that errorPos will contain the position in the N1QL string

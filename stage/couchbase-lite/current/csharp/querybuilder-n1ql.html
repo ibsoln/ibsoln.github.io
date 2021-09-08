@@ -424,10 +424,18 @@
     <a class="menu_title menu_link" href="../c/indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../c/replication.html">Sync</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../c/landing-replications.html">Data Sync</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../c/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -2021,7 +2029,22 @@ Then run the query using the`.execute()` method&#8201;&#8212;&#8201;see <a href=
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs">tbd</code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs">var doc_type = "hotel";
+
+DatabaseConfiguration dbCfg = new DatabaseConfiguration();
+dbCfg.Directory =
+    Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
+
+Database thisDb = new Database(dbName, dbCfg);
+
+var thisQuery =
+    thisDb.CreateQuery(
+        "SELECT META().id AS thisId FROM $thisDb.name " +
+        "WHERE type = $type"); <i class="conum" data-value="1"></i><b>(1)</b>
+
+thisQuery.Parameters.SetString("type", "hotel"); <i class="conum" data-value="2"></i><b>(2)</b>
+
+var results = thisQuery.Execute().AllResults();</code></pre>
 </div>
 </div>
 </div>

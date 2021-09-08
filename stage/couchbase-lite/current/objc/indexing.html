@@ -423,10 +423,18 @@
     <a class="menu_title menu_link" href="../c/indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../c/replication.html">Sync</a>
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../c/landing-replications.html">Data Sync</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../c/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1951,12 +1959,6 @@
 <article class="doc">
 <div class="page-heading-title">
 <h1 class="page">Indexes and Indexing</h1>
-<div class="labels">
-<ul>
-<li class="edition"><a href="https://www.couchbase.com/products/editions">{release}</a></li>
-<li class="status"><span>BETA</span></li>
-</ul>
-</div>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -1967,22 +1969,42 @@
 <div class="quoteblock abstract">
 <blockquote>
 <div class="paragraph">
-<p>Description&#8201;&#8212;&#8201;<em>Couchbase mobile database indexing concepts</em><br>
-Related Content&#8201;&#8212;&#8201;<a href="database.html" class="page">Databases</a> | <a href="document.html" class="page">Documents</a> | <a href="indexing.html" class="page">Indexing</a> |</p>
+<p>Description&#8201;&#8212;&#8201;<em>Couchbase mobile database indexing concepts</em><br></p>
 </div>
 </blockquote>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Before we begin querying documents, let&#8217;s briefly mention the importance of having an appropriate and balanced approach to indexes.</p>
+<p>Creating indexes can speed up the performance of queries.
+While indexes make queries faster, they also make writes slightly slower, and the Couchbase Lite database file slightly larger.
+As such, it is best to only create indexes when you need to optimize a specific case for better query performance.</p>
 </div>
 <div class="paragraph">
-<p>Creating indexes can speed up the performance of queries.
-A query will typically return results more quickly if it can take advantage of an existing database index to search, narrowing down the set of documents to be examined.</p>
+<p>The following example creates a new index for the <code>type</code> and <code>name</code> properties.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "_id": "hotel123",
+    "type": "hotel",
+    "name": "Apple Droid"
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m#L354-L357">CBLValueIndexItem *type = [CBLValueIndexItem property:@"type"];
+CBLValueIndexItem *name = [CBLValueIndexItem property:@"name"];
+CBLIndex* index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
+[database createIndex:index withName:@"TypeNameIndex" error:&amp;error];</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If there are multiple expressions, the first one will be the primary key, the second the secondary key, etc.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1991,67 +2013,11 @@ A query will typically return results more quickly if it can take advantage of a
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="title">Constraints</div>
-Couchbase Lite for ios does not currently support partial value indexes; indexes with non-property expressions.
-You should only index with properties that you plan to use in the query.
+Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
+Thus, good performance depends on designing and creating the <em>right</em> indexes to go along with your queries.
 </td>
 </tr>
 </table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="creating-a-new-index"><a class="anchor" href="#creating-a-new-index"></a>Creating a new index</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><a href="#ex-create-index">Example 2</a> creates a new index for the <code>type</code> and <code>name</code> properties, shown in this data model:</p>
-</div>
-<div class="exampleblock">
-<div class="title">Example 1. Data Model</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-    "_id": "hotel123",
-    "type": "hotel", <i class="conum" data-value="1"></i><b>(1)</b>
-    "name": "Apple Droid"
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>The code to create the index will look something like this:</p>
-</div>
-<div id="ex-create-index" class="exampleblock">
-<div class="title">Example 2. Create index</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLValueIndexItem *type = [CBLValueIndexItem property:@"type"];
-CBLValueIndexItem *name = [CBLValueIndexItem property:@"name"];
-CBLIndex* index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
-[database createIndex:index withName:@"TypeNameIndex" error:&amp;error];</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>When planning the indexes you need for your database, remember that while indexes make queries faster, they may also:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Make writes slightly slower, because each index must be updated whenever a document is updated</p>
-</li>
-<li>
-<p>Make your Couchbase Lite database slightly larger.</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>So too many indexes may hurt performance.
-Optimal performance depends on designing and creating the <em>right</em> indexes to go along with your queries.</p>
 </div>
 </div>
 </div>
