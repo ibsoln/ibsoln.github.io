@@ -2120,7 +2120,13 @@ See the <a href="indexing.html" class="page">Indexing</a> topic to learn more ab
 <div class="tab-pane" aria-labelledby="tabset1_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">database.createIndex(
+    "TypeNameIndex",
+    IndexBuilder.valueIndex(
+        ValueIndexItem.property("type"),
+        ValueIndexItem.property("name")
+    )
+)</code></pre>
 </div>
 </div>
 </div>
@@ -2204,7 +2210,10 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 <div class="tab-pane" aria-labelledby="tabset2_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val queryAll = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")))</code></pre>
 </div>
 </div>
 </div>
@@ -2300,7 +2309,7 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 <div class="tab-pane" aria-labelledby="tabset3_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt]</code></pre>
 </div>
 </div>
 </div>
@@ -2420,7 +2429,18 @@ In the example below, we use the <code>equalTo</code> operator to query document
 <div class="tab-pane" aria-labelledby="tabset4_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")))
+    .limit(Expression.intValue(10))
+    .execute()
+for (result in rs) {
+    result.getDictionary(DATABASE_NAME)?.let {
+        Log.i(TAG, "name -&gt; ${it.getString("name")}")
+        Log.i(TAG, "type -&gt; ${it.getString("type")}")
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2480,7 +2500,26 @@ for (Result result : rs) {
 <div class="tab-pane" aria-labelledby="tabset5_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_block.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("name"),
+        SelectResult.property("public_likes")
+    )
+    .from(DataSource.database(database))
+    .where(
+        Expression.property("type").equalTo(Expression.string("hotel"))
+            .and(
+                ArrayFunction.contains(
+                    Expression.property("public_likes"),
+                    Expression.string("Armani Langworth")
+                )
+            )
+    )
+    .execute()
+for (result in rs) {
+    Log.i(TAG, "public_likes -&gt; ${result.getArray("public_likes")?.toList()}")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2529,7 +2568,20 @@ The following example looks for documents whose <code>first</code>, <code>last</
 <div class="tab-pane" aria-labelledby="tabset6_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_block.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder.select(SelectResult.all())
+    .from(DataSource.database(database))
+    .where(
+        Expression.string("Armani").`in`(
+            Expression.property("first"),
+            Expression.property("last"),
+            Expression.property("username")
+        )
+    )
+    .execute()
+
+for (result in rs) {
+    Log.i(TAG, "public_likes -&gt; ${result.toMap()}")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2603,7 +2655,25 @@ To perform case insensitive matching, use <code>Function.lower</code> or <code>F
 <div class="tab-pane" aria-labelledby="tabset7_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name")
+    )
+    .from(DataSource.database(database))
+    .where(
+        Expression.property("type").equalTo(Expression.string("landmark"))
+            .and(
+                Function.lower(Expression.property("name"))
+                    .like(Expression.string("royal engineers museum"))
+            )
+    )
+    .execute()
+
+for (result in rs) {
+    Log.i(TAG, "name -&gt; ${result.getString("name")}")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2663,7 +2733,25 @@ Notice that the matches may span word boundaries.</p>
 <div class="tab-pane" aria-labelledby="tabset8_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name")
+    )
+    .from(DataSource.database(database))
+    .where(
+        Expression.property("type").equalTo(Expression.string("landmark"))
+            .and(
+                Function.lower(Expression.property("name"))
+                    .like(Expression.string("eng%e%"))
+            )
+    )
+    .execute()
+
+for (result in rs) {
+    Log.i(TAG, "name -&gt; ${result.getString("name")}")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2715,7 +2803,25 @@ The query returns "landmark" type documents with names such as "Engineer", "engi
 <div class="tab-pane" aria-labelledby="tabset9_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name")
+    )
+    .from(DataSource.database(database))
+    .where(
+        Expression.property("type").equalTo(Expression.string("landmark"))
+            .and(
+                Function.lower(Expression.property("name"))
+                    .like(Expression.string("eng____r"))
+            )
+    )
+    .execute()
+
+for (result in rs) {
+    Log.i(TAG, "name -&gt; ${result.getString("name")}")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2779,7 +2885,24 @@ The <code>regex</code> operator is case sensitive, use <code>upper</code> or <co
 <div class="tab-pane" aria-labelledby="tabset10_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name")
+    )
+    .from(DataSource.database(database))
+    .where(
+        Expression.property("type").equalTo(Expression.string("landmark"))
+            .and(
+                Function.lower(Expression.property("name"))
+                    .regex(Expression.string("\\beng.*r\\b"))
+            )
+    )
+    .execute()
+for (result in rs) {
+    Log.i(TAG, "name -&gt; ${result.getString("name")}")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2851,7 +2974,11 @@ For more on the regex spec used by <em>Couchbase&#160;Lite</em> see <a href="htt
 <div class="tab-pane" aria-labelledby="tabset11_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Query documents that have been deleted
+val query = QueryBuilder
+    .select(SelectResult.expression(Meta.id))
+    .from(DataSource.database(database))
+    .where(Meta.deleted)</code></pre>
 </div>
 </div>
 </div>
@@ -2901,7 +3028,37 @@ For example to combine airline details with route details, linked by the airline
 <div class="tab-pane" aria-labelledby="tabset12_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder.select(
+    SelectResult.expression(Expression.property("name").from("airline")),
+    SelectResult.expression(Expression.property("callsign").from("airline")),
+    SelectResult.expression(Expression.property("destinationairport").from("route")),
+    SelectResult.expression(Expression.property("stops").from("route")),
+    SelectResult.expression(Expression.property("airline").from("route"))
+)
+    .from(DataSource.database(database).`as`("airline"))
+    .join(
+        Join.join(DataSource.database(database).`as`("route"))
+            .on(
+                Meta.id.from("airline")
+                    .equalTo(Expression.property("airlineid").from("route"))
+            )
+    )
+    .where(
+        Expression.property("type").from("route").equalTo(Expression.string("route"))
+            .and(
+                Expression.property("type").from("airline")
+                    .equalTo(Expression.string("airline"))
+            )
+            .and(
+                Expression.property("sourceairport").from("route")
+                    .equalTo(Expression.string("RIX"))
+            )
+    )
+    .execute()
+
+for (result in rs) {
+    Log.i(TAG, "name -&gt; ${result.toMap()}")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2973,7 +3130,33 @@ for (Result result : rs) { Log.w("Sample", String.format("%s", result.toMap().to
 <div class="tab-pane" aria-labelledby="tabset13_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder.select(
+    SelectResult.expression(Function.count(Expression.string("*"))),
+    SelectResult.property("country"),
+    SelectResult.property("tz")
+)
+    .from(DataSource.database(database))
+    .where(
+        Expression.property("type").equalTo(Expression.string("airport"))
+            .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300)))
+    )
+    .groupBy(
+        Expression.property("country"), Expression.property("tz")
+    )
+    .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending())
+    .execute()
+
+for (result in rs) {
+    result.let {
+        Log.i(
+            TAG,
+            "There are ${it.getInt("$1")} airports on the ${
+                it.getString("tz")
+            } timezone located in ${
+                it.getString("country")
+            } and above 300ft"
+        )
+    }</code></pre>
 </div>
 </div>
 </div>
@@ -3051,7 +3234,20 @@ There are 123 airports on the America/Denver timezone located in United States a
 <div class="tab-pane" aria-labelledby="tabset14_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("name")
+    )
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")))
+    .orderBy(Ordering.property("name").ascending())
+    .limit(Expression.intValue(10))
+    .execute()
+
+for (result in rs) {
+    Log.i(TAG, "${result.toMap()}")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3214,7 +3410,14 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="tab-pane" aria-labelledby="tabset15_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">//        try {
+//            this_Db = new Database("hotels");
+//        } catch (CouchbaseLiteException e) {
+//            e.printStackTrace();
+//        }
+
+        val listQuery: Query = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.database(openOrCreateDatabaseForUser(currentUser)))</code></pre>
 </div>
 </div>
 </div>
@@ -3314,7 +3517,27 @@ Query listQuery = QueryBuilder.select(SelectResult.all())
 <div class="tab-pane" aria-labelledby="tabset16_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val hotels: HashMap&lt;String, Hotel&gt; = HashMap()
+
+for (result in listQuery.execute().allResults()) {
+    // get the k-v pairs from the 'hotel' key's value into a dictionary
+    val thisDocsProps = result.getDictionary(0) <i class="conum" data-value="1"></i><b>(1)</b>
+    val thisDocsId = thisDocsProps!!.getString("id")
+    val thisDocsName = thisDocsProps.getString("name")
+    val thisDocsType = thisDocsProps.getString("type")
+    val thisDocsCity = thisDocsProps.getString("city")
+
+    // Alternatively, access results value dictionary directly
+    val id = result.getDictionary(0)?.getString("id").toString() <i class="conum" data-value="2"></i><b>(2)</b>
+    hotels[id] = Hotel(
+        id,
+        result.getDictionary(0)?.getString("type"),
+        result.getDictionary(0)?.getString("name"),
+        result.getDictionary(0)?.getString("city"),
+        result.getDictionary(0)?.getString("country"),
+        result.getDictionary(0)?.getString("description")
+    )
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3391,7 +3614,7 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="tab-pane" aria-labelledby="tabset17_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt]</code></pre>
 </div>
 </div>
 </div>
@@ -3484,7 +3707,7 @@ Query listQuery =
 <div class="tab-pane" aria-labelledby="tabset18_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt]</code></pre>
 </div>
 </div>
 </div>
@@ -3554,7 +3777,7 @@ try {
 <div class="tab-pane" aria-labelledby="tabset19_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt]</code></pre>
 </div>
 </div>
 </div>
@@ -3625,7 +3848,7 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="tab-pane" aria-labelledby="tabset20_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt]</code></pre>
 </div>
 </div>
 </div>
@@ -3688,7 +3911,7 @@ try {
 <div class="tab-pane" aria-labelledby="tabset21_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt]</code></pre>
 </div>
 </div>
 </div>
@@ -3764,7 +3987,7 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
 <div class="tab-pane" aria-labelledby="tabset22_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt]</code></pre>
 </div>
 </div>
 </div>
@@ -3827,7 +4050,7 @@ Use the <code>limit</code> and <code>offset</code> feature, to return a defined 
 <div class="tab-pane" aria-labelledby="tabset23_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt]</code></pre>
 </div>
 </div>
 </div>
@@ -3906,7 +4129,28 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="tab-pane" aria-labelledby="tabset24_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Uses Jackson JSON processor
+val mapper = ObjectMapper()
+val hotels: ArrayList&lt;Hotel&gt; = ArrayList()
+
+for (result in listQuery.execute()) {
+
+    // Get result as JSON string
+    val json = result.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
+
+    // Get Hashmap from JSON string
+    val dictFromJSONstring = mapper.readValue(json, HashMap::class.java) <i class="conum" data-value="2"></i><b>(2)</b>
+
+    // Use created hashmap
+    val hotelId = dictFromJSONstring["id"].toString() //
+    val hotelType = dictFromJSONstring["type"].toString()
+    val hotelname = dictFromJSONstring["name"].toString()
+
+
+    // Get custom object from JSON string
+    val thisHotel = mapper.readValue(json, Hotel::class.java) <i class="conum" data-value="3"></i><b>(3)</b>
+    hotels.add(thisHotel)
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4064,7 +4308,547 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 <div class="tab-pane" aria-labelledby="tabset25_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">
+
+
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+
+
+
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
+//
+// Copyright (c) 2021 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.code_snippets
+
+import android.util.Log
+import com.couchbase.lite.ArrayFunction
+import com.couchbase.lite.CouchbaseLiteException
+import com.couchbase.lite.DataSource
+import com.couchbase.lite.Database
+import com.couchbase.lite.Expression
+import com.couchbase.lite.FullTextExpression
+import com.couchbase.lite.FullTextIndexItem
+import com.couchbase.lite.Function
+import com.couchbase.lite.IndexBuilder
+import com.couchbase.lite.Join
+import com.couchbase.lite.Meta
+import com.couchbase.lite.Ordering
+import com.couchbase.lite.Query
+import com.couchbase.lite.QueryBuilder
+import com.couchbase.lite.SelectResult
+import com.couchbase.lite.ValueIndexItem
+import com.fasterxml.jackson.databind.ObjectMapper
+import org.json.JSONException
+
+
+private const val TAG = "QUERY"
+private const val DATABASE_NAME = "database"
+
+data class Hotel(
+    var description: String? = null,
+    var country: String? = null,
+    var city: String? = null,
+    var name: String? = null,
+    var type: String? = null,
+    var id: String? = null
+)
+
+@Suppress("unused")
+class QueryExamples(private val database: Database) {
+
+    // ### Indexing
+    @Throws(CouchbaseLiteException::class)
+    fun testIndexing() {
+        database.createIndex(
+            "TypeNameIndex",
+            IndexBuilder.valueIndex(
+                ValueIndexItem.property("type"),
+                ValueIndexItem.property("name")
+            )
+        )
+    }
+
+    // ### SELECT statement
+    fun testSelectStatement() {
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("name"),
+                SelectResult.property("type")
+            )
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("hotel")))
+            .orderBy(Ordering.expression(Meta.id))
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "hotel id -&gt;${result.getString("id")}")
+            Log.i(TAG, "hotel name -&gt; ${result.getString("name")}")
+        }
+    }
+
+    // META function
+    @Throws(CouchbaseLiteException::class)
+    fun testMetaFunction() {
+        val rs = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("airport")))
+            .orderBy(Ordering.expression(Meta.id))
+            .execute()
+
+        for (result in rs) {
+            Log.w(TAG, "airport id -&gt;${result.getString("id")}")
+            Log.w(TAG, "airport id -&gt; ${result.getString(0)}")
+        }
+    }
+
+    // ### all(*)
+    @Throws(CouchbaseLiteException::class)
+    fun testSelectAll() {
+        val queryAll = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("hotel")))
+
+        val query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+
+        // Adds a query change listener.
+        // Changes will be posted on the main queue.
+        val token = query.addChangeListener { change -&gt;
+            change.results?.let {
+                for (result in it) {
+                    Log.d(TAG, "results: ${result.keys}")
+                    /* Update UI */
+                }
+            }
+        }
+
+        // Start live query.
+        query.execute() <i class="conum" data-value="1"></i><b>(1)</b>
+
+        query.removeChangeListener(token)
+
+        for (result in query.execute()) {
+            Log.i(TAG, "hotel -&gt; ${result.getDictionary(DATABASE_NAME)?.toMap()}")
+        }
+    }
+
+
+    // ###　WHERE statement
+    @Throws(CouchbaseLiteException::class)
+    fun testWhereStatement() {
+        val rs = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("hotel")))
+            .limit(Expression.intValue(10))
+            .execute()
+        for (result in rs) {
+            result.getDictionary(DATABASE_NAME)?.let {
+                Log.i(TAG, "name -&gt; ${it.getString("name")}")
+                Log.i(TAG, "type -&gt; ${it.getString("type")}")
+            }
+        }
+    }
+
+    fun testQueryDeletedDocuments() {
+        // Query documents that have been deleted
+        val query = QueryBuilder
+            .select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(Meta.deleted)
+    }
+
+    // ####　Collection Operators
+    @Throws(CouchbaseLiteException::class)
+    fun testCollectionStatement() {
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("name"),
+                SelectResult.property("public_likes")
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("hotel"))
+                    .and(
+                        ArrayFunction.contains(
+                            Expression.property("public_likes"),
+                            Expression.string("Armani Langworth")
+                        )
+                    )
+            )
+            .execute()
+        for (result in rs) {
+            Log.i(TAG, "public_likes -&gt; ${result.getArray("public_likes")?.toList()}")
+        }
+    }
+
+    // IN operator
+    @Throws(CouchbaseLiteException::class)
+    fun testInOperator() {
+        val rs = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(
+                Expression.string("Armani").`in`(
+                    Expression.property("first"),
+                    Expression.property("last"),
+                    Expression.property("username")
+                )
+            )
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "public_likes -&gt; ${result.toMap()}")
+        }
+    }
+
+    // Pattern Matching
+    @Throws(CouchbaseLiteException::class)
+    fun testPatternMatching() {
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("landmark"))
+                    .and(
+                        Function.lower(Expression.property("name"))
+                            .like(Expression.string("royal engineers museum"))
+                    )
+            )
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "name -&gt; ${result.getString("name")}")
+        }
+    }
+
+    // ### Wildcard Match
+    @Throws(CouchbaseLiteException::class)
+    fun testWildcardMatch() {
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("landmark"))
+                    .and(
+                        Function.lower(Expression.property("name"))
+                            .like(Expression.string("eng%e%"))
+                    )
+            )
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "name -&gt; ${result.getString("name")}")
+        }
+    }
+
+    // Wildcard Character Match
+    @Throws(CouchbaseLiteException::class)
+    fun testWildCharacterMatch() {
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("landmark"))
+                    .and(
+                        Function.lower(Expression.property("name"))
+                            .like(Expression.string("eng____r"))
+                    )
+            )
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "name -&gt; ${result.getString("name")}")
+        }
+    }
+
+    // ### Regex Match
+    @Throws(CouchbaseLiteException::class)
+    fun testRegexMatch() {
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("landmark"))
+                    .and(
+                        Function.lower(Expression.property("name"))
+                            .regex(Expression.string("\\beng.*r\\b"))
+                    )
+            )
+            .execute()
+        for (result in rs) {
+            Log.i(TAG, "name -&gt; ${result.getString("name")}")
+        }
+    }
+
+    // JOIN statement
+    @Throws(CouchbaseLiteException::class)
+    fun testJoinStatement() {
+        val rs = QueryBuilder.select(
+            SelectResult.expression(Expression.property("name").from("airline")),
+            SelectResult.expression(Expression.property("callsign").from("airline")),
+            SelectResult.expression(Expression.property("destinationairport").from("route")),
+            SelectResult.expression(Expression.property("stops").from("route")),
+            SelectResult.expression(Expression.property("airline").from("route"))
+        )
+            .from(DataSource.database(database).`as`("airline"))
+            .join(
+                Join.join(DataSource.database(database).`as`("route"))
+                    .on(
+                        Meta.id.from("airline")
+                            .equalTo(Expression.property("airlineid").from("route"))
+                    )
+            )
+            .where(
+                Expression.property("type").from("route").equalTo(Expression.string("route"))
+                    .and(
+                        Expression.property("type").from("airline")
+                            .equalTo(Expression.string("airline"))
+                    )
+                    .and(
+                        Expression.property("sourceairport").from("route")
+                            .equalTo(Expression.string("RIX"))
+                    )
+            )
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "name -&gt; ${result.toMap()}")
+        }
+    }
+
+
+    // ### GROUPBY statement
+    @Throws(CouchbaseLiteException::class)
+    fun testGroupByStatement() {
+        val rs = QueryBuilder.select(
+            SelectResult.expression(Function.count(Expression.string("*"))),
+            SelectResult.property("country"),
+            SelectResult.property("tz")
+        )
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").equalTo(Expression.string("airport"))
+                    .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300)))
+            )
+            .groupBy(
+                Expression.property("country"), Expression.property("tz")
+            )
+            .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending())
+            .execute()
+
+        for (result in rs) {
+            result.let {
+                Log.i(
+                    TAG,
+                    "There are ${it.getInt("$1")} airports on the ${
+                        it.getString("tz")
+                    } timezone located in ${
+                        it.getString("country")
+                    } and above 300ft"
+                )
+            }
+        }
+    }
+
+    // ### ORDER BY statement
+    @Throws(CouchbaseLiteException::class)
+    fun testOrderByStatement() {
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("hotel")))
+            .orderBy(Ordering.property("name").ascending())
+            .limit(Expression.intValue(10))
+            .execute()
+
+        for (result in rs) {
+            Log.i(TAG, "${result.toMap()}")
+        }
+    }
+
+
+    // ### EXPLAIN statement
+    @Throws(CouchbaseLiteException::class)
+    fun testExplainStatement() {
+        var query: Query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("university")))
+            .groupBy(Expression.property("country"))
+            .orderBy(Ordering.property("name").descending()) <i class="conum" data-value="1"></i><b>(1)</b>
+        Log.i(TAG, query.explain()) <i class="conum" data-value="2"></i><b>(2)</b>
+
+        query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").like(Expression.string("%hotel%"))) <i class="conum" data-value="3"></i><b>(3)</b>
+        Log.i(TAG, query.explain())
+
+        query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(
+                Expression.property("type").like(Expression.string("hotel%")) <i class="conum" data-value="4"></i><b>(4)</b>
+                    .and(Expression.property("name").like(Expression.string("%royal%")))
+            )
+        Log.i(TAG, query.explain())
+
+        query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(
+                Function.lower(
+                    Expression.property("type").equalTo(Expression.string("hotel"))
+                )
+            ) <i class="conum" data-value="5"></i><b>(5)</b>
+        Log.i(TAG, query.explain())
+
+        query = QueryBuilder
+            .select(SelectResult.all())
+            .from(DataSource.database(database))
+            .where(Expression.property("type").equalTo(Expression.string("hotel"))) <i class="conum" data-value="6"></i><b>(6)</b>
+        Log.i(TAG, query.explain())
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun prepareIndex() {
+        database.createIndex(
+            "nameFTSIndex",
+            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false)
+        )
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun testFTS() {
+        val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
+            .from(DataSource.database(database))
+            .where(FullTextExpression.index("nameFTSIndex").match("buy"))
+            .execute()
+        for (result in rs) {
+            Log.i(TAG, "document properties${result.getString(0)}")
+        }
+    }
+
+
+    fun testQuerySyntaxAll(currentUser: String) {
+
+//        try {
+//            this_Db = new Database("hotels");
+//        } catch (CouchbaseLiteException e) {
+//            e.printStackTrace();
+//        }
+
+        val listQuery: Query = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.database(openOrCreateDatabaseForUser(currentUser)))
+
+        val hotels: HashMap&lt;String, Hotel&gt; = HashMap()
+
+        for (result in listQuery.execute().allResults()) {
+            // get the k-v pairs from the 'hotel' key's value into a dictionary
+            val thisDocsProps = result.getDictionary(0) <i class="conum" data-value="7"></i><b>(7)</b>
+            val thisDocsId = thisDocsProps!!.getString("id")
+            val thisDocsName = thisDocsProps.getString("name")
+            val thisDocsType = thisDocsProps.getString("type")
+            val thisDocsCity = thisDocsProps.getString("city")
+
+            // Alternatively, access results value dictionary directly
+            val id = result.getDictionary(0)?.getString("id").toString() <i class="conum" data-value="8"></i><b>(8)</b>
+            hotels[id] = Hotel(
+                id,
+                result.getDictionary(0)?.getString("type"),
+                result.getDictionary(0)?.getString("name"),
+                result.getDictionary(0)?.getString("city"),
+                result.getDictionary(0)?.getString("country"),
+                result.getDictionary(0)?.getString("description")
+            )
+        }
+
+    }
+
+    @Throws(CouchbaseLiteException::class, JSONException::class)
+    fun testQuerySyntaxJson(currentUser: String) {
+        val db = openOrCreateDatabaseForUser(currentUser)
+        // Example assumes Hotel class object defined elsewhere
+//        Database db = null;
+//        try {
+//                db = new Database(dbName);
+//        } catch (CouchbaseLiteException e) {
+//            e.printStackTrace();
+//        }
+
+        // Build the query
+        val listQuery: Query = QueryBuilder.select(SelectResult.all())
+            .from(DataSource.database(db))
+
+
+        // Uses Jackson JSON processor
+        val mapper = ObjectMapper()
+        val hotels: ArrayList&lt;Hotel&gt; = ArrayList()
+
+        for (result in listQuery.execute()) {
+
+            // Get result as JSON string
+            val json = result.toJSON() <i class="conum" data-value="9"></i><b>(9)</b>
+
+            // Get Hashmap from JSON string
+            val dictFromJSONstring = mapper.readValue(json, HashMap::class.java) <i class="conum" data-value="10"></i><b>(10)</b>
+
+            // Use created hashmap
+            val hotelId = dictFromJSONstring["id"].toString() //
+            val hotelType = dictFromJSONstring["type"].toString()
+            val hotelname = dictFromJSONstring["name"].toString()
+
+
+            // Get custom object from JSON string
+            val thisHotel = mapper.readValue(json, Hotel::class.java) <i class="conum" data-value="11"></i><b>(11)</b>
+            hotels.add(thisHotel)
+        }
+    }
+/* end func testQuerySyntaxJson */
+
+    fun openOrCreateDatabaseForUser(user: String): Database = Database(user)
+}
+
+
+
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt</code></pre>
 </div>
 </div>
 </div>
@@ -4134,7 +4918,7 @@ Therefore, the supported data type will be constrained by the data type that the
 <div class="tab-pane" aria-labelledby="tabset26_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">Database.prediction.registerModel("ImageClassifier", ImageClassifierModel)</code></pre>
 </div>
 </div>
 </div>
@@ -4196,7 +4980,8 @@ When documents are added or updated, the index will call the prediction function
 <div class="tab-pane" aria-labelledby="tabset27_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val index: ValueIndex = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")))
+database.createIndex("value-index-image-classifier", index)</code></pre>
 </div>
 </div>
 </div>
@@ -4240,7 +5025,11 @@ It differs from the value index in that it caches the predictive results and cre
 <div class="tab-pane" aria-labelledby="tabset28_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val inputMap: MutableMap&lt;String, Any&gt; = mutableMapOf()
+inputMap["numbers"] = Expression.property("photo")
+val input: Expression = Expression.map(inputMap)
+val index: PredictiveIndex = IndexBuilder.predictiveIndex("ImageClassifier", input, null)
+database.createIndex("predictive-index-image-classifier", index)</code></pre>
 </div>
 </div>
 </div>
@@ -4285,7 +5074,25 @@ database.createIndex("predictive-index-image-classifier", index);</code></pre>
 <div class="tab-pane" aria-labelledby="tabset29_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val prediction: PredictionFunction = Function.prediction(
+    ImageClassifierModel.name,
+    Expression.map(mutableMapOf("photo" to Expression.property("photo")) as Map&lt;String, Any&gt;?) <i class="conum" data-value="1"></i><b>(1)</b>
+)
+
+// !!! Is this query using that prediction function, at all?
+val rs = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.database(database))
+    .where(
+        Expression.property("label").equalTo(Expression.string("car"))
+            .and(
+                Expression.property("probability")
+                    .greaterThanOrEqualTo(Expression.doubleValue(0.8))
+            )
+    )
+    .execute()
+
+Log.d(TAG, "Number of rows: ${rs.allResults().size}")</code></pre>
 </div>
 </div>
 </div>
@@ -4357,7 +5164,7 @@ The null value returned by the prediction method will be interpreted as MISSING 
 <div class="tab-pane" aria-labelledby="tabset30_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">Database.prediction.unregisterModel("ImageClassifier")</code></pre>
 </div>
 </div>
 </div>

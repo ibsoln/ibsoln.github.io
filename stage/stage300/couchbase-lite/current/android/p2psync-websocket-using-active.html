@@ -2100,7 +2100,46 @@ The implementation of this storage differs from platform to platform&#8201;&#821
 <div class="tab-pane" aria-labelledby="tabset1_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">    // initialize the replicator configuration
+    ReplicatorConfigurationFactory.create(
+        database = database,
+        target = URLEndpoint(URI("wss://listener.com:8954")), <i class="conum" data-value="1"></i><b>(1)</b>
+
+        // Set replicator type
+        type = ReplicatorType.PUSH_AND_PULL,
+
+        // Configure Sync Mode
+        continuous = false, // default value
+
+
+
+
+        // Configure Server Authentication --
+        // only accept self-signed certs
+        acceptOnlySelfSignedServerCertificate = true, <i class="conum" data-value="2"></i><b>(2)</b>
+
+        // Configure the credentials the
+        // client will provide if prompted
+        authenticator = BasicAuthenticator("Our Username", "Our PasswordValue".toCharArray()), <i class="conum" data-value="3"></i><b>(3)</b>
+
+
+        /* Optionally set custom conflict resolver call back */
+        conflictResolver = null <i class="conum" data-value="4"></i><b>(4)</b>
+    )
+)
+
+
+// Optionally add a change listener <i class="conum" data-value="5"></i><b>(5)</b>
+val thisListener = repl.addChangeListener { change -&gt;
+    val err: CouchbaseLiteException? = change.status.error
+    if (err != null) {
+        Log.i(TAG, "Error code ::  ${err.code}", err)
+    }
+}
+
+// Start replicator
+repl.start(false) <i class="conum" data-value="6"></i><b>(6)</b>
+thisReplicator = repl</code></pre>
 </div>
 </div>
 </div>
@@ -2279,7 +2318,10 @@ To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <co
 <div class="tab-pane" aria-labelledby="tabset2_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// initialize the replicator configuration
+    val thisConfig = ReplicatorConfigurationFactory.create(
+        database = database,
+        target = URLEndpoint(URI("wss://10.0.2.2:8954/travel-sample"))</code></pre>
 </div>
 </div>
 </div>
@@ -2355,7 +2397,11 @@ final ReplicatorConfiguration thisConfig
 <div class="tab-pane" aria-labelledby="tabset3_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Set replicator type
+type = ReplicatorType.PUSH_AND_PULL,
+
+// Configure Sync Mode
+continuous = false, // default value</code></pre>
 </div>
 </div>
 </div>
@@ -2504,7 +2550,19 @@ thisConfig.setContinuous(false); // default value</code></pre>
 <div class="tab-pane" aria-labelledby="tabset4_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val repl = Replicator(
+    ReplicatorConfigurationFactory.create(
+        database = database,
+        target = URLEndpoint(URI("ws://localhost:4984/mydatabase")),
+        //  other config params as required . .
+        heartbeat = 150, <i class="conum" data-value="1"></i><b>(1)</b>
+        maxAttempts = 20,
+        maxAttemptWaitTime = 600
+    )
+)
+
+repl.start()
+replicator = repl</code></pre>
 </div>
 </div>
 </div>
@@ -2610,7 +2668,9 @@ If the server cannot provide acceptable credentials then the connection will fai
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-set-server-authentication.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Configure Server Security
+// -- only accept CA attested certs
+acceptOnlySelfSignedServerCertificate = false, <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2630,7 +2690,9 @@ Self signed certificates are not allowed.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-set-server-authentication.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Configure Server Authentication --
+// only accept self-signed certs
+acceptOnlySelfSignedServerCertificate = true, <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2649,11 +2711,18 @@ Any certificates that are not self-signed are rejected.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-set-server-authentication.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1320-L1322">
+// Use the pinned certificate from the byte array (cert)
+pinnedServerCertificate = caCert.encoded, <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/commons/common-set-server-authentication.adoc - include::android:example$codesnippet_collection.kt[]</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Configure the pinned certificate using data from the byte array <code>cert</code></td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -2779,7 +2848,9 @@ thisConfig.setPinnedServerCertificate(cert.getEncoded()); <i class="conum" data-
 <div class="tab-pane" aria-labelledby="tabset8_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Configure the credentials the
+// client will provide if prompted
+authenticator = BasicAuthenticator("Our Username", "Our PasswordValue".toCharArray()), <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2847,7 +2918,19 @@ The <strong>server</strong> (listener) must have <code>disableTLS</code> set <co
 <div class="tab-pane" aria-labelledby="tabset9_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">        // ... other replicator configuration
+        // Provide a client certificate to the server for authentication
+        authenticator = ClientCertificateAuthenticator(
+            TLSIdentity.getIdentity("clientId")
+                ?: throw IllegalStateException("Cannot find client id")
+        ) <i class="conum" data-value="1"></i><b>(1)</b>
+
+        // ... other replicator configuration
+
+    )
+)
+
+thisReplicator = repl</code></pre>
 </div>
 </div>
 </div>
@@ -2913,7 +2996,47 @@ You can, optionally, add a change listener (see <a href="#lbl-repl-mon">Monitor 
 <div class="tab-pane" aria-labelledby="tabset10_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Create replicator
+// Consider holding a reference somewhere
+// to prevent the Replicator from being GCed
+val repl = Replicator( <i class="conum" data-value="1"></i><b>(1)</b>
+
+    // initialize the replicator configuration
+    ReplicatorConfigurationFactory.create(
+        database = database,
+        target = URLEndpoint(URI("wss://listener.com:8954")), <i class="conum" data-value="2"></i><b>(2)</b>
+
+        // Set replicator type
+        type = ReplicatorType.PUSH_AND_PULL,
+
+        // Configure Sync Mode
+        continuous = false, // default value
+
+
+        // set auto-purge behavior
+        // (here we override default)
+        enableAutoPurge = false, <i class="conum" data-value="3"></i><b>(3)</b>
+
+
+
+        // Configure Server Authentication --
+        // only accept self-signed certs
+        acceptOnlySelfSignedServerCertificate = true, <i class="conum" data-value="4"></i><b>(4)</b>
+
+        // Configure the credentials the
+        // client will provide if prompted
+        authenticator = BasicAuthenticator("Our Username", "Our PasswordValue".toCharArray()), <i class="conum" data-value="5"></i><b>(5)</b>
+
+
+        /* Optionally set custom conflict resolver call back */
+        conflictResolver = null <i class="conum" data-value="6"></i><b>(6)</b>
+    )
+)
+
+
+// Start replicator
+repl.start(false) <i class="conum" data-value="7"></i><b>(7)</b>
+thisReplicator = repl</code></pre>
 </div>
 </div>
 </div>
@@ -3054,14 +3177,30 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <div class="tab-pane" aria-labelledby="tabset12_adding-a-change-listener">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-sgw-replication-monitor.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">val thisListener = repl.addChangeListener { change -&gt;
+    val err: CouchbaseLiteException? = change.status.error
+    if (err != null) {
+        Log.i(TAG, "Error code ::  ${err.code}", err)
+    }
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset12_using-replicator-status">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-sgw-replication-monitor.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">thisReplicator?.status?.let {
+    Log.i(TAG, "The Replicator is currently ${it.activityLevel}")
+    Log.i(TAG, "The Replicator has processed ${it.progress}")
+    Log.i(
+        TAG,
+        if (it.activityLevel === ReplicatorActivityLevel.BUSY) {
+            "Replication Processing"
+        } else {
+            "It has completed ${it.progress.total} changes"
+        }
+    )
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3243,7 +3382,24 @@ Use it in preference to returning a list of pending document IDs, where possible
 <div class="tab-pane" aria-labelledby="tabset14_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">//
+private fun onStatusChanged(pendingDocs: Set&lt;String&gt;, status: ReplicatorStatus) {
+    // ... sample onStatusChanged function
+    //
+    Log.i(TAG, "Replicator activity level is ${status.activityLevel}")
+
+    // iterate and report-on previously
+    // retrieved pending docids 'list'
+    val itr = pendingDocs.iterator()
+    while (itr.hasNext()) {
+        val docId = itr.next()
+
+        if (!replicator.isDocumentPending(docId)) { <i class="conum" data-value="1"></i><b>(1)</b>
+            continue
+        }
+
+        Log.i(TAG, "Doc ID $docId has been pushed")
+    }</code></pre>
 </div>
 </div>
 </div>
@@ -3351,7 +3507,8 @@ Your app should account for this potential delay before attempting any subsequen
 <div class="tab-pane" aria-labelledby="tabset15_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Stop replication.
+thisReplicator?.stop() <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -3428,21 +3585,51 @@ Remove any active <a href="#lbl-repl-chng">change listener</a> before stopping t
 <div class="tab-pane" aria-labelledby="tabset17_local-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new LocalWinConflictResolver());
+@Suppress("unused")
+object LocalWinsResolver : ConflictResolver {
+    override fun resolve(conflict: Conflict) = conflict.localDocument
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset17_remote-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
+@Suppress("unused")
+object RemoteWinsResolver : ConflictResolver {
+    override fun resolve(conflict: Conflict) = conflict.remoteDocument
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset17_merge">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">// Using replConfig.setConflictResolver(new MergeConflictResolver());
+@Suppress("unused")
+object MergeConflictResolver : ConflictResolver {
+    override fun resolve(conflict: Conflict): Document {
+        val localDoc = conflict.localDocument?.toMap()
+        val remoteDoc = conflict.remoteDocument?.toMap()
+
+        val merge: MutableMap&lt;String, Any&gt;?
+        if (localDoc == null) {
+            merge = remoteDoc
+        } else {
+            merge = localDoc
+            if (remoteDoc != null) {
+                merge.putAll(remoteDoc)
+            }
+        }
+
+        return if (merge == null) {
+            MutableDocument(conflict.documentId)
+        } else {
+            MutableDocument(conflict.documentId, merge)
+        }
+    }</code></pre>
 </div>
 </div>
 </div>
@@ -3468,7 +3655,7 @@ Remove any active <a href="#lbl-repl-chng">change listener</a> before stopping t
 <div class="tab-pane" aria-labelledby="tabset18_local-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1279-L1284">// Using replConfig.setConflictResolver(new LocalWinConflictResolver());
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1283-L1288">// Using replConfig.setConflictResolver(new LocalWinConflictResolver());
 class LocalWinConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         return conflict.getLocalDocument();
@@ -3480,14 +3667,18 @@ class LocalWinConflictResolver implements ConflictResolver {
 <div class="tab-pane" aria-labelledby="tabset18_remote-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L87-L91">// Using replConfig.setConflictResolver(new RemoteWinConflictResolver());
+@Suppress("unused")
+object RemoteWinsResolver : ConflictResolver {
+    override fun resolve(conflict: Conflict) = conflict.remoteDocument
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset18_merge">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1297-L1304">// Using replConfig.setConflictResolver(new MergeConflictResolver());
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java#L1301-L1308">// Using replConfig.setConflictResolver(new MergeConflictResolver());
 class MergeConflictResolver implements ConflictResolver {
     public Document resolve(Conflict conflict) {
         Map&lt;String, Object&gt; merge = conflict.getLocalDocument().toMap();
@@ -3531,7 +3722,17 @@ In the event of conflicting keys, it will pick the key value from <code>new</cod
 <div class="tab-pane" aria-labelledby="tabset19_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::android:example$codesnippet_collection.kt[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val mutableDocument = database.getDocument("xyz")?.toMutable() ?: return
+mutableDocument.setString("name", "apples")
+database.save(mutableDocument) { newDoc, curDoc -&gt;  <i class="conum" data-value="1"></i><b>(1)</b>
+    if (curDoc == null) {
+        return@save false
+    } <i class="conum" data-value="2"></i><b>(2)</b>
+    val dataMap: MutableMap&lt;String, Any&gt; = curDoc.toMap()
+    dataMap.putAll(newDoc.toMap()) <i class="conum" data-value="3"></i><b>(3)</b>
+    newDoc.setData(dataMap)
+    true <i class="conum" data-value="4"></i><b>(4)</b>
+} <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 </div>
@@ -3558,9 +3759,6 @@ database.save(
 </div>
 </div>
 </div>
-</div>
-<div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/commons/common-conflict.adoc - include::android:example$codesnippet_collection.kt[]</p>
 </div>
 <div class="paragraph">
 <p>For more on replicator conflict resolution see: <a href="conflict.html" class="page">Handling Data Conflicts</a>.</p>

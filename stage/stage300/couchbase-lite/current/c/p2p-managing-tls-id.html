@@ -2157,7 +2157,7 @@ static void getting_started() {
     CBLDocument_Release(docAgain);
     FLSliceResult_Release(id);
 
-    // tag::query-syntax-n1ql[]
+    // tag::query-syntax-n1ql-params[]
     // Create a query to fetch documents of type SDK
     int errorPos;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &amp;errorPos, &amp;err);
@@ -2173,7 +2173,7 @@ static void getting_started() {
         // Failed to run query, do error handling as above
         return;
     }
-    // end::query-syntax-n1ql[]
+    // end::query-syntax-n1ql-params[]
 
     // TODO: Result set count?
     CBLResultSet_Release(result);
@@ -2210,6 +2210,7 @@ static void getting_started() {
     // }
 
     CBLListenerToken* token = CBLReplicator_AddChangeListener(replicator, getting_started_change_listener, NULL);
+
     CBLReplicator_Start(replicator, false);
 
     // Later, stop and release the replicator
@@ -2341,10 +2342,11 @@ static void reset_replicator_checkpoint() {
     CBLReplicator* replicator = CBLReplicator_Create(&amp;config, NULL);
     CBLEndpoint_Free(target);
 
-    // tag::replication-reset-checkpoint[]
+    // tag::replication-reset-checkpoint-full[]
     // replicator is a CBLReplicator* instance
-    CBLReplicator_Start(replicator, true);
-    // end::replication-reset-checkpoint[]
+    CBLReplicator_Start(replicator, true); <i class="conum" data-value="1"></i><b>(1)</b>
+
+    // end::replication-reset-checkpoint-full[]
 
     CBLReplicator_Release(replicator);
 }
@@ -2882,44 +2884,6 @@ static void group_by() {
     // end::query-groupby[]
 }
 
-static void docsonly_N1QL_Params() {
-    /* Documentation Only query-syntax-n1ql-params
-        Declared elsewhere
-          CBLDatabase* database = kDatabase;
-    */
-
-    // tag::query-syntax-n1ql-params[]
-    int errorPos;
-
-    FLSTR n1qlstr = "SELECT * FROM _ WHERE type = $type";
-
-    n1qlparams = FLMutableDict_New();
-
-    FLSlot_SetString(FLMutableDict_Set(n1qlparams, "type"_sl), "hotel"_sl);
-
-    CBLQuery* query = CBLDatabase_CreateQuery(database,
-                          kCBLN1QLLanguage,
-                          n1qlstr,
-                          &amp;errorPos,
-                          &amp;err);
-
-    CBLQuery_SetParameters(query, n1qlparams);
-
-    if(!query) {
-        // Failed to create query, do error handling as above
-        // Note that errorPos will contain the position in the N1QL string
-        // that the parse failed, if applicable
-        return;
-    }
-
-    CBLResultSet* result = CBLQuery_Execute(query, &amp;err);
-    if(!result) {
-        // Failed to run query, do error handling as above
-        return;
-    }
-    // end::query-syntax-n1ql-params[]
-}
-
 int main(int argc, char** argv) {
     return 0;
 }
@@ -2937,6 +2901,11 @@ Placeholder for code to increase level of console logging for all domains
 Placeholder for Date accessors.
 
 // end::date-getter[]
+
+
+// tag::query-index[]
+// placeholder
+// end::query-index[]
 
 // tag::fts-index[]
 // placeholder
@@ -3039,7 +3008,7 @@ static void getting_started() {
     CBLDocument_Release(docAgain);
     FLSliceResult_Release(id);
 
-    // tag::query-syntax-n1ql[]
+    // tag::query-syntax-n1ql-params[]
     // Create a query to fetch documents of type SDK
     int errorPos;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &amp;errorPos, &amp;err);
@@ -3055,7 +3024,7 @@ static void getting_started() {
         // Failed to run query, do error handling as above
         return;
     }
-    // end::query-syntax-n1ql[]
+    // end::query-syntax-n1ql-params[]
 
     // TODO: Result set count?
     CBLResultSet_Release(result);
@@ -3092,6 +3061,7 @@ static void getting_started() {
     // }
 
     CBLListenerToken* token = CBLReplicator_AddChangeListener(replicator, getting_started_change_listener, NULL);
+
     CBLReplicator_Start(replicator, false);
 
     // Later, stop and release the replicator
@@ -3223,10 +3193,11 @@ static void reset_replicator_checkpoint() {
     CBLReplicator* replicator = CBLReplicator_Create(&amp;config, NULL);
     CBLEndpoint_Free(target);
 
-    // tag::replication-reset-checkpoint[]
+    // tag::replication-reset-checkpoint-full[]
     // replicator is a CBLReplicator* instance
-    CBLReplicator_Start(replicator, true);
-    // end::replication-reset-checkpoint[]
+    CBLReplicator_Start(replicator, true); <i class="conum" data-value="1"></i><b>(1)</b>
+
+    // end::replication-reset-checkpoint-full[]
 
     CBLReplicator_Release(replicator);
 }
@@ -3764,44 +3735,6 @@ static void group_by() {
     // end::query-groupby[]
 }
 
-static void docsonly_N1QL_Params() {
-    /* Documentation Only query-syntax-n1ql-params
-        Declared elsewhere
-          CBLDatabase* database = kDatabase;
-    */
-
-    // tag::query-syntax-n1ql-params[]
-    int errorPos;
-
-    FLSTR n1qlstr = "SELECT * FROM _ WHERE type = $type";
-
-    n1qlparams = FLMutableDict_New();
-
-    FLSlot_SetString(FLMutableDict_Set(n1qlparams, "type"_sl), "hotel"_sl);
-
-    CBLQuery* query = CBLDatabase_CreateQuery(database,
-                          kCBLN1QLLanguage,
-                          n1qlstr,
-                          &amp;errorPos,
-                          &amp;err);
-
-    CBLQuery_SetParameters(query, n1qlparams);
-
-    if(!query) {
-        // Failed to create query, do error handling as above
-        // Note that errorPos will contain the position in the N1QL string
-        // that the parse failed, if applicable
-        return;
-    }
-
-    CBLResultSet* result = CBLQuery_Execute(query, &amp;err);
-    if(!result) {
-        // Failed to run query, do error handling as above
-        return;
-    }
-    // end::query-syntax-n1ql-params[]
-}
-
 int main(int argc, char** argv) {
     return 0;
 }
@@ -3819,6 +3752,11 @@ Placeholder for code to increase level of console logging for all domains
 Placeholder for Date accessors.
 
 // end::date-getter[]
+
+
+// tag::query-index[]
+// placeholder
+// end::query-index[]
 
 // tag::fts-index[]
 // placeholder
@@ -3921,7 +3859,7 @@ static void getting_started() {
     CBLDocument_Release(docAgain);
     FLSliceResult_Release(id);
 
-    // tag::query-syntax-n1ql[]
+    // tag::query-syntax-n1ql-params[]
     // Create a query to fetch documents of type SDK
     int errorPos;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &amp;errorPos, &amp;err);
@@ -3937,7 +3875,7 @@ static void getting_started() {
         // Failed to run query, do error handling as above
         return;
     }
-    // end::query-syntax-n1ql[]
+    // end::query-syntax-n1ql-params[]
 
     // TODO: Result set count?
     CBLResultSet_Release(result);
@@ -3974,6 +3912,7 @@ static void getting_started() {
     // }
 
     CBLListenerToken* token = CBLReplicator_AddChangeListener(replicator, getting_started_change_listener, NULL);
+
     CBLReplicator_Start(replicator, false);
 
     // Later, stop and release the replicator
@@ -4105,10 +4044,11 @@ static void reset_replicator_checkpoint() {
     CBLReplicator* replicator = CBLReplicator_Create(&amp;config, NULL);
     CBLEndpoint_Free(target);
 
-    // tag::replication-reset-checkpoint[]
+    // tag::replication-reset-checkpoint-full[]
     // replicator is a CBLReplicator* instance
-    CBLReplicator_Start(replicator, true);
-    // end::replication-reset-checkpoint[]
+    CBLReplicator_Start(replicator, true); <i class="conum" data-value="1"></i><b>(1)</b>
+
+    // end::replication-reset-checkpoint-full[]
 
     CBLReplicator_Release(replicator);
 }
@@ -4646,44 +4586,6 @@ static void group_by() {
     // end::query-groupby[]
 }
 
-static void docsonly_N1QL_Params() {
-    /* Documentation Only query-syntax-n1ql-params
-        Declared elsewhere
-          CBLDatabase* database = kDatabase;
-    */
-
-    // tag::query-syntax-n1ql-params[]
-    int errorPos;
-
-    FLSTR n1qlstr = "SELECT * FROM _ WHERE type = $type";
-
-    n1qlparams = FLMutableDict_New();
-
-    FLSlot_SetString(FLMutableDict_Set(n1qlparams, "type"_sl), "hotel"_sl);
-
-    CBLQuery* query = CBLDatabase_CreateQuery(database,
-                          kCBLN1QLLanguage,
-                          n1qlstr,
-                          &amp;errorPos,
-                          &amp;err);
-
-    CBLQuery_SetParameters(query, n1qlparams);
-
-    if(!query) {
-        // Failed to create query, do error handling as above
-        // Note that errorPos will contain the position in the N1QL string
-        // that the parse failed, if applicable
-        return;
-    }
-
-    CBLResultSet* result = CBLQuery_Execute(query, &amp;err);
-    if(!result) {
-        // Failed to run query, do error handling as above
-        return;
-    }
-    // end::query-syntax-n1ql-params[]
-}
-
 int main(int argc, char** argv) {
     return 0;
 }
@@ -4701,6 +4603,11 @@ Placeholder for code to increase level of console logging for all domains
 Placeholder for Date accessors.
 
 // end::date-getter[]
+
+
+// tag::query-index[]
+// placeholder
+// end::query-index[]
 
 // tag::fts-index[]
 // placeholder
@@ -4803,7 +4710,7 @@ static void getting_started() {
     CBLDocument_Release(docAgain);
     FLSliceResult_Release(id);
 
-    // tag::query-syntax-n1ql[]
+    // tag::query-syntax-n1ql-params[]
     // Create a query to fetch documents of type SDK
     int errorPos;
     CBLQuery* query = CBLDatabase_CreateQuery(database, kCBLN1QLLanguage, FLSTR("SELECT * FROM _ WHERE type = \"SDK\""), &amp;errorPos, &amp;err);
@@ -4819,7 +4726,7 @@ static void getting_started() {
         // Failed to run query, do error handling as above
         return;
     }
-    // end::query-syntax-n1ql[]
+    // end::query-syntax-n1ql-params[]
 
     // TODO: Result set count?
     CBLResultSet_Release(result);
@@ -4856,6 +4763,7 @@ static void getting_started() {
     // }
 
     CBLListenerToken* token = CBLReplicator_AddChangeListener(replicator, getting_started_change_listener, NULL);
+
     CBLReplicator_Start(replicator, false);
 
     // Later, stop and release the replicator
@@ -4987,10 +4895,11 @@ static void reset_replicator_checkpoint() {
     CBLReplicator* replicator = CBLReplicator_Create(&amp;config, NULL);
     CBLEndpoint_Free(target);
 
-    // tag::replication-reset-checkpoint[]
+    // tag::replication-reset-checkpoint-full[]
     // replicator is a CBLReplicator* instance
-    CBLReplicator_Start(replicator, true);
-    // end::replication-reset-checkpoint[]
+    CBLReplicator_Start(replicator, true); <i class="conum" data-value="1"></i><b>(1)</b>
+
+    // end::replication-reset-checkpoint-full[]
 
     CBLReplicator_Release(replicator);
 }
@@ -5528,44 +5437,6 @@ static void group_by() {
     // end::query-groupby[]
 }
 
-static void docsonly_N1QL_Params() {
-    /* Documentation Only query-syntax-n1ql-params
-        Declared elsewhere
-          CBLDatabase* database = kDatabase;
-    */
-
-    // tag::query-syntax-n1ql-params[]
-    int errorPos;
-
-    FLSTR n1qlstr = "SELECT * FROM _ WHERE type = $type";
-
-    n1qlparams = FLMutableDict_New();
-
-    FLSlot_SetString(FLMutableDict_Set(n1qlparams, "type"_sl), "hotel"_sl);
-
-    CBLQuery* query = CBLDatabase_CreateQuery(database,
-                          kCBLN1QLLanguage,
-                          n1qlstr,
-                          &amp;errorPos,
-                          &amp;err);
-
-    CBLQuery_SetParameters(query, n1qlparams);
-
-    if(!query) {
-        // Failed to create query, do error handling as above
-        // Note that errorPos will contain the position in the N1QL string
-        // that the parse failed, if applicable
-        return;
-    }
-
-    CBLResultSet* result = CBLQuery_Execute(query, &amp;err);
-    if(!result) {
-        // Failed to run query, do error handling as above
-        return;
-    }
-    // end::query-syntax-n1ql-params[]
-}
-
 int main(int argc, char** argv) {
     return 0;
 }
@@ -5583,6 +5454,11 @@ Placeholder for code to increase level of console logging for all domains
 Placeholder for Date accessors.
 
 // end::date-getter[]
+
+
+// tag::query-index[]
+// placeholder
+// end::query-index[]
 
 // tag::fts-index[]
 // placeholder

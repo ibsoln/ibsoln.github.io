@@ -2443,10 +2443,18 @@ namespace api_walkthrough
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(database, target);
             using (var replicator = new Replicator(config)) {
-                // tag::replication-reset-checkpoint[]
-                // replicator is a Replicator instance
-                replicator.ResetCheckpoint();
-                replicator.Start();
+              // tag::replication-reset-checkpoint[]
+              // replicator is a Replicator instance
+              if (resetCheckpointRequired_Example) {
+                  replicator.Start(true); <i class="conum" data-value="1"></i><b>(1)</b>
+              else
+                replicator.Start(false);
+              }
+              // end::replication-reset-checkpoint[]
+
+
+
+
                 // end::replication-reset-checkpoint[]
             }
         }
@@ -2636,7 +2644,7 @@ namespace api_walkthrough
             // For value types, this is optional but provides performance enhancements
             var index = IndexBuilder.ValueIndex(
                 ValueIndexItem.Expression(Expression.Property("type")),
-                ValueIndexItem.Expression(Expression.Property("name"))); <i class="conum" data-value="1"></i><b>(1)</b>
+                ValueIndexItem.Expression(Expression.Property("name"))); <i class="conum" data-value="2"></i><b>(2)</b>
             db.CreateIndex("TypeNameIndex", index);
             // end::query-index[]
         }
@@ -2678,7 +2686,7 @@ namespace api_walkthrough
 
             // Adds a query change listener.
             // Changes will be posted on the main queue.
-            var token = query.AddChangeListener((sender, args) =&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+            var token = query.AddChangeListener((sender, args) =&gt; <i class="conum" data-value="3"></i><b>(3)</b>
             {
                 var allResult = args.Results.AllResults();
                 foreach (var result in allResult) {
@@ -2919,9 +2927,9 @@ namespace api_walkthrough
             .From(DataSource.Database(db))
             .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
             .GroupBy(Expression.Property("country"))
-            .OrderBy(Ordering.Property("title").Ascending()) <i class="conum" data-value="3"></i><b>(3)</b>
+            .OrderBy(Ordering.Property("title").Ascending()) <i class="conum" data-value="4"></i><b>(4)</b>
 
-          Console.WriteLine(query.Explain()); <i class="conum" data-value="4"></i><b>(4)</b>
+          Console.WriteLine(query.Explain()); <i class="conum" data-value="5"></i><b>(5)</b>
 
           // end::query-explain-all[]
           // tag::query-explain-like[]
@@ -2930,7 +2938,7 @@ var query =
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
     .Where(Expression.Property("type").Like(Expression.String("%hotel%"))
-      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="5"></i><b>(5)</b>
+      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="6"></i><b>(6)</b>
   Console.WriteLine(query.Explain());
 
           // end::query-explain-like[]
@@ -2940,7 +2948,7 @@ var query =
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
     .Where(Expression.Property("type").Like(Expression.String("hotel%"))
-      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="6"></i><b>(6)</b>
+      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="7"></i><b>(7)</b>
 
   Console.WriteLine(query.Explain());
 
@@ -2950,7 +2958,7 @@ var query =
   QueryBuilder
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
-    .Where(Function.Lower(Expression.Property("type")).EqualTo(Expression.String("hotel"))); <i class="conum" data-value="7"></i><b>(7)</b>
+    .Where(Function.Lower(Expression.Property("type")).EqualTo(Expression.String("hotel"))); <i class="conum" data-value="8"></i><b>(8)</b>
 
   Console.WriteLine(query.Explain());
 
@@ -2960,7 +2968,7 @@ var query =
           QueryBuilder
             .Select(SelectResult.All())
             .From(DataSource.Database(db))
-            .Where(Expression.Property("type")).EqualTo(Expression.String("hotel")); <i class="conum" data-value="8"></i><b>(8)</b>
+            .Where(Expression.Property("type")).EqualTo(Expression.String("hotel")); <i class="conum" data-value="9"></i><b>(9)</b>
 
           Console.WriteLine(query.Explain());
 
@@ -3057,8 +3065,8 @@ var query =
         private static void ConsoleLogging()
         {
             // tag::console-logging[]
-            Database.Log.Console.Domains = LogDomain.All; <i class="conum" data-value="9"></i><b>(9)</b>
-            Database.Log.Console.LogLevel = LogLevel.Verbose; <i class="conum" data-value="10"></i><b>(10)</b>
+            Database.Log.Console.Domains = LogDomain.All; <i class="conum" data-value="10"></i><b>(10)</b>
+            Database.Log.Console.LogLevel = LogLevel.Verbose; <i class="conum" data-value="11"></i><b>(11)</b>
 
             // end::console-logging[]
 
@@ -3072,14 +3080,14 @@ var query =
         {
             // tag::file-logging[]
             var tempFolder = Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), "cbllog");
-            var config = new LogFileConfiguration(tempFolder) <i class="conum" data-value="11"></i><b>(11)</b>
+            var config = new LogFileConfiguration(tempFolder) <i class="conum" data-value="12"></i><b>(12)</b>
             {
-                MaxRotateCount = 5, <i class="conum" data-value="12"></i><b>(12)</b>
-                MaxSize = 10240, <i class="conum" data-value="13"></i><b>(13)</b>
-                UsePlainText = false  <i class="conum" data-value="14"></i><b>(14)</b>
+                MaxRotateCount = 5, <i class="conum" data-value="13"></i><b>(13)</b>
+                MaxSize = 10240, <i class="conum" data-value="14"></i><b>(14)</b>
+                UsePlainText = false  <i class="conum" data-value="15"></i><b>(15)</b>
             };
             Database.Log.File.Config = config; // Apply configuration
-            Database.Log.File.Level = LogLevel.Info; <i class="conum" data-value="15"></i><b>(15)</b>
+            Database.Log.File.Level = LogLevel.Info; <i class="conum" data-value="16"></i><b>(16)</b>
 
             // end::file-logging[]
         }
@@ -3087,7 +3095,7 @@ var query =
         private static void EnableCustomLogging()
         {
             // tag::set-custom-logging[]
-            Database.Log.Custom = new LogTestLogger(); <i class="conum" data-value="16"></i><b>(16)</b>
+            Database.Log.Custom = new LogTestLogger(); <i class="conum" data-value="17"></i><b>(17)</b>
             or
             Database.Log.Custom = new LogTestLogger { Level = LogLevel.Warning };
 
@@ -3176,7 +3184,7 @@ var query =
         var replicator = new Replicator(config);
 
         var mydocids =
-          new HashSet &lt;string&gt; (replicator.GetPendingDocumentIDs()); <i class="conum" data-value="17"></i><b>(17)</b>
+          new HashSet &lt;string&gt; (replicator.GetPendingDocumentIDs()); <i class="conum" data-value="18"></i><b>(18)</b>
 
         // end::replication-push-pendingdocumentids[]
 
@@ -3191,7 +3199,7 @@ var query =
                 // retrieved pending docids 'list'
                 foreach (var thisId in mydocids)
                     // tag::replication-push-isdocumentpending[]
-                    if (!replicator.IsDocumentPending(thisId)) <i class="conum" data-value="18"></i><b>(18)</b>
+                    if (!replicator.IsDocumentPending(thisId)) <i class="conum" data-value="19"></i><b>(19)</b>
                     {
                         Console.WriteLine($"Doc ID {thisId} now pushed");
                     };
@@ -3368,13 +3376,13 @@ var query =
         //  other config as required . . .
 
         // tag::replication-set-heartbeat[]
-            config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="19"></i><b>(19)</b>
+            config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="20"></i><b>(20)</b>
         // end::replication-set-heartbeat[]
         // tag::replication-set-maxretries[]
-            config.MaxRetries = 20; //  <i class="conum" data-value="20"></i><b>(20)</b>
+            config.MaxRetries = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
         // end::replication-set-maxretries[]
         // tag::replication-set-maxretrywaittime[]
-            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="21"></i><b>(21)</b>
+            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
         // end::replication-set-maxretrywaittime[]
 
         //  other config as required . . .
@@ -3746,36 +3754,6 @@ var query =
       dbCfg.Directory =
           Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
       // tag::query-syntax-n1ql[]
-      // dbname; dbcfg defined elsewhere ...
-
-      Database thisDb = new Database(dbName, dbCfg);
-
-      var n1qlstr =
-        "SELECT META().id AS thisId FROM _ WHERE type = "hotel");  <i class="conum" data-value="22"></i><b>(22)</b>
-
-      var thisQuery = thisDb.CreateQuery(n1qlstr);
-
-      var results = thisQuery.Execute().AllResults();
-
-      // end::query-syntax-n1ql[]
-      return results;
-  }
-
-  public  List&lt;Result&gt; docsonlyN1QLQueryString (Database argDB)
-  {
-      /* For Documentation -- N1QL Query using parameters
-        *  Declared elsewhere:
-              var dbName = "travel-sample";
-              var username = "ian";
-      */
-
-      // tag::query-syntax-n1ql-params[]
-      var doc_type = "hotel";
-
-      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
-      dbCfg.Directory =
-          Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
-
       Database thisDb = new Database(dbName, dbCfg);
 
       var thisQuery =
@@ -3787,9 +3765,17 @@ var query =
 
       var results = thisQuery.Execute().AllResults();
 
-      // end::query-syntax-n1ql-params[]
       return results;
+      // end::query-syntax-n1ql[]
   }
+
+    // tag::query-syntax-n1ql-params[]
+    tbd
+    // end::query-syntax-n1ql-params[]
+
+    // tag::query-access-n1ql[]
+    tbd
+    // end::query-access-n1ql[]
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
@@ -5626,10 +5612,18 @@ namespace api_walkthrough
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(database, target);
             using (var replicator = new Replicator(config)) {
-                // tag::replication-reset-checkpoint[]
-                // replicator is a Replicator instance
-                replicator.ResetCheckpoint();
-                replicator.Start();
+              // tag::replication-reset-checkpoint[]
+              // replicator is a Replicator instance
+              if (resetCheckpointRequired_Example) {
+                  replicator.Start(true); <i class="conum" data-value="1"></i><b>(1)</b>
+              else
+                replicator.Start(false);
+              }
+              // end::replication-reset-checkpoint[]
+
+
+
+
                 // end::replication-reset-checkpoint[]
             }
         }
@@ -5819,7 +5813,7 @@ namespace api_walkthrough
             // For value types, this is optional but provides performance enhancements
             var index = IndexBuilder.ValueIndex(
                 ValueIndexItem.Expression(Expression.Property("type")),
-                ValueIndexItem.Expression(Expression.Property("name"))); <i class="conum" data-value="1"></i><b>(1)</b>
+                ValueIndexItem.Expression(Expression.Property("name"))); <i class="conum" data-value="2"></i><b>(2)</b>
             db.CreateIndex("TypeNameIndex", index);
             // end::query-index[]
         }
@@ -5861,7 +5855,7 @@ namespace api_walkthrough
 
             // Adds a query change listener.
             // Changes will be posted on the main queue.
-            var token = query.AddChangeListener((sender, args) =&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+            var token = query.AddChangeListener((sender, args) =&gt; <i class="conum" data-value="3"></i><b>(3)</b>
             {
                 var allResult = args.Results.AllResults();
                 foreach (var result in allResult) {
@@ -6102,9 +6096,9 @@ namespace api_walkthrough
             .From(DataSource.Database(db))
             .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
             .GroupBy(Expression.Property("country"))
-            .OrderBy(Ordering.Property("title").Ascending()) <i class="conum" data-value="3"></i><b>(3)</b>
+            .OrderBy(Ordering.Property("title").Ascending()) <i class="conum" data-value="4"></i><b>(4)</b>
 
-          Console.WriteLine(query.Explain()); <i class="conum" data-value="4"></i><b>(4)</b>
+          Console.WriteLine(query.Explain()); <i class="conum" data-value="5"></i><b>(5)</b>
 
           // end::query-explain-all[]
           // tag::query-explain-like[]
@@ -6113,7 +6107,7 @@ var query =
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
     .Where(Expression.Property("type").Like(Expression.String("%hotel%"))
-      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="5"></i><b>(5)</b>
+      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="6"></i><b>(6)</b>
   Console.WriteLine(query.Explain());
 
           // end::query-explain-like[]
@@ -6123,7 +6117,7 @@ var query =
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
     .Where(Expression.Property("type").Like(Expression.String("hotel%"))
-      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="6"></i><b>(6)</b>
+      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="7"></i><b>(7)</b>
 
   Console.WriteLine(query.Explain());
 
@@ -6133,7 +6127,7 @@ var query =
   QueryBuilder
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
-    .Where(Function.Lower(Expression.Property("type")).EqualTo(Expression.String("hotel"))); <i class="conum" data-value="7"></i><b>(7)</b>
+    .Where(Function.Lower(Expression.Property("type")).EqualTo(Expression.String("hotel"))); <i class="conum" data-value="8"></i><b>(8)</b>
 
   Console.WriteLine(query.Explain());
 
@@ -6143,7 +6137,7 @@ var query =
           QueryBuilder
             .Select(SelectResult.All())
             .From(DataSource.Database(db))
-            .Where(Expression.Property("type")).EqualTo(Expression.String("hotel")); <i class="conum" data-value="8"></i><b>(8)</b>
+            .Where(Expression.Property("type")).EqualTo(Expression.String("hotel")); <i class="conum" data-value="9"></i><b>(9)</b>
 
           Console.WriteLine(query.Explain());
 
@@ -6240,8 +6234,8 @@ var query =
         private static void ConsoleLogging()
         {
             // tag::console-logging[]
-            Database.Log.Console.Domains = LogDomain.All; <i class="conum" data-value="9"></i><b>(9)</b>
-            Database.Log.Console.LogLevel = LogLevel.Verbose; <i class="conum" data-value="10"></i><b>(10)</b>
+            Database.Log.Console.Domains = LogDomain.All; <i class="conum" data-value="10"></i><b>(10)</b>
+            Database.Log.Console.LogLevel = LogLevel.Verbose; <i class="conum" data-value="11"></i><b>(11)</b>
 
             // end::console-logging[]
 
@@ -6255,14 +6249,14 @@ var query =
         {
             // tag::file-logging[]
             var tempFolder = Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), "cbllog");
-            var config = new LogFileConfiguration(tempFolder) <i class="conum" data-value="11"></i><b>(11)</b>
+            var config = new LogFileConfiguration(tempFolder) <i class="conum" data-value="12"></i><b>(12)</b>
             {
-                MaxRotateCount = 5, <i class="conum" data-value="12"></i><b>(12)</b>
-                MaxSize = 10240, <i class="conum" data-value="13"></i><b>(13)</b>
-                UsePlainText = false  <i class="conum" data-value="14"></i><b>(14)</b>
+                MaxRotateCount = 5, <i class="conum" data-value="13"></i><b>(13)</b>
+                MaxSize = 10240, <i class="conum" data-value="14"></i><b>(14)</b>
+                UsePlainText = false  <i class="conum" data-value="15"></i><b>(15)</b>
             };
             Database.Log.File.Config = config; // Apply configuration
-            Database.Log.File.Level = LogLevel.Info; <i class="conum" data-value="15"></i><b>(15)</b>
+            Database.Log.File.Level = LogLevel.Info; <i class="conum" data-value="16"></i><b>(16)</b>
 
             // end::file-logging[]
         }
@@ -6270,7 +6264,7 @@ var query =
         private static void EnableCustomLogging()
         {
             // tag::set-custom-logging[]
-            Database.Log.Custom = new LogTestLogger(); <i class="conum" data-value="16"></i><b>(16)</b>
+            Database.Log.Custom = new LogTestLogger(); <i class="conum" data-value="17"></i><b>(17)</b>
             or
             Database.Log.Custom = new LogTestLogger { Level = LogLevel.Warning };
 
@@ -6359,7 +6353,7 @@ var query =
         var replicator = new Replicator(config);
 
         var mydocids =
-          new HashSet &lt;string&gt; (replicator.GetPendingDocumentIDs()); <i class="conum" data-value="17"></i><b>(17)</b>
+          new HashSet &lt;string&gt; (replicator.GetPendingDocumentIDs()); <i class="conum" data-value="18"></i><b>(18)</b>
 
         // end::replication-push-pendingdocumentids[]
 
@@ -6374,7 +6368,7 @@ var query =
                 // retrieved pending docids 'list'
                 foreach (var thisId in mydocids)
                     // tag::replication-push-isdocumentpending[]
-                    if (!replicator.IsDocumentPending(thisId)) <i class="conum" data-value="18"></i><b>(18)</b>
+                    if (!replicator.IsDocumentPending(thisId)) <i class="conum" data-value="19"></i><b>(19)</b>
                     {
                         Console.WriteLine($"Doc ID {thisId} now pushed");
                     };
@@ -6551,13 +6545,13 @@ var query =
         //  other config as required . . .
 
         // tag::replication-set-heartbeat[]
-            config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="19"></i><b>(19)</b>
+            config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="20"></i><b>(20)</b>
         // end::replication-set-heartbeat[]
         // tag::replication-set-maxretries[]
-            config.MaxRetries = 20; //  <i class="conum" data-value="20"></i><b>(20)</b>
+            config.MaxRetries = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
         // end::replication-set-maxretries[]
         // tag::replication-set-maxretrywaittime[]
-            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="21"></i><b>(21)</b>
+            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
         // end::replication-set-maxretrywaittime[]
 
         //  other config as required . . .
@@ -6929,36 +6923,6 @@ var query =
       dbCfg.Directory =
           Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
       // tag::query-syntax-n1ql[]
-      // dbname; dbcfg defined elsewhere ...
-
-      Database thisDb = new Database(dbName, dbCfg);
-
-      var n1qlstr =
-        "SELECT META().id AS thisId FROM _ WHERE type = "hotel");  <i class="conum" data-value="22"></i><b>(22)</b>
-
-      var thisQuery = thisDb.CreateQuery(n1qlstr);
-
-      var results = thisQuery.Execute().AllResults();
-
-      // end::query-syntax-n1ql[]
-      return results;
-  }
-
-  public  List&lt;Result&gt; docsonlyN1QLQueryString (Database argDB)
-  {
-      /* For Documentation -- N1QL Query using parameters
-        *  Declared elsewhere:
-              var dbName = "travel-sample";
-              var username = "ian";
-      */
-
-      // tag::query-syntax-n1ql-params[]
-      var doc_type = "hotel";
-
-      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
-      dbCfg.Directory =
-          Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
-
       Database thisDb = new Database(dbName, dbCfg);
 
       var thisQuery =
@@ -6970,9 +6934,17 @@ var query =
 
       var results = thisQuery.Execute().AllResults();
 
-      // end::query-syntax-n1ql-params[]
       return results;
+      // end::query-syntax-n1ql[]
   }
+
+    // tag::query-syntax-n1ql-params[]
+    tbd
+    // end::query-syntax-n1ql-params[]
+
+    // tag::query-access-n1ql[]
+    tbd
+    // end::query-access-n1ql[]
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
@@ -8809,10 +8781,18 @@ namespace api_walkthrough
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(database, target);
             using (var replicator = new Replicator(config)) {
-                // tag::replication-reset-checkpoint[]
-                // replicator is a Replicator instance
-                replicator.ResetCheckpoint();
-                replicator.Start();
+              // tag::replication-reset-checkpoint[]
+              // replicator is a Replicator instance
+              if (resetCheckpointRequired_Example) {
+                  replicator.Start(true); <i class="conum" data-value="1"></i><b>(1)</b>
+              else
+                replicator.Start(false);
+              }
+              // end::replication-reset-checkpoint[]
+
+
+
+
                 // end::replication-reset-checkpoint[]
             }
         }
@@ -9002,7 +8982,7 @@ namespace api_walkthrough
             // For value types, this is optional but provides performance enhancements
             var index = IndexBuilder.ValueIndex(
                 ValueIndexItem.Expression(Expression.Property("type")),
-                ValueIndexItem.Expression(Expression.Property("name"))); <i class="conum" data-value="1"></i><b>(1)</b>
+                ValueIndexItem.Expression(Expression.Property("name"))); <i class="conum" data-value="2"></i><b>(2)</b>
             db.CreateIndex("TypeNameIndex", index);
             // end::query-index[]
         }
@@ -9044,7 +9024,7 @@ namespace api_walkthrough
 
             // Adds a query change listener.
             // Changes will be posted on the main queue.
-            var token = query.AddChangeListener((sender, args) =&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+            var token = query.AddChangeListener((sender, args) =&gt; <i class="conum" data-value="3"></i><b>(3)</b>
             {
                 var allResult = args.Results.AllResults();
                 foreach (var result in allResult) {
@@ -9285,9 +9265,9 @@ namespace api_walkthrough
             .From(DataSource.Database(db))
             .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
             .GroupBy(Expression.Property("country"))
-            .OrderBy(Ordering.Property("title").Ascending()) <i class="conum" data-value="3"></i><b>(3)</b>
+            .OrderBy(Ordering.Property("title").Ascending()) <i class="conum" data-value="4"></i><b>(4)</b>
 
-          Console.WriteLine(query.Explain()); <i class="conum" data-value="4"></i><b>(4)</b>
+          Console.WriteLine(query.Explain()); <i class="conum" data-value="5"></i><b>(5)</b>
 
           // end::query-explain-all[]
           // tag::query-explain-like[]
@@ -9296,7 +9276,7 @@ var query =
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
     .Where(Expression.Property("type").Like(Expression.String("%hotel%"))
-      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="5"></i><b>(5)</b>
+      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="6"></i><b>(6)</b>
   Console.WriteLine(query.Explain());
 
           // end::query-explain-like[]
@@ -9306,7 +9286,7 @@ var query =
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
     .Where(Expression.Property("type").Like(Expression.String("hotel%"))
-      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="6"></i><b>(6)</b>
+      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="7"></i><b>(7)</b>
 
   Console.WriteLine(query.Explain());
 
@@ -9316,7 +9296,7 @@ var query =
   QueryBuilder
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
-    .Where(Function.Lower(Expression.Property("type")).EqualTo(Expression.String("hotel"))); <i class="conum" data-value="7"></i><b>(7)</b>
+    .Where(Function.Lower(Expression.Property("type")).EqualTo(Expression.String("hotel"))); <i class="conum" data-value="8"></i><b>(8)</b>
 
   Console.WriteLine(query.Explain());
 
@@ -9326,7 +9306,7 @@ var query =
           QueryBuilder
             .Select(SelectResult.All())
             .From(DataSource.Database(db))
-            .Where(Expression.Property("type")).EqualTo(Expression.String("hotel")); <i class="conum" data-value="8"></i><b>(8)</b>
+            .Where(Expression.Property("type")).EqualTo(Expression.String("hotel")); <i class="conum" data-value="9"></i><b>(9)</b>
 
           Console.WriteLine(query.Explain());
 
@@ -9423,8 +9403,8 @@ var query =
         private static void ConsoleLogging()
         {
             // tag::console-logging[]
-            Database.Log.Console.Domains = LogDomain.All; <i class="conum" data-value="9"></i><b>(9)</b>
-            Database.Log.Console.LogLevel = LogLevel.Verbose; <i class="conum" data-value="10"></i><b>(10)</b>
+            Database.Log.Console.Domains = LogDomain.All; <i class="conum" data-value="10"></i><b>(10)</b>
+            Database.Log.Console.LogLevel = LogLevel.Verbose; <i class="conum" data-value="11"></i><b>(11)</b>
 
             // end::console-logging[]
 
@@ -9438,14 +9418,14 @@ var query =
         {
             // tag::file-logging[]
             var tempFolder = Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), "cbllog");
-            var config = new LogFileConfiguration(tempFolder) <i class="conum" data-value="11"></i><b>(11)</b>
+            var config = new LogFileConfiguration(tempFolder) <i class="conum" data-value="12"></i><b>(12)</b>
             {
-                MaxRotateCount = 5, <i class="conum" data-value="12"></i><b>(12)</b>
-                MaxSize = 10240, <i class="conum" data-value="13"></i><b>(13)</b>
-                UsePlainText = false  <i class="conum" data-value="14"></i><b>(14)</b>
+                MaxRotateCount = 5, <i class="conum" data-value="13"></i><b>(13)</b>
+                MaxSize = 10240, <i class="conum" data-value="14"></i><b>(14)</b>
+                UsePlainText = false  <i class="conum" data-value="15"></i><b>(15)</b>
             };
             Database.Log.File.Config = config; // Apply configuration
-            Database.Log.File.Level = LogLevel.Info; <i class="conum" data-value="15"></i><b>(15)</b>
+            Database.Log.File.Level = LogLevel.Info; <i class="conum" data-value="16"></i><b>(16)</b>
 
             // end::file-logging[]
         }
@@ -9453,7 +9433,7 @@ var query =
         private static void EnableCustomLogging()
         {
             // tag::set-custom-logging[]
-            Database.Log.Custom = new LogTestLogger(); <i class="conum" data-value="16"></i><b>(16)</b>
+            Database.Log.Custom = new LogTestLogger(); <i class="conum" data-value="17"></i><b>(17)</b>
             or
             Database.Log.Custom = new LogTestLogger { Level = LogLevel.Warning };
 
@@ -9542,7 +9522,7 @@ var query =
         var replicator = new Replicator(config);
 
         var mydocids =
-          new HashSet &lt;string&gt; (replicator.GetPendingDocumentIDs()); <i class="conum" data-value="17"></i><b>(17)</b>
+          new HashSet &lt;string&gt; (replicator.GetPendingDocumentIDs()); <i class="conum" data-value="18"></i><b>(18)</b>
 
         // end::replication-push-pendingdocumentids[]
 
@@ -9557,7 +9537,7 @@ var query =
                 // retrieved pending docids 'list'
                 foreach (var thisId in mydocids)
                     // tag::replication-push-isdocumentpending[]
-                    if (!replicator.IsDocumentPending(thisId)) <i class="conum" data-value="18"></i><b>(18)</b>
+                    if (!replicator.IsDocumentPending(thisId)) <i class="conum" data-value="19"></i><b>(19)</b>
                     {
                         Console.WriteLine($"Doc ID {thisId} now pushed");
                     };
@@ -9734,13 +9714,13 @@ var query =
         //  other config as required . . .
 
         // tag::replication-set-heartbeat[]
-            config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="19"></i><b>(19)</b>
+            config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="20"></i><b>(20)</b>
         // end::replication-set-heartbeat[]
         // tag::replication-set-maxretries[]
-            config.MaxRetries = 20; //  <i class="conum" data-value="20"></i><b>(20)</b>
+            config.MaxRetries = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
         // end::replication-set-maxretries[]
         // tag::replication-set-maxretrywaittime[]
-            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="21"></i><b>(21)</b>
+            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
         // end::replication-set-maxretrywaittime[]
 
         //  other config as required . . .
@@ -10112,36 +10092,6 @@ var query =
       dbCfg.Directory =
           Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
       // tag::query-syntax-n1ql[]
-      // dbname; dbcfg defined elsewhere ...
-
-      Database thisDb = new Database(dbName, dbCfg);
-
-      var n1qlstr =
-        "SELECT META().id AS thisId FROM _ WHERE type = "hotel");  <i class="conum" data-value="22"></i><b>(22)</b>
-
-      var thisQuery = thisDb.CreateQuery(n1qlstr);
-
-      var results = thisQuery.Execute().AllResults();
-
-      // end::query-syntax-n1ql[]
-      return results;
-  }
-
-  public  List&lt;Result&gt; docsonlyN1QLQueryString (Database argDB)
-  {
-      /* For Documentation -- N1QL Query using parameters
-        *  Declared elsewhere:
-              var dbName = "travel-sample";
-              var username = "ian";
-      */
-
-      // tag::query-syntax-n1ql-params[]
-      var doc_type = "hotel";
-
-      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
-      dbCfg.Directory =
-          Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
-
       Database thisDb = new Database(dbName, dbCfg);
 
       var thisQuery =
@@ -10153,9 +10103,17 @@ var query =
 
       var results = thisQuery.Execute().AllResults();
 
-      // end::query-syntax-n1ql-params[]
       return results;
+      // end::query-syntax-n1ql[]
   }
+
+    // tag::query-syntax-n1ql-params[]
+    tbd
+    // end::query-syntax-n1ql-params[]
+
+    // tag::query-access-n1ql[]
+    tbd
+    // end::query-access-n1ql[]
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
@@ -11992,10 +11950,18 @@ namespace api_walkthrough
             var target = new URLEndpoint(url);
             var config = new ReplicatorConfiguration(database, target);
             using (var replicator = new Replicator(config)) {
-                // tag::replication-reset-checkpoint[]
-                // replicator is a Replicator instance
-                replicator.ResetCheckpoint();
-                replicator.Start();
+              // tag::replication-reset-checkpoint[]
+              // replicator is a Replicator instance
+              if (resetCheckpointRequired_Example) {
+                  replicator.Start(true); <i class="conum" data-value="1"></i><b>(1)</b>
+              else
+                replicator.Start(false);
+              }
+              // end::replication-reset-checkpoint[]
+
+
+
+
                 // end::replication-reset-checkpoint[]
             }
         }
@@ -12185,7 +12151,7 @@ namespace api_walkthrough
             // For value types, this is optional but provides performance enhancements
             var index = IndexBuilder.ValueIndex(
                 ValueIndexItem.Expression(Expression.Property("type")),
-                ValueIndexItem.Expression(Expression.Property("name"))); <i class="conum" data-value="1"></i><b>(1)</b>
+                ValueIndexItem.Expression(Expression.Property("name"))); <i class="conum" data-value="2"></i><b>(2)</b>
             db.CreateIndex("TypeNameIndex", index);
             // end::query-index[]
         }
@@ -12227,7 +12193,7 @@ namespace api_walkthrough
 
             // Adds a query change listener.
             // Changes will be posted on the main queue.
-            var token = query.AddChangeListener((sender, args) =&gt; <i class="conum" data-value="2"></i><b>(2)</b>
+            var token = query.AddChangeListener((sender, args) =&gt; <i class="conum" data-value="3"></i><b>(3)</b>
             {
                 var allResult = args.Results.AllResults();
                 foreach (var result in allResult) {
@@ -12468,9 +12434,9 @@ namespace api_walkthrough
             .From(DataSource.Database(db))
             .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
             .GroupBy(Expression.Property("country"))
-            .OrderBy(Ordering.Property("title").Ascending()) <i class="conum" data-value="3"></i><b>(3)</b>
+            .OrderBy(Ordering.Property("title").Ascending()) <i class="conum" data-value="4"></i><b>(4)</b>
 
-          Console.WriteLine(query.Explain()); <i class="conum" data-value="4"></i><b>(4)</b>
+          Console.WriteLine(query.Explain()); <i class="conum" data-value="5"></i><b>(5)</b>
 
           // end::query-explain-all[]
           // tag::query-explain-like[]
@@ -12479,7 +12445,7 @@ var query =
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
     .Where(Expression.Property("type").Like(Expression.String("%hotel%"))
-      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="5"></i><b>(5)</b>
+      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="6"></i><b>(6)</b>
   Console.WriteLine(query.Explain());
 
           // end::query-explain-like[]
@@ -12489,7 +12455,7 @@ var query =
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
     .Where(Expression.Property("type").Like(Expression.String("hotel%"))
-      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="6"></i><b>(6)</b>
+      .And(Function.Lower(Expression.Property("name")).Like(Expression.String("%royal%")))); <i class="conum" data-value="7"></i><b>(7)</b>
 
   Console.WriteLine(query.Explain());
 
@@ -12499,7 +12465,7 @@ var query =
   QueryBuilder
     .Select(SelectResult.All())
     .From(DataSource.Database(db))
-    .Where(Function.Lower(Expression.Property("type")).EqualTo(Expression.String("hotel"))); <i class="conum" data-value="7"></i><b>(7)</b>
+    .Where(Function.Lower(Expression.Property("type")).EqualTo(Expression.String("hotel"))); <i class="conum" data-value="8"></i><b>(8)</b>
 
   Console.WriteLine(query.Explain());
 
@@ -12509,7 +12475,7 @@ var query =
           QueryBuilder
             .Select(SelectResult.All())
             .From(DataSource.Database(db))
-            .Where(Expression.Property("type")).EqualTo(Expression.String("hotel")); <i class="conum" data-value="8"></i><b>(8)</b>
+            .Where(Expression.Property("type")).EqualTo(Expression.String("hotel")); <i class="conum" data-value="9"></i><b>(9)</b>
 
           Console.WriteLine(query.Explain());
 
@@ -12606,8 +12572,8 @@ var query =
         private static void ConsoleLogging()
         {
             // tag::console-logging[]
-            Database.Log.Console.Domains = LogDomain.All; <i class="conum" data-value="9"></i><b>(9)</b>
-            Database.Log.Console.LogLevel = LogLevel.Verbose; <i class="conum" data-value="10"></i><b>(10)</b>
+            Database.Log.Console.Domains = LogDomain.All; <i class="conum" data-value="10"></i><b>(10)</b>
+            Database.Log.Console.LogLevel = LogLevel.Verbose; <i class="conum" data-value="11"></i><b>(11)</b>
 
             // end::console-logging[]
 
@@ -12621,14 +12587,14 @@ var query =
         {
             // tag::file-logging[]
             var tempFolder = Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), "cbllog");
-            var config = new LogFileConfiguration(tempFolder) <i class="conum" data-value="11"></i><b>(11)</b>
+            var config = new LogFileConfiguration(tempFolder) <i class="conum" data-value="12"></i><b>(12)</b>
             {
-                MaxRotateCount = 5, <i class="conum" data-value="12"></i><b>(12)</b>
-                MaxSize = 10240, <i class="conum" data-value="13"></i><b>(13)</b>
-                UsePlainText = false  <i class="conum" data-value="14"></i><b>(14)</b>
+                MaxRotateCount = 5, <i class="conum" data-value="13"></i><b>(13)</b>
+                MaxSize = 10240, <i class="conum" data-value="14"></i><b>(14)</b>
+                UsePlainText = false  <i class="conum" data-value="15"></i><b>(15)</b>
             };
             Database.Log.File.Config = config; // Apply configuration
-            Database.Log.File.Level = LogLevel.Info; <i class="conum" data-value="15"></i><b>(15)</b>
+            Database.Log.File.Level = LogLevel.Info; <i class="conum" data-value="16"></i><b>(16)</b>
 
             // end::file-logging[]
         }
@@ -12636,7 +12602,7 @@ var query =
         private static void EnableCustomLogging()
         {
             // tag::set-custom-logging[]
-            Database.Log.Custom = new LogTestLogger(); <i class="conum" data-value="16"></i><b>(16)</b>
+            Database.Log.Custom = new LogTestLogger(); <i class="conum" data-value="17"></i><b>(17)</b>
             or
             Database.Log.Custom = new LogTestLogger { Level = LogLevel.Warning };
 
@@ -12725,7 +12691,7 @@ var query =
         var replicator = new Replicator(config);
 
         var mydocids =
-          new HashSet &lt;string&gt; (replicator.GetPendingDocumentIDs()); <i class="conum" data-value="17"></i><b>(17)</b>
+          new HashSet &lt;string&gt; (replicator.GetPendingDocumentIDs()); <i class="conum" data-value="18"></i><b>(18)</b>
 
         // end::replication-push-pendingdocumentids[]
 
@@ -12740,7 +12706,7 @@ var query =
                 // retrieved pending docids 'list'
                 foreach (var thisId in mydocids)
                     // tag::replication-push-isdocumentpending[]
-                    if (!replicator.IsDocumentPending(thisId)) <i class="conum" data-value="18"></i><b>(18)</b>
+                    if (!replicator.IsDocumentPending(thisId)) <i class="conum" data-value="19"></i><b>(19)</b>
                     {
                         Console.WriteLine($"Doc ID {thisId} now pushed");
                     };
@@ -12917,13 +12883,13 @@ var query =
         //  other config as required . . .
 
         // tag::replication-set-heartbeat[]
-            config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="19"></i><b>(19)</b>
+            config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="20"></i><b>(20)</b>
         // end::replication-set-heartbeat[]
         // tag::replication-set-maxretries[]
-            config.MaxRetries = 20; //  <i class="conum" data-value="20"></i><b>(20)</b>
+            config.MaxRetries = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
         // end::replication-set-maxretries[]
         // tag::replication-set-maxretrywaittime[]
-            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="21"></i><b>(21)</b>
+            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
         // end::replication-set-maxretrywaittime[]
 
         //  other config as required . . .
@@ -13295,36 +13261,6 @@ var query =
       dbCfg.Directory =
           Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
       // tag::query-syntax-n1ql[]
-      // dbname; dbcfg defined elsewhere ...
-
-      Database thisDb = new Database(dbName, dbCfg);
-
-      var n1qlstr =
-        "SELECT META().id AS thisId FROM _ WHERE type = "hotel");  <i class="conum" data-value="22"></i><b>(22)</b>
-
-      var thisQuery = thisDb.CreateQuery(n1qlstr);
-
-      var results = thisQuery.Execute().AllResults();
-
-      // end::query-syntax-n1ql[]
-      return results;
-  }
-
-  public  List&lt;Result&gt; docsonlyN1QLQueryString (Database argDB)
-  {
-      /* For Documentation -- N1QL Query using parameters
-        *  Declared elsewhere:
-              var dbName = "travel-sample";
-              var username = "ian";
-      */
-
-      // tag::query-syntax-n1ql-params[]
-      var doc_type = "hotel";
-
-      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
-      dbCfg.Directory =
-          Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
-
       Database thisDb = new Database(dbName, dbCfg);
 
       var thisQuery =
@@ -13336,9 +13272,17 @@ var query =
 
       var results = thisQuery.Execute().AllResults();
 
-      // end::query-syntax-n1ql-params[]
       return results;
+      // end::query-syntax-n1ql[]
   }
+
+    // tag::query-syntax-n1ql-params[]
+    tbd
+    // end::query-syntax-n1ql-params[]
+
+    // tag::query-access-n1ql[]
+    tbd
+    // end::query-access-n1ql[]
 
 
 // QUERY RESULT SET HANDLING EXAMPLES

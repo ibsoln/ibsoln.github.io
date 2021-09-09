@@ -3041,8 +3041,11 @@ listenerConfig.tlsIdentity = nil</code></pre>
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
 
     // tag::replication-reset-checkpoint[]
-    [replicator resetCheckpoint];
-    [replicator start];
+    if (resetCheckpointRequired_Example) {
+      [replicator startWithReset];  <i class="conum" data-value="19"></i><b>(19)</b>
+    else
+      [replicator start];
+    }
     // end::replication-reset-checkpoint[]
 }
 
@@ -3099,15 +3102,15 @@ listenerConfig.tlsIdentity = nil</code></pre>
         //  other config as required . . .
 
         // tag::replication-heartbeat[]
-        config.heartbeat = 150; <i class="conum" data-value="19"></i><b>(19)</b>
+        config.heartbeat = 150; <i class="conum" data-value="20"></i><b>(20)</b>
 
         // end::replication-heartbeat[]
         // tag::replication-maxretries[]
-        config.maxretries = 20; <i class="conum" data-value="20"></i><b>(20)</b>
+        config.maxretries = 20; <i class="conum" data-value="21"></i><b>(21)</b>
 
         // end::replication-maxretries[]
         // tag::replication-maxretrywaittime[]
-        config.maxretrywaittime = 600; <i class="conum" data-value="21"></i><b>(21)</b>
+        config.maxretrywaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
 
         // end::replication-maxretrywaittime[]
         //  other config as required . . .
@@ -3677,7 +3680,7 @@ listenerConfig.tlsIdentity = nil</code></pre>
     CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
 
     CBLQuery *listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                                             from:[CBLQueryDataSource database:db]]; <i class="conum" data-value="22"></i><b>(22)</b>
+                                             from:[CBLQueryDataSource database:db]]; <i class="conum" data-value="23"></i><b>(23)</b>
 
     // end::query-syntax-all[]
 
@@ -3713,14 +3716,14 @@ listenerConfig.tlsIdentity = nil</code></pre>
         // Get result as a JSON string
 
         NSString* thisJsonString =
-                    [result toJSON]; <i class="conum" data-value="23"></i><b>(23)</b>
+                    [result toJSON]; <i class="conum" data-value="24"></i><b>(24)</b>
 
         // Get an native Obj-C object from the Json String
         NSDictionary *thisDictFromJSON =
                 [NSJSONSerialization JSONObjectWithData:
                  [thisJsonString dataUsingEncoding: NSUTF8StringEncoding]
                        options: NSJSONReadingAllowFragments
-                       error: &amp;error]; <i class="conum" data-value="24"></i><b>(24)</b>
+                       error: &amp;error]; <i class="conum" data-value="25"></i><b>(25)</b>
         if (error) {
             NSLog(@"Error in serialization: %@",error);
             return;
@@ -3730,7 +3733,7 @@ listenerConfig.tlsIdentity = nil</code></pre>
         // Populate a custom object from native dictionary
         Hotel *hotelFromJson = Hotel.new;
 
-        hotelFromJson.id = thisDictFromJSON[@"id"];  <i class="conum" data-value="25"></i><b>(25)</b>
+        hotelFromJson.id = thisDictFromJSON[@"id"];  <i class="conum" data-value="26"></i><b>(26)</b>
         hotelFromJson.name = thisDictFromJSON[@"name"];
         hotelFromJson.city = thisDictFromJSON[@"city"];
         hotelFromJson.country = thisDictFromJSON[@"country"];
@@ -3768,7 +3771,7 @@ CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
 CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
 
 *listQuery = [CBLQueryBuilder select:@[id, type, name, city]
-             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="26"></i><b>(26)</b>
+             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="27"></i><b>(27)</b>
 
 // end::query-syntax-props[]
 
@@ -3799,7 +3802,7 @@ CBLQuerySelectResult *count =
   [CBLQuerySelectResult expression:[CBLQueryFunction count:   [CBLQueryExpression all]]];
 
 *listQuery = [CBLQueryBuilder select:@[count]
-             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="27"></i><b>(27)</b>
+             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="28"></i><b>(28)</b>
 
 // end::query-syntax-count-only[]
 
@@ -3814,7 +3817,7 @@ for (CBLQueryResult *result in resultset) {
 
   *match = [result toDictionary];
 
-  *thisCount = [match intForKey:@"mycount"] <i class="conum" data-value="28"></i><b>(28)</b>
+  *thisCount = [match intForKey:@"mycount"] <i class="conum" data-value="29"></i><b>(29)</b>
 
 } // end for
 
@@ -3845,7 +3848,7 @@ for (CBLQueryResult *result in resultset) {
 
   *match = [result toDictionary];
 
-  *thisDocsId = [match stringForKey:@"id"] <i class="conum" data-value="29"></i><b>(29)</b>
+  *thisDocsId = [match stringForKey:@"id"] <i class="conum" data-value="30"></i><b>(30)</b>
 
   // Now you can get the document using its ID
   // for example using
@@ -3873,48 +3876,7 @@ CBLQuery* listQuery =
 
 // end::query-syntax-pagination[]
 
-- (void) docsonly_QuerySyntaxN1QL() {
-    /* Documentation Only query-syntax-n1ql
-        Declared elsewhere: CBLDatabase* argDb
-    */
 
-    // tag::query-syntax-n1ql[]
-    NSError *error;
-
-    CBLDatabase *db == argDB;
-
-    NSString *n1qlstr = "SELECT * FROM _ WHERE type = \"hotel\""; <i class="conum" data-value="30"></i><b>(30)</b>
-
-    CBLQuery* thisQuery = [db createQuery: n1qlstr];
-
-    CBLQueryResultSet* resultset =  [thisQuery execute:&amp;error];
-
-    // end::query-syntax-n1ql[]
-}
-
-- (void) docsonly_QuerySyntaxN1QLParams() {
-    /* Documentation Only query-syntax-n1ql-params
-        Declared elsewhere: CBLDatabase* argDB
-    */
-
-    // tag::query-syntax-n1ql-params[]
-    NSError *error;
-
-    CBLDatabase *db = argDB;
-
-    NSString *n1qlstr = "SELECT * FROM _ WHERE type = $type"; <i class="conum" data-value="31"></i><b>(31)</b>
-
-    CBLQuery* thisQuery = [db createQuery: n1qlstr];
-
-    CBLQueryParameters* n1qlparams = [[CBLQueryParameters alloc] init];
-    [params setString: @"hotel" forName: @"type"]; <i class="conum" data-value="32"></i><b>(32)</b>
-
-    thisQuery.parameters = n1qlparams;
-
-    CBLQueryResultSet* resultset =  [thisQuery execute:&amp;error];
-
-    // end::query-syntax-n1ql-params[]
-}
 
 // PEER-to-PEER
 
@@ -3923,7 +3885,7 @@ CBLQuery* listQuery =
 CBLURLEndpointListenerConfiguration* thisConfig;
   thisConfig =
     [[CBLURLEndpointListenerConfiguration alloc]
-      initWithDatabase: database]; <i class="conum" data-value="33"></i><b>(33)</b>
+      initWithDatabase: database]; <i class="conum" data-value="31"></i><b>(31)</b>
 
 thisConfig.authenticator =
   [[CBLListenerPasswordAuthenticator alloc]
@@ -3932,16 +3894,16 @@ thisConfig.authenticator =
           return  YES;
       }
       return NO;
-  }]; <i class="conum" data-value="34"></i><b>(34)</b>
+  }]; <i class="conum" data-value="32"></i><b>(32)</b>
 
 CBLURLEndpointListener* thisListener = nil;
 thisListener =
-  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; <i class="conum" data-value="35"></i><b>(35)</b>
+  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; <i class="conum" data-value="33"></i><b>(33)</b>
 
 BOOL success = [thisListener startWithError: &amp;error];
 if (!success) {
     NSLog(@"Cannot start the listener: %@", error);
-} <i class="conum" data-value="36"></i><b>(36)</b>
+} <i class="conum" data-value="34"></i><b>(34)</b>
 
 // end::listener-simple[]
 
@@ -3949,24 +3911,24 @@ if (!success) {
 NSURL *url =
   [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
 CBLURLEndpoint *theListenerURL =
-  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="37"></i><b>(37)</b>
+  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="35"></i><b>(35)</b>
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:theListenerURL]; <i class="conum" data-value="38"></i><b>(38)</b>
+      initWithDatabase:thisDB target:theListenerURL]; <i class="conum" data-value="36"></i><b>(36)</b>
 
-thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="39"></i><b>(39)</b>
+thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="37"></i><b>(37)</b>
 
 thisConfig.authenticator =
   [[CBLBasicAuthenticator alloc]
     initWithUsername:@"valid.user"
-      password:@"valid.password.string"]; <i class="conum" data-value="40"></i><b>(40)</b>
+      password:@"valid.password.string"]; <i class="conum" data-value="38"></i><b>(38)</b>
 
 
 CBLReplicator *_thisReplicator;
-_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="41"></i><b>(41)</b>
+_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="39"></i><b>(39)</b>
 
-[_thisReplicator start]; <i class="conum" data-value="42"></i><b>(42)</b>
+[_thisReplicator start]; <i class="conum" data-value="40"></i><b>(40)</b>
 
 // end::replicator-simple[]
 
@@ -3985,7 +3947,7 @@ import MultipeerConnectivity
 class cMyPassListener {
   // tag::listener-initialize[]
   // tag::listener-config-db[]
-  // Initialize the listener config <i class="conum" data-value="43"></i><b>(43)</b>
+  // Initialize the listener config <i class="conum" data-value="41"></i><b>(41)</b>
   CBLURLEndpointListenerConfiguration* thisConfig;
   thisConfig =
     [[CBLURLEndpointListenerConfiguration alloc]
@@ -3993,32 +3955,32 @@ class cMyPassListener {
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
-    thisConfig.port =  55990; <i class="conum" data-value="44"></i><b>(44)</b>
+    thisConfig.port =  55990; <i class="conum" data-value="42"></i><b>(42)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
     NSString *thisURL = @"10.1.1.10";
-    thisConfig.networkInterface = thisURL; <i class="conum" data-value="45"></i><b>(45)</b>
+    thisConfig.networkInterface = thisURL; <i class="conum" data-value="43"></i><b>(43)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    thisConfig.enableDeltaSync = true; <i class="conum" data-value="46"></i><b>(46)</b>
+    thisConfig.enableDeltaSync = true; <i class="conum" data-value="44"></i><b>(44)</b>
 
     // end::listener-config-delta-sync[]
     // Configure server security
     // tag::listener-config-tls-enable[]
-    thisConfig.disableTLS  = false; <i class="conum" data-value="47"></i><b>(47)</b>
+    thisConfig.disableTLS  = false; <i class="conum" data-value="45"></i><b>(45)</b>
 
     // end::listener-config-tls-enable[]
 
     // tag::listener-config-tls-id-anon[]
     // Use an anonymous self-signed cert
-    thisConfig.tlsIdentity = nil; <i class="conum" data-value="48"></i><b>(48)</b>
+    thisConfig.tlsIdentity = nil; <i class="conum" data-value="46"></i><b>(46)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
     // Configure Client Security using an Authenticator
-    // For example, Basic Authentication <i class="conum" data-value="49"></i><b>(49)</b>
+    // For example, Basic Authentication <i class="conum" data-value="47"></i><b>(47)</b>
     thisConfig.authenticator =
       [[CBLListenerPasswordAuthenticator alloc]
         initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
@@ -4031,13 +3993,13 @@ class cMyPassListener {
     // end::listener-config-client-auth-pwd[]
     // tag::listener-start[]
     // tag::listener-init[]
-    // Initialize the listener <i class="conum" data-value="50"></i><b>(50)</b>
+    // Initialize the listener <i class="conum" data-value="48"></i><b>(48)</b>
     CBLURLEndpointListener* thisListener = nil;
     thisListener =
       [[CBLURLEndpointListener alloc] initWithConfig: thisConfig];
 
     // end::listener-init[]
-    // start the listener <i class="conum" data-value="51"></i><b>(51)</b>
+    // start the listener <i class="conum" data-value="49"></i><b>(49)</b>
     BOOL success = [thisListener startWithError: &amp;error];
     if (!success) {
         NSLog(@"Cannot start the listener: %@", error);
@@ -4089,7 +4051,7 @@ CBLDatabase *thisDB = self.db;
 // tag::listener-config-tls-full[]
   // Configure server authentication
   // tag::listener-config-tls-disable[]
-  thisConfig.disableTLS  = true; <i class="conum" data-value="52"></i><b>(52)</b>
+  thisConfig.disableTLS  = true; <i class="conum" data-value="50"></i><b>(50)</b>
 
   // end::listener-config-tls-disable[]
 
@@ -4100,7 +4062,7 @@ CBLDatabase *thisDB = self.db;
   // Create a TLSIdentity from a key-pair and
   // certificate in secure storage
     NSURL *certURL =
-      [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="53"></i><b>(53)</b>
+      [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="51"></i><b>(51)</b>
 
     NSData *data =
       [[NSData alloc] initWithContentsOfURL: certURL];
@@ -4108,27 +4070,27 @@ CBLDatabase *thisDB = self.db;
       [CBLTLSIdentity importIdentityWithData: data
         password: @"123"
         label: @"couchbase-docs-cert"
-        error: &amp;error]; <i class="conum" data-value="54"></i><b>(54)</b>
+        error: &amp;error]; <i class="conum" data-value="52"></i><b>(52)</b>
 
-    config.tlsIdentity = thisIdentity; <i class="conum" data-value="55"></i><b>(55)</b>
+    config.tlsIdentity = thisIdentity; <i class="conum" data-value="53"></i><b>(53)</b>
 
   // end::listener-config-tls-id-caCert[]
   // tag::listener-config-tls-id-SelfSigned[]
   // Use a self-signed certificate
   NSDictionary* attrs =
-    @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; <i class="conum" data-value="56"></i><b>(56)</b>
+    @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; <i class="conum" data-value="54"></i><b>(54)</b>
 
   thisIdentity =
     [CBLTLSIdentity createIdentityForServer: YES /* isServer */
         attributes: attrs
         expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
               label: @" couchbase-docs-cert"
-              error: &amp;error]; <i class="conum" data-value="57"></i><b>(57)</b>
+              error: &amp;error]; <i class="conum" data-value="55"></i><b>(55)</b>
 
   // end::listener-config-tls-id-SelfSigned[]
       // tag::listener-config-tls-id-set[]
   // set the TLS Identity
-  thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="58"></i><b>(58)</b>
+  thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="56"></i><b>(56)</b>
 
   // end::listener-config-tls-id-set[]
   // end::listener-config-tls-id-full[]
@@ -4139,7 +4101,7 @@ CBLDatabase *thisDB = self.db;
 // Configure the client authenticator
 NSURL *certURL =
   [[NSBundle mainBundle]
-    URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="59"></i><b>(59)</b>
+    URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="57"></i><b>(57)</b>
 NSData *data =
   [[NSData alloc]
     initWithContentsOfURL: certURL];
@@ -4148,7 +4110,7 @@ SecCertificateRef rootCertRef =
 
 thisConfig.authenticator =
   [[CBLListenerCertificateAuthenticator alloc]
-    initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  <i class="conum" data-value="60"></i><b>(60)</b> <i class="conum" data-value="61"></i><b>(61)</b>
+    initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  <i class="conum" data-value="58"></i><b>(58)</b> <i class="conum" data-value="59"></i><b>(59)</b>
 
 // end::listener-config-client-auth-root[]
 // tag::listener-config-client-auth-lambda[]
@@ -4158,7 +4120,7 @@ CBLListenerCertificateAuthenticator* thisListenerAuth =
   [[CBLListenerCertificateAuthenticator alloc]
     initWithBlock: ^BOOL(NSArray *certs) {
       SecCertificateRef cert =
-        (__bridge SecCertificateRef)(certs[0]); <i class="conum" data-value="62"></i><b>(62)</b>
+        (__bridge SecCertificateRef)(certs[0]); <i class="conum" data-value="60"></i><b>(60)</b>
       CFStringRef cnRef;
       OSStatus status = SecCertificateCopyCommonName(cert, &amp;cnRef);
       if (status == errSecSuccess) {
@@ -4167,9 +4129,9 @@ CBLListenerCertificateAuthenticator* thisListenerAuth =
               return YES;
       }
       return NO;
-  }];  <i class="conum" data-value="63"></i><b>(63)</b>
+  }];  <i class="conum" data-value="61"></i><b>(61)</b>
 
-thisConfig.authenticator = thisListenerAuth; <i class="conum" data-value="64"></i><b>(64)</b>
+thisConfig.authenticator = thisListenerAuth; <i class="conum" data-value="62"></i><b>(62)</b>
 
 // end::listener-config-client-auth-lambda[]
 
@@ -4300,7 +4262,7 @@ class myActPeerClass {
 
     CBLReplicatorConfiguration *thisConfig
       = [[CBLReplicatorConfiguration alloc]
-          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="65"></i><b>(65)</b>
+          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="63"></i><b>(63)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -4310,7 +4272,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="66"></i><b>(66)</b>
+    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="64"></i><b>(64)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -4321,7 +4283,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication
     // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="67"></i><b>(67)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="65"></i><b>(65)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // Configure Client Authentication
@@ -4329,23 +4291,23 @@ class myActPeerClass {
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="68"></i><b>(68)</b>
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="66"></i><b>(66)</b>
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::p2p-act-rep-config-conflict[]    //
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="70"></i><b>(70)</b>
+    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="68"></i><b>(68)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <i class="conum" data-value="71"></i><b>(71)</b>
+    // Optionally add a change listener <i class="conum" data-value="69"></i><b>(69)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     // Retain token for use in deletion
     id&lt;CBLListenerToken&gt; thisListenerToken
@@ -4361,7 +4323,7 @@ class myActPeerClass {
 // end::p2p-act-rep-add-change-listener[]
 // tag::p2p-act-rep-start[]
     // Run the replicator using the config settings
-    [thisReplicator start]; <i class="conum" data-value="72"></i><b>(72)</b>
+    [thisReplicator start]; <i class="conum" data-value="70"></i><b>(70)</b>
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -4381,7 +4343,7 @@ class myActPeerClass {
 // Additional Snippets from above
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="73"></i><b>(73)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::p2p-act-rep-config-cacert[]
 
@@ -4432,11 +4394,11 @@ class cMyGetCert1{
         // tag::p2p-tlsid-check-keychain[]
         // Check if Id exists in keychain and if so, use it
         CBLTLSIdentity* identity =
-          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="74"></i><b>(74)</b>
+          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="72"></i><b>(72)</b>
 
         // end::p2p-tlsid-check-keychain[]
         thisConfig.authenticator =
-          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="75"></i><b>(75)</b>
+          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="73"></i><b>(73)</b>
 
         // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -4621,7 +4583,7 @@ CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="76"></i><b>(76)</b>
+      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="74"></i><b>(74)</b>
 
 // end::sgw-act-rep-initialize[]
 // END -- snippets --</code></pre>
@@ -5607,8 +5569,11 @@ CBLReplicatorConfiguration *thisConfig
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
 
     // tag::replication-reset-checkpoint[]
-    [replicator resetCheckpoint];
-    [replicator start];
+    if (resetCheckpointRequired_Example) {
+      [replicator startWithReset];  <i class="conum" data-value="19"></i><b>(19)</b>
+    else
+      [replicator start];
+    }
     // end::replication-reset-checkpoint[]
 }
 
@@ -5665,15 +5630,15 @@ CBLReplicatorConfiguration *thisConfig
         //  other config as required . . .
 
         // tag::replication-heartbeat[]
-        config.heartbeat = 150; <i class="conum" data-value="19"></i><b>(19)</b>
+        config.heartbeat = 150; <i class="conum" data-value="20"></i><b>(20)</b>
 
         // end::replication-heartbeat[]
         // tag::replication-maxretries[]
-        config.maxretries = 20; <i class="conum" data-value="20"></i><b>(20)</b>
+        config.maxretries = 20; <i class="conum" data-value="21"></i><b>(21)</b>
 
         // end::replication-maxretries[]
         // tag::replication-maxretrywaittime[]
-        config.maxretrywaittime = 600; <i class="conum" data-value="21"></i><b>(21)</b>
+        config.maxretrywaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
 
         // end::replication-maxretrywaittime[]
         //  other config as required . . .
@@ -6243,7 +6208,7 @@ CBLReplicatorConfiguration *thisConfig
     CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
 
     CBLQuery *listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                                             from:[CBLQueryDataSource database:db]]; <i class="conum" data-value="22"></i><b>(22)</b>
+                                             from:[CBLQueryDataSource database:db]]; <i class="conum" data-value="23"></i><b>(23)</b>
 
     // end::query-syntax-all[]
 
@@ -6279,14 +6244,14 @@ CBLReplicatorConfiguration *thisConfig
         // Get result as a JSON string
 
         NSString* thisJsonString =
-                    [result toJSON]; <i class="conum" data-value="23"></i><b>(23)</b>
+                    [result toJSON]; <i class="conum" data-value="24"></i><b>(24)</b>
 
         // Get an native Obj-C object from the Json String
         NSDictionary *thisDictFromJSON =
                 [NSJSONSerialization JSONObjectWithData:
                  [thisJsonString dataUsingEncoding: NSUTF8StringEncoding]
                        options: NSJSONReadingAllowFragments
-                       error: &amp;error]; <i class="conum" data-value="24"></i><b>(24)</b>
+                       error: &amp;error]; <i class="conum" data-value="25"></i><b>(25)</b>
         if (error) {
             NSLog(@"Error in serialization: %@",error);
             return;
@@ -6296,7 +6261,7 @@ CBLReplicatorConfiguration *thisConfig
         // Populate a custom object from native dictionary
         Hotel *hotelFromJson = Hotel.new;
 
-        hotelFromJson.id = thisDictFromJSON[@"id"];  <i class="conum" data-value="25"></i><b>(25)</b>
+        hotelFromJson.id = thisDictFromJSON[@"id"];  <i class="conum" data-value="26"></i><b>(26)</b>
         hotelFromJson.name = thisDictFromJSON[@"name"];
         hotelFromJson.city = thisDictFromJSON[@"city"];
         hotelFromJson.country = thisDictFromJSON[@"country"];
@@ -6334,7 +6299,7 @@ CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
 CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
 
 *listQuery = [CBLQueryBuilder select:@[id, type, name, city]
-             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="26"></i><b>(26)</b>
+             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="27"></i><b>(27)</b>
 
 // end::query-syntax-props[]
 
@@ -6365,7 +6330,7 @@ CBLQuerySelectResult *count =
   [CBLQuerySelectResult expression:[CBLQueryFunction count:   [CBLQueryExpression all]]];
 
 *listQuery = [CBLQueryBuilder select:@[count]
-             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="27"></i><b>(27)</b>
+             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="28"></i><b>(28)</b>
 
 // end::query-syntax-count-only[]
 
@@ -6380,7 +6345,7 @@ for (CBLQueryResult *result in resultset) {
 
   *match = [result toDictionary];
 
-  *thisCount = [match intForKey:@"mycount"] <i class="conum" data-value="28"></i><b>(28)</b>
+  *thisCount = [match intForKey:@"mycount"] <i class="conum" data-value="29"></i><b>(29)</b>
 
 } // end for
 
@@ -6411,7 +6376,7 @@ for (CBLQueryResult *result in resultset) {
 
   *match = [result toDictionary];
 
-  *thisDocsId = [match stringForKey:@"id"] <i class="conum" data-value="29"></i><b>(29)</b>
+  *thisDocsId = [match stringForKey:@"id"] <i class="conum" data-value="30"></i><b>(30)</b>
 
   // Now you can get the document using its ID
   // for example using
@@ -6439,48 +6404,7 @@ CBLQuery* listQuery =
 
 // end::query-syntax-pagination[]
 
-- (void) docsonly_QuerySyntaxN1QL() {
-    /* Documentation Only query-syntax-n1ql
-        Declared elsewhere: CBLDatabase* argDb
-    */
 
-    // tag::query-syntax-n1ql[]
-    NSError *error;
-
-    CBLDatabase *db == argDB;
-
-    NSString *n1qlstr = "SELECT * FROM _ WHERE type = \"hotel\""; <i class="conum" data-value="30"></i><b>(30)</b>
-
-    CBLQuery* thisQuery = [db createQuery: n1qlstr];
-
-    CBLQueryResultSet* resultset =  [thisQuery execute:&amp;error];
-
-    // end::query-syntax-n1ql[]
-}
-
-- (void) docsonly_QuerySyntaxN1QLParams() {
-    /* Documentation Only query-syntax-n1ql-params
-        Declared elsewhere: CBLDatabase* argDB
-    */
-
-    // tag::query-syntax-n1ql-params[]
-    NSError *error;
-
-    CBLDatabase *db = argDB;
-
-    NSString *n1qlstr = "SELECT * FROM _ WHERE type = $type"; <i class="conum" data-value="31"></i><b>(31)</b>
-
-    CBLQuery* thisQuery = [db createQuery: n1qlstr];
-
-    CBLQueryParameters* n1qlparams = [[CBLQueryParameters alloc] init];
-    [params setString: @"hotel" forName: @"type"]; <i class="conum" data-value="32"></i><b>(32)</b>
-
-    thisQuery.parameters = n1qlparams;
-
-    CBLQueryResultSet* resultset =  [thisQuery execute:&amp;error];
-
-    // end::query-syntax-n1ql-params[]
-}
 
 // PEER-to-PEER
 
@@ -6489,7 +6413,7 @@ CBLQuery* listQuery =
 CBLURLEndpointListenerConfiguration* thisConfig;
   thisConfig =
     [[CBLURLEndpointListenerConfiguration alloc]
-      initWithDatabase: database]; <i class="conum" data-value="33"></i><b>(33)</b>
+      initWithDatabase: database]; <i class="conum" data-value="31"></i><b>(31)</b>
 
 thisConfig.authenticator =
   [[CBLListenerPasswordAuthenticator alloc]
@@ -6498,16 +6422,16 @@ thisConfig.authenticator =
           return  YES;
       }
       return NO;
-  }]; <i class="conum" data-value="34"></i><b>(34)</b>
+  }]; <i class="conum" data-value="32"></i><b>(32)</b>
 
 CBLURLEndpointListener* thisListener = nil;
 thisListener =
-  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; <i class="conum" data-value="35"></i><b>(35)</b>
+  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; <i class="conum" data-value="33"></i><b>(33)</b>
 
 BOOL success = [thisListener startWithError: &amp;error];
 if (!success) {
     NSLog(@"Cannot start the listener: %@", error);
-} <i class="conum" data-value="36"></i><b>(36)</b>
+} <i class="conum" data-value="34"></i><b>(34)</b>
 
 // end::listener-simple[]
 
@@ -6515,24 +6439,24 @@ if (!success) {
 NSURL *url =
   [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
 CBLURLEndpoint *theListenerURL =
-  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="37"></i><b>(37)</b>
+  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="35"></i><b>(35)</b>
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:theListenerURL]; <i class="conum" data-value="38"></i><b>(38)</b>
+      initWithDatabase:thisDB target:theListenerURL]; <i class="conum" data-value="36"></i><b>(36)</b>
 
-thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="39"></i><b>(39)</b>
+thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="37"></i><b>(37)</b>
 
 thisConfig.authenticator =
   [[CBLBasicAuthenticator alloc]
     initWithUsername:@"valid.user"
-      password:@"valid.password.string"]; <i class="conum" data-value="40"></i><b>(40)</b>
+      password:@"valid.password.string"]; <i class="conum" data-value="38"></i><b>(38)</b>
 
 
 CBLReplicator *_thisReplicator;
-_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="41"></i><b>(41)</b>
+_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="39"></i><b>(39)</b>
 
-[_thisReplicator start]; <i class="conum" data-value="42"></i><b>(42)</b>
+[_thisReplicator start]; <i class="conum" data-value="40"></i><b>(40)</b>
 
 // end::replicator-simple[]
 
@@ -6551,7 +6475,7 @@ import MultipeerConnectivity
 class cMyPassListener {
   // tag::listener-initialize[]
   // tag::listener-config-db[]
-  // Initialize the listener config <i class="conum" data-value="43"></i><b>(43)</b>
+  // Initialize the listener config <i class="conum" data-value="41"></i><b>(41)</b>
   CBLURLEndpointListenerConfiguration* thisConfig;
   thisConfig =
     [[CBLURLEndpointListenerConfiguration alloc]
@@ -6559,32 +6483,32 @@ class cMyPassListener {
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
-    thisConfig.port =  55990; <i class="conum" data-value="44"></i><b>(44)</b>
+    thisConfig.port =  55990; <i class="conum" data-value="42"></i><b>(42)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
     NSString *thisURL = @"10.1.1.10";
-    thisConfig.networkInterface = thisURL; <i class="conum" data-value="45"></i><b>(45)</b>
+    thisConfig.networkInterface = thisURL; <i class="conum" data-value="43"></i><b>(43)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    thisConfig.enableDeltaSync = true; <i class="conum" data-value="46"></i><b>(46)</b>
+    thisConfig.enableDeltaSync = true; <i class="conum" data-value="44"></i><b>(44)</b>
 
     // end::listener-config-delta-sync[]
     // Configure server security
     // tag::listener-config-tls-enable[]
-    thisConfig.disableTLS  = false; <i class="conum" data-value="47"></i><b>(47)</b>
+    thisConfig.disableTLS  = false; <i class="conum" data-value="45"></i><b>(45)</b>
 
     // end::listener-config-tls-enable[]
 
     // tag::listener-config-tls-id-anon[]
     // Use an anonymous self-signed cert
-    thisConfig.tlsIdentity = nil; <i class="conum" data-value="48"></i><b>(48)</b>
+    thisConfig.tlsIdentity = nil; <i class="conum" data-value="46"></i><b>(46)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
     // Configure Client Security using an Authenticator
-    // For example, Basic Authentication <i class="conum" data-value="49"></i><b>(49)</b>
+    // For example, Basic Authentication <i class="conum" data-value="47"></i><b>(47)</b>
     thisConfig.authenticator =
       [[CBLListenerPasswordAuthenticator alloc]
         initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
@@ -6597,13 +6521,13 @@ class cMyPassListener {
     // end::listener-config-client-auth-pwd[]
     // tag::listener-start[]
     // tag::listener-init[]
-    // Initialize the listener <i class="conum" data-value="50"></i><b>(50)</b>
+    // Initialize the listener <i class="conum" data-value="48"></i><b>(48)</b>
     CBLURLEndpointListener* thisListener = nil;
     thisListener =
       [[CBLURLEndpointListener alloc] initWithConfig: thisConfig];
 
     // end::listener-init[]
-    // start the listener <i class="conum" data-value="51"></i><b>(51)</b>
+    // start the listener <i class="conum" data-value="49"></i><b>(49)</b>
     BOOL success = [thisListener startWithError: &amp;error];
     if (!success) {
         NSLog(@"Cannot start the listener: %@", error);
@@ -6655,7 +6579,7 @@ CBLDatabase *thisDB = self.db;
 // tag::listener-config-tls-full[]
   // Configure server authentication
   // tag::listener-config-tls-disable[]
-  thisConfig.disableTLS  = true; <i class="conum" data-value="52"></i><b>(52)</b>
+  thisConfig.disableTLS  = true; <i class="conum" data-value="50"></i><b>(50)</b>
 
   // end::listener-config-tls-disable[]
 
@@ -6666,7 +6590,7 @@ CBLDatabase *thisDB = self.db;
   // Create a TLSIdentity from a key-pair and
   // certificate in secure storage
     NSURL *certURL =
-      [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="53"></i><b>(53)</b>
+      [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="51"></i><b>(51)</b>
 
     NSData *data =
       [[NSData alloc] initWithContentsOfURL: certURL];
@@ -6674,27 +6598,27 @@ CBLDatabase *thisDB = self.db;
       [CBLTLSIdentity importIdentityWithData: data
         password: @"123"
         label: @"couchbase-docs-cert"
-        error: &amp;error]; <i class="conum" data-value="54"></i><b>(54)</b>
+        error: &amp;error]; <i class="conum" data-value="52"></i><b>(52)</b>
 
-    config.tlsIdentity = thisIdentity; <i class="conum" data-value="55"></i><b>(55)</b>
+    config.tlsIdentity = thisIdentity; <i class="conum" data-value="53"></i><b>(53)</b>
 
   // end::listener-config-tls-id-caCert[]
   // tag::listener-config-tls-id-SelfSigned[]
   // Use a self-signed certificate
   NSDictionary* attrs =
-    @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; <i class="conum" data-value="56"></i><b>(56)</b>
+    @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; <i class="conum" data-value="54"></i><b>(54)</b>
 
   thisIdentity =
     [CBLTLSIdentity createIdentityForServer: YES /* isServer */
         attributes: attrs
         expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
               label: @" couchbase-docs-cert"
-              error: &amp;error]; <i class="conum" data-value="57"></i><b>(57)</b>
+              error: &amp;error]; <i class="conum" data-value="55"></i><b>(55)</b>
 
   // end::listener-config-tls-id-SelfSigned[]
       // tag::listener-config-tls-id-set[]
   // set the TLS Identity
-  thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="58"></i><b>(58)</b>
+  thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="56"></i><b>(56)</b>
 
   // end::listener-config-tls-id-set[]
   // end::listener-config-tls-id-full[]
@@ -6705,7 +6629,7 @@ CBLDatabase *thisDB = self.db;
 // Configure the client authenticator
 NSURL *certURL =
   [[NSBundle mainBundle]
-    URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="59"></i><b>(59)</b>
+    URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="57"></i><b>(57)</b>
 NSData *data =
   [[NSData alloc]
     initWithContentsOfURL: certURL];
@@ -6714,7 +6638,7 @@ SecCertificateRef rootCertRef =
 
 thisConfig.authenticator =
   [[CBLListenerCertificateAuthenticator alloc]
-    initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  <i class="conum" data-value="60"></i><b>(60)</b> <i class="conum" data-value="61"></i><b>(61)</b>
+    initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  <i class="conum" data-value="58"></i><b>(58)</b> <i class="conum" data-value="59"></i><b>(59)</b>
 
 // end::listener-config-client-auth-root[]
 // tag::listener-config-client-auth-lambda[]
@@ -6724,7 +6648,7 @@ CBLListenerCertificateAuthenticator* thisListenerAuth =
   [[CBLListenerCertificateAuthenticator alloc]
     initWithBlock: ^BOOL(NSArray *certs) {
       SecCertificateRef cert =
-        (__bridge SecCertificateRef)(certs[0]); <i class="conum" data-value="62"></i><b>(62)</b>
+        (__bridge SecCertificateRef)(certs[0]); <i class="conum" data-value="60"></i><b>(60)</b>
       CFStringRef cnRef;
       OSStatus status = SecCertificateCopyCommonName(cert, &amp;cnRef);
       if (status == errSecSuccess) {
@@ -6733,9 +6657,9 @@ CBLListenerCertificateAuthenticator* thisListenerAuth =
               return YES;
       }
       return NO;
-  }];  <i class="conum" data-value="63"></i><b>(63)</b>
+  }];  <i class="conum" data-value="61"></i><b>(61)</b>
 
-thisConfig.authenticator = thisListenerAuth; <i class="conum" data-value="64"></i><b>(64)</b>
+thisConfig.authenticator = thisListenerAuth; <i class="conum" data-value="62"></i><b>(62)</b>
 
 // end::listener-config-client-auth-lambda[]
 
@@ -6866,7 +6790,7 @@ class myActPeerClass {
 
     CBLReplicatorConfiguration *thisConfig
       = [[CBLReplicatorConfiguration alloc]
-          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="65"></i><b>(65)</b>
+          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="63"></i><b>(63)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -6876,7 +6800,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="66"></i><b>(66)</b>
+    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="64"></i><b>(64)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -6887,7 +6811,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication
     // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="67"></i><b>(67)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="65"></i><b>(65)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // Configure Client Authentication
@@ -6895,23 +6819,23 @@ class myActPeerClass {
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="68"></i><b>(68)</b>
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="66"></i><b>(66)</b>
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::p2p-act-rep-config-conflict[]    //
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="70"></i><b>(70)</b>
+    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="68"></i><b>(68)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <i class="conum" data-value="71"></i><b>(71)</b>
+    // Optionally add a change listener <i class="conum" data-value="69"></i><b>(69)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     // Retain token for use in deletion
     id&lt;CBLListenerToken&gt; thisListenerToken
@@ -6927,7 +6851,7 @@ class myActPeerClass {
 // end::p2p-act-rep-add-change-listener[]
 // tag::p2p-act-rep-start[]
     // Run the replicator using the config settings
-    [thisReplicator start]; <i class="conum" data-value="72"></i><b>(72)</b>
+    [thisReplicator start]; <i class="conum" data-value="70"></i><b>(70)</b>
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -6947,7 +6871,7 @@ class myActPeerClass {
 // Additional Snippets from above
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="73"></i><b>(73)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::p2p-act-rep-config-cacert[]
 
@@ -6998,11 +6922,11 @@ class cMyGetCert1{
         // tag::p2p-tlsid-check-keychain[]
         // Check if Id exists in keychain and if so, use it
         CBLTLSIdentity* identity =
-          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="74"></i><b>(74)</b>
+          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="72"></i><b>(72)</b>
 
         // end::p2p-tlsid-check-keychain[]
         thisConfig.authenticator =
-          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="75"></i><b>(75)</b>
+          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="73"></i><b>(73)</b>
 
         // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -7187,7 +7111,7 @@ CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="76"></i><b>(76)</b>
+      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="74"></i><b>(74)</b>
 
 // end::sgw-act-rep-initialize[]
 // END -- snippets --</code></pre>
@@ -8173,8 +8097,11 @@ CBLReplicatorConfiguration *thisConfig
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
 
     // tag::replication-reset-checkpoint[]
-    [replicator resetCheckpoint];
-    [replicator start];
+    if (resetCheckpointRequired_Example) {
+      [replicator startWithReset];  <i class="conum" data-value="19"></i><b>(19)</b>
+    else
+      [replicator start];
+    }
     // end::replication-reset-checkpoint[]
 }
 
@@ -8231,15 +8158,15 @@ CBLReplicatorConfiguration *thisConfig
         //  other config as required . . .
 
         // tag::replication-heartbeat[]
-        config.heartbeat = 150; <i class="conum" data-value="19"></i><b>(19)</b>
+        config.heartbeat = 150; <i class="conum" data-value="20"></i><b>(20)</b>
 
         // end::replication-heartbeat[]
         // tag::replication-maxretries[]
-        config.maxretries = 20; <i class="conum" data-value="20"></i><b>(20)</b>
+        config.maxretries = 20; <i class="conum" data-value="21"></i><b>(21)</b>
 
         // end::replication-maxretries[]
         // tag::replication-maxretrywaittime[]
-        config.maxretrywaittime = 600; <i class="conum" data-value="21"></i><b>(21)</b>
+        config.maxretrywaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
 
         // end::replication-maxretrywaittime[]
         //  other config as required . . .
@@ -8809,7 +8736,7 @@ CBLReplicatorConfiguration *thisConfig
     CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
 
     CBLQuery *listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                                             from:[CBLQueryDataSource database:db]]; <i class="conum" data-value="22"></i><b>(22)</b>
+                                             from:[CBLQueryDataSource database:db]]; <i class="conum" data-value="23"></i><b>(23)</b>
 
     // end::query-syntax-all[]
 
@@ -8845,14 +8772,14 @@ CBLReplicatorConfiguration *thisConfig
         // Get result as a JSON string
 
         NSString* thisJsonString =
-                    [result toJSON]; <i class="conum" data-value="23"></i><b>(23)</b>
+                    [result toJSON]; <i class="conum" data-value="24"></i><b>(24)</b>
 
         // Get an native Obj-C object from the Json String
         NSDictionary *thisDictFromJSON =
                 [NSJSONSerialization JSONObjectWithData:
                  [thisJsonString dataUsingEncoding: NSUTF8StringEncoding]
                        options: NSJSONReadingAllowFragments
-                       error: &amp;error]; <i class="conum" data-value="24"></i><b>(24)</b>
+                       error: &amp;error]; <i class="conum" data-value="25"></i><b>(25)</b>
         if (error) {
             NSLog(@"Error in serialization: %@",error);
             return;
@@ -8862,7 +8789,7 @@ CBLReplicatorConfiguration *thisConfig
         // Populate a custom object from native dictionary
         Hotel *hotelFromJson = Hotel.new;
 
-        hotelFromJson.id = thisDictFromJSON[@"id"];  <i class="conum" data-value="25"></i><b>(25)</b>
+        hotelFromJson.id = thisDictFromJSON[@"id"];  <i class="conum" data-value="26"></i><b>(26)</b>
         hotelFromJson.name = thisDictFromJSON[@"name"];
         hotelFromJson.city = thisDictFromJSON[@"city"];
         hotelFromJson.country = thisDictFromJSON[@"country"];
@@ -8900,7 +8827,7 @@ CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
 CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
 
 *listQuery = [CBLQueryBuilder select:@[id, type, name, city]
-             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="26"></i><b>(26)</b>
+             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="27"></i><b>(27)</b>
 
 // end::query-syntax-props[]
 
@@ -8931,7 +8858,7 @@ CBLQuerySelectResult *count =
   [CBLQuerySelectResult expression:[CBLQueryFunction count:   [CBLQueryExpression all]]];
 
 *listQuery = [CBLQueryBuilder select:@[count]
-             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="27"></i><b>(27)</b>
+             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="28"></i><b>(28)</b>
 
 // end::query-syntax-count-only[]
 
@@ -8946,7 +8873,7 @@ for (CBLQueryResult *result in resultset) {
 
   *match = [result toDictionary];
 
-  *thisCount = [match intForKey:@"mycount"] <i class="conum" data-value="28"></i><b>(28)</b>
+  *thisCount = [match intForKey:@"mycount"] <i class="conum" data-value="29"></i><b>(29)</b>
 
 } // end for
 
@@ -8977,7 +8904,7 @@ for (CBLQueryResult *result in resultset) {
 
   *match = [result toDictionary];
 
-  *thisDocsId = [match stringForKey:@"id"] <i class="conum" data-value="29"></i><b>(29)</b>
+  *thisDocsId = [match stringForKey:@"id"] <i class="conum" data-value="30"></i><b>(30)</b>
 
   // Now you can get the document using its ID
   // for example using
@@ -9005,48 +8932,7 @@ CBLQuery* listQuery =
 
 // end::query-syntax-pagination[]
 
-- (void) docsonly_QuerySyntaxN1QL() {
-    /* Documentation Only query-syntax-n1ql
-        Declared elsewhere: CBLDatabase* argDb
-    */
 
-    // tag::query-syntax-n1ql[]
-    NSError *error;
-
-    CBLDatabase *db == argDB;
-
-    NSString *n1qlstr = "SELECT * FROM _ WHERE type = \"hotel\""; <i class="conum" data-value="30"></i><b>(30)</b>
-
-    CBLQuery* thisQuery = [db createQuery: n1qlstr];
-
-    CBLQueryResultSet* resultset =  [thisQuery execute:&amp;error];
-
-    // end::query-syntax-n1ql[]
-}
-
-- (void) docsonly_QuerySyntaxN1QLParams() {
-    /* Documentation Only query-syntax-n1ql-params
-        Declared elsewhere: CBLDatabase* argDB
-    */
-
-    // tag::query-syntax-n1ql-params[]
-    NSError *error;
-
-    CBLDatabase *db = argDB;
-
-    NSString *n1qlstr = "SELECT * FROM _ WHERE type = $type"; <i class="conum" data-value="31"></i><b>(31)</b>
-
-    CBLQuery* thisQuery = [db createQuery: n1qlstr];
-
-    CBLQueryParameters* n1qlparams = [[CBLQueryParameters alloc] init];
-    [params setString: @"hotel" forName: @"type"]; <i class="conum" data-value="32"></i><b>(32)</b>
-
-    thisQuery.parameters = n1qlparams;
-
-    CBLQueryResultSet* resultset =  [thisQuery execute:&amp;error];
-
-    // end::query-syntax-n1ql-params[]
-}
 
 // PEER-to-PEER
 
@@ -9055,7 +8941,7 @@ CBLQuery* listQuery =
 CBLURLEndpointListenerConfiguration* thisConfig;
   thisConfig =
     [[CBLURLEndpointListenerConfiguration alloc]
-      initWithDatabase: database]; <i class="conum" data-value="33"></i><b>(33)</b>
+      initWithDatabase: database]; <i class="conum" data-value="31"></i><b>(31)</b>
 
 thisConfig.authenticator =
   [[CBLListenerPasswordAuthenticator alloc]
@@ -9064,16 +8950,16 @@ thisConfig.authenticator =
           return  YES;
       }
       return NO;
-  }]; <i class="conum" data-value="34"></i><b>(34)</b>
+  }]; <i class="conum" data-value="32"></i><b>(32)</b>
 
 CBLURLEndpointListener* thisListener = nil;
 thisListener =
-  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; <i class="conum" data-value="35"></i><b>(35)</b>
+  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; <i class="conum" data-value="33"></i><b>(33)</b>
 
 BOOL success = [thisListener startWithError: &amp;error];
 if (!success) {
     NSLog(@"Cannot start the listener: %@", error);
-} <i class="conum" data-value="36"></i><b>(36)</b>
+} <i class="conum" data-value="34"></i><b>(34)</b>
 
 // end::listener-simple[]
 
@@ -9081,24 +8967,24 @@ if (!success) {
 NSURL *url =
   [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
 CBLURLEndpoint *theListenerURL =
-  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="37"></i><b>(37)</b>
+  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="35"></i><b>(35)</b>
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:theListenerURL]; <i class="conum" data-value="38"></i><b>(38)</b>
+      initWithDatabase:thisDB target:theListenerURL]; <i class="conum" data-value="36"></i><b>(36)</b>
 
-thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="39"></i><b>(39)</b>
+thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="37"></i><b>(37)</b>
 
 thisConfig.authenticator =
   [[CBLBasicAuthenticator alloc]
     initWithUsername:@"valid.user"
-      password:@"valid.password.string"]; <i class="conum" data-value="40"></i><b>(40)</b>
+      password:@"valid.password.string"]; <i class="conum" data-value="38"></i><b>(38)</b>
 
 
 CBLReplicator *_thisReplicator;
-_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="41"></i><b>(41)</b>
+_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="39"></i><b>(39)</b>
 
-[_thisReplicator start]; <i class="conum" data-value="42"></i><b>(42)</b>
+[_thisReplicator start]; <i class="conum" data-value="40"></i><b>(40)</b>
 
 // end::replicator-simple[]
 
@@ -9117,7 +9003,7 @@ import MultipeerConnectivity
 class cMyPassListener {
   // tag::listener-initialize[]
   // tag::listener-config-db[]
-  // Initialize the listener config <i class="conum" data-value="43"></i><b>(43)</b>
+  // Initialize the listener config <i class="conum" data-value="41"></i><b>(41)</b>
   CBLURLEndpointListenerConfiguration* thisConfig;
   thisConfig =
     [[CBLURLEndpointListenerConfiguration alloc]
@@ -9125,32 +9011,32 @@ class cMyPassListener {
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
-    thisConfig.port =  55990; <i class="conum" data-value="44"></i><b>(44)</b>
+    thisConfig.port =  55990; <i class="conum" data-value="42"></i><b>(42)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
     NSString *thisURL = @"10.1.1.10";
-    thisConfig.networkInterface = thisURL; <i class="conum" data-value="45"></i><b>(45)</b>
+    thisConfig.networkInterface = thisURL; <i class="conum" data-value="43"></i><b>(43)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    thisConfig.enableDeltaSync = true; <i class="conum" data-value="46"></i><b>(46)</b>
+    thisConfig.enableDeltaSync = true; <i class="conum" data-value="44"></i><b>(44)</b>
 
     // end::listener-config-delta-sync[]
     // Configure server security
     // tag::listener-config-tls-enable[]
-    thisConfig.disableTLS  = false; <i class="conum" data-value="47"></i><b>(47)</b>
+    thisConfig.disableTLS  = false; <i class="conum" data-value="45"></i><b>(45)</b>
 
     // end::listener-config-tls-enable[]
 
     // tag::listener-config-tls-id-anon[]
     // Use an anonymous self-signed cert
-    thisConfig.tlsIdentity = nil; <i class="conum" data-value="48"></i><b>(48)</b>
+    thisConfig.tlsIdentity = nil; <i class="conum" data-value="46"></i><b>(46)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
     // Configure Client Security using an Authenticator
-    // For example, Basic Authentication <i class="conum" data-value="49"></i><b>(49)</b>
+    // For example, Basic Authentication <i class="conum" data-value="47"></i><b>(47)</b>
     thisConfig.authenticator =
       [[CBLListenerPasswordAuthenticator alloc]
         initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
@@ -9163,13 +9049,13 @@ class cMyPassListener {
     // end::listener-config-client-auth-pwd[]
     // tag::listener-start[]
     // tag::listener-init[]
-    // Initialize the listener <i class="conum" data-value="50"></i><b>(50)</b>
+    // Initialize the listener <i class="conum" data-value="48"></i><b>(48)</b>
     CBLURLEndpointListener* thisListener = nil;
     thisListener =
       [[CBLURLEndpointListener alloc] initWithConfig: thisConfig];
 
     // end::listener-init[]
-    // start the listener <i class="conum" data-value="51"></i><b>(51)</b>
+    // start the listener <i class="conum" data-value="49"></i><b>(49)</b>
     BOOL success = [thisListener startWithError: &amp;error];
     if (!success) {
         NSLog(@"Cannot start the listener: %@", error);
@@ -9221,7 +9107,7 @@ CBLDatabase *thisDB = self.db;
 // tag::listener-config-tls-full[]
   // Configure server authentication
   // tag::listener-config-tls-disable[]
-  thisConfig.disableTLS  = true; <i class="conum" data-value="52"></i><b>(52)</b>
+  thisConfig.disableTLS  = true; <i class="conum" data-value="50"></i><b>(50)</b>
 
   // end::listener-config-tls-disable[]
 
@@ -9232,7 +9118,7 @@ CBLDatabase *thisDB = self.db;
   // Create a TLSIdentity from a key-pair and
   // certificate in secure storage
     NSURL *certURL =
-      [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="53"></i><b>(53)</b>
+      [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="51"></i><b>(51)</b>
 
     NSData *data =
       [[NSData alloc] initWithContentsOfURL: certURL];
@@ -9240,27 +9126,27 @@ CBLDatabase *thisDB = self.db;
       [CBLTLSIdentity importIdentityWithData: data
         password: @"123"
         label: @"couchbase-docs-cert"
-        error: &amp;error]; <i class="conum" data-value="54"></i><b>(54)</b>
+        error: &amp;error]; <i class="conum" data-value="52"></i><b>(52)</b>
 
-    config.tlsIdentity = thisIdentity; <i class="conum" data-value="55"></i><b>(55)</b>
+    config.tlsIdentity = thisIdentity; <i class="conum" data-value="53"></i><b>(53)</b>
 
   // end::listener-config-tls-id-caCert[]
   // tag::listener-config-tls-id-SelfSigned[]
   // Use a self-signed certificate
   NSDictionary* attrs =
-    @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; <i class="conum" data-value="56"></i><b>(56)</b>
+    @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; <i class="conum" data-value="54"></i><b>(54)</b>
 
   thisIdentity =
     [CBLTLSIdentity createIdentityForServer: YES /* isServer */
         attributes: attrs
         expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
               label: @" couchbase-docs-cert"
-              error: &amp;error]; <i class="conum" data-value="57"></i><b>(57)</b>
+              error: &amp;error]; <i class="conum" data-value="55"></i><b>(55)</b>
 
   // end::listener-config-tls-id-SelfSigned[]
       // tag::listener-config-tls-id-set[]
   // set the TLS Identity
-  thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="58"></i><b>(58)</b>
+  thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="56"></i><b>(56)</b>
 
   // end::listener-config-tls-id-set[]
   // end::listener-config-tls-id-full[]
@@ -9271,7 +9157,7 @@ CBLDatabase *thisDB = self.db;
 // Configure the client authenticator
 NSURL *certURL =
   [[NSBundle mainBundle]
-    URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="59"></i><b>(59)</b>
+    URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="57"></i><b>(57)</b>
 NSData *data =
   [[NSData alloc]
     initWithContentsOfURL: certURL];
@@ -9280,7 +9166,7 @@ SecCertificateRef rootCertRef =
 
 thisConfig.authenticator =
   [[CBLListenerCertificateAuthenticator alloc]
-    initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  <i class="conum" data-value="60"></i><b>(60)</b> <i class="conum" data-value="61"></i><b>(61)</b>
+    initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  <i class="conum" data-value="58"></i><b>(58)</b> <i class="conum" data-value="59"></i><b>(59)</b>
 
 // end::listener-config-client-auth-root[]
 // tag::listener-config-client-auth-lambda[]
@@ -9290,7 +9176,7 @@ CBLListenerCertificateAuthenticator* thisListenerAuth =
   [[CBLListenerCertificateAuthenticator alloc]
     initWithBlock: ^BOOL(NSArray *certs) {
       SecCertificateRef cert =
-        (__bridge SecCertificateRef)(certs[0]); <i class="conum" data-value="62"></i><b>(62)</b>
+        (__bridge SecCertificateRef)(certs[0]); <i class="conum" data-value="60"></i><b>(60)</b>
       CFStringRef cnRef;
       OSStatus status = SecCertificateCopyCommonName(cert, &amp;cnRef);
       if (status == errSecSuccess) {
@@ -9299,9 +9185,9 @@ CBLListenerCertificateAuthenticator* thisListenerAuth =
               return YES;
       }
       return NO;
-  }];  <i class="conum" data-value="63"></i><b>(63)</b>
+  }];  <i class="conum" data-value="61"></i><b>(61)</b>
 
-thisConfig.authenticator = thisListenerAuth; <i class="conum" data-value="64"></i><b>(64)</b>
+thisConfig.authenticator = thisListenerAuth; <i class="conum" data-value="62"></i><b>(62)</b>
 
 // end::listener-config-client-auth-lambda[]
 
@@ -9432,7 +9318,7 @@ class myActPeerClass {
 
     CBLReplicatorConfiguration *thisConfig
       = [[CBLReplicatorConfiguration alloc]
-          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="65"></i><b>(65)</b>
+          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="63"></i><b>(63)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -9442,7 +9328,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="66"></i><b>(66)</b>
+    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="64"></i><b>(64)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -9453,7 +9339,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication
     // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="67"></i><b>(67)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="65"></i><b>(65)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // Configure Client Authentication
@@ -9461,23 +9347,23 @@ class myActPeerClass {
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="68"></i><b>(68)</b>
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="66"></i><b>(66)</b>
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::p2p-act-rep-config-conflict[]    //
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="70"></i><b>(70)</b>
+    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="68"></i><b>(68)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <i class="conum" data-value="71"></i><b>(71)</b>
+    // Optionally add a change listener <i class="conum" data-value="69"></i><b>(69)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     // Retain token for use in deletion
     id&lt;CBLListenerToken&gt; thisListenerToken
@@ -9493,7 +9379,7 @@ class myActPeerClass {
 // end::p2p-act-rep-add-change-listener[]
 // tag::p2p-act-rep-start[]
     // Run the replicator using the config settings
-    [thisReplicator start]; <i class="conum" data-value="72"></i><b>(72)</b>
+    [thisReplicator start]; <i class="conum" data-value="70"></i><b>(70)</b>
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -9513,7 +9399,7 @@ class myActPeerClass {
 // Additional Snippets from above
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="73"></i><b>(73)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::p2p-act-rep-config-cacert[]
 
@@ -9564,11 +9450,11 @@ class cMyGetCert1{
         // tag::p2p-tlsid-check-keychain[]
         // Check if Id exists in keychain and if so, use it
         CBLTLSIdentity* identity =
-          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="74"></i><b>(74)</b>
+          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="72"></i><b>(72)</b>
 
         // end::p2p-tlsid-check-keychain[]
         thisConfig.authenticator =
-          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="75"></i><b>(75)</b>
+          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="73"></i><b>(73)</b>
 
         // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -9753,7 +9639,7 @@ CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="76"></i><b>(76)</b>
+      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="74"></i><b>(74)</b>
 
 // end::sgw-act-rep-initialize[]
 // END -- snippets --</code></pre>
@@ -10739,8 +10625,11 @@ CBLReplicatorConfiguration *thisConfig
     CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
 
     // tag::replication-reset-checkpoint[]
-    [replicator resetCheckpoint];
-    [replicator start];
+    if (resetCheckpointRequired_Example) {
+      [replicator startWithReset];  <i class="conum" data-value="19"></i><b>(19)</b>
+    else
+      [replicator start];
+    }
     // end::replication-reset-checkpoint[]
 }
 
@@ -10797,15 +10686,15 @@ CBLReplicatorConfiguration *thisConfig
         //  other config as required . . .
 
         // tag::replication-heartbeat[]
-        config.heartbeat = 150; <i class="conum" data-value="19"></i><b>(19)</b>
+        config.heartbeat = 150; <i class="conum" data-value="20"></i><b>(20)</b>
 
         // end::replication-heartbeat[]
         // tag::replication-maxretries[]
-        config.maxretries = 20; <i class="conum" data-value="20"></i><b>(20)</b>
+        config.maxretries = 20; <i class="conum" data-value="21"></i><b>(21)</b>
 
         // end::replication-maxretries[]
         // tag::replication-maxretrywaittime[]
-        config.maxretrywaittime = 600; <i class="conum" data-value="21"></i><b>(21)</b>
+        config.maxretrywaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
 
         // end::replication-maxretrywaittime[]
         //  other config as required . . .
@@ -11375,7 +11264,7 @@ CBLReplicatorConfiguration *thisConfig
     CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
 
     CBLQuery *listQuery = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
-                                             from:[CBLQueryDataSource database:db]]; <i class="conum" data-value="22"></i><b>(22)</b>
+                                             from:[CBLQueryDataSource database:db]]; <i class="conum" data-value="23"></i><b>(23)</b>
 
     // end::query-syntax-all[]
 
@@ -11411,14 +11300,14 @@ CBLReplicatorConfiguration *thisConfig
         // Get result as a JSON string
 
         NSString* thisJsonString =
-                    [result toJSON]; <i class="conum" data-value="23"></i><b>(23)</b>
+                    [result toJSON]; <i class="conum" data-value="24"></i><b>(24)</b>
 
         // Get an native Obj-C object from the Json String
         NSDictionary *thisDictFromJSON =
                 [NSJSONSerialization JSONObjectWithData:
                  [thisJsonString dataUsingEncoding: NSUTF8StringEncoding]
                        options: NSJSONReadingAllowFragments
-                       error: &amp;error]; <i class="conum" data-value="24"></i><b>(24)</b>
+                       error: &amp;error]; <i class="conum" data-value="25"></i><b>(25)</b>
         if (error) {
             NSLog(@"Error in serialization: %@",error);
             return;
@@ -11428,7 +11317,7 @@ CBLReplicatorConfiguration *thisConfig
         // Populate a custom object from native dictionary
         Hotel *hotelFromJson = Hotel.new;
 
-        hotelFromJson.id = thisDictFromJSON[@"id"];  <i class="conum" data-value="25"></i><b>(25)</b>
+        hotelFromJson.id = thisDictFromJSON[@"id"];  <i class="conum" data-value="26"></i><b>(26)</b>
         hotelFromJson.name = thisDictFromJSON[@"name"];
         hotelFromJson.city = thisDictFromJSON[@"city"];
         hotelFromJson.country = thisDictFromJSON[@"country"];
@@ -11466,7 +11355,7 @@ CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
 CBLQuerySelectResult *city = [CBLQuerySelectResult property:@"city"];
 
 *listQuery = [CBLQueryBuilder select:@[id, type, name, city]
-             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="26"></i><b>(26)</b>
+             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="27"></i><b>(27)</b>
 
 // end::query-syntax-props[]
 
@@ -11497,7 +11386,7 @@ CBLQuerySelectResult *count =
   [CBLQuerySelectResult expression:[CBLQueryFunction count:   [CBLQueryExpression all]]];
 
 *listQuery = [CBLQueryBuilder select:@[count]
-             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="27"></i><b>(27)</b>
+             from:[CBLQueryDataSource database:db]] <i class="conum" data-value="28"></i><b>(28)</b>
 
 // end::query-syntax-count-only[]
 
@@ -11512,7 +11401,7 @@ for (CBLQueryResult *result in resultset) {
 
   *match = [result toDictionary];
 
-  *thisCount = [match intForKey:@"mycount"] <i class="conum" data-value="28"></i><b>(28)</b>
+  *thisCount = [match intForKey:@"mycount"] <i class="conum" data-value="29"></i><b>(29)</b>
 
 } // end for
 
@@ -11543,7 +11432,7 @@ for (CBLQueryResult *result in resultset) {
 
   *match = [result toDictionary];
 
-  *thisDocsId = [match stringForKey:@"id"] <i class="conum" data-value="29"></i><b>(29)</b>
+  *thisDocsId = [match stringForKey:@"id"] <i class="conum" data-value="30"></i><b>(30)</b>
 
   // Now you can get the document using its ID
   // for example using
@@ -11571,48 +11460,7 @@ CBLQuery* listQuery =
 
 // end::query-syntax-pagination[]
 
-- (void) docsonly_QuerySyntaxN1QL() {
-    /* Documentation Only query-syntax-n1ql
-        Declared elsewhere: CBLDatabase* argDb
-    */
 
-    // tag::query-syntax-n1ql[]
-    NSError *error;
-
-    CBLDatabase *db == argDB;
-
-    NSString *n1qlstr = "SELECT * FROM _ WHERE type = \"hotel\""; <i class="conum" data-value="30"></i><b>(30)</b>
-
-    CBLQuery* thisQuery = [db createQuery: n1qlstr];
-
-    CBLQueryResultSet* resultset =  [thisQuery execute:&amp;error];
-
-    // end::query-syntax-n1ql[]
-}
-
-- (void) docsonly_QuerySyntaxN1QLParams() {
-    /* Documentation Only query-syntax-n1ql-params
-        Declared elsewhere: CBLDatabase* argDB
-    */
-
-    // tag::query-syntax-n1ql-params[]
-    NSError *error;
-
-    CBLDatabase *db = argDB;
-
-    NSString *n1qlstr = "SELECT * FROM _ WHERE type = $type"; <i class="conum" data-value="31"></i><b>(31)</b>
-
-    CBLQuery* thisQuery = [db createQuery: n1qlstr];
-
-    CBLQueryParameters* n1qlparams = [[CBLQueryParameters alloc] init];
-    [params setString: @"hotel" forName: @"type"]; <i class="conum" data-value="32"></i><b>(32)</b>
-
-    thisQuery.parameters = n1qlparams;
-
-    CBLQueryResultSet* resultset =  [thisQuery execute:&amp;error];
-
-    // end::query-syntax-n1ql-params[]
-}
 
 // PEER-to-PEER
 
@@ -11621,7 +11469,7 @@ CBLQuery* listQuery =
 CBLURLEndpointListenerConfiguration* thisConfig;
   thisConfig =
     [[CBLURLEndpointListenerConfiguration alloc]
-      initWithDatabase: database]; <i class="conum" data-value="33"></i><b>(33)</b>
+      initWithDatabase: database]; <i class="conum" data-value="31"></i><b>(31)</b>
 
 thisConfig.authenticator =
   [[CBLListenerPasswordAuthenticator alloc]
@@ -11630,16 +11478,16 @@ thisConfig.authenticator =
           return  YES;
       }
       return NO;
-  }]; <i class="conum" data-value="34"></i><b>(34)</b>
+  }]; <i class="conum" data-value="32"></i><b>(32)</b>
 
 CBLURLEndpointListener* thisListener = nil;
 thisListener =
-  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; <i class="conum" data-value="35"></i><b>(35)</b>
+  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; <i class="conum" data-value="33"></i><b>(33)</b>
 
 BOOL success = [thisListener startWithError: &amp;error];
 if (!success) {
     NSLog(@"Cannot start the listener: %@", error);
-} <i class="conum" data-value="36"></i><b>(36)</b>
+} <i class="conum" data-value="34"></i><b>(34)</b>
 
 // end::listener-simple[]
 
@@ -11647,24 +11495,24 @@ if (!success) {
 NSURL *url =
   [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
 CBLURLEndpoint *theListenerURL =
-  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="37"></i><b>(37)</b>
+  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="35"></i><b>(35)</b>
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:theListenerURL]; <i class="conum" data-value="38"></i><b>(38)</b>
+      initWithDatabase:thisDB target:theListenerURL]; <i class="conum" data-value="36"></i><b>(36)</b>
 
-thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="39"></i><b>(39)</b>
+thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="37"></i><b>(37)</b>
 
 thisConfig.authenticator =
   [[CBLBasicAuthenticator alloc]
     initWithUsername:@"valid.user"
-      password:@"valid.password.string"]; <i class="conum" data-value="40"></i><b>(40)</b>
+      password:@"valid.password.string"]; <i class="conum" data-value="38"></i><b>(38)</b>
 
 
 CBLReplicator *_thisReplicator;
-_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="41"></i><b>(41)</b>
+_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="39"></i><b>(39)</b>
 
-[_thisReplicator start]; <i class="conum" data-value="42"></i><b>(42)</b>
+[_thisReplicator start]; <i class="conum" data-value="40"></i><b>(40)</b>
 
 // end::replicator-simple[]
 
@@ -11683,7 +11531,7 @@ import MultipeerConnectivity
 class cMyPassListener {
   // tag::listener-initialize[]
   // tag::listener-config-db[]
-  // Initialize the listener config <i class="conum" data-value="43"></i><b>(43)</b>
+  // Initialize the listener config <i class="conum" data-value="41"></i><b>(41)</b>
   CBLURLEndpointListenerConfiguration* thisConfig;
   thisConfig =
     [[CBLURLEndpointListenerConfiguration alloc]
@@ -11691,32 +11539,32 @@ class cMyPassListener {
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
-    thisConfig.port =  55990; <i class="conum" data-value="44"></i><b>(44)</b>
+    thisConfig.port =  55990; <i class="conum" data-value="42"></i><b>(42)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
     NSString *thisURL = @"10.1.1.10";
-    thisConfig.networkInterface = thisURL; <i class="conum" data-value="45"></i><b>(45)</b>
+    thisConfig.networkInterface = thisURL; <i class="conum" data-value="43"></i><b>(43)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    thisConfig.enableDeltaSync = true; <i class="conum" data-value="46"></i><b>(46)</b>
+    thisConfig.enableDeltaSync = true; <i class="conum" data-value="44"></i><b>(44)</b>
 
     // end::listener-config-delta-sync[]
     // Configure server security
     // tag::listener-config-tls-enable[]
-    thisConfig.disableTLS  = false; <i class="conum" data-value="47"></i><b>(47)</b>
+    thisConfig.disableTLS  = false; <i class="conum" data-value="45"></i><b>(45)</b>
 
     // end::listener-config-tls-enable[]
 
     // tag::listener-config-tls-id-anon[]
     // Use an anonymous self-signed cert
-    thisConfig.tlsIdentity = nil; <i class="conum" data-value="48"></i><b>(48)</b>
+    thisConfig.tlsIdentity = nil; <i class="conum" data-value="46"></i><b>(46)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
     // Configure Client Security using an Authenticator
-    // For example, Basic Authentication <i class="conum" data-value="49"></i><b>(49)</b>
+    // For example, Basic Authentication <i class="conum" data-value="47"></i><b>(47)</b>
     thisConfig.authenticator =
       [[CBLListenerPasswordAuthenticator alloc]
         initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
@@ -11729,13 +11577,13 @@ class cMyPassListener {
     // end::listener-config-client-auth-pwd[]
     // tag::listener-start[]
     // tag::listener-init[]
-    // Initialize the listener <i class="conum" data-value="50"></i><b>(50)</b>
+    // Initialize the listener <i class="conum" data-value="48"></i><b>(48)</b>
     CBLURLEndpointListener* thisListener = nil;
     thisListener =
       [[CBLURLEndpointListener alloc] initWithConfig: thisConfig];
 
     // end::listener-init[]
-    // start the listener <i class="conum" data-value="51"></i><b>(51)</b>
+    // start the listener <i class="conum" data-value="49"></i><b>(49)</b>
     BOOL success = [thisListener startWithError: &amp;error];
     if (!success) {
         NSLog(@"Cannot start the listener: %@", error);
@@ -11787,7 +11635,7 @@ CBLDatabase *thisDB = self.db;
 // tag::listener-config-tls-full[]
   // Configure server authentication
   // tag::listener-config-tls-disable[]
-  thisConfig.disableTLS  = true; <i class="conum" data-value="52"></i><b>(52)</b>
+  thisConfig.disableTLS  = true; <i class="conum" data-value="50"></i><b>(50)</b>
 
   // end::listener-config-tls-disable[]
 
@@ -11798,7 +11646,7 @@ CBLDatabase *thisDB = self.db;
   // Create a TLSIdentity from a key-pair and
   // certificate in secure storage
     NSURL *certURL =
-      [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="53"></i><b>(53)</b>
+      [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="51"></i><b>(51)</b>
 
     NSData *data =
       [[NSData alloc] initWithContentsOfURL: certURL];
@@ -11806,27 +11654,27 @@ CBLDatabase *thisDB = self.db;
       [CBLTLSIdentity importIdentityWithData: data
         password: @"123"
         label: @"couchbase-docs-cert"
-        error: &amp;error]; <i class="conum" data-value="54"></i><b>(54)</b>
+        error: &amp;error]; <i class="conum" data-value="52"></i><b>(52)</b>
 
-    config.tlsIdentity = thisIdentity; <i class="conum" data-value="55"></i><b>(55)</b>
+    config.tlsIdentity = thisIdentity; <i class="conum" data-value="53"></i><b>(53)</b>
 
   // end::listener-config-tls-id-caCert[]
   // tag::listener-config-tls-id-SelfSigned[]
   // Use a self-signed certificate
   NSDictionary* attrs =
-    @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; <i class="conum" data-value="56"></i><b>(56)</b>
+    @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; <i class="conum" data-value="54"></i><b>(54)</b>
 
   thisIdentity =
     [CBLTLSIdentity createIdentityForServer: YES /* isServer */
         attributes: attrs
         expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
               label: @" couchbase-docs-cert"
-              error: &amp;error]; <i class="conum" data-value="57"></i><b>(57)</b>
+              error: &amp;error]; <i class="conum" data-value="55"></i><b>(55)</b>
 
   // end::listener-config-tls-id-SelfSigned[]
       // tag::listener-config-tls-id-set[]
   // set the TLS Identity
-  thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="58"></i><b>(58)</b>
+  thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="56"></i><b>(56)</b>
 
   // end::listener-config-tls-id-set[]
   // end::listener-config-tls-id-full[]
@@ -11837,7 +11685,7 @@ CBLDatabase *thisDB = self.db;
 // Configure the client authenticator
 NSURL *certURL =
   [[NSBundle mainBundle]
-    URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="59"></i><b>(59)</b>
+    URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="57"></i><b>(57)</b>
 NSData *data =
   [[NSData alloc]
     initWithContentsOfURL: certURL];
@@ -11846,7 +11694,7 @@ SecCertificateRef rootCertRef =
 
 thisConfig.authenticator =
   [[CBLListenerCertificateAuthenticator alloc]
-    initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  <i class="conum" data-value="60"></i><b>(60)</b> <i class="conum" data-value="61"></i><b>(61)</b>
+    initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  <i class="conum" data-value="58"></i><b>(58)</b> <i class="conum" data-value="59"></i><b>(59)</b>
 
 // end::listener-config-client-auth-root[]
 // tag::listener-config-client-auth-lambda[]
@@ -11856,7 +11704,7 @@ CBLListenerCertificateAuthenticator* thisListenerAuth =
   [[CBLListenerCertificateAuthenticator alloc]
     initWithBlock: ^BOOL(NSArray *certs) {
       SecCertificateRef cert =
-        (__bridge SecCertificateRef)(certs[0]); <i class="conum" data-value="62"></i><b>(62)</b>
+        (__bridge SecCertificateRef)(certs[0]); <i class="conum" data-value="60"></i><b>(60)</b>
       CFStringRef cnRef;
       OSStatus status = SecCertificateCopyCommonName(cert, &amp;cnRef);
       if (status == errSecSuccess) {
@@ -11865,9 +11713,9 @@ CBLListenerCertificateAuthenticator* thisListenerAuth =
               return YES;
       }
       return NO;
-  }];  <i class="conum" data-value="63"></i><b>(63)</b>
+  }];  <i class="conum" data-value="61"></i><b>(61)</b>
 
-thisConfig.authenticator = thisListenerAuth; <i class="conum" data-value="64"></i><b>(64)</b>
+thisConfig.authenticator = thisListenerAuth; <i class="conum" data-value="62"></i><b>(62)</b>
 
 // end::listener-config-client-auth-lambda[]
 
@@ -11998,7 +11846,7 @@ class myActPeerClass {
 
     CBLReplicatorConfiguration *thisConfig
       = [[CBLReplicatorConfiguration alloc]
-          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="65"></i><b>(65)</b>
+          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="63"></i><b>(63)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -12008,7 +11856,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="66"></i><b>(66)</b>
+    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="64"></i><b>(64)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -12019,7 +11867,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication
     // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="67"></i><b>(67)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="65"></i><b>(65)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // Configure Client Authentication
@@ -12027,23 +11875,23 @@ class myActPeerClass {
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="68"></i><b>(68)</b>
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="66"></i><b>(66)</b>
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::p2p-act-rep-config-conflict[]    //
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="70"></i><b>(70)</b>
+    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="68"></i><b>(68)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <i class="conum" data-value="71"></i><b>(71)</b>
+    // Optionally add a change listener <i class="conum" data-value="69"></i><b>(69)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     // Retain token for use in deletion
     id&lt;CBLListenerToken&gt; thisListenerToken
@@ -12059,7 +11907,7 @@ class myActPeerClass {
 // end::p2p-act-rep-add-change-listener[]
 // tag::p2p-act-rep-start[]
     // Run the replicator using the config settings
-    [thisReplicator start]; <i class="conum" data-value="72"></i><b>(72)</b>
+    [thisReplicator start]; <i class="conum" data-value="70"></i><b>(70)</b>
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -12079,7 +11927,7 @@ class myActPeerClass {
 // Additional Snippets from above
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="73"></i><b>(73)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::p2p-act-rep-config-cacert[]
 
@@ -12130,11 +11978,11 @@ class cMyGetCert1{
         // tag::p2p-tlsid-check-keychain[]
         // Check if Id exists in keychain and if so, use it
         CBLTLSIdentity* identity =
-          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="74"></i><b>(74)</b>
+          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="72"></i><b>(72)</b>
 
         // end::p2p-tlsid-check-keychain[]
         thisConfig.authenticator =
-          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="75"></i><b>(75)</b>
+          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="73"></i><b>(73)</b>
 
         // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -12319,7 +12167,7 @@ CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="76"></i><b>(76)</b>
+      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="74"></i><b>(74)</b>
 
 // end::sgw-act-rep-initialize[]
 // END -- snippets --</code></pre>

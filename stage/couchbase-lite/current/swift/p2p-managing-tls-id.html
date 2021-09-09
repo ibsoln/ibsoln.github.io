@@ -2987,8 +2987,12 @@ class SampleCodeTest {
 
     func dontTestReplicationResetCheckpoint() throws {
         // tag::replication-reset-checkpoint[]
-        self.replicator.resetCheckpoint()
-        self.replicator.start()
+        if (resetCheckpointRequired_Example) {
+          self.replicator.start(reset: true)  <i class="conum" data-value="27"></i><b>(27)</b>
+        else
+          self.replicator.start()
+        }
+
         // end::replication-reset-checkpoint[]
     }
 
@@ -3039,15 +3043,15 @@ class SampleCodeTest {
         config.type = .pushAndPull
         config.continuous = true
         // tag::replication-set-heartbeat[]
-        config.heartbeat = 150 <i class="conum" data-value="27"></i><b>(27)</b>
+        config.heartbeat = 150 <i class="conum" data-value="28"></i><b>(28)</b>
 
         // end::replication-set-heartbeat[]
         // tag::replication-set-maxretries[]
-        config.maxretries = 20 <i class="conum" data-value="28"></i><b>(28)</b>
+        config.maxretries = 20 <i class="conum" data-value="29"></i><b>(29)</b>
 
         // end::replication-set-maxretries[]
         // tag::replication-set-maxretrywaittime[]
-        config.maxretrywaittime = 600 <i class="conum" data-value="29"></i><b>(29)</b>
+        config.maxretrywaittime = 600 <i class="conum" data-value="30"></i><b>(30)</b>
         repl = Replicator(config: config)
 
         // end::replication-set-maxretrywaittime[]
@@ -4295,7 +4299,7 @@ class Query {
             for row in try! listQuery.execute() {
 
                 let thisDocsProps =
-                    row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="30"></i><b>(30)</b>
+                    row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="31"></i><b>(31)</b>
 
                 let docid = thisDocsProps!["id"] as! String
 
@@ -4305,7 +4309,7 @@ class Query {
 
                 let city = thisDocsProps!["city"] as! String
 
-                let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="31"></i><b>(31)</b>
+                let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="32"></i><b>(32)</b>
                 let hotelId = hotel!["id"] as! String
                 hotels[hotelId] = hotel
             } // end for
@@ -4335,13 +4339,13 @@ class Query {
             for row in  results {
 
                 // get the result into a JSON String
-                let jsonString = row.toJSON() <i class="conum" data-value="32"></i><b>(32)</b>
+                let jsonString = row.toJSON() <i class="conum" data-value="33"></i><b>(33)</b>
 
                 let thisJsonObj:Dictionary =
                     try! (JSONSerialization.jsonObject(
                             with: jsonString.data(using: .utf8)!,
                                                   options: .allowFragments)
-                            as? [String: Any])! <i class="conum" data-value="33"></i><b>(33)</b>
+                            as? [String: Any])! <i class="conum" data-value="34"></i><b>(34)</b>
 
                 // Use Json Object to populate Native object
                 // Use Codable class to unpack JSON data to native object
@@ -4350,7 +4354,7 @@ class Query {
                         Hotel.self,
                         from: jsonString.data(using: .utf8)!
                         )
-                    ) <i class="conum" data-value="34"></i><b>(34)</b>
+                    ) <i class="conum" data-value="35"></i><b>(35)</b>
 
                 // ALTERNATIVELY unpack in steps
                 this_hotel.id = thisJsonObj["id"] as! String
@@ -4395,7 +4399,7 @@ class Query {
         for (_, result) in try! listQuery.execute().enumerated() {
 
 
-            let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="35"></i><b>(35)</b>
+            let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="36"></i><b>(36)</b>
                 // Store dictionary data in hotel object and save in arry
             hotel.id = thisDoc!["id"] as! String
             hotel.name = thisDoc!["name"] as! String
@@ -4434,7 +4438,7 @@ class Query {
 
             for result in try! listQuery.execute() {
                 let dict = result.toDictionary() as? [String: Int]
-                let thiscount = dict!["mycount"]! <i class="conum" data-value="36"></i><b>(36)</b>
+                let thiscount = dict!["mycount"]! <i class="conum" data-value="37"></i><b>(37)</b>
                 print("There are ", thiscount, " rows")
 
                 // Alternatively
@@ -4464,7 +4468,7 @@ class Query {
             print(result.toDictionary())
             print("Document Id is -- ", result["metaId"].string!)
 
-            let thisDocsId = result["metaId"].string! <i class="conum" data-value="37"></i><b>(37)</b>
+            let thisDocsId = result["metaId"].string! <i class="conum" data-value="38"></i><b>(38)</b>
 
             // Now you can get the document using the ID
             var thisDoc = db.document(withID: thisDocsId)!.toDictionary()
@@ -4546,7 +4550,7 @@ class Query {
         let db = try! Database(name: "hotel")
 
         let listQuery =  db.createQuery( query:
-            "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'" <i class="conum" data-value="38"></i><b>(38)</b>
+            "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'" <i class="conum" data-value="39"></i><b>(39)</b>
         )
 
         let results: ResultSet = try listQuery.execute()
@@ -4567,11 +4571,11 @@ class Query {
 
         let listQuery =
             db.createQuery( query:
-                   "SELECT META().id AS thisId FROM _ WHERE type = $type" <i class="conum" data-value="39"></i><b>(39)</b>
+                   "SELECT META().id AS thisId FROM _ WHERE type = $type" <i class="conum" data-value="40"></i><b>(40)</b>
                 )
 
         listQuery.parameters =
-            Parameters().setString("hotel", forName: "type") <i class="conum" data-value="40"></i><b>(40)</b>
+            Parameters().setString("hotel", forName: "type") <i class="conum" data-value="41"></i><b>(41)</b>
 
         let results: ResultSet = try listQuery.execute()
 
@@ -4645,11 +4649,11 @@ class Query {
         // tag::tojson-document[]
             var thisId = row.string(forKey: "metaId")! as String
 
-            var thisJSONstring = try! db.document(withID: thisId)!.toJSON() <i class="conum" data-value="41"></i><b>(41)</b>
+            var thisJSONstring = try! db.document(withID: thisId)!.toJSON() <i class="conum" data-value="42"></i><b>(42)</b>
 
             print("JSON String = ", thisJSONstring as! String)
 
-            let hotelFromJSON:MutableDocument = <i class="conum" data-value="42"></i><b>(42)</b>
+            let hotelFromJSON:MutableDocument = <i class="conum" data-value="43"></i><b>(43)</b>
                     try! MutableDocument(id: thisId as? String, json: thisJSONstring)
 
             try! dbnew.saveDocument(hotelFromJSON)
@@ -4657,7 +4661,7 @@ class Query {
             let newhotel = dbnew.document(withID: thisId)
 
             let keys = newhotel!.keys
-            for key in keys { <i class="conum" data-value="43"></i><b>(43)</b>
+            for key in keys { <i class="conum" data-value="44"></i><b>(44)</b>
                 print(key, newhotel!.value(forKey: key) as! String)
             }
 
@@ -4689,7 +4693,7 @@ class Query {
             \"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]
             """
         let myArray:MutableArrayObject =
-            try! MutableArrayObject.init(json: thisJSONstring) <i class="conum" data-value="44"></i><b>(44)</b>
+            try! MutableArrayObject.init(json: thisJSONstring) <i class="conum" data-value="45"></i><b>(45)</b>
 
         for i in 0...myArray.count-1 {
 
@@ -4697,7 +4701,7 @@ class Query {
 
             var docid = myArray.dictionary(at: i)!.string(forKey: "id")
 
-            var newdoc:MutableDocument = <i class="conum" data-value="45"></i><b>(45)</b>
+            var newdoc:MutableDocument = <i class="conum" data-value="46"></i><b>(46)</b>
                 try! MutableDocument(id: docid,
                          data: (myArray.dictionary(at: i)?.toDictionary())! )
 
@@ -4707,13 +4711,13 @@ class Query {
 
         let extendedDoc = dbnew.document(withID: "1002")
         let features =
-            extendedDoc!.array(forKey: "features")?.toArray() <i class="conum" data-value="46"></i><b>(46)</b>
+            extendedDoc!.array(forKey: "features")?.toArray() <i class="conum" data-value="47"></i><b>(47)</b>
         for i in 0...features!.count-1 {
             print(features![i])
         }
 
         print( extendedDoc!.array(
-                forKey: "features")?.toJSON() as! String) <i class="conum" data-value="47"></i><b>(47)</b>
+                forKey: "features")?.toJSON() as! String) <i class="conum" data-value="48"></i><b>(48)</b>
 
         // end::tojson-array[]
 
@@ -4741,7 +4745,7 @@ class Query {
             """
 
         let myDict:MutableDictionaryObject =
-            try! MutableDictionaryObject(json: aJSONstring) <i class="conum" data-value="48"></i><b>(48)</b>
+            try! MutableDictionaryObject(json: aJSONstring) <i class="conum" data-value="49"></i><b>(49)</b>
         print(myDict)
 
         let name = myDict.string(forKey: "name")
@@ -4775,18 +4779,18 @@ class Query {
         // tag::tojson-blob[]
 
         // Get a document
-        let thisDoc = db.document(withID: "1000")?.toMutable() <i class="conum" data-value="49"></i><b>(49)</b>
+        let thisDoc = db.document(withID: "1000")?.toMutable() <i class="conum" data-value="50"></i><b>(50)</b>
 
 
         // Get the image and add as a blob to the document
         let contentType = "";
         let ourImage = UIImage(named: "couchbaseimage.png")!
-        let imageData = ourImage.jpegData(compressionQuality: 1)! <i class="conum" data-value="50"></i><b>(50)</b>
+        let imageData = ourImage.jpegData(compressionQuality: 1)! <i class="conum" data-value="51"></i><b>(51)</b>
         thisDoc?.setBlob(
-            Blob(contentType: contentType, data: imageData), forKey: "avatar") <i class="conum" data-value="51"></i><b>(51)</b>
+            Blob(contentType: contentType, data: imageData), forKey: "avatar") <i class="conum" data-value="52"></i><b>(52)</b>
 
        let theBlobAsJSONstringFails =
-              thisDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="52"></i><b>(52)</b>
+              thisDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="53"></i><b>(53)</b>
 
         // Save blob as part of doc or alternatively as a blob
 
@@ -4796,7 +4800,7 @@ class Query {
 
         // Retrieve saved blob as a JSON, reconstitue and check still blob
         let sameDoc = db.document(withID: "1000")?.toMutable()
-        let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="53"></i><b>(53)</b>
+        let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="54"></i><b>(54)</b>
         let reconstitutedBlob =
              MutableDictionaryObject().
                 setDictionary(try MutableDictionaryObject().
@@ -4805,7 +4809,7 @@ class Query {
              print( "Data -- {0) = {1}", key, value);
         }
 
-        if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) <i class="conum" data-value="54"></i><b>(54)</b>
+        if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) <i class="conum" data-value="55"></i><b>(55)</b>
         {
             print(theBlobAsJSONstring);
         }
@@ -4864,7 +4868,7 @@ class Query {
 
 // tag::listener-simple[]
 val config =
-  URLEndpointListenerConfiguration(database) <i class="conum" data-value="55"></i><b>(55)</b>
+  URLEndpointListenerConfiguration(database) <i class="conum" data-value="56"></i><b>(56)</b>
 
 config.setAuthenticator(
     ListenerPasswordAuthenticator {
@@ -4872,12 +4876,12 @@ config.setAuthenticator(
         "valid.user" == username &amp;&amp;
         ("valid.password.string" == String(password))
     }
-) <i class="conum" data-value="56"></i><b>(56)</b>
+) <i class="conum" data-value="57"></i><b>(57)</b>
 
 val listener =
-  URLEndpointListener(config) <i class="conum" data-value="57"></i><b>(57)</b>
+  URLEndpointListener(config) <i class="conum" data-value="58"></i><b>(58)</b>
 
-listener.start()  <i class="conum" data-value="58"></i><b>(58)</b>
+listener.start()  <i class="conum" data-value="59"></i><b>(59)</b>
 
 // end::listener-simple[]
 
@@ -4886,18 +4890,18 @@ listener.start()  <i class="conum" data-value="58"></i><b>(58)</b>
 // tag::replicator-simple[]
 
 let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
-let targetEndpoint = URLEndpoint(url: tgtUrl) //  <i class="conum" data-value="59"></i><b>(59)</b>
+let targetEndpoint = URLEndpoint(url: tgtUrl) //  <i class="conum" data-value="60"></i><b>(60)</b>
 
-var thisConfig = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="60"></i><b>(60)</b>
+var thisConfig = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="61"></i><b>(61)</b>
 
-thisConfig.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="61"></i><b>(61)</b>
+thisConfig.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="62"></i><b>(62)</b>
 
 let thisAuthenticator = BasicAuthenticator(username: "valid.user", password: "valid.password.string")
-thisConfig.authenticator = thisAuthenticator <i class="conum" data-value="62"></i><b>(62)</b>
+thisConfig.authenticator = thisAuthenticator <i class="conum" data-value="63"></i><b>(63)</b>
 
-this.replicator = new Replicator(config); <i class="conum" data-value="63"></i><b>(63)</b>
+this.replicator = new Replicator(config); <i class="conum" data-value="64"></i><b>(64)</b>
 
-this.replicator.start(); <i class="conum" data-value="64"></i><b>(64)</b>
+this.replicator.start(); <i class="conum" data-value="65"></i><b>(65)</b>
 
 // end::replicator-simple[]
 
@@ -5505,31 +5509,31 @@ class cMyPassListener {
 
     // tag::listener-config-db[]
     let listenerConfig =
-      URLEndpointListenerConfiguration(database: thisDB!) <i class="conum" data-value="65"></i><b>(65)</b>
+      URLEndpointListenerConfiguration(database: thisDB!) <i class="conum" data-value="66"></i><b>(66)</b>
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
     /* optionally */ let wsPort: UInt16 = 55991
     /* optionally */ let wssPort: UInt16 = 55990
-    listenerConfig.port =  wssPort <i class="conum" data-value="66"></i><b>(66)</b>
+    listenerConfig.port =  wssPort <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
-    listenerConfig.networkInterface = "10.1.1.10"  <i class="conum" data-value="67"></i><b>(67)</b>
+    listenerConfig.networkInterface = "10.1.1.10"  <i class="conum" data-value="68"></i><b>(68)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    listenerConfig.enableDeltaSync = true <i class="conum" data-value="68"></i><b>(68)</b>
+    listenerConfig.enableDeltaSync = true <i class="conum" data-value="69"></i><b>(69)</b>
 
     // end::listener-config-delta-sync[]
     // tag::listener-config-tls-enable[]
-    listenerConfig.disableTLS  = false <i class="conum" data-value="69"></i><b>(69)</b>
+    listenerConfig.disableTLS  = false <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::listener-config-tls-enable[]
      // tag::listener-config-tls-id-anon[]
     // Set the credentials the server presents the client
     // Use an anonymous self-signed cert
-    listenerConfig.tlsIdentity = nil <i class="conum" data-value="70"></i><b>(70)</b>
+    listenerConfig.tlsIdentity = nil <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
@@ -5544,19 +5548,19 @@ class cMyPassListener {
               return true
               }
             return false
-          }) <i class="conum" data-value="71"></i><b>(71)</b>
+          }) <i class="conum" data-value="72"></i><b>(72)</b>
 
     // end::listener-config-client-auth-pwd[]
 
     // tag::listener-start[]
     // Initialize the listener
-    _thisListener = URLEndpointListener(config: listenerConfig) <i class="conum" data-value="72"></i><b>(72)</b>
+    _thisListener = URLEndpointListener(config: listenerConfig) <i class="conum" data-value="73"></i><b>(73)</b>
     guard let thisListener = _thisListener else {
       throw ListenerError.NotInitialized
       // ... take appropriate actions
     }
     // Start the listener
-    try thisListener.start() <i class="conum" data-value="73"></i><b>(73)</b>
+    try thisListener.start() <i class="conum" data-value="74"></i><b>(74)</b>
 
     // end::listener-start[]
 // end::listener-initialize[]
@@ -5594,11 +5598,11 @@ print("urls: \(listener.urls)")
 
     // tag::listener-config-tls-full[]
     // tag::listener-config-tls-full-enable[]
-    listenerConfig.disableTLS  = false <i class="conum" data-value="74"></i><b>(74)</b>
+    listenerConfig.disableTLS  = false <i class="conum" data-value="75"></i><b>(75)</b>
 
     // end::listener-config-tls-full-enable[]
     // tag::listener-config-tls-disable[]
-    listenerConfig.disableTLS  = true <i class="conum" data-value="75"></i><b>(75)</b>
+    listenerConfig.disableTLS  = true <i class="conum" data-value="76"></i><b>(76)</b>
 
     // end::listener-config-tls-disable[]
 
@@ -5610,27 +5614,27 @@ print("urls: \(listener.urls)")
 
     guard let localCertificate =
       try? NSData(contentsOfFile: pathToCert) as Data
-    else { /* process error */ return } <i class="conum" data-value="76"></i><b>(76)</b>
+    else { /* process error */ return } <i class="conum" data-value="77"></i><b>(77)</b>
 
     let thisIdentity =
       try TLSIdentity.importIdentity(withData: localCertificate,
                                     password: "123",
-                                    label: thisSecId) <i class="conum" data-value="77"></i><b>(77)</b>
+                                    label: thisSecId) <i class="conum" data-value="78"></i><b>(78)</b>
 
     // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
-    let attrs = [certAttrCommonName: "Couchbase Inc"] <i class="conum" data-value="78"></i><b>(78)</b>
+    let attrs = [certAttrCommonName: "Couchbase Inc"] <i class="conum" data-value="79"></i><b>(79)</b>
 
     let thisIdentity =
       try TLSIdentity.createIdentity(forServer: true, /* isServer */
             attributes: attrs,
             expiration: Date().addingTimeInterval(86400),
-            label: "Server-Cert-Label") <i class="conum" data-value="79"></i><b>(79)</b>
+            label: "Server-Cert-Label") <i class="conum" data-value="80"></i><b>(80)</b>
 
     // end::listener-config-tls-id-SelfSigned[]
     // tag::listener-config-tls-id-full-set[]
     // Set the credentials the server presents the client
-    listenerConfig.tlsIdentity = thisIdentity    <i class="conum" data-value="80"></i><b>(80)</b>
+    listenerConfig.tlsIdentity = thisIdentity    <i class="conum" data-value="81"></i><b>(81)</b>
 
     // end::listener-config-tls-id-full-set[]
     // end::listener-config-tls-id-full[]
@@ -5639,10 +5643,10 @@ print("urls: \(listener.urls)")
     // Authenticate using Cert Authority
 
     // cert is a pre-populated object of type:SecCertificate representing a certificate
-    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="81"></i><b>(81)</b>
+    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="82"></i><b>(82)</b>
     let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! //
 
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) <i class="conum" data-value="82"></i><b>(82)</b> <i class="conum" data-value="83"></i><b>(83)</b>
+    listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) <i class="conum" data-value="83"></i><b>(83)</b> <i class="conum" data-value="84"></i><b>(84)</b>
 
     // end::listener-config-client-auth-root[]
     // end::listener-config-client-root-ca[]
@@ -5651,10 +5655,10 @@ print("urls: \(listener.urls)")
     // Authenticate self-signed cert using application logic
 
     // cert is a user-supplied object of type:SecCertificate representing a certificate
-    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="84"></i><b>(84)</b>
+    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="85"></i><b>(85)</b>
     let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
 
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init { <i class="conum" data-value="85"></i><b>(85)</b>
+    listenerConfig.authenticator = ListenerCertificateAuthenticator.init { <i class="conum" data-value="86"></i><b>(86)</b>
       (certs) -&gt; Bool in
         var certs:SecCertificate
         var certCommonName:CFString?
@@ -5663,7 +5667,7 @@ print("urls: \(listener.urls)")
             return true
         }
         return false
-    } <i class="conum" data-value="86"></i><b>(86)</b>
+    } <i class="conum" data-value="87"></i><b>(87)</b>
 
     // end::listener-config-client-auth-self-signed[]
     // end::listener-config-client-auth-lambda[]
@@ -5769,7 +5773,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-initialize[]
     let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
     let targetEndpoint = URLEndpoint(url: tgtUrl)
-    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="87"></i><b>(87)</b>
+    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="88"></i><b>(88)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -5779,7 +5783,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = false; <i class="conum" data-value="88"></i><b>(88)</b>
+    thisConfig.enableAutoPurge = false; <i class="conum" data-value="89"></i><b>(89)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -5789,10 +5793,10 @@ class myActPeerClass {
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="89"></i><b>(89)</b>
+    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="90"></i><b>(90)</b>
 
     // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Security <i class="conum" data-value="90"></i><b>(90)</b>
+    // Configure Client Security <i class="conum" data-value="91"></i><b>(91)</b>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
     let thisAuthenticator = BasicAuthenticator(username: "Our Username", password: "Our Password")
@@ -5801,18 +5805,18 @@ class myActPeerClass {
     // end::p2p-act-rep-auth[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    config.conflictResolver = ( /* define resolver function */); <i class="conum" data-value="91"></i><b>(91)</b>
+    config.conflictResolver = ( /* define resolver function */); <i class="conum" data-value="92"></i><b>(92)</b>
 
     // end::p2p-act-rep-config-conflict[]
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    thisReplicator = Replicator.init( config: config) <i class="conum" data-value="92"></i><b>(92)</b>
+    thisReplicator = Replicator.init( config: config) <i class="conum" data-value="93"></i><b>(93)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // Optionally add a change listener
     // Retain token for use in deletion
-    let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="93"></i><b>(93)</b>
+    let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="94"></i><b>(94)</b>
       if change.status.activity == .stopped {
           print("Replication stopped")
       }
@@ -5827,7 +5831,7 @@ class myActPeerClass {
 
     // tag::p2p-act-rep-start[]
         // Run the replicator using the config settings
-        thisReplicator?.start()  <i class="conum" data-value="94"></i><b>(94)</b>
+        thisReplicator?.start()  <i class="conum" data-value="95"></i><b>(95)</b>
 
     // end::p2p-act-rep-start[]
     // end::p2p-act-rep-start-full[]
@@ -5852,12 +5856,12 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    config.acceptOnlySelfSignedServerCertificate = false <i class="conum" data-value="95"></i><b>(95)</b>
+    config.acceptOnlySelfSignedServerCertificate = false <i class="conum" data-value="96"></i><b>(96)</b>
 
     // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="96"></i><b>(96)</b>
+    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="97"></i><b>(97)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // tag::p2p-act-rep-config-pinnedcert[]
@@ -5865,7 +5869,7 @@ class myActPeerClass {
     config.pinnedServerCertificate = thisCert; // Get listener cert if pinned
 
     // end::p2p-act-rep-config-pinnedcert[]
-    // Configure Client Security <i class="conum" data-value="97"></i><b>(97)</b>
+    // Configure Client Security <i class="conum" data-value="98"></i><b>(98)</b>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
     let thisAuthenticator = BasicAuthenticator(username: validUser, password: validPassword)
@@ -5877,9 +5881,9 @@ class myActPeerClass {
     // tag::p2p-tlsid-tlsidentity-with-label[]
       // Check if Id exists in keychain and if so, use that Id
       if let thisIdentity =
-        (try? TLSIdentity.identity(withLabel: "doco-sync-server")) ?? nil { <i class="conum" data-value="98"></i><b>(98)</b>
+        (try? TLSIdentity.identity(withLabel: "doco-sync-server")) ?? nil { <i class="conum" data-value="99"></i><b>(99)</b>
           print("An identity with label : doco-sync-server already exists in keychain")
-          thisAuthenticator = ClientCertificateAuthenticator(identity: thisIdentity)  <i class="conum" data-value="99"></i><b>(99)</b>
+          thisAuthenticator = ClientCertificateAuthenticator(identity: thisIdentity)  <i class="conum" data-value="100"></i><b>(100)</b>
           config.authenticator = thisAuthenticator
           }
 
@@ -6073,7 +6077,7 @@ func fMyCaCertPinned() {
 
 
         // tag::old-listener-config-client-root-ca[]
-    // Configure the client authenticator to validate using ROOT CA <i class="conum" data-value="100"></i><b>(100)</b>
+    // Configure the client authenticator to validate using ROOT CA <i class="conum" data-value="101"></i><b>(101)</b>
 
     // end::old-listener-config-client-root-ca[]
 
@@ -6113,7 +6117,7 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
     // tag::sgw-act-rep-initialize[]
     let tgtUrl = URL(string: "wss://10.1.1.12:8092/travel-sample")!
     let targetEndpoint = URLEndpoint(url: tgtUrl)
-    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="101"></i><b>(101)</b>
+    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="102"></i><b>(102)</b>
 
     // end::sgw-act-rep-initialize[]</code></pre>
 </div>
@@ -7044,8 +7048,12 @@ class SampleCodeTest {
 
     func dontTestReplicationResetCheckpoint() throws {
         // tag::replication-reset-checkpoint[]
-        self.replicator.resetCheckpoint()
-        self.replicator.start()
+        if (resetCheckpointRequired_Example) {
+          self.replicator.start(reset: true)  <i class="conum" data-value="27"></i><b>(27)</b>
+        else
+          self.replicator.start()
+        }
+
         // end::replication-reset-checkpoint[]
     }
 
@@ -7096,15 +7104,15 @@ class SampleCodeTest {
         config.type = .pushAndPull
         config.continuous = true
         // tag::replication-set-heartbeat[]
-        config.heartbeat = 150 <i class="conum" data-value="27"></i><b>(27)</b>
+        config.heartbeat = 150 <i class="conum" data-value="28"></i><b>(28)</b>
 
         // end::replication-set-heartbeat[]
         // tag::replication-set-maxretries[]
-        config.maxretries = 20 <i class="conum" data-value="28"></i><b>(28)</b>
+        config.maxretries = 20 <i class="conum" data-value="29"></i><b>(29)</b>
 
         // end::replication-set-maxretries[]
         // tag::replication-set-maxretrywaittime[]
-        config.maxretrywaittime = 600 <i class="conum" data-value="29"></i><b>(29)</b>
+        config.maxretrywaittime = 600 <i class="conum" data-value="30"></i><b>(30)</b>
         repl = Replicator(config: config)
 
         // end::replication-set-maxretrywaittime[]
@@ -8352,7 +8360,7 @@ class Query {
             for row in try! listQuery.execute() {
 
                 let thisDocsProps =
-                    row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="30"></i><b>(30)</b>
+                    row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="31"></i><b>(31)</b>
 
                 let docid = thisDocsProps!["id"] as! String
 
@@ -8362,7 +8370,7 @@ class Query {
 
                 let city = thisDocsProps!["city"] as! String
 
-                let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="31"></i><b>(31)</b>
+                let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="32"></i><b>(32)</b>
                 let hotelId = hotel!["id"] as! String
                 hotels[hotelId] = hotel
             } // end for
@@ -8392,13 +8400,13 @@ class Query {
             for row in  results {
 
                 // get the result into a JSON String
-                let jsonString = row.toJSON() <i class="conum" data-value="32"></i><b>(32)</b>
+                let jsonString = row.toJSON() <i class="conum" data-value="33"></i><b>(33)</b>
 
                 let thisJsonObj:Dictionary =
                     try! (JSONSerialization.jsonObject(
                             with: jsonString.data(using: .utf8)!,
                                                   options: .allowFragments)
-                            as? [String: Any])! <i class="conum" data-value="33"></i><b>(33)</b>
+                            as? [String: Any])! <i class="conum" data-value="34"></i><b>(34)</b>
 
                 // Use Json Object to populate Native object
                 // Use Codable class to unpack JSON data to native object
@@ -8407,7 +8415,7 @@ class Query {
                         Hotel.self,
                         from: jsonString.data(using: .utf8)!
                         )
-                    ) <i class="conum" data-value="34"></i><b>(34)</b>
+                    ) <i class="conum" data-value="35"></i><b>(35)</b>
 
                 // ALTERNATIVELY unpack in steps
                 this_hotel.id = thisJsonObj["id"] as! String
@@ -8452,7 +8460,7 @@ class Query {
         for (_, result) in try! listQuery.execute().enumerated() {
 
 
-            let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="35"></i><b>(35)</b>
+            let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="36"></i><b>(36)</b>
                 // Store dictionary data in hotel object and save in arry
             hotel.id = thisDoc!["id"] as! String
             hotel.name = thisDoc!["name"] as! String
@@ -8491,7 +8499,7 @@ class Query {
 
             for result in try! listQuery.execute() {
                 let dict = result.toDictionary() as? [String: Int]
-                let thiscount = dict!["mycount"]! <i class="conum" data-value="36"></i><b>(36)</b>
+                let thiscount = dict!["mycount"]! <i class="conum" data-value="37"></i><b>(37)</b>
                 print("There are ", thiscount, " rows")
 
                 // Alternatively
@@ -8521,7 +8529,7 @@ class Query {
             print(result.toDictionary())
             print("Document Id is -- ", result["metaId"].string!)
 
-            let thisDocsId = result["metaId"].string! <i class="conum" data-value="37"></i><b>(37)</b>
+            let thisDocsId = result["metaId"].string! <i class="conum" data-value="38"></i><b>(38)</b>
 
             // Now you can get the document using the ID
             var thisDoc = db.document(withID: thisDocsId)!.toDictionary()
@@ -8603,7 +8611,7 @@ class Query {
         let db = try! Database(name: "hotel")
 
         let listQuery =  db.createQuery( query:
-            "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'" <i class="conum" data-value="38"></i><b>(38)</b>
+            "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'" <i class="conum" data-value="39"></i><b>(39)</b>
         )
 
         let results: ResultSet = try listQuery.execute()
@@ -8624,11 +8632,11 @@ class Query {
 
         let listQuery =
             db.createQuery( query:
-                   "SELECT META().id AS thisId FROM _ WHERE type = $type" <i class="conum" data-value="39"></i><b>(39)</b>
+                   "SELECT META().id AS thisId FROM _ WHERE type = $type" <i class="conum" data-value="40"></i><b>(40)</b>
                 )
 
         listQuery.parameters =
-            Parameters().setString("hotel", forName: "type") <i class="conum" data-value="40"></i><b>(40)</b>
+            Parameters().setString("hotel", forName: "type") <i class="conum" data-value="41"></i><b>(41)</b>
 
         let results: ResultSet = try listQuery.execute()
 
@@ -8702,11 +8710,11 @@ class Query {
         // tag::tojson-document[]
             var thisId = row.string(forKey: "metaId")! as String
 
-            var thisJSONstring = try! db.document(withID: thisId)!.toJSON() <i class="conum" data-value="41"></i><b>(41)</b>
+            var thisJSONstring = try! db.document(withID: thisId)!.toJSON() <i class="conum" data-value="42"></i><b>(42)</b>
 
             print("JSON String = ", thisJSONstring as! String)
 
-            let hotelFromJSON:MutableDocument = <i class="conum" data-value="42"></i><b>(42)</b>
+            let hotelFromJSON:MutableDocument = <i class="conum" data-value="43"></i><b>(43)</b>
                     try! MutableDocument(id: thisId as? String, json: thisJSONstring)
 
             try! dbnew.saveDocument(hotelFromJSON)
@@ -8714,7 +8722,7 @@ class Query {
             let newhotel = dbnew.document(withID: thisId)
 
             let keys = newhotel!.keys
-            for key in keys { <i class="conum" data-value="43"></i><b>(43)</b>
+            for key in keys { <i class="conum" data-value="44"></i><b>(44)</b>
                 print(key, newhotel!.value(forKey: key) as! String)
             }
 
@@ -8746,7 +8754,7 @@ class Query {
             \"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]
             """
         let myArray:MutableArrayObject =
-            try! MutableArrayObject.init(json: thisJSONstring) <i class="conum" data-value="44"></i><b>(44)</b>
+            try! MutableArrayObject.init(json: thisJSONstring) <i class="conum" data-value="45"></i><b>(45)</b>
 
         for i in 0...myArray.count-1 {
 
@@ -8754,7 +8762,7 @@ class Query {
 
             var docid = myArray.dictionary(at: i)!.string(forKey: "id")
 
-            var newdoc:MutableDocument = <i class="conum" data-value="45"></i><b>(45)</b>
+            var newdoc:MutableDocument = <i class="conum" data-value="46"></i><b>(46)</b>
                 try! MutableDocument(id: docid,
                          data: (myArray.dictionary(at: i)?.toDictionary())! )
 
@@ -8764,13 +8772,13 @@ class Query {
 
         let extendedDoc = dbnew.document(withID: "1002")
         let features =
-            extendedDoc!.array(forKey: "features")?.toArray() <i class="conum" data-value="46"></i><b>(46)</b>
+            extendedDoc!.array(forKey: "features")?.toArray() <i class="conum" data-value="47"></i><b>(47)</b>
         for i in 0...features!.count-1 {
             print(features![i])
         }
 
         print( extendedDoc!.array(
-                forKey: "features")?.toJSON() as! String) <i class="conum" data-value="47"></i><b>(47)</b>
+                forKey: "features")?.toJSON() as! String) <i class="conum" data-value="48"></i><b>(48)</b>
 
         // end::tojson-array[]
 
@@ -8798,7 +8806,7 @@ class Query {
             """
 
         let myDict:MutableDictionaryObject =
-            try! MutableDictionaryObject(json: aJSONstring) <i class="conum" data-value="48"></i><b>(48)</b>
+            try! MutableDictionaryObject(json: aJSONstring) <i class="conum" data-value="49"></i><b>(49)</b>
         print(myDict)
 
         let name = myDict.string(forKey: "name")
@@ -8832,18 +8840,18 @@ class Query {
         // tag::tojson-blob[]
 
         // Get a document
-        let thisDoc = db.document(withID: "1000")?.toMutable() <i class="conum" data-value="49"></i><b>(49)</b>
+        let thisDoc = db.document(withID: "1000")?.toMutable() <i class="conum" data-value="50"></i><b>(50)</b>
 
 
         // Get the image and add as a blob to the document
         let contentType = "";
         let ourImage = UIImage(named: "couchbaseimage.png")!
-        let imageData = ourImage.jpegData(compressionQuality: 1)! <i class="conum" data-value="50"></i><b>(50)</b>
+        let imageData = ourImage.jpegData(compressionQuality: 1)! <i class="conum" data-value="51"></i><b>(51)</b>
         thisDoc?.setBlob(
-            Blob(contentType: contentType, data: imageData), forKey: "avatar") <i class="conum" data-value="51"></i><b>(51)</b>
+            Blob(contentType: contentType, data: imageData), forKey: "avatar") <i class="conum" data-value="52"></i><b>(52)</b>
 
        let theBlobAsJSONstringFails =
-              thisDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="52"></i><b>(52)</b>
+              thisDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="53"></i><b>(53)</b>
 
         // Save blob as part of doc or alternatively as a blob
 
@@ -8853,7 +8861,7 @@ class Query {
 
         // Retrieve saved blob as a JSON, reconstitue and check still blob
         let sameDoc = db.document(withID: "1000")?.toMutable()
-        let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="53"></i><b>(53)</b>
+        let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="54"></i><b>(54)</b>
         let reconstitutedBlob =
              MutableDictionaryObject().
                 setDictionary(try MutableDictionaryObject().
@@ -8862,7 +8870,7 @@ class Query {
              print( "Data -- {0) = {1}", key, value);
         }
 
-        if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) <i class="conum" data-value="54"></i><b>(54)</b>
+        if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) <i class="conum" data-value="55"></i><b>(55)</b>
         {
             print(theBlobAsJSONstring);
         }
@@ -8921,7 +8929,7 @@ class Query {
 
 // tag::listener-simple[]
 val config =
-  URLEndpointListenerConfiguration(database) <i class="conum" data-value="55"></i><b>(55)</b>
+  URLEndpointListenerConfiguration(database) <i class="conum" data-value="56"></i><b>(56)</b>
 
 config.setAuthenticator(
     ListenerPasswordAuthenticator {
@@ -8929,12 +8937,12 @@ config.setAuthenticator(
         "valid.user" == username &amp;&amp;
         ("valid.password.string" == String(password))
     }
-) <i class="conum" data-value="56"></i><b>(56)</b>
+) <i class="conum" data-value="57"></i><b>(57)</b>
 
 val listener =
-  URLEndpointListener(config) <i class="conum" data-value="57"></i><b>(57)</b>
+  URLEndpointListener(config) <i class="conum" data-value="58"></i><b>(58)</b>
 
-listener.start()  <i class="conum" data-value="58"></i><b>(58)</b>
+listener.start()  <i class="conum" data-value="59"></i><b>(59)</b>
 
 // end::listener-simple[]
 
@@ -8943,18 +8951,18 @@ listener.start()  <i class="conum" data-value="58"></i><b>(58)</b>
 // tag::replicator-simple[]
 
 let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
-let targetEndpoint = URLEndpoint(url: tgtUrl) //  <i class="conum" data-value="59"></i><b>(59)</b>
+let targetEndpoint = URLEndpoint(url: tgtUrl) //  <i class="conum" data-value="60"></i><b>(60)</b>
 
-var thisConfig = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="60"></i><b>(60)</b>
+var thisConfig = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="61"></i><b>(61)</b>
 
-thisConfig.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="61"></i><b>(61)</b>
+thisConfig.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="62"></i><b>(62)</b>
 
 let thisAuthenticator = BasicAuthenticator(username: "valid.user", password: "valid.password.string")
-thisConfig.authenticator = thisAuthenticator <i class="conum" data-value="62"></i><b>(62)</b>
+thisConfig.authenticator = thisAuthenticator <i class="conum" data-value="63"></i><b>(63)</b>
 
-this.replicator = new Replicator(config); <i class="conum" data-value="63"></i><b>(63)</b>
+this.replicator = new Replicator(config); <i class="conum" data-value="64"></i><b>(64)</b>
 
-this.replicator.start(); <i class="conum" data-value="64"></i><b>(64)</b>
+this.replicator.start(); <i class="conum" data-value="65"></i><b>(65)</b>
 
 // end::replicator-simple[]
 
@@ -9562,31 +9570,31 @@ class cMyPassListener {
 
     // tag::listener-config-db[]
     let listenerConfig =
-      URLEndpointListenerConfiguration(database: thisDB!) <i class="conum" data-value="65"></i><b>(65)</b>
+      URLEndpointListenerConfiguration(database: thisDB!) <i class="conum" data-value="66"></i><b>(66)</b>
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
     /* optionally */ let wsPort: UInt16 = 55991
     /* optionally */ let wssPort: UInt16 = 55990
-    listenerConfig.port =  wssPort <i class="conum" data-value="66"></i><b>(66)</b>
+    listenerConfig.port =  wssPort <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
-    listenerConfig.networkInterface = "10.1.1.10"  <i class="conum" data-value="67"></i><b>(67)</b>
+    listenerConfig.networkInterface = "10.1.1.10"  <i class="conum" data-value="68"></i><b>(68)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    listenerConfig.enableDeltaSync = true <i class="conum" data-value="68"></i><b>(68)</b>
+    listenerConfig.enableDeltaSync = true <i class="conum" data-value="69"></i><b>(69)</b>
 
     // end::listener-config-delta-sync[]
     // tag::listener-config-tls-enable[]
-    listenerConfig.disableTLS  = false <i class="conum" data-value="69"></i><b>(69)</b>
+    listenerConfig.disableTLS  = false <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::listener-config-tls-enable[]
      // tag::listener-config-tls-id-anon[]
     // Set the credentials the server presents the client
     // Use an anonymous self-signed cert
-    listenerConfig.tlsIdentity = nil <i class="conum" data-value="70"></i><b>(70)</b>
+    listenerConfig.tlsIdentity = nil <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
@@ -9601,19 +9609,19 @@ class cMyPassListener {
               return true
               }
             return false
-          }) <i class="conum" data-value="71"></i><b>(71)</b>
+          }) <i class="conum" data-value="72"></i><b>(72)</b>
 
     // end::listener-config-client-auth-pwd[]
 
     // tag::listener-start[]
     // Initialize the listener
-    _thisListener = URLEndpointListener(config: listenerConfig) <i class="conum" data-value="72"></i><b>(72)</b>
+    _thisListener = URLEndpointListener(config: listenerConfig) <i class="conum" data-value="73"></i><b>(73)</b>
     guard let thisListener = _thisListener else {
       throw ListenerError.NotInitialized
       // ... take appropriate actions
     }
     // Start the listener
-    try thisListener.start() <i class="conum" data-value="73"></i><b>(73)</b>
+    try thisListener.start() <i class="conum" data-value="74"></i><b>(74)</b>
 
     // end::listener-start[]
 // end::listener-initialize[]
@@ -9651,11 +9659,11 @@ print("urls: \(listener.urls)")
 
     // tag::listener-config-tls-full[]
     // tag::listener-config-tls-full-enable[]
-    listenerConfig.disableTLS  = false <i class="conum" data-value="74"></i><b>(74)</b>
+    listenerConfig.disableTLS  = false <i class="conum" data-value="75"></i><b>(75)</b>
 
     // end::listener-config-tls-full-enable[]
     // tag::listener-config-tls-disable[]
-    listenerConfig.disableTLS  = true <i class="conum" data-value="75"></i><b>(75)</b>
+    listenerConfig.disableTLS  = true <i class="conum" data-value="76"></i><b>(76)</b>
 
     // end::listener-config-tls-disable[]
 
@@ -9667,27 +9675,27 @@ print("urls: \(listener.urls)")
 
     guard let localCertificate =
       try? NSData(contentsOfFile: pathToCert) as Data
-    else { /* process error */ return } <i class="conum" data-value="76"></i><b>(76)</b>
+    else { /* process error */ return } <i class="conum" data-value="77"></i><b>(77)</b>
 
     let thisIdentity =
       try TLSIdentity.importIdentity(withData: localCertificate,
                                     password: "123",
-                                    label: thisSecId) <i class="conum" data-value="77"></i><b>(77)</b>
+                                    label: thisSecId) <i class="conum" data-value="78"></i><b>(78)</b>
 
     // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
-    let attrs = [certAttrCommonName: "Couchbase Inc"] <i class="conum" data-value="78"></i><b>(78)</b>
+    let attrs = [certAttrCommonName: "Couchbase Inc"] <i class="conum" data-value="79"></i><b>(79)</b>
 
     let thisIdentity =
       try TLSIdentity.createIdentity(forServer: true, /* isServer */
             attributes: attrs,
             expiration: Date().addingTimeInterval(86400),
-            label: "Server-Cert-Label") <i class="conum" data-value="79"></i><b>(79)</b>
+            label: "Server-Cert-Label") <i class="conum" data-value="80"></i><b>(80)</b>
 
     // end::listener-config-tls-id-SelfSigned[]
     // tag::listener-config-tls-id-full-set[]
     // Set the credentials the server presents the client
-    listenerConfig.tlsIdentity = thisIdentity    <i class="conum" data-value="80"></i><b>(80)</b>
+    listenerConfig.tlsIdentity = thisIdentity    <i class="conum" data-value="81"></i><b>(81)</b>
 
     // end::listener-config-tls-id-full-set[]
     // end::listener-config-tls-id-full[]
@@ -9696,10 +9704,10 @@ print("urls: \(listener.urls)")
     // Authenticate using Cert Authority
 
     // cert is a pre-populated object of type:SecCertificate representing a certificate
-    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="81"></i><b>(81)</b>
+    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="82"></i><b>(82)</b>
     let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! //
 
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) <i class="conum" data-value="82"></i><b>(82)</b> <i class="conum" data-value="83"></i><b>(83)</b>
+    listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) <i class="conum" data-value="83"></i><b>(83)</b> <i class="conum" data-value="84"></i><b>(84)</b>
 
     // end::listener-config-client-auth-root[]
     // end::listener-config-client-root-ca[]
@@ -9708,10 +9716,10 @@ print("urls: \(listener.urls)")
     // Authenticate self-signed cert using application logic
 
     // cert is a user-supplied object of type:SecCertificate representing a certificate
-    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="84"></i><b>(84)</b>
+    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="85"></i><b>(85)</b>
     let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
 
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init { <i class="conum" data-value="85"></i><b>(85)</b>
+    listenerConfig.authenticator = ListenerCertificateAuthenticator.init { <i class="conum" data-value="86"></i><b>(86)</b>
       (certs) -&gt; Bool in
         var certs:SecCertificate
         var certCommonName:CFString?
@@ -9720,7 +9728,7 @@ print("urls: \(listener.urls)")
             return true
         }
         return false
-    } <i class="conum" data-value="86"></i><b>(86)</b>
+    } <i class="conum" data-value="87"></i><b>(87)</b>
 
     // end::listener-config-client-auth-self-signed[]
     // end::listener-config-client-auth-lambda[]
@@ -9826,7 +9834,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-initialize[]
     let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
     let targetEndpoint = URLEndpoint(url: tgtUrl)
-    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="87"></i><b>(87)</b>
+    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="88"></i><b>(88)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -9836,7 +9844,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = false; <i class="conum" data-value="88"></i><b>(88)</b>
+    thisConfig.enableAutoPurge = false; <i class="conum" data-value="89"></i><b>(89)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -9846,10 +9854,10 @@ class myActPeerClass {
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="89"></i><b>(89)</b>
+    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="90"></i><b>(90)</b>
 
     // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Security <i class="conum" data-value="90"></i><b>(90)</b>
+    // Configure Client Security <i class="conum" data-value="91"></i><b>(91)</b>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
     let thisAuthenticator = BasicAuthenticator(username: "Our Username", password: "Our Password")
@@ -9858,18 +9866,18 @@ class myActPeerClass {
     // end::p2p-act-rep-auth[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    config.conflictResolver = ( /* define resolver function */); <i class="conum" data-value="91"></i><b>(91)</b>
+    config.conflictResolver = ( /* define resolver function */); <i class="conum" data-value="92"></i><b>(92)</b>
 
     // end::p2p-act-rep-config-conflict[]
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    thisReplicator = Replicator.init( config: config) <i class="conum" data-value="92"></i><b>(92)</b>
+    thisReplicator = Replicator.init( config: config) <i class="conum" data-value="93"></i><b>(93)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // Optionally add a change listener
     // Retain token for use in deletion
-    let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="93"></i><b>(93)</b>
+    let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="94"></i><b>(94)</b>
       if change.status.activity == .stopped {
           print("Replication stopped")
       }
@@ -9884,7 +9892,7 @@ class myActPeerClass {
 
     // tag::p2p-act-rep-start[]
         // Run the replicator using the config settings
-        thisReplicator?.start()  <i class="conum" data-value="94"></i><b>(94)</b>
+        thisReplicator?.start()  <i class="conum" data-value="95"></i><b>(95)</b>
 
     // end::p2p-act-rep-start[]
     // end::p2p-act-rep-start-full[]
@@ -9909,12 +9917,12 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    config.acceptOnlySelfSignedServerCertificate = false <i class="conum" data-value="95"></i><b>(95)</b>
+    config.acceptOnlySelfSignedServerCertificate = false <i class="conum" data-value="96"></i><b>(96)</b>
 
     // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="96"></i><b>(96)</b>
+    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="97"></i><b>(97)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // tag::p2p-act-rep-config-pinnedcert[]
@@ -9922,7 +9930,7 @@ class myActPeerClass {
     config.pinnedServerCertificate = thisCert; // Get listener cert if pinned
 
     // end::p2p-act-rep-config-pinnedcert[]
-    // Configure Client Security <i class="conum" data-value="97"></i><b>(97)</b>
+    // Configure Client Security <i class="conum" data-value="98"></i><b>(98)</b>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
     let thisAuthenticator = BasicAuthenticator(username: validUser, password: validPassword)
@@ -9934,9 +9942,9 @@ class myActPeerClass {
     // tag::p2p-tlsid-tlsidentity-with-label[]
       // Check if Id exists in keychain and if so, use that Id
       if let thisIdentity =
-        (try? TLSIdentity.identity(withLabel: "doco-sync-server")) ?? nil { <i class="conum" data-value="98"></i><b>(98)</b>
+        (try? TLSIdentity.identity(withLabel: "doco-sync-server")) ?? nil { <i class="conum" data-value="99"></i><b>(99)</b>
           print("An identity with label : doco-sync-server already exists in keychain")
-          thisAuthenticator = ClientCertificateAuthenticator(identity: thisIdentity)  <i class="conum" data-value="99"></i><b>(99)</b>
+          thisAuthenticator = ClientCertificateAuthenticator(identity: thisIdentity)  <i class="conum" data-value="100"></i><b>(100)</b>
           config.authenticator = thisAuthenticator
           }
 
@@ -10130,7 +10138,7 @@ func fMyCaCertPinned() {
 
 
         // tag::old-listener-config-client-root-ca[]
-    // Configure the client authenticator to validate using ROOT CA <i class="conum" data-value="100"></i><b>(100)</b>
+    // Configure the client authenticator to validate using ROOT CA <i class="conum" data-value="101"></i><b>(101)</b>
 
     // end::old-listener-config-client-root-ca[]
 
@@ -10170,7 +10178,7 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
     // tag::sgw-act-rep-initialize[]
     let tgtUrl = URL(string: "wss://10.1.1.12:8092/travel-sample")!
     let targetEndpoint = URLEndpoint(url: tgtUrl)
-    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="101"></i><b>(101)</b>
+    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="102"></i><b>(102)</b>
 
     // end::sgw-act-rep-initialize[]</code></pre>
 </div>
@@ -11101,8 +11109,12 @@ class SampleCodeTest {
 
     func dontTestReplicationResetCheckpoint() throws {
         // tag::replication-reset-checkpoint[]
-        self.replicator.resetCheckpoint()
-        self.replicator.start()
+        if (resetCheckpointRequired_Example) {
+          self.replicator.start(reset: true)  <i class="conum" data-value="27"></i><b>(27)</b>
+        else
+          self.replicator.start()
+        }
+
         // end::replication-reset-checkpoint[]
     }
 
@@ -11153,15 +11165,15 @@ class SampleCodeTest {
         config.type = .pushAndPull
         config.continuous = true
         // tag::replication-set-heartbeat[]
-        config.heartbeat = 150 <i class="conum" data-value="27"></i><b>(27)</b>
+        config.heartbeat = 150 <i class="conum" data-value="28"></i><b>(28)</b>
 
         // end::replication-set-heartbeat[]
         // tag::replication-set-maxretries[]
-        config.maxretries = 20 <i class="conum" data-value="28"></i><b>(28)</b>
+        config.maxretries = 20 <i class="conum" data-value="29"></i><b>(29)</b>
 
         // end::replication-set-maxretries[]
         // tag::replication-set-maxretrywaittime[]
-        config.maxretrywaittime = 600 <i class="conum" data-value="29"></i><b>(29)</b>
+        config.maxretrywaittime = 600 <i class="conum" data-value="30"></i><b>(30)</b>
         repl = Replicator(config: config)
 
         // end::replication-set-maxretrywaittime[]
@@ -12409,7 +12421,7 @@ class Query {
             for row in try! listQuery.execute() {
 
                 let thisDocsProps =
-                    row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="30"></i><b>(30)</b>
+                    row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="31"></i><b>(31)</b>
 
                 let docid = thisDocsProps!["id"] as! String
 
@@ -12419,7 +12431,7 @@ class Query {
 
                 let city = thisDocsProps!["city"] as! String
 
-                let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="31"></i><b>(31)</b>
+                let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="32"></i><b>(32)</b>
                 let hotelId = hotel!["id"] as! String
                 hotels[hotelId] = hotel
             } // end for
@@ -12449,13 +12461,13 @@ class Query {
             for row in  results {
 
                 // get the result into a JSON String
-                let jsonString = row.toJSON() <i class="conum" data-value="32"></i><b>(32)</b>
+                let jsonString = row.toJSON() <i class="conum" data-value="33"></i><b>(33)</b>
 
                 let thisJsonObj:Dictionary =
                     try! (JSONSerialization.jsonObject(
                             with: jsonString.data(using: .utf8)!,
                                                   options: .allowFragments)
-                            as? [String: Any])! <i class="conum" data-value="33"></i><b>(33)</b>
+                            as? [String: Any])! <i class="conum" data-value="34"></i><b>(34)</b>
 
                 // Use Json Object to populate Native object
                 // Use Codable class to unpack JSON data to native object
@@ -12464,7 +12476,7 @@ class Query {
                         Hotel.self,
                         from: jsonString.data(using: .utf8)!
                         )
-                    ) <i class="conum" data-value="34"></i><b>(34)</b>
+                    ) <i class="conum" data-value="35"></i><b>(35)</b>
 
                 // ALTERNATIVELY unpack in steps
                 this_hotel.id = thisJsonObj["id"] as! String
@@ -12509,7 +12521,7 @@ class Query {
         for (_, result) in try! listQuery.execute().enumerated() {
 
 
-            let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="35"></i><b>(35)</b>
+            let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="36"></i><b>(36)</b>
                 // Store dictionary data in hotel object and save in arry
             hotel.id = thisDoc!["id"] as! String
             hotel.name = thisDoc!["name"] as! String
@@ -12548,7 +12560,7 @@ class Query {
 
             for result in try! listQuery.execute() {
                 let dict = result.toDictionary() as? [String: Int]
-                let thiscount = dict!["mycount"]! <i class="conum" data-value="36"></i><b>(36)</b>
+                let thiscount = dict!["mycount"]! <i class="conum" data-value="37"></i><b>(37)</b>
                 print("There are ", thiscount, " rows")
 
                 // Alternatively
@@ -12578,7 +12590,7 @@ class Query {
             print(result.toDictionary())
             print("Document Id is -- ", result["metaId"].string!)
 
-            let thisDocsId = result["metaId"].string! <i class="conum" data-value="37"></i><b>(37)</b>
+            let thisDocsId = result["metaId"].string! <i class="conum" data-value="38"></i><b>(38)</b>
 
             // Now you can get the document using the ID
             var thisDoc = db.document(withID: thisDocsId)!.toDictionary()
@@ -12660,7 +12672,7 @@ class Query {
         let db = try! Database(name: "hotel")
 
         let listQuery =  db.createQuery( query:
-            "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'" <i class="conum" data-value="38"></i><b>(38)</b>
+            "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'" <i class="conum" data-value="39"></i><b>(39)</b>
         )
 
         let results: ResultSet = try listQuery.execute()
@@ -12681,11 +12693,11 @@ class Query {
 
         let listQuery =
             db.createQuery( query:
-                   "SELECT META().id AS thisId FROM _ WHERE type = $type" <i class="conum" data-value="39"></i><b>(39)</b>
+                   "SELECT META().id AS thisId FROM _ WHERE type = $type" <i class="conum" data-value="40"></i><b>(40)</b>
                 )
 
         listQuery.parameters =
-            Parameters().setString("hotel", forName: "type") <i class="conum" data-value="40"></i><b>(40)</b>
+            Parameters().setString("hotel", forName: "type") <i class="conum" data-value="41"></i><b>(41)</b>
 
         let results: ResultSet = try listQuery.execute()
 
@@ -12759,11 +12771,11 @@ class Query {
         // tag::tojson-document[]
             var thisId = row.string(forKey: "metaId")! as String
 
-            var thisJSONstring = try! db.document(withID: thisId)!.toJSON() <i class="conum" data-value="41"></i><b>(41)</b>
+            var thisJSONstring = try! db.document(withID: thisId)!.toJSON() <i class="conum" data-value="42"></i><b>(42)</b>
 
             print("JSON String = ", thisJSONstring as! String)
 
-            let hotelFromJSON:MutableDocument = <i class="conum" data-value="42"></i><b>(42)</b>
+            let hotelFromJSON:MutableDocument = <i class="conum" data-value="43"></i><b>(43)</b>
                     try! MutableDocument(id: thisId as? String, json: thisJSONstring)
 
             try! dbnew.saveDocument(hotelFromJSON)
@@ -12771,7 +12783,7 @@ class Query {
             let newhotel = dbnew.document(withID: thisId)
 
             let keys = newhotel!.keys
-            for key in keys { <i class="conum" data-value="43"></i><b>(43)</b>
+            for key in keys { <i class="conum" data-value="44"></i><b>(44)</b>
                 print(key, newhotel!.value(forKey: key) as! String)
             }
 
@@ -12803,7 +12815,7 @@ class Query {
             \"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]
             """
         let myArray:MutableArrayObject =
-            try! MutableArrayObject.init(json: thisJSONstring) <i class="conum" data-value="44"></i><b>(44)</b>
+            try! MutableArrayObject.init(json: thisJSONstring) <i class="conum" data-value="45"></i><b>(45)</b>
 
         for i in 0...myArray.count-1 {
 
@@ -12811,7 +12823,7 @@ class Query {
 
             var docid = myArray.dictionary(at: i)!.string(forKey: "id")
 
-            var newdoc:MutableDocument = <i class="conum" data-value="45"></i><b>(45)</b>
+            var newdoc:MutableDocument = <i class="conum" data-value="46"></i><b>(46)</b>
                 try! MutableDocument(id: docid,
                          data: (myArray.dictionary(at: i)?.toDictionary())! )
 
@@ -12821,13 +12833,13 @@ class Query {
 
         let extendedDoc = dbnew.document(withID: "1002")
         let features =
-            extendedDoc!.array(forKey: "features")?.toArray() <i class="conum" data-value="46"></i><b>(46)</b>
+            extendedDoc!.array(forKey: "features")?.toArray() <i class="conum" data-value="47"></i><b>(47)</b>
         for i in 0...features!.count-1 {
             print(features![i])
         }
 
         print( extendedDoc!.array(
-                forKey: "features")?.toJSON() as! String) <i class="conum" data-value="47"></i><b>(47)</b>
+                forKey: "features")?.toJSON() as! String) <i class="conum" data-value="48"></i><b>(48)</b>
 
         // end::tojson-array[]
 
@@ -12855,7 +12867,7 @@ class Query {
             """
 
         let myDict:MutableDictionaryObject =
-            try! MutableDictionaryObject(json: aJSONstring) <i class="conum" data-value="48"></i><b>(48)</b>
+            try! MutableDictionaryObject(json: aJSONstring) <i class="conum" data-value="49"></i><b>(49)</b>
         print(myDict)
 
         let name = myDict.string(forKey: "name")
@@ -12889,18 +12901,18 @@ class Query {
         // tag::tojson-blob[]
 
         // Get a document
-        let thisDoc = db.document(withID: "1000")?.toMutable() <i class="conum" data-value="49"></i><b>(49)</b>
+        let thisDoc = db.document(withID: "1000")?.toMutable() <i class="conum" data-value="50"></i><b>(50)</b>
 
 
         // Get the image and add as a blob to the document
         let contentType = "";
         let ourImage = UIImage(named: "couchbaseimage.png")!
-        let imageData = ourImage.jpegData(compressionQuality: 1)! <i class="conum" data-value="50"></i><b>(50)</b>
+        let imageData = ourImage.jpegData(compressionQuality: 1)! <i class="conum" data-value="51"></i><b>(51)</b>
         thisDoc?.setBlob(
-            Blob(contentType: contentType, data: imageData), forKey: "avatar") <i class="conum" data-value="51"></i><b>(51)</b>
+            Blob(contentType: contentType, data: imageData), forKey: "avatar") <i class="conum" data-value="52"></i><b>(52)</b>
 
        let theBlobAsJSONstringFails =
-              thisDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="52"></i><b>(52)</b>
+              thisDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="53"></i><b>(53)</b>
 
         // Save blob as part of doc or alternatively as a blob
 
@@ -12910,7 +12922,7 @@ class Query {
 
         // Retrieve saved blob as a JSON, reconstitue and check still blob
         let sameDoc = db.document(withID: "1000")?.toMutable()
-        let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="53"></i><b>(53)</b>
+        let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="54"></i><b>(54)</b>
         let reconstitutedBlob =
              MutableDictionaryObject().
                 setDictionary(try MutableDictionaryObject().
@@ -12919,7 +12931,7 @@ class Query {
              print( "Data -- {0) = {1}", key, value);
         }
 
-        if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) <i class="conum" data-value="54"></i><b>(54)</b>
+        if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) <i class="conum" data-value="55"></i><b>(55)</b>
         {
             print(theBlobAsJSONstring);
         }
@@ -12978,7 +12990,7 @@ class Query {
 
 // tag::listener-simple[]
 val config =
-  URLEndpointListenerConfiguration(database) <i class="conum" data-value="55"></i><b>(55)</b>
+  URLEndpointListenerConfiguration(database) <i class="conum" data-value="56"></i><b>(56)</b>
 
 config.setAuthenticator(
     ListenerPasswordAuthenticator {
@@ -12986,12 +12998,12 @@ config.setAuthenticator(
         "valid.user" == username &amp;&amp;
         ("valid.password.string" == String(password))
     }
-) <i class="conum" data-value="56"></i><b>(56)</b>
+) <i class="conum" data-value="57"></i><b>(57)</b>
 
 val listener =
-  URLEndpointListener(config) <i class="conum" data-value="57"></i><b>(57)</b>
+  URLEndpointListener(config) <i class="conum" data-value="58"></i><b>(58)</b>
 
-listener.start()  <i class="conum" data-value="58"></i><b>(58)</b>
+listener.start()  <i class="conum" data-value="59"></i><b>(59)</b>
 
 // end::listener-simple[]
 
@@ -13000,18 +13012,18 @@ listener.start()  <i class="conum" data-value="58"></i><b>(58)</b>
 // tag::replicator-simple[]
 
 let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
-let targetEndpoint = URLEndpoint(url: tgtUrl) //  <i class="conum" data-value="59"></i><b>(59)</b>
+let targetEndpoint = URLEndpoint(url: tgtUrl) //  <i class="conum" data-value="60"></i><b>(60)</b>
 
-var thisConfig = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="60"></i><b>(60)</b>
+var thisConfig = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="61"></i><b>(61)</b>
 
-thisConfig.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="61"></i><b>(61)</b>
+thisConfig.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="62"></i><b>(62)</b>
 
 let thisAuthenticator = BasicAuthenticator(username: "valid.user", password: "valid.password.string")
-thisConfig.authenticator = thisAuthenticator <i class="conum" data-value="62"></i><b>(62)</b>
+thisConfig.authenticator = thisAuthenticator <i class="conum" data-value="63"></i><b>(63)</b>
 
-this.replicator = new Replicator(config); <i class="conum" data-value="63"></i><b>(63)</b>
+this.replicator = new Replicator(config); <i class="conum" data-value="64"></i><b>(64)</b>
 
-this.replicator.start(); <i class="conum" data-value="64"></i><b>(64)</b>
+this.replicator.start(); <i class="conum" data-value="65"></i><b>(65)</b>
 
 // end::replicator-simple[]
 
@@ -13619,31 +13631,31 @@ class cMyPassListener {
 
     // tag::listener-config-db[]
     let listenerConfig =
-      URLEndpointListenerConfiguration(database: thisDB!) <i class="conum" data-value="65"></i><b>(65)</b>
+      URLEndpointListenerConfiguration(database: thisDB!) <i class="conum" data-value="66"></i><b>(66)</b>
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
     /* optionally */ let wsPort: UInt16 = 55991
     /* optionally */ let wssPort: UInt16 = 55990
-    listenerConfig.port =  wssPort <i class="conum" data-value="66"></i><b>(66)</b>
+    listenerConfig.port =  wssPort <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
-    listenerConfig.networkInterface = "10.1.1.10"  <i class="conum" data-value="67"></i><b>(67)</b>
+    listenerConfig.networkInterface = "10.1.1.10"  <i class="conum" data-value="68"></i><b>(68)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    listenerConfig.enableDeltaSync = true <i class="conum" data-value="68"></i><b>(68)</b>
+    listenerConfig.enableDeltaSync = true <i class="conum" data-value="69"></i><b>(69)</b>
 
     // end::listener-config-delta-sync[]
     // tag::listener-config-tls-enable[]
-    listenerConfig.disableTLS  = false <i class="conum" data-value="69"></i><b>(69)</b>
+    listenerConfig.disableTLS  = false <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::listener-config-tls-enable[]
      // tag::listener-config-tls-id-anon[]
     // Set the credentials the server presents the client
     // Use an anonymous self-signed cert
-    listenerConfig.tlsIdentity = nil <i class="conum" data-value="70"></i><b>(70)</b>
+    listenerConfig.tlsIdentity = nil <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
@@ -13658,19 +13670,19 @@ class cMyPassListener {
               return true
               }
             return false
-          }) <i class="conum" data-value="71"></i><b>(71)</b>
+          }) <i class="conum" data-value="72"></i><b>(72)</b>
 
     // end::listener-config-client-auth-pwd[]
 
     // tag::listener-start[]
     // Initialize the listener
-    _thisListener = URLEndpointListener(config: listenerConfig) <i class="conum" data-value="72"></i><b>(72)</b>
+    _thisListener = URLEndpointListener(config: listenerConfig) <i class="conum" data-value="73"></i><b>(73)</b>
     guard let thisListener = _thisListener else {
       throw ListenerError.NotInitialized
       // ... take appropriate actions
     }
     // Start the listener
-    try thisListener.start() <i class="conum" data-value="73"></i><b>(73)</b>
+    try thisListener.start() <i class="conum" data-value="74"></i><b>(74)</b>
 
     // end::listener-start[]
 // end::listener-initialize[]
@@ -13708,11 +13720,11 @@ print("urls: \(listener.urls)")
 
     // tag::listener-config-tls-full[]
     // tag::listener-config-tls-full-enable[]
-    listenerConfig.disableTLS  = false <i class="conum" data-value="74"></i><b>(74)</b>
+    listenerConfig.disableTLS  = false <i class="conum" data-value="75"></i><b>(75)</b>
 
     // end::listener-config-tls-full-enable[]
     // tag::listener-config-tls-disable[]
-    listenerConfig.disableTLS  = true <i class="conum" data-value="75"></i><b>(75)</b>
+    listenerConfig.disableTLS  = true <i class="conum" data-value="76"></i><b>(76)</b>
 
     // end::listener-config-tls-disable[]
 
@@ -13724,27 +13736,27 @@ print("urls: \(listener.urls)")
 
     guard let localCertificate =
       try? NSData(contentsOfFile: pathToCert) as Data
-    else { /* process error */ return } <i class="conum" data-value="76"></i><b>(76)</b>
+    else { /* process error */ return } <i class="conum" data-value="77"></i><b>(77)</b>
 
     let thisIdentity =
       try TLSIdentity.importIdentity(withData: localCertificate,
                                     password: "123",
-                                    label: thisSecId) <i class="conum" data-value="77"></i><b>(77)</b>
+                                    label: thisSecId) <i class="conum" data-value="78"></i><b>(78)</b>
 
     // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
-    let attrs = [certAttrCommonName: "Couchbase Inc"] <i class="conum" data-value="78"></i><b>(78)</b>
+    let attrs = [certAttrCommonName: "Couchbase Inc"] <i class="conum" data-value="79"></i><b>(79)</b>
 
     let thisIdentity =
       try TLSIdentity.createIdentity(forServer: true, /* isServer */
             attributes: attrs,
             expiration: Date().addingTimeInterval(86400),
-            label: "Server-Cert-Label") <i class="conum" data-value="79"></i><b>(79)</b>
+            label: "Server-Cert-Label") <i class="conum" data-value="80"></i><b>(80)</b>
 
     // end::listener-config-tls-id-SelfSigned[]
     // tag::listener-config-tls-id-full-set[]
     // Set the credentials the server presents the client
-    listenerConfig.tlsIdentity = thisIdentity    <i class="conum" data-value="80"></i><b>(80)</b>
+    listenerConfig.tlsIdentity = thisIdentity    <i class="conum" data-value="81"></i><b>(81)</b>
 
     // end::listener-config-tls-id-full-set[]
     // end::listener-config-tls-id-full[]
@@ -13753,10 +13765,10 @@ print("urls: \(listener.urls)")
     // Authenticate using Cert Authority
 
     // cert is a pre-populated object of type:SecCertificate representing a certificate
-    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="81"></i><b>(81)</b>
+    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="82"></i><b>(82)</b>
     let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! //
 
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) <i class="conum" data-value="82"></i><b>(82)</b> <i class="conum" data-value="83"></i><b>(83)</b>
+    listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) <i class="conum" data-value="83"></i><b>(83)</b> <i class="conum" data-value="84"></i><b>(84)</b>
 
     // end::listener-config-client-auth-root[]
     // end::listener-config-client-root-ca[]
@@ -13765,10 +13777,10 @@ print("urls: \(listener.urls)")
     // Authenticate self-signed cert using application logic
 
     // cert is a user-supplied object of type:SecCertificate representing a certificate
-    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="84"></i><b>(84)</b>
+    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="85"></i><b>(85)</b>
     let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
 
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init { <i class="conum" data-value="85"></i><b>(85)</b>
+    listenerConfig.authenticator = ListenerCertificateAuthenticator.init { <i class="conum" data-value="86"></i><b>(86)</b>
       (certs) -&gt; Bool in
         var certs:SecCertificate
         var certCommonName:CFString?
@@ -13777,7 +13789,7 @@ print("urls: \(listener.urls)")
             return true
         }
         return false
-    } <i class="conum" data-value="86"></i><b>(86)</b>
+    } <i class="conum" data-value="87"></i><b>(87)</b>
 
     // end::listener-config-client-auth-self-signed[]
     // end::listener-config-client-auth-lambda[]
@@ -13883,7 +13895,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-initialize[]
     let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
     let targetEndpoint = URLEndpoint(url: tgtUrl)
-    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="87"></i><b>(87)</b>
+    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="88"></i><b>(88)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -13893,7 +13905,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = false; <i class="conum" data-value="88"></i><b>(88)</b>
+    thisConfig.enableAutoPurge = false; <i class="conum" data-value="89"></i><b>(89)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -13903,10 +13915,10 @@ class myActPeerClass {
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="89"></i><b>(89)</b>
+    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="90"></i><b>(90)</b>
 
     // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Security <i class="conum" data-value="90"></i><b>(90)</b>
+    // Configure Client Security <i class="conum" data-value="91"></i><b>(91)</b>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
     let thisAuthenticator = BasicAuthenticator(username: "Our Username", password: "Our Password")
@@ -13915,18 +13927,18 @@ class myActPeerClass {
     // end::p2p-act-rep-auth[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    config.conflictResolver = ( /* define resolver function */); <i class="conum" data-value="91"></i><b>(91)</b>
+    config.conflictResolver = ( /* define resolver function */); <i class="conum" data-value="92"></i><b>(92)</b>
 
     // end::p2p-act-rep-config-conflict[]
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    thisReplicator = Replicator.init( config: config) <i class="conum" data-value="92"></i><b>(92)</b>
+    thisReplicator = Replicator.init( config: config) <i class="conum" data-value="93"></i><b>(93)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // Optionally add a change listener
     // Retain token for use in deletion
-    let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="93"></i><b>(93)</b>
+    let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="94"></i><b>(94)</b>
       if change.status.activity == .stopped {
           print("Replication stopped")
       }
@@ -13941,7 +13953,7 @@ class myActPeerClass {
 
     // tag::p2p-act-rep-start[]
         // Run the replicator using the config settings
-        thisReplicator?.start()  <i class="conum" data-value="94"></i><b>(94)</b>
+        thisReplicator?.start()  <i class="conum" data-value="95"></i><b>(95)</b>
 
     // end::p2p-act-rep-start[]
     // end::p2p-act-rep-start-full[]
@@ -13966,12 +13978,12 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    config.acceptOnlySelfSignedServerCertificate = false <i class="conum" data-value="95"></i><b>(95)</b>
+    config.acceptOnlySelfSignedServerCertificate = false <i class="conum" data-value="96"></i><b>(96)</b>
 
     // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="96"></i><b>(96)</b>
+    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="97"></i><b>(97)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // tag::p2p-act-rep-config-pinnedcert[]
@@ -13979,7 +13991,7 @@ class myActPeerClass {
     config.pinnedServerCertificate = thisCert; // Get listener cert if pinned
 
     // end::p2p-act-rep-config-pinnedcert[]
-    // Configure Client Security <i class="conum" data-value="97"></i><b>(97)</b>
+    // Configure Client Security <i class="conum" data-value="98"></i><b>(98)</b>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
     let thisAuthenticator = BasicAuthenticator(username: validUser, password: validPassword)
@@ -13991,9 +14003,9 @@ class myActPeerClass {
     // tag::p2p-tlsid-tlsidentity-with-label[]
       // Check if Id exists in keychain and if so, use that Id
       if let thisIdentity =
-        (try? TLSIdentity.identity(withLabel: "doco-sync-server")) ?? nil { <i class="conum" data-value="98"></i><b>(98)</b>
+        (try? TLSIdentity.identity(withLabel: "doco-sync-server")) ?? nil { <i class="conum" data-value="99"></i><b>(99)</b>
           print("An identity with label : doco-sync-server already exists in keychain")
-          thisAuthenticator = ClientCertificateAuthenticator(identity: thisIdentity)  <i class="conum" data-value="99"></i><b>(99)</b>
+          thisAuthenticator = ClientCertificateAuthenticator(identity: thisIdentity)  <i class="conum" data-value="100"></i><b>(100)</b>
           config.authenticator = thisAuthenticator
           }
 
@@ -14187,7 +14199,7 @@ func fMyCaCertPinned() {
 
 
         // tag::old-listener-config-client-root-ca[]
-    // Configure the client authenticator to validate using ROOT CA <i class="conum" data-value="100"></i><b>(100)</b>
+    // Configure the client authenticator to validate using ROOT CA <i class="conum" data-value="101"></i><b>(101)</b>
 
     // end::old-listener-config-client-root-ca[]
 
@@ -14227,7 +14239,7 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
     // tag::sgw-act-rep-initialize[]
     let tgtUrl = URL(string: "wss://10.1.1.12:8092/travel-sample")!
     let targetEndpoint = URLEndpoint(url: tgtUrl)
-    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="101"></i><b>(101)</b>
+    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="102"></i><b>(102)</b>
 
     // end::sgw-act-rep-initialize[]</code></pre>
 </div>
@@ -15158,8 +15170,12 @@ class SampleCodeTest {
 
     func dontTestReplicationResetCheckpoint() throws {
         // tag::replication-reset-checkpoint[]
-        self.replicator.resetCheckpoint()
-        self.replicator.start()
+        if (resetCheckpointRequired_Example) {
+          self.replicator.start(reset: true)  <i class="conum" data-value="27"></i><b>(27)</b>
+        else
+          self.replicator.start()
+        }
+
         // end::replication-reset-checkpoint[]
     }
 
@@ -15210,15 +15226,15 @@ class SampleCodeTest {
         config.type = .pushAndPull
         config.continuous = true
         // tag::replication-set-heartbeat[]
-        config.heartbeat = 150 <i class="conum" data-value="27"></i><b>(27)</b>
+        config.heartbeat = 150 <i class="conum" data-value="28"></i><b>(28)</b>
 
         // end::replication-set-heartbeat[]
         // tag::replication-set-maxretries[]
-        config.maxretries = 20 <i class="conum" data-value="28"></i><b>(28)</b>
+        config.maxretries = 20 <i class="conum" data-value="29"></i><b>(29)</b>
 
         // end::replication-set-maxretries[]
         // tag::replication-set-maxretrywaittime[]
-        config.maxretrywaittime = 600 <i class="conum" data-value="29"></i><b>(29)</b>
+        config.maxretrywaittime = 600 <i class="conum" data-value="30"></i><b>(30)</b>
         repl = Replicator(config: config)
 
         // end::replication-set-maxretrywaittime[]
@@ -16466,7 +16482,7 @@ class Query {
             for row in try! listQuery.execute() {
 
                 let thisDocsProps =
-                    row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="30"></i><b>(30)</b>
+                    row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="31"></i><b>(31)</b>
 
                 let docid = thisDocsProps!["id"] as! String
 
@@ -16476,7 +16492,7 @@ class Query {
 
                 let city = thisDocsProps!["city"] as! String
 
-                let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="31"></i><b>(31)</b>
+                let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="32"></i><b>(32)</b>
                 let hotelId = hotel!["id"] as! String
                 hotels[hotelId] = hotel
             } // end for
@@ -16506,13 +16522,13 @@ class Query {
             for row in  results {
 
                 // get the result into a JSON String
-                let jsonString = row.toJSON() <i class="conum" data-value="32"></i><b>(32)</b>
+                let jsonString = row.toJSON() <i class="conum" data-value="33"></i><b>(33)</b>
 
                 let thisJsonObj:Dictionary =
                     try! (JSONSerialization.jsonObject(
                             with: jsonString.data(using: .utf8)!,
                                                   options: .allowFragments)
-                            as? [String: Any])! <i class="conum" data-value="33"></i><b>(33)</b>
+                            as? [String: Any])! <i class="conum" data-value="34"></i><b>(34)</b>
 
                 // Use Json Object to populate Native object
                 // Use Codable class to unpack JSON data to native object
@@ -16521,7 +16537,7 @@ class Query {
                         Hotel.self,
                         from: jsonString.data(using: .utf8)!
                         )
-                    ) <i class="conum" data-value="34"></i><b>(34)</b>
+                    ) <i class="conum" data-value="35"></i><b>(35)</b>
 
                 // ALTERNATIVELY unpack in steps
                 this_hotel.id = thisJsonObj["id"] as! String
@@ -16566,7 +16582,7 @@ class Query {
         for (_, result) in try! listQuery.execute().enumerated() {
 
 
-            let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="35"></i><b>(35)</b>
+            let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="36"></i><b>(36)</b>
                 // Store dictionary data in hotel object and save in arry
             hotel.id = thisDoc!["id"] as! String
             hotel.name = thisDoc!["name"] as! String
@@ -16605,7 +16621,7 @@ class Query {
 
             for result in try! listQuery.execute() {
                 let dict = result.toDictionary() as? [String: Int]
-                let thiscount = dict!["mycount"]! <i class="conum" data-value="36"></i><b>(36)</b>
+                let thiscount = dict!["mycount"]! <i class="conum" data-value="37"></i><b>(37)</b>
                 print("There are ", thiscount, " rows")
 
                 // Alternatively
@@ -16635,7 +16651,7 @@ class Query {
             print(result.toDictionary())
             print("Document Id is -- ", result["metaId"].string!)
 
-            let thisDocsId = result["metaId"].string! <i class="conum" data-value="37"></i><b>(37)</b>
+            let thisDocsId = result["metaId"].string! <i class="conum" data-value="38"></i><b>(38)</b>
 
             // Now you can get the document using the ID
             var thisDoc = db.document(withID: thisDocsId)!.toDictionary()
@@ -16717,7 +16733,7 @@ class Query {
         let db = try! Database(name: "hotel")
 
         let listQuery =  db.createQuery( query:
-            "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'" <i class="conum" data-value="38"></i><b>(38)</b>
+            "SELECT META().id AS thisId FROM _ WHERE type = 'hotel'" <i class="conum" data-value="39"></i><b>(39)</b>
         )
 
         let results: ResultSet = try listQuery.execute()
@@ -16738,11 +16754,11 @@ class Query {
 
         let listQuery =
             db.createQuery( query:
-                   "SELECT META().id AS thisId FROM _ WHERE type = $type" <i class="conum" data-value="39"></i><b>(39)</b>
+                   "SELECT META().id AS thisId FROM _ WHERE type = $type" <i class="conum" data-value="40"></i><b>(40)</b>
                 )
 
         listQuery.parameters =
-            Parameters().setString("hotel", forName: "type") <i class="conum" data-value="40"></i><b>(40)</b>
+            Parameters().setString("hotel", forName: "type") <i class="conum" data-value="41"></i><b>(41)</b>
 
         let results: ResultSet = try listQuery.execute()
 
@@ -16816,11 +16832,11 @@ class Query {
         // tag::tojson-document[]
             var thisId = row.string(forKey: "metaId")! as String
 
-            var thisJSONstring = try! db.document(withID: thisId)!.toJSON() <i class="conum" data-value="41"></i><b>(41)</b>
+            var thisJSONstring = try! db.document(withID: thisId)!.toJSON() <i class="conum" data-value="42"></i><b>(42)</b>
 
             print("JSON String = ", thisJSONstring as! String)
 
-            let hotelFromJSON:MutableDocument = <i class="conum" data-value="42"></i><b>(42)</b>
+            let hotelFromJSON:MutableDocument = <i class="conum" data-value="43"></i><b>(43)</b>
                     try! MutableDocument(id: thisId as? String, json: thisJSONstring)
 
             try! dbnew.saveDocument(hotelFromJSON)
@@ -16828,7 +16844,7 @@ class Query {
             let newhotel = dbnew.document(withID: thisId)
 
             let keys = newhotel!.keys
-            for key in keys { <i class="conum" data-value="43"></i><b>(43)</b>
+            for key in keys { <i class="conum" data-value="44"></i><b>(44)</b>
                 print(key, newhotel!.value(forKey: key) as! String)
             }
 
@@ -16860,7 +16876,7 @@ class Query {
             \"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]
             """
         let myArray:MutableArrayObject =
-            try! MutableArrayObject.init(json: thisJSONstring) <i class="conum" data-value="44"></i><b>(44)</b>
+            try! MutableArrayObject.init(json: thisJSONstring) <i class="conum" data-value="45"></i><b>(45)</b>
 
         for i in 0...myArray.count-1 {
 
@@ -16868,7 +16884,7 @@ class Query {
 
             var docid = myArray.dictionary(at: i)!.string(forKey: "id")
 
-            var newdoc:MutableDocument = <i class="conum" data-value="45"></i><b>(45)</b>
+            var newdoc:MutableDocument = <i class="conum" data-value="46"></i><b>(46)</b>
                 try! MutableDocument(id: docid,
                          data: (myArray.dictionary(at: i)?.toDictionary())! )
 
@@ -16878,13 +16894,13 @@ class Query {
 
         let extendedDoc = dbnew.document(withID: "1002")
         let features =
-            extendedDoc!.array(forKey: "features")?.toArray() <i class="conum" data-value="46"></i><b>(46)</b>
+            extendedDoc!.array(forKey: "features")?.toArray() <i class="conum" data-value="47"></i><b>(47)</b>
         for i in 0...features!.count-1 {
             print(features![i])
         }
 
         print( extendedDoc!.array(
-                forKey: "features")?.toJSON() as! String) <i class="conum" data-value="47"></i><b>(47)</b>
+                forKey: "features")?.toJSON() as! String) <i class="conum" data-value="48"></i><b>(48)</b>
 
         // end::tojson-array[]
 
@@ -16912,7 +16928,7 @@ class Query {
             """
 
         let myDict:MutableDictionaryObject =
-            try! MutableDictionaryObject(json: aJSONstring) <i class="conum" data-value="48"></i><b>(48)</b>
+            try! MutableDictionaryObject(json: aJSONstring) <i class="conum" data-value="49"></i><b>(49)</b>
         print(myDict)
 
         let name = myDict.string(forKey: "name")
@@ -16946,18 +16962,18 @@ class Query {
         // tag::tojson-blob[]
 
         // Get a document
-        let thisDoc = db.document(withID: "1000")?.toMutable() <i class="conum" data-value="49"></i><b>(49)</b>
+        let thisDoc = db.document(withID: "1000")?.toMutable() <i class="conum" data-value="50"></i><b>(50)</b>
 
 
         // Get the image and add as a blob to the document
         let contentType = "";
         let ourImage = UIImage(named: "couchbaseimage.png")!
-        let imageData = ourImage.jpegData(compressionQuality: 1)! <i class="conum" data-value="50"></i><b>(50)</b>
+        let imageData = ourImage.jpegData(compressionQuality: 1)! <i class="conum" data-value="51"></i><b>(51)</b>
         thisDoc?.setBlob(
-            Blob(contentType: contentType, data: imageData), forKey: "avatar") <i class="conum" data-value="51"></i><b>(51)</b>
+            Blob(contentType: contentType, data: imageData), forKey: "avatar") <i class="conum" data-value="52"></i><b>(52)</b>
 
        let theBlobAsJSONstringFails =
-              thisDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="52"></i><b>(52)</b>
+              thisDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="53"></i><b>(53)</b>
 
         // Save blob as part of doc or alternatively as a blob
 
@@ -16967,7 +16983,7 @@ class Query {
 
         // Retrieve saved blob as a JSON, reconstitue and check still blob
         let sameDoc = db.document(withID: "1000")?.toMutable()
-        let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="53"></i><b>(53)</b>
+        let theBlobAsJSONstring = sameDoc?.blob(forKey: "avatar")!.toJSON(); <i class="conum" data-value="54"></i><b>(54)</b>
         let reconstitutedBlob =
              MutableDictionaryObject().
                 setDictionary(try MutableDictionaryObject().
@@ -16976,7 +16992,7 @@ class Query {
              print( "Data -- {0) = {1}", key, value);
         }
 
-        if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) <i class="conum" data-value="54"></i><b>(54)</b>
+        if(Blob.isBlob(properties: reconstitutedBlob.dictionary(forKey: "blobCOPY")!.toDictionary())) <i class="conum" data-value="55"></i><b>(55)</b>
         {
             print(theBlobAsJSONstring);
         }
@@ -17035,7 +17051,7 @@ class Query {
 
 // tag::listener-simple[]
 val config =
-  URLEndpointListenerConfiguration(database) <i class="conum" data-value="55"></i><b>(55)</b>
+  URLEndpointListenerConfiguration(database) <i class="conum" data-value="56"></i><b>(56)</b>
 
 config.setAuthenticator(
     ListenerPasswordAuthenticator {
@@ -17043,12 +17059,12 @@ config.setAuthenticator(
         "valid.user" == username &amp;&amp;
         ("valid.password.string" == String(password))
     }
-) <i class="conum" data-value="56"></i><b>(56)</b>
+) <i class="conum" data-value="57"></i><b>(57)</b>
 
 val listener =
-  URLEndpointListener(config) <i class="conum" data-value="57"></i><b>(57)</b>
+  URLEndpointListener(config) <i class="conum" data-value="58"></i><b>(58)</b>
 
-listener.start()  <i class="conum" data-value="58"></i><b>(58)</b>
+listener.start()  <i class="conum" data-value="59"></i><b>(59)</b>
 
 // end::listener-simple[]
 
@@ -17057,18 +17073,18 @@ listener.start()  <i class="conum" data-value="58"></i><b>(58)</b>
 // tag::replicator-simple[]
 
 let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
-let targetEndpoint = URLEndpoint(url: tgtUrl) //  <i class="conum" data-value="59"></i><b>(59)</b>
+let targetEndpoint = URLEndpoint(url: tgtUrl) //  <i class="conum" data-value="60"></i><b>(60)</b>
 
-var thisConfig = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="60"></i><b>(60)</b>
+var thisConfig = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="61"></i><b>(61)</b>
 
-thisConfig.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="61"></i><b>(61)</b>
+thisConfig.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="62"></i><b>(62)</b>
 
 let thisAuthenticator = BasicAuthenticator(username: "valid.user", password: "valid.password.string")
-thisConfig.authenticator = thisAuthenticator <i class="conum" data-value="62"></i><b>(62)</b>
+thisConfig.authenticator = thisAuthenticator <i class="conum" data-value="63"></i><b>(63)</b>
 
-this.replicator = new Replicator(config); <i class="conum" data-value="63"></i><b>(63)</b>
+this.replicator = new Replicator(config); <i class="conum" data-value="64"></i><b>(64)</b>
 
-this.replicator.start(); <i class="conum" data-value="64"></i><b>(64)</b>
+this.replicator.start(); <i class="conum" data-value="65"></i><b>(65)</b>
 
 // end::replicator-simple[]
 
@@ -17676,31 +17692,31 @@ class cMyPassListener {
 
     // tag::listener-config-db[]
     let listenerConfig =
-      URLEndpointListenerConfiguration(database: thisDB!) <i class="conum" data-value="65"></i><b>(65)</b>
+      URLEndpointListenerConfiguration(database: thisDB!) <i class="conum" data-value="66"></i><b>(66)</b>
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
     /* optionally */ let wsPort: UInt16 = 55991
     /* optionally */ let wssPort: UInt16 = 55990
-    listenerConfig.port =  wssPort <i class="conum" data-value="66"></i><b>(66)</b>
+    listenerConfig.port =  wssPort <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
-    listenerConfig.networkInterface = "10.1.1.10"  <i class="conum" data-value="67"></i><b>(67)</b>
+    listenerConfig.networkInterface = "10.1.1.10"  <i class="conum" data-value="68"></i><b>(68)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    listenerConfig.enableDeltaSync = true <i class="conum" data-value="68"></i><b>(68)</b>
+    listenerConfig.enableDeltaSync = true <i class="conum" data-value="69"></i><b>(69)</b>
 
     // end::listener-config-delta-sync[]
     // tag::listener-config-tls-enable[]
-    listenerConfig.disableTLS  = false <i class="conum" data-value="69"></i><b>(69)</b>
+    listenerConfig.disableTLS  = false <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::listener-config-tls-enable[]
      // tag::listener-config-tls-id-anon[]
     // Set the credentials the server presents the client
     // Use an anonymous self-signed cert
-    listenerConfig.tlsIdentity = nil <i class="conum" data-value="70"></i><b>(70)</b>
+    listenerConfig.tlsIdentity = nil <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
@@ -17715,19 +17731,19 @@ class cMyPassListener {
               return true
               }
             return false
-          }) <i class="conum" data-value="71"></i><b>(71)</b>
+          }) <i class="conum" data-value="72"></i><b>(72)</b>
 
     // end::listener-config-client-auth-pwd[]
 
     // tag::listener-start[]
     // Initialize the listener
-    _thisListener = URLEndpointListener(config: listenerConfig) <i class="conum" data-value="72"></i><b>(72)</b>
+    _thisListener = URLEndpointListener(config: listenerConfig) <i class="conum" data-value="73"></i><b>(73)</b>
     guard let thisListener = _thisListener else {
       throw ListenerError.NotInitialized
       // ... take appropriate actions
     }
     // Start the listener
-    try thisListener.start() <i class="conum" data-value="73"></i><b>(73)</b>
+    try thisListener.start() <i class="conum" data-value="74"></i><b>(74)</b>
 
     // end::listener-start[]
 // end::listener-initialize[]
@@ -17765,11 +17781,11 @@ print("urls: \(listener.urls)")
 
     // tag::listener-config-tls-full[]
     // tag::listener-config-tls-full-enable[]
-    listenerConfig.disableTLS  = false <i class="conum" data-value="74"></i><b>(74)</b>
+    listenerConfig.disableTLS  = false <i class="conum" data-value="75"></i><b>(75)</b>
 
     // end::listener-config-tls-full-enable[]
     // tag::listener-config-tls-disable[]
-    listenerConfig.disableTLS  = true <i class="conum" data-value="75"></i><b>(75)</b>
+    listenerConfig.disableTLS  = true <i class="conum" data-value="76"></i><b>(76)</b>
 
     // end::listener-config-tls-disable[]
 
@@ -17781,27 +17797,27 @@ print("urls: \(listener.urls)")
 
     guard let localCertificate =
       try? NSData(contentsOfFile: pathToCert) as Data
-    else { /* process error */ return } <i class="conum" data-value="76"></i><b>(76)</b>
+    else { /* process error */ return } <i class="conum" data-value="77"></i><b>(77)</b>
 
     let thisIdentity =
       try TLSIdentity.importIdentity(withData: localCertificate,
                                     password: "123",
-                                    label: thisSecId) <i class="conum" data-value="77"></i><b>(77)</b>
+                                    label: thisSecId) <i class="conum" data-value="78"></i><b>(78)</b>
 
     // end::listener-config-tls-id-caCert[]
     // tag::listener-config-tls-id-SelfSigned[]
-    let attrs = [certAttrCommonName: "Couchbase Inc"] <i class="conum" data-value="78"></i><b>(78)</b>
+    let attrs = [certAttrCommonName: "Couchbase Inc"] <i class="conum" data-value="79"></i><b>(79)</b>
 
     let thisIdentity =
       try TLSIdentity.createIdentity(forServer: true, /* isServer */
             attributes: attrs,
             expiration: Date().addingTimeInterval(86400),
-            label: "Server-Cert-Label") <i class="conum" data-value="79"></i><b>(79)</b>
+            label: "Server-Cert-Label") <i class="conum" data-value="80"></i><b>(80)</b>
 
     // end::listener-config-tls-id-SelfSigned[]
     // tag::listener-config-tls-id-full-set[]
     // Set the credentials the server presents the client
-    listenerConfig.tlsIdentity = thisIdentity    <i class="conum" data-value="80"></i><b>(80)</b>
+    listenerConfig.tlsIdentity = thisIdentity    <i class="conum" data-value="81"></i><b>(81)</b>
 
     // end::listener-config-tls-id-full-set[]
     // end::listener-config-tls-id-full[]
@@ -17810,10 +17826,10 @@ print("urls: \(listener.urls)")
     // Authenticate using Cert Authority
 
     // cert is a pre-populated object of type:SecCertificate representing a certificate
-    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="81"></i><b>(81)</b>
+    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="82"></i><b>(82)</b>
     let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)! //
 
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) <i class="conum" data-value="82"></i><b>(82)</b> <i class="conum" data-value="83"></i><b>(83)</b>
+    listenerConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [rootCert]) <i class="conum" data-value="83"></i><b>(83)</b> <i class="conum" data-value="84"></i><b>(84)</b>
 
     // end::listener-config-client-auth-root[]
     // end::listener-config-client-root-ca[]
@@ -17822,10 +17838,10 @@ print("urls: \(listener.urls)")
     // Authenticate self-signed cert using application logic
 
     // cert is a user-supplied object of type:SecCertificate representing a certificate
-    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="84"></i><b>(84)</b>
+    let rootCertData = SecCertificateCopyData(cert) as Data <i class="conum" data-value="85"></i><b>(85)</b>
     let rootCert = SecCertificateCreateWithData(kCFAllocatorDefault, rootCertData as CFData)!
 
-    listenerConfig.authenticator = ListenerCertificateAuthenticator.init { <i class="conum" data-value="85"></i><b>(85)</b>
+    listenerConfig.authenticator = ListenerCertificateAuthenticator.init { <i class="conum" data-value="86"></i><b>(86)</b>
       (certs) -&gt; Bool in
         var certs:SecCertificate
         var certCommonName:CFString?
@@ -17834,7 +17850,7 @@ print("urls: \(listener.urls)")
             return true
         }
         return false
-    } <i class="conum" data-value="86"></i><b>(86)</b>
+    } <i class="conum" data-value="87"></i><b>(87)</b>
 
     // end::listener-config-client-auth-self-signed[]
     // end::listener-config-client-auth-lambda[]
@@ -17940,7 +17956,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-initialize[]
     let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
     let targetEndpoint = URLEndpoint(url: tgtUrl)
-    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="87"></i><b>(87)</b>
+    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="88"></i><b>(88)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -17950,7 +17966,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = false; <i class="conum" data-value="88"></i><b>(88)</b>
+    thisConfig.enableAutoPurge = false; <i class="conum" data-value="89"></i><b>(89)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -17960,10 +17976,10 @@ class myActPeerClass {
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="89"></i><b>(89)</b>
+    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="90"></i><b>(90)</b>
 
     // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Security <i class="conum" data-value="90"></i><b>(90)</b>
+    // Configure Client Security <i class="conum" data-value="91"></i><b>(91)</b>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
     let thisAuthenticator = BasicAuthenticator(username: "Our Username", password: "Our Password")
@@ -17972,18 +17988,18 @@ class myActPeerClass {
     // end::p2p-act-rep-auth[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    config.conflictResolver = ( /* define resolver function */); <i class="conum" data-value="91"></i><b>(91)</b>
+    config.conflictResolver = ( /* define resolver function */); <i class="conum" data-value="92"></i><b>(92)</b>
 
     // end::p2p-act-rep-config-conflict[]
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    thisReplicator = Replicator.init( config: config) <i class="conum" data-value="92"></i><b>(92)</b>
+    thisReplicator = Replicator.init( config: config) <i class="conum" data-value="93"></i><b>(93)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // Optionally add a change listener
     // Retain token for use in deletion
-    let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="93"></i><b>(93)</b>
+    let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="94"></i><b>(94)</b>
       if change.status.activity == .stopped {
           print("Replication stopped")
       }
@@ -17998,7 +18014,7 @@ class myActPeerClass {
 
     // tag::p2p-act-rep-start[]
         // Run the replicator using the config settings
-        thisReplicator?.start()  <i class="conum" data-value="94"></i><b>(94)</b>
+        thisReplicator?.start()  <i class="conum" data-value="95"></i><b>(95)</b>
 
     // end::p2p-act-rep-start[]
     // end::p2p-act-rep-start-full[]
@@ -18023,12 +18039,12 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    config.acceptOnlySelfSignedServerCertificate = false <i class="conum" data-value="95"></i><b>(95)</b>
+    config.acceptOnlySelfSignedServerCertificate = false <i class="conum" data-value="96"></i><b>(96)</b>
 
     // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="96"></i><b>(96)</b>
+    config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="97"></i><b>(97)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // tag::p2p-act-rep-config-pinnedcert[]
@@ -18036,7 +18052,7 @@ class myActPeerClass {
     config.pinnedServerCertificate = thisCert; // Get listener cert if pinned
 
     // end::p2p-act-rep-config-pinnedcert[]
-    // Configure Client Security <i class="conum" data-value="97"></i><b>(97)</b>
+    // Configure Client Security <i class="conum" data-value="98"></i><b>(98)</b>
     // tag::p2p-act-rep-auth[]
     //  Set Authentication Mode
     let thisAuthenticator = BasicAuthenticator(username: validUser, password: validPassword)
@@ -18048,9 +18064,9 @@ class myActPeerClass {
     // tag::p2p-tlsid-tlsidentity-with-label[]
       // Check if Id exists in keychain and if so, use that Id
       if let thisIdentity =
-        (try? TLSIdentity.identity(withLabel: "doco-sync-server")) ?? nil { <i class="conum" data-value="98"></i><b>(98)</b>
+        (try? TLSIdentity.identity(withLabel: "doco-sync-server")) ?? nil { <i class="conum" data-value="99"></i><b>(99)</b>
           print("An identity with label : doco-sync-server already exists in keychain")
-          thisAuthenticator = ClientCertificateAuthenticator(identity: thisIdentity)  <i class="conum" data-value="99"></i><b>(99)</b>
+          thisAuthenticator = ClientCertificateAuthenticator(identity: thisIdentity)  <i class="conum" data-value="100"></i><b>(100)</b>
           config.authenticator = thisAuthenticator
           }
 
@@ -18244,7 +18260,7 @@ func fMyCaCertPinned() {
 
 
         // tag::old-listener-config-client-root-ca[]
-    // Configure the client authenticator to validate using ROOT CA <i class="conum" data-value="100"></i><b>(100)</b>
+    // Configure the client authenticator to validate using ROOT CA <i class="conum" data-value="101"></i><b>(101)</b>
 
     // end::old-listener-config-client-root-ca[]
 
@@ -18284,7 +18300,7 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
     // tag::sgw-act-rep-initialize[]
     let tgtUrl = URL(string: "wss://10.1.1.12:8092/travel-sample")!
     let targetEndpoint = URLEndpoint(url: tgtUrl)
-    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="101"></i><b>(101)</b>
+    var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="102"></i><b>(102)</b>
 
     // end::sgw-act-rep-initialize[]</code></pre>
 </div>
