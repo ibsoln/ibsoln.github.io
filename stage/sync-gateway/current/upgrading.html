@@ -122,7 +122,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/cbl-whatsnew.html">New at 3.0</a>
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/cbl-whatsnew.html">New at 3.0 BETA</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1306,7 +1306,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="whatsnew.html"><strong><em>New in 3.0</em></strong></a>
+    <a class="menu_title menu_link" href="whatsnew.html"><strong>_New in 3.x</strong></a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1950,6 +1950,12 @@
 <article class="doc">
 <div class="page-heading-title">
 <h1 class="page">Upgrading Sync Gateway</h1>
+<div class="labels">
+<ul>
+<li class="edition"><a href="https://www.couchbase.com/products/editions">3.0 BETA</a></li>
+<li class="status"><span>BETA</span></li>
+</ul>
+</div>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -1995,10 +2001,15 @@ At a high level, a rolling upgrade consists of the following steps:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="use-persistent-configuration"><a class="anchor" href="#use-persistent-configuration"></a>Use Persistent Configuration</h2>
+<h2 id="upgade-to-3-0-beta"><a class="anchor" href="#upgade-to-3-0-beta"></a>Upgade to 3.0 BETA</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="automatic-migration"><a class="anchor" href="#automatic-migration"></a>Automatic Migration</h3>
 <div class="paragraph">
-<p><em>Sync&#160;Gateway</em> 3.x provides an automatic migration path for existing users.</p>
+<p>The use of 3.0 BETA&#8217;s Persistent configuration feature is strongly recommended and it is the default operational mode when starting sync&#160;gateway.</p>
+</div>
+<div class="paragraph">
+<p>The feature provides an smooth upgrade path for existing users by automatically converting their existing configuration files to the new persistent configuration format.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2007,17 +2018,70 @@ At a high level, a rolling upgrade consists of the following steps:</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-To continue using sync&#160;gateway in pre-3.0 mode, that-is using file-based configuration, you need to use the <code>-disable_persistent_config</code> option at the command line when starting sync&#160;gateway&#8201;&#8212;&#8201;see: <a href="command-line-options.html" class="page">Command Line Options</a>
+<div class="title">One Way Upgrade</div>
+<div class="paragraph">
+<p>The migration to 3.0 BETA configuration is a ONE WAY process; to continue using the pre-3.x configuration see: <a href="#lbl-3-0-upgrade-opt-out">Continue using Pre-3.0 Beta Configuration File</a></p>
+</div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Startup a sync&#160;gateway node using a pre-3.0 configuration properties file and sync&#160;gateway will take the appropriate upgrade path as shown in <a href="#tbl-enhancedcfg">Table 1</a>.</p>
+<p>Just startup a sync&#160;gateway node using your pre-3.0 BETA configuration properties file and sync&#160;gateway will take the appropriate upgrade path as shown in <a href="#tbl-enhancedcfg">Table 1</a>.</p>
 </div>
 <div class="paragraph">
-<p>If you want the sync&#160;gateway to associate with a specific configuration group Id, you must add the <code>config_group_id</code> value to the configuration file prior to startup.
-Failing to do so may result in the configuration being overridden by one configured on  a different sync&#160;gateway node that has already started and registered its configuration.</p>
+<p>Before commencing your upgrade consider your requirements for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Sync&#160;gateway node groups&#8201;&#8212;&#8201;<a href="#lbl-3-0-config-grps">Configuration Groups</a></p>
+</li>
+<li>
+<p>Secure connectivity&#8201;&#8212;&#8201;<a href="#lbl-3-0-config-tls">Secure Server Connection</a></p>
+</li>
+<li>
+<p>Secure remote Administration&#8201;&#8212;&#8201;<a href="#lbl-3-0-config-adm">Secure Remote Administration</a>
+ing sync&#160;gateway nodes within your sync&#160;gateway cluster&#8201;&#8212;&#8201;see: {configuration-overview&#8212;&#8203;xref-groups}</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-3-0-config-grps"><a class="anchor" href="#lbl-3-0-config-grps"></a>Configuration Groups</h3>
+<div class="paragraph">
+<p>Before commencing your upgrade consider your requirements for grouping sync&#160;gateway nodes within your sync&#160;gateway cluster&#8201;&#8212;&#8201;see: {configuration-overview&#8212;&#8203;xref-groups}</p>
+</div>
+<div class="paragraph">
+<p>If you want the sync&#160;gateway to associate with a specific configuration group Id, you must add the <code>config_group_id</code> value to the configuration file prior to startup.</p>
+</div>
+<div class="paragraph">
+<p>Failing to do so may result in the configuration being overridden by one configured on  a different sync&#160;gateway node that has already started and registered its configuration.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-3-0-config-tls"><a class="anchor" href="#lbl-3-0-config-tls"></a>Secure Server Connection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Secure TLS Connection to Couchbase Server is enabled out-of-the-box in 3.0 BETA.</p>
+</div>
+<div class="paragraph">
+<p>If you wish to use non-secure connection, perhaps in a test environment, you need to run sync&#160;gateway with
+<code>use_tls_server</code> set to <code>false</code>&#8201;&#8212;&#8201;see: <a href="secure-sgw-access.html" class="page">Secure Sync Gateway Access</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-3-0-config-adm"><a class="anchor" href="#lbl-3-0-config-adm"></a>Secure Remote Administration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Secure Remote Administration is under-pinned by the use of Couchbase Server RBAC-users to authenticate and authorize access to Admin (and Metrics) API functionality.
+This requires you set-up and configure appropriate users&#8201;&#8212;&#8201;see: <a href="rest-api-access.html" class="page">REST API Access</a>.</p>
+</div>
+<div class="paragraph">
+<p>To opt out of this, you can configure: <code>admin_interface_authentication: false</code> and-or <code>metrics_interface_authentication: false</code>.</p>
 </div>
 <table id="tbl-enhancedcfg" class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. Upgrade Paths</caption>
@@ -2058,6 +2122,13 @@ Failing to do so may result in the configuration being overridden by one configu
 </tr>
 </tbody>
 </table>
+<div class="sect2">
+<h3 id="lbl-3-0-upgrade-opt-out"><a class="anchor" href="#lbl-3-0-upgrade-opt-out"></a>Continue using Pre-3.0 Beta Configuration File</h3>
+<div class="paragraph">
+<p>If you want to continue temporary use of pre-3.x configuration&#8201;&#8212;&#8201;that-is using file-based configuration&#8201;&#8212;&#8201;set the <code>-disable_persistent_config</code> option <code>true</code> when starting sync&#160;gateway.
+You can do this using a <a href="command-line-options.html" class="page">Command Line Options</a> or by addinn git to the configuration file.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">

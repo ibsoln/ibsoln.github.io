@@ -123,7 +123,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../cbl-whatsnew.html">New at 3.0</a>
+    <a class="menu_title menu_link" href="../cbl-whatsnew.html">New at 3.0 BETA</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1307,7 +1307,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html"><strong><em>New in 3.0</em></strong></a>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html"><strong>_New in 3.x</strong></a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1953,6 +1953,12 @@
 <article class="doc">
 <div class="page-heading-title">
 <h1 class="page">N1QL Query Strings</h1>
+<div class="labels">
+<ul>
+<li class="edition"><a href="https://www.couchbase.com/products/editions">3.0 BETA</a></li>
+<li class="status"><span>BETA</span></li>
+</ul>
+</div>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -2021,12 +2027,18 @@ Then run the query using the`.execute()` method&#8201;&#8212;&#8201;see <a href=
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs">// Declared elsewhere: Database argDB
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs">Database thisDb = new Database(dbName, dbCfg);
 
 var thisQuery =
-    thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); <i class="conum" data-value="1"></i><b>(1)</b>
+    thisDb.CreateQuery(
+        "SELECT META().id AS thisId FROM $thisDb.name " +
+        "WHERE type = $type"); <i class="conum" data-value="1"></i><b>(1)</b>
 
-return thisQuery.Execute().AllResults();</code></pre>
+thisQuery.Parameters.SetString("type", "hotel"); <i class="conum" data-value="2"></i><b>(2)</b>
+
+var results = thisQuery.Execute().AllResults();
+
+return results;</code></pre>
 </div>
 </div>
 </div>
@@ -4859,16 +4871,7 @@ TOSTRING</code></p></td>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs">// Declared elsewhere: Database argDB
-
-var thisQuery =
-    thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = $type"); <i class="conum" data-value="1"></i><b>(1)</b>
-
-var n1qlParams = new Parameters();
-n1qlParams.SetString("type", "hotel"); <i class="conum" data-value="2"></i><b>(2)</b>
-thisQuery.Parameters = n1qlParams;
-
-return thisQuery.Execute().AllResults();</code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/csharp/examples/code_snippets/Program.cs">tbd</code></pre>
 </div>
 </div>
 </div>
