@@ -1380,7 +1380,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="configuration-properties.html">Configuration <em><sup>(pre-3.0)</sup></em> schema</a>
+    <a class="menu_title menu_link" href="configuration-properties.html">Configuration <em><sup>(legacy)</sup></em> schema</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -2004,12 +2004,12 @@ At a high level, a rolling upgrade consists of the following steps:</p>
 <h2 id="upgade-to-3-0-beta"><a class="anchor" href="#upgade-to-3-0-beta"></a>Upgade to 3.0 BETA</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="automatic-migration"><a class="anchor" href="#automatic-migration"></a>Automatic Migration</h3>
+<h3 id="using-persistent-configuration"><a class="anchor" href="#using-persistent-configuration"></a>Using Persistent Configuration</h3>
 <div class="paragraph">
-<p>The use of 3.0 BETA&#8217;s Persistent configuration feature is strongly recommended and it is the default operational mode when starting sync&#160;gateway.</p>
+<p>The use of 3.0 BETA&#8217;s Persistent Configuration feature is strongly recommended and it is the default operational mode when starting sync&#160;gateway.</p>
 </div>
 <div class="paragraph">
-<p>The feature provides an smooth upgrade path for existing users by automatically converting their existing configuration files to the new persistent configuration format.</p>
+<p>The feature provides a smooth upgrade path for existing users by automatically converting their existing configuration files to the new persistent configuration format.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2020,14 +2020,14 @@ At a high level, a rolling upgrade consists of the following steps:</p>
 <td class="content">
 <div class="title">One Way Upgrade</div>
 <div class="paragraph">
-<p>The migration to 3.0 BETA configuration is a ONE WAY process; to continue using the pre-3.x configuration see: <a href="#lbl-3-0-upgrade-opt-out">Continue using Pre-3.0 Beta Configuration File</a></p>
+<p>The migration to 3.0 BETA configuration is a ONE WAY process; to continue using legacy-mode configuration see: <a href="#lbl-3-0-upgrade-opt-out">Continue to use Legacy-mode Configuration File</a></p>
 </div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Just startup a sync&#160;gateway node using your pre-3.0 BETA configuration properties file and sync&#160;gateway will take the appropriate upgrade path as shown in <a href="#tbl-enhancedcfg">Table 1</a>.</p>
+<p>Just startup a sync&#160;gateway node using your existing configuration properties file and sync&#160;gateway will take the appropriate upgrade path as shown in <a href="#tbl-enhancedcfg">Table 1</a>.</p>
 </div>
 <div class="paragraph">
 <p>Before commencing your upgrade consider your requirements for:</p>
@@ -2046,6 +2046,29 @@ ing sync&#160;gateway nodes within your sync&#160;gateway cluster&#8201;&#8212;&
 </li>
 </ul>
 </div>
+<table id="tbl-enhancedcfg" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Upgrade Paths</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">Configuration exists in Server bucket&#8201;&#8212;&#8201;a node with this <code>groupID</code> has already started</th>
+<th class="tableblock halign-center valign-top">No configuration exists&#8201;&#8212;&#8201;this is first node with this <code>groupID</code> to start</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Sync&#160;gateway ignores the supplied configuration file and uses the configuration associated with the <code>groupId</code> provided (or the default group if no <code>groupId</code> is provided).</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Sync&#160;gateway uses file-based configuration to derive and persist a configuration for this node.</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="sect2">
 <h3 id="lbl-3-0-config-grps"><a class="anchor" href="#lbl-3-0-config-grps"></a>Configuration Groups</h3>
@@ -2059,11 +2082,8 @@ ing sync&#160;gateway nodes within your sync&#160;gateway cluster&#8201;&#8212;&
 <p>Failing to do so may result in the configuration being overridden by one configured on  a different sync&#160;gateway node that has already started and registered its configuration.</p>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-3-0-config-tls"><a class="anchor" href="#lbl-3-0-config-tls"></a>Secure Server Connection</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="lbl-3-0-config-tls"><a class="anchor" href="#lbl-3-0-config-tls"></a>Secure Server Connection</h3>
 <div class="paragraph">
 <p>Secure TLS Connection to Couchbase Server is enabled out-of-the-box in 3.0 BETA.</p>
 </div>
@@ -2072,10 +2092,8 @@ ing sync&#160;gateway nodes within your sync&#160;gateway cluster&#8201;&#8212;&
 <code>use_tls_server</code> set to <code>false</code>&#8201;&#8212;&#8201;see: <a href="secure-sgw-access.html" class="page">Secure Sync Gateway Access</a></p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="lbl-3-0-config-adm"><a class="anchor" href="#lbl-3-0-config-adm"></a>Secure Remote Administration</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="lbl-3-0-config-adm"><a class="anchor" href="#lbl-3-0-config-adm"></a>Secure Remote Administration</h3>
 <div class="paragraph">
 <p>Secure Remote Administration is under-pinned by the use of Couchbase Server RBAC-users to authenticate and authorize access to Admin (and Metrics) API functionality.
 This requires you set-up and configure appropriate users&#8201;&#8212;&#8201;see: <a href="rest-api-access.html" class="page">REST API Access</a>.</p>
@@ -2083,50 +2101,12 @@ This requires you set-up and configure appropriate users&#8201;&#8212;&#8201;see
 <div class="paragraph">
 <p>To opt out of this, you can configure: <code>admin_interface_authentication: false</code> and-or <code>metrics_interface_authentication: false</code>.</p>
 </div>
-<table id="tbl-enhancedcfg" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Upgrade Paths</caption>
-<colgroup>
-<col style="width: 12.5%;">
-<col style="width: 12.5%;">
-<col style="width: 37.5%;">
-<col style="width: 37.5%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Node Type</th>
-<th class="tableblock halign-center valign-top">Group ID Set?</th>
-<th class="tableblock halign-left valign-top">Configuration exists in bucket</th>
-<th class="tableblock halign-left valign-top">No configuration exists</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Homogenous-cluster or single node</p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock">No</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Sync&#160;gateway ignores supplied file and uses the default group configuration</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Sync&#160;gateway uses file-based configuration to derive and persist a configuration for this node and any subsequent members of the default group that startup.</p>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Non-Homogenous</p></td>
-<td class="tableblock halign-center valign-top"><p class="tableblock">Yes</p></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Sync&#160;gateway ignores supplied file and uses the identified group&#8217;s configuration</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Sync&#160;gateway uses file-based configuration to derive and persist a configuration for this node and any subsequent members of the identified group that startup.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
+</div>
 <div class="sect2">
-<h3 id="lbl-3-0-upgrade-opt-out"><a class="anchor" href="#lbl-3-0-upgrade-opt-out"></a>Continue using Pre-3.0 Beta Configuration File</h3>
+<h3 id="lbl-3-0-upgrade-opt-out"><a class="anchor" href="#lbl-3-0-upgrade-opt-out"></a>Continue to use Legacy-mode Configuration File</h3>
 <div class="paragraph">
-<p>If you want to continue temporary use of pre-3.x configuration&#8201;&#8212;&#8201;that-is using file-based configuration&#8201;&#8212;&#8201;set the <code>-disable_persistent_config</code> option <code>true</code> when starting sync&#160;gateway.
-You can do this using a <a href="command-line-options.html" class="page">Command Line Options</a> or by addinn git to the configuration file.</p>
+<p>If you want to continue temporary use of legacy-mode configuration set the <code>-disable_persistent_config</code> option <code>true</code> when starting sync&#160;gateway.
+You can do this using a <a href="command-line-options.html" class="page">Command Line Options</a> or by adding  it to the configuration file.</p>
 </div>
 </div>
 </div>
