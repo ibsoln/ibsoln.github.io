@@ -435,7 +435,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-c">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -3379,12 +3379,12 @@ var query =
         // tag::replication-set-heartbeat[]
             config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="20"></i><b>(20)</b>
         // end::replication-set-heartbeat[]
-        // tag::replication-set-maxretries[]
-            config.MaxRetries = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
-        // end::replication-set-maxretries[]
-        // tag::replication-set-maxretrywaittime[]
-            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
-        // end::replication-set-maxretrywaittime[]
+        // tag::replication-set-maxattempts[]
+            config.Maxattempts = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
+        // end::replication-set-maxattempts[]
+        // tag::replication-set-maxattemptwaittime[]
+            config.MaxAttemptWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
+        // end::replication-set-maxattemptwaittime[]
 
         //  other config as required . . .
 
@@ -3747,36 +3747,54 @@ var query =
 
 // N1QL QUERY
 
-
-  public  List&lt;Result&gt; testN1QLQueryString (Database argDB)
+  public List&lt;Result&gt; docsonly_N1QLQueryString(Database argDB)
   {
-      // For Documentation
+      var doc_type = "hotel";
+
       DatabaseConfiguration dbCfg = new DatabaseConfiguration();
       dbCfg.Directory =
           Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
-      // tag::query-syntax-n1ql[]
+
       Database thisDb = new Database(dbName, dbCfg);
 
+      // For Documentation -- N1QL Query
+      // tag::query-syntax-n1ql[]
+      // Declared elsewhere: Database argDB
+
       var thisQuery =
-          thisDb.CreateQuery(
-              "SELECT META().id AS thisId FROM $thisDb.name " +
-              "WHERE type = $type"); <i class="conum" data-value="23"></i><b>(23)</b>
+          thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); <i class="conum" data-value="23"></i><b>(23)</b>
 
-      thisQuery.Parameters.SetString("type", "hotel"); <i class="conum" data-value="24"></i><b>(24)</b>
+      return thisQuery.Execute().AllResults();
 
-      var results = thisQuery.Execute().AllResults();
-
-      return results;
       // end::query-syntax-n1ql[]
   }
 
-    // tag::query-syntax-n1ql-params[]
-    tbd
-    // end::query-syntax-n1ql-params[]
 
-    // tag::query-access-n1ql[]
-    tbd
-    // end::query-access-n1ql[]
+  public  List&lt;Result&gt; docsonly_N1QLQueryStringParams(Database argDB)
+  {
+      var doc_type = "hotel";
+
+      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
+      dbCfg.Directory =
+          Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
+
+      Database thisDb = new Database(dbName, dbCfg);
+
+      // For Documentation -- N1QL Query
+      // tag::query-syntax-n1ql-params[]
+      // Declared elsewhere: Database argDB
+
+      var thisQuery =
+          thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = $type"); <i class="conum" data-value="24"></i><b>(24)</b>
+
+      var n1qlParams = new Parameters();
+      n1qlParams.SetString("type", "hotel"); <i class="conum" data-value="25"></i><b>(25)</b>
+      thisQuery.Parameters = n1qlParams;
+
+      return thisQuery.Execute().AllResults();
+
+      // end::query-syntax-n1ql-params[]
+  }
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
@@ -3810,11 +3828,11 @@ var query =
             foreach (var result in results)
             {
                 // get the result into our dictionary object
-                var thisDocsProps = result.GetDictionary(dbName); <i class="conum" data-value="25"></i><b>(25)</b>
+                var thisDocsProps = result.GetDictionary(dbName); <i class="conum" data-value="26"></i><b>(26)</b>
 
                 if (thisDocsProps != null)
                 {
-                    thisDocsId = thisDocsProps.GetString("id"); <i class="conum" data-value="26"></i><b>(26)</b>
+                    thisDocsId = thisDocsProps.GetString("id"); <i class="conum" data-value="27"></i><b>(27)</b>
                     thisDocsName = thisDocsProps.GetString("name");
                     thisDocsCity = thisDocsProps.GetString("city");
                     thisDocsType = thisDocsProps.GetString("type");
@@ -3831,13 +3849,13 @@ var query =
     foreach (var result in query.Execute().AsEnumerable()) {
 
         // get the result into a JSON String
-                var thisDocsJSONString = result.ToJSON();<i class="conum" data-value="27"></i><b>(27)</b>
+                var thisDocsJSONString = result.ToJSON();<i class="conum" data-value="28"></i><b>(28)</b>
 
         // Get a native dictionary object using the JSON string
         var dictFromJSONstring =
               JsonConvert.
                 DeserializeObject&lt;Dictionary&lt;string, object&gt;&gt;
-                  (thisDocsJSONString); <i class="conum" data-value="28"></i><b>(28)</b>
+                  (thisDocsJSONString); <i class="conum" data-value="29"></i><b>(29)</b>
 
         // use the created dictionary
         if (dictFromJSONstring != null)
@@ -3850,7 +3868,7 @@ var query =
 
         //Get a custom object using the JSON string
         Hotel this_hotel =
-            JsonConvert.DeserializeObject&lt;Hotel&gt;(thisDocsJSONString); <i class="conum" data-value="29"></i><b>(29)</b>
+            JsonConvert.DeserializeObject&lt;Hotel&gt;(thisDocsJSONString); <i class="conum" data-value="30"></i><b>(30)</b>
 
         // Store this hotel object in a list of hotels
         hotels.Add(
@@ -3921,7 +3939,7 @@ var query =
 
         var query =
           QueryBuilder
-            .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) <i class="conum" data-value="30"></i><b>(30)</b>
+            .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) <i class="conum" data-value="31"></i><b>(31)</b>
             .From(DataSource.Database(this_Db));
 
         // end::query-syntax-count-only[]
@@ -3934,7 +3952,7 @@ var query =
         foreach (var result in results)
         {
 
-            var numberOfDocs = result.GetInt("mycount"); <i class="conum" data-value="31"></i><b>(31)</b>
+            var numberOfDocs = result.GetInt("mycount"); <i class="conum" data-value="32"></i><b>(32)</b>
 
         }
 
@@ -3970,7 +3988,7 @@ var query =
         foreach (var result in results)
         {
 
-            var thisDocsID = result.GetString("this_ID"); <i class="conum" data-value="32"></i><b>(32)</b>
+            var thisDocsID = result.GetString("this_ID"); <i class="conum" data-value="33"></i><b>(33)</b>
             var doc = this_Db.GetDocument(thisDocsID);
         }
 
@@ -4009,7 +4027,7 @@ var query =
               QueryBuilder
                   .Select(SelectResult.All())
                   .From(DataSource.Database(this_Db))
-                  .Limit(Expression.Int(thisLimit), Expression.Int(thisOffset)); <i class="conum" data-value="33"></i><b>(33)</b>
+                  .Limit(Expression.Int(thisLimit), Expression.Int(thisOffset)); <i class="conum" data-value="34"></i><b>(34)</b>
 
           foreach (var result in listQuery.Execute().AllResults())
           {
@@ -4040,7 +4058,7 @@ var query =
             var thisDoc = this_Db.GetDocument("hotel_10025");
 
             // Get document data as JSON String
-            var thisDocAsJsonString = thisDoc?.ToJSON(); <i class="conum" data-value="34"></i><b>(34)</b>
+            var thisDocAsJsonString = thisDoc?.ToJSON(); <i class="conum" data-value="35"></i><b>(35)</b>
 
             // Get Json Object from the Json String
             JObject myJsonObj = JObject.Parse(thisDocAsJsonString);
@@ -4061,7 +4079,7 @@ var query =
 
             // Update new document with JSOn String
             MutableDocument newhotel =
-                new MutableDocument(anhotel.Id, newJsonString); <i class="conum" data-value="35"></i><b>(35)</b>
+                new MutableDocument(anhotel.Id, newJsonString); <i class="conum" data-value="36"></i><b>(36)</b>
 
             foreach (string key in newhotel.ToDictionary().Keys)
             {
@@ -4071,7 +4089,7 @@ var query =
 
             newDb.Save(newhotel);
 
-            var thatDoc = newDb.GetDocument("2001").ToJSON(); <i class="conum" data-value="36"></i><b>(36)</b>
+            var thatDoc = newDb.GetDocument("2001").ToJSON(); <i class="conum" data-value="37"></i><b>(37)</b>
             System.Console.Write(thatDoc);
 
             // end::tojson-document[]
@@ -4114,7 +4132,7 @@ var query =
 
             // Create mutable array using JSON String Array
             var myArray = new MutableArrayObject();
-            myArray.SetJSON(thisJSONstring);  <i class="conum" data-value="37"></i><b>(37)</b>
+            myArray.SetJSON(thisJSONstring);  <i class="conum" data-value="38"></i><b>(38)</b>
 
 
             // Create a new documenty for each array element
@@ -4122,19 +4140,19 @@ var query =
             {
                 var dict = myArray.GetDictionary(i);
                 var docid = myArray[i].Dictionary.GetString("id");
-                var newdoc = new MutableDocument(docid, dict.ToDictionary()); <i class="conum" data-value="38"></i><b>(38)</b>
+                var newdoc = new MutableDocument(docid, dict.ToDictionary()); <i class="conum" data-value="39"></i><b>(39)</b>
                 dbNew.Save(newdoc);
             }
 
             // Get one of the created docs and iterate through one of the embedded arrays
             var extendedDoc = dbNew.GetDocument("1002");
             var features = extendedDoc.GetArray("features");
-            <i class="conum" data-value="39"></i><b>(39)</b>
+            <i class="conum" data-value="40"></i><b>(40)</b>
             foreach (string feature in features) {
                 System.Console.Write(feature);
                 //process array item as required
             }
-            var featuresJSON = extendedDoc.GetArray("features").ToJSON(); <i class="conum" data-value="40"></i><b>(40)</b>
+            var featuresJSON = extendedDoc.GetArray("features").ToJSON(); <i class="conum" data-value="41"></i><b>(41)</b>
 
             // end::tojson-array[]
         }
@@ -4155,7 +4173,7 @@ var query =
 
             // Get dictionary from JSONstring
             var aJSONstring = "{'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDict = new MutableDictionaryObject(json: aJSONstring); <i class="conum" data-value="41"></i><b>(41)</b>
+            var myDict = new MutableDictionaryObject(json: aJSONstring); <i class="conum" data-value="42"></i><b>(42)</b>
 
             // use dictionary to get name value
             var name = myDict.GetString("name");
@@ -4209,7 +4227,7 @@ var query =
                 "'city':'Balmain','country':'Australia'," +
                 "'description':'Undefined description for Hotel Ned'," +
                 "'features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDoc = new MutableDocument(docId, aJSONstring); <i class="conum" data-value="42"></i><b>(42)</b>
+            var myDoc = new MutableDocument(docId, aJSONstring); <i class="conum" data-value="43"></i><b>(43)</b>
 
 
             // Get the content (an image), create blob and add to doc)
@@ -4219,8 +4237,8 @@ var query =
                                 userName);
             var myImagePath = Path.Combine(defaultDirectory, "avatarimage.jpg");
             var myImageUri = new Uri(myImagePath.ToString());
-            var myBlob = new Blob("image/jpg", myImageUri); <i class="conum" data-value="43"></i><b>(43)</b>
-            myDoc.SetBlob("avatar", myBlob); <i class="conum" data-value="44"></i><b>(44)</b>
+            var myBlob = new Blob("image/jpg", myImageUri); <i class="conum" data-value="44"></i><b>(44)</b>
+            myDoc.SetBlob("avatar", myBlob); <i class="conum" data-value="45"></i><b>(45)</b>
 
 
             // This example generates a 'blob not saved' exception
@@ -4231,16 +4249,16 @@ var query =
             dbNew.Save(myDoc);
 
             // Alternatively -- depending on use case
-            dbNew.SaveBlob(new Blob("image/jpg", myImageUri)); <i class="conum" data-value="45"></i><b>(45)</b>
+            dbNew.SaveBlob(new Blob("image/jpg", myImageUri)); <i class="conum" data-value="46"></i><b>(46)</b>
 
 
             // Retrieve saved doc, get blob as JSON andheck its still a 'blob'
             var sameDoc = dbNew.GetDocument(docId);
             var reconstitutedBlob = new MutableDictionaryObject().
-                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON())); <i class="conum" data-value="46"></i><b>(46)</b>
+                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON())); <i class="conum" data-value="47"></i><b>(47)</b>
 
             if (Blob.IsBlob(
-                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))  <i class="conum" data-value="47"></i><b>(47)</b>
+                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))  <i class="conum" data-value="48"></i><b>(48)</b>
             {
                //... process accordingly
                Console.WriteLine("Its a Blob!!");
@@ -4308,7 +4326,7 @@ var query =
 
 
 // tag::listener-simple[]
-var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="48"></i><b>(48)</b>
+var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="49"></i><b>(49)</b>
 
 thisConfig.Authenticator =
   new ListenerPasswordAuthenticator(
@@ -4316,29 +4334,29 @@ thisConfig.Authenticator =
       {
       return username.equals("valid.user")  &amp;&amp; (password == validPassword);
       }
-  ); <i class="conum" data-value="49"></i><b>(49)</b>
+  ); <i class="conum" data-value="50"></i><b>(50)</b>
 
-_thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="50"></i><b>(50)</b>
+_thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="51"></i><b>(51)</b>
 
-_thisListener.Start(); <i class="conum" data-value="51"></i><b>(51)</b>
+_thisListener.Start(); <i class="conum" data-value="52"></i><b>(52)</b>
 
 // end::listener-simple[]
 
 
 
 // tag::replicator-simple[]
-var theListenerEndpoint = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="52"></i><b>(52)</b>
+var theListenerEndpoint = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="53"></i><b>(53)</b>
 
-var thisConfig = new ReplicatorConfiguration(thisDB, theListenerEndpoint); <i class="conum" data-value="53"></i><b>(53)</b>
+var thisConfig = new ReplicatorConfiguration(thisDB, theListenerEndpoint); <i class="conum" data-value="54"></i><b>(54)</b>
 
-thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="54"></i><b>(54)</b>
+thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="55"></i><b>(55)</b>
 
 thisConfig.Authenticator =
-  new BasicAuthenticator("valid.user", "valid.password.string"); <i class="conum" data-value="55"></i><b>(55)</b>
+  new BasicAuthenticator("valid.user", "valid.password.string"); <i class="conum" data-value="56"></i><b>(56)</b>
 
-var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="56"></i><b>(56)</b>
+var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="57"></i><b>(57)</b>
 
-thisReplicator.Start(); <i class="conum" data-value="57"></i><b>(57)</b>
+thisReplicator.Start(); <i class="conum" data-value="58"></i><b>(58)</b>
 
 // end::replicator-simple[]
 
@@ -4401,34 +4419,34 @@ namespace api_walkthrough
 
     // tag::listener-config-db[]
     // Initialize the listener config
-    var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="58"></i><b>(58)</b>
+    var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="59"></i><b>(59)</b>
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
-    thisConfig.Port = 55990; <i class="conum" data-value="59"></i><b>(59)</b>
+    thisConfig.Port = 55990; <i class="conum" data-value="60"></i><b>(60)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
-    thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="60"></i><b>(60)</b>
+    thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="61"></i><b>(61)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    thisConfig.EnableDeltaSync = true; <i class="conum" data-value="61"></i><b>(61)</b>
+    thisConfig.EnableDeltaSync = true; <i class="conum" data-value="62"></i><b>(62)</b>
 
     // end::listener-config-delta-sync[]
     // tag::listener-config-tls-full[]
     // tag::listener-config-tls-enable[]
-    thisConfig.DisableTLS = false; <i class="conum" data-value="62"></i><b>(62)</b>
+    thisConfig.DisableTLS = false; <i class="conum" data-value="63"></i><b>(63)</b>
 
     // end::listener-config-tls-enable[]
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
-    thisConfig.TlsIdentity = null; <i class="conum" data-value="63"></i><b>(63)</b>
+    thisConfig.TlsIdentity = null; <i class="conum" data-value="64"></i><b>(64)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
     // Configure the client authenticator
-    // Here we are using Basic Authentication) <i class="conum" data-value="64"></i><b>(64)</b>
+    // Here we are using Basic Authentication) <i class="conum" data-value="65"></i><b>(65)</b>
     SecureString validPassword =  new SecureString(); /* example only */
     // Get SecureString input for validPassword
     var validUser = "valid.username";
@@ -4442,10 +4460,10 @@ namespace api_walkthrough
     // end::listener-config-client-auth-pwd[]
     // tag::listener-start[]
     // Initialize the listener
-    _thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="65"></i><b>(65)</b>
+    _thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="66"></i><b>(66)</b>
 
     // Start the listener
-    thisListener.Start(); <i class="conum" data-value="66"></i><b>(66)</b>
+    thisListener.Start(); <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::listener-start[]
     // end::listener-initialize[]
@@ -4468,8 +4486,8 @@ namespace api_walkthrough
 
 
   // tag::listener-status-check[]
-  int connectionCount = thisListener.Status.ConnectionCount; <i class="conum" data-value="67"></i><b>(67)</b>
-  int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  <i class="conum" data-value="68"></i><b>(68)</b>
+  int connectionCount = thisListener.Status.ConnectionCount; <i class="conum" data-value="68"></i><b>(68)</b>
+  int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  <i class="conum" data-value="69"></i><b>(69)</b>
 
   // end::listener-status-check[]
 
@@ -4506,7 +4524,7 @@ _thisListener.Start();
 // end::listener-get-url-list[]
 
     // tag::listener-config-tls-disable[]
-    thisConfig.DisableTLS = true; <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.DisableTLS = true; <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::listener-config-tls-disable[]
 
@@ -4528,13 +4546,13 @@ _thisListener.Start();
 
     // Get keys and certificates from PKCS12 data
     byte[] thisIdData =
-      File.ReadAllBytes("c:client.p12"); <i class="conum" data-value="70"></i><b>(70)</b>
+      File.ReadAllBytes("c:client.p12"); <i class="conum" data-value="71"></i><b>(71)</b>
     // . . . other user code . . .
 
     // tag::import-tls-identity[]
     thisIdentity = TLSIdentity.ImportIdentity(
       _store,
-      thisIdData, <i class="conum" data-value="71"></i><b>(71)</b>
+      thisIdData, <i class="conum" data-value="72"></i><b>(72)</b>
       "123", // Password to access certificate data
       "couchbase-demo-cert",
       null); // Label to get cert in certificate map
@@ -4547,12 +4565,12 @@ _thisListener.Start();
 
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
-    thisConfig.TlsIdentity = null; <i class="conum" data-value="72"></i><b>(72)</b>
+    thisConfig.TlsIdentity = null; <i class="conum" data-value="73"></i><b>(73)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-tls-id-set[]
     // Set the TLS Identity
-    thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="73"></i><b>(73)</b>
+    thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="74"></i><b>(74)</b>
 
     // end::listener-config-tls-id-set[]
     // end::listener-config-tls-id-full[]
@@ -4563,17 +4581,17 @@ _thisListener.Start();
 
     // Get the valid cert chain, in this instance from
     // PKCS12 data containing private key, public key
-    // and certificates <i class="conum" data-value="74"></i><b>(74)</b>
+    // and certificates <i class="conum" data-value="75"></i><b>(75)</b>
     var clientData = File.ReadAllBytes("c:client.p12");
     var ourCaData = File.ReadAllBytes("c:client-ca.der");
 
     // Get the root certs from the data
-    var thisRootCert = new X509Certificate2(ourCaData); <i class="conum" data-value="75"></i><b>(75)</b>
+    var thisRootCert = new X509Certificate2(ourCaData); <i class="conum" data-value="76"></i><b>(76)</b>
 
     // Configure the authenticator to use the root certs
     var thisAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(thisRootCert));
 
-    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="76"></i><b>(76)</b>
+    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="77"></i><b>(77)</b>
 
     // Initialize the listener using the config
     _listener = new URLEndpointListener(thisConfig);
@@ -4585,7 +4603,7 @@ _thisListener.Start();
 
     // Get the valid cert chain, in this instance from
     // PKCS12 data containing private key, public key
-    // and certificates <i class="conum" data-value="77"></i><b>(77)</b>
+    // and certificates <i class="conum" data-value="78"></i><b>(78)</b>
     clientData = File.ReadAllBytes("c:client.p12");
     ourCaData = File.ReadAllBytes("c:client-ca.der");
 
@@ -4599,9 +4617,9 @@ _thisListener.Start();
         new X509Certificate2Collection(thisRootCert) =&gt; {
           // . . . user supplied code block
           // . . . returns boolean value (true=authenticated)
-        }); <i class="conum" data-value="78"></i><b>(78)</b>
+        }); <i class="conum" data-value="79"></i><b>(79)</b>
 
-    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="79"></i><b>(79)</b>
+    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="80"></i><b>(80)</b>
 
     // end::listener-config-client-auth-lambda[]
 
@@ -4759,7 +4777,7 @@ public class Examples {
     // tag::p2p-act-rep-initialize[]
     // initialize the replicator configuration
 
-    var thisUrl = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="80"></i><b>(80)</b>
+    var thisUrl = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="81"></i><b>(81)</b>
     var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
     // end::p2p-act-rep-initialize[]
@@ -4772,7 +4790,7 @@ public class Examples {
     // tag::autopurge-override[]
     // Set autopurge option
     // here we override its default
-    thisConfig.EnableAutoPurge = false; <i class="conum" data-value="81"></i><b>(81)</b>
+    thisConfig.EnableAutoPurge = false; <i class="conum" data-value="82"></i><b>(82)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -4782,10 +4800,10 @@ public class Examples {
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="82"></i><b>(82)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="83"></i><b>(83)</b>
 
     // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Security <i class="conum" data-value="83"></i><b>(83)</b>
+    // Configure Client Security <i class="conum" data-value="84"></i><b>(84)</b>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
@@ -4793,7 +4811,7 @@ public class Examples {
     // end::p2p-act-rep-auth[]
     // tag::p2p-act-rep-config-conflict-full[]
     // tag::p2p-act-rep-config-conflict-builtin[]
-    /* Optionally set a conflict resolver call back */ <i class="conum" data-value="84"></i><b>(84)</b>
+    /* Optionally set a conflict resolver call back */ <i class="conum" data-value="85"></i><b>(85)</b>
     // Use built-in resolver
     thisConfig.ConflictResolver = new LocalWinConflictResolver();  //
 
@@ -4811,11 +4829,11 @@ public class Examples {
     // tag::p2p-act-rep-start-full[]
     // Initialize and start a replicator
     // Initialize replicator with configuration data
-    var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="85"></i><b>(85)</b>
+    var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="86"></i><b>(86)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    //Optionally add a change listener <i class="conum" data-value="86"></i><b>(86)</b>
+    //Optionally add a change listener <i class="conum" data-value="87"></i><b>(87)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     _thisListenerToken =
       thisReplicator.AddChangeListener((sender, args) =&gt;
@@ -4828,7 +4846,7 @@ public class Examples {
     // end::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-start[]
     // Start replicator
-    thisReplicator.Start(); <i class="conum" data-value="87"></i><b>(87)</b>
+    thisReplicator.Start(); <i class="conum" data-value="88"></i><b>(88)</b>
 
     // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -4840,7 +4858,7 @@ public class Examples {
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="88"></i><b>(88)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="89"></i><b>(89)</b>
 
     // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-pinnedcert[]
@@ -4848,7 +4866,7 @@ public class Examples {
     // Return the remote pinned cert (the listener's cert)
     byte returnedCert = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
     // end::p2p-act-rep-config-pinnedcert[]
-    // Configure Client Security <i class="conum" data-value="89"></i><b>(89)</b>
+    // Configure Client Security <i class="conum" data-value="90"></i><b>(90)</b>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
@@ -4859,13 +4877,13 @@ public class Examples {
     // tag::p2p-act-rep-config-cacert-pinned[]
     // Only CA Certs accepted
     thisConfig.AcceptOnlySelfSignedServerCertificate =
-      false; <i class="conum" data-value="90"></i><b>(90)</b>
+      false; <i class="conum" data-value="91"></i><b>(91)</b>
 
     var thisCert =
-      new X509Certificate2(caData); <i class="conum" data-value="91"></i><b>(91)</b>
+      new X509Certificate2(caData); <i class="conum" data-value="92"></i><b>(92)</b>
 
     thisConfig.PinnedServerCertificate =
-      thisCert; <i class="conum" data-value="92"></i><b>(92)</b>
+      thisCert; <i class="conum" data-value="93"></i><b>(93)</b>
 
     // end::p2p-act-rep-config-cacert-pinned[]
 
@@ -4901,7 +4919,7 @@ public class Examples {
 
       // tag::p2p-act-rep-stop[]
       // Stop replication.
-      thisReplicator.Stop(); <i class="conum" data-value="93"></i><b>(93)</b>
+      thisReplicator.Stop(); <i class="conum" data-value="94"></i><b>(94)</b>
       // end::p2p-act-rep-stop[]
 
 
@@ -4909,7 +4927,7 @@ public class Examples {
 
 {
   CouchbaseLite.init(context);
-  Database thisDB = new Database("passivepeerdb");  <i class="conum" data-value="94"></i><b>(94)</b>
+  Database thisDB = new Database("passivepeerdb");  <i class="conum" data-value="95"></i><b>(95)</b>
   // Initialize the listener config
   final URLEndpointListenerConfiguration thisConfig = new URLEndpointListenerConfiguration(database);
   thisConfig.Port(55990)             // &lt;.&gt; Default- port is selected
@@ -4917,14 +4935,14 @@ public class Examples {
   thisConfig.EnableDeltaSync(true)   // &lt;.&gt; Optional. Defaults to false.
 
   // Configure the client authenticator (if using basic auth)
-  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "Our Username", "Our Password"}; <i class="conum" data-value="95"></i><b>(95)</b>
-  thisConfig.Authenticator(auth); <i class="conum" data-value="96"></i><b>(96)</b>
+  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "Our Username", "Our Password"}; <i class="conum" data-value="96"></i><b>(96)</b>
+  thisConfig.Authenticator(auth); <i class="conum" data-value="97"></i><b>(97)</b>
 
   // Initialize the listener
-  final URLEndpointListener listener = new URLEndpointListener( thisConfig ); <i class="conum" data-value="97"></i><b>(97)</b>
+  final URLEndpointListener listener = new URLEndpointListener( thisConfig ); <i class="conum" data-value="98"></i><b>(98)</b>
 
   // Start the listener
-  listener.Start(); <i class="conum" data-value="98"></i><b>(98)</b>
+  listener.Start(); <i class="conum" data-value="99"></i><b>(99)</b>
     }
 
 
@@ -4964,7 +4982,7 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
     // String validUser = new String("validUsername"); // an example username
     // String validPassword = new String("validPasswordValue"); // an example password
 
-    // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( <i class="conum" data-value="99"></i><b>(99)</b>
+    // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( <i class="conum" data-value="100"></i><b>(100)</b>
     //   validUser, validPassword -&gt; validUser == "validUsername" &amp;&amp; validPassword == "validPasswordValue" );
 
     // if (thisAuth) {
@@ -4979,7 +4997,7 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 
 
     // tag::old-p2p-act-rep-add-change-listener[]
-    ListenerToken thisListener = new thisReplicator.addChangeListener(change -&gt; { <i class="conum" data-value="100"></i><b>(100)</b>
+    ListenerToken thisListener = new thisReplicator.addChangeListener(change -&gt; { <i class="conum" data-value="101"></i><b>(101)</b>
       if (change.Status().getError() != null) {
         Log.i(TAG, "Error code ::  " + change.Status().getError().getCode());
       }
@@ -5024,10 +5042,10 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 // tag::old-deleteTlsIdentity[]
 
 String thisAlias = "alias-to-delete";
-KeyStore thisKeystore = KeyStore.getInstance("PKCS12"); <i class="conum" data-value="101"></i><b>(101)</b>
+KeyStore thisKeystore = KeyStore.getInstance("PKCS12"); <i class="conum" data-value="102"></i><b>(102)</b>
 thisKeyStore.load= null;
 if (thisAlias != null) {
-   thisKeystore.deleteEntry(thisAlias);  <i class="conum" data-value="102"></i><b>(102)</b>
+   thisKeystore.deleteEntry(thisAlias);  <i class="conum" data-value="103"></i><b>(103)</b>
 }
 
 // end::old-deleteTlsIdentity[]
@@ -5072,7 +5090,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // tag::old-listener-config-client-root-ca[]
     // Configure the client authenticator
-    // to validate using ROOT CA <i class="conum" data-value="103"></i><b>(103)</b>
+    // to validate using ROOT CA <i class="conum" data-value="104"></i><b>(104)</b>
     byte[] thisCaData; // byte array for CA data
     using (var thisReader = new BinaryReader(stream)) {
       thisCaData = thisReader.ReadBytes(int stream.Length);
@@ -5098,7 +5116,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // Configure the expected server-supplied
     // credentials -- only accept CA Certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="104"></i><b>(104)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="105"></i><b>(105)</b>
 
     // Client identity
     thisIdentity =
@@ -5106,10 +5124,10 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         clientData,
         "123",
         "CBL-Client-Cert",
-        null); <i class="conum" data-value="105"></i><b>(105)</b>
+        null); <i class="conum" data-value="106"></i><b>(106)</b>
 
     thisConfig.Authenticator =
-      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="106"></i><b>(106)</b>
+      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="107"></i><b>(107)</b>
 
     // end::client-cert-authenticator-root-certs[]
 
@@ -5118,7 +5136,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
 
     byte[] thisCaData, thisClientData;
-    thisClientData = File.ReadAllBytes("C:\\client.p12"); <i class="conum" data-value="107"></i><b>(107)</b>
+    thisClientData = File.ReadAllBytes("C:\\client.p12"); <i class="conum" data-value="108"></i><b>(108)</b>
     thisCaData = File.ReadAllBytes("C:\\client-ca.der");
 
     // Root certs
@@ -5129,7 +5147,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // Create URL Endpoint Listener
     var thisConfig = new URLEndpointListenerConfiguration(_Database);
-    thisConfig.DisableTLS = false; <i class="conum" data-value="108"></i><b>(108)</b>
+    thisConfig.DisableTLS = false; <i class="conum" data-value="109"></i><b>(109)</b>
     thisConfig.Authenticator = thisAuth;
     _listener = new URLEndpointListener(thisConfig);
     _listener.Start();
@@ -5179,10 +5197,10 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         clientData,
         "123",
         "CBL-Client-Cert",
-        null); <i class="conum" data-value="109"></i><b>(109)</b>
+        null); <i class="conum" data-value="110"></i><b>(110)</b>
 
     thisConfig.Authenticator =
-      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="110"></i><b>(110)</b>
+      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="111"></i><b>(111)</b>
 
     // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -5196,11 +5214,11 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 public class MyClass
 {
     public Database Database { get; set; }
-    public Replicator Replicator { get; set; } <i class="conum" data-value="1"></i><b>(1)</b>
+    public Replicator Replicator { get; set; } <i class="conum" data-value="112"></i><b>(112)</b>
 
     public void StartReplication()
     {
-        var url = new Uri("ws://localhost:4984/db"); <i class="conum" data-value="2"></i><b>(2)</b>
+        var url = new Uri("wss://localhost:4984/db"); <i class="conum" data-value="113"></i><b>(113)</b>
         var target = new URLEndpoint(url);
         var config = new ReplicatorConfiguration(Database, target)
         {
@@ -5215,9 +5233,9 @@ public class MyClass
 // end::sgw-repl-pull[]
 
 // tag::sgw-repl-pull-callouts[]
-&lt;1&gt; A replication is an asynchronous operation.
+&lt;.&gt; A replication is an asynchronous operation.
 To keep a reference to the `replicator` object, you can set it as an instance property.
-&lt;2&gt; The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+&lt;.&gt; The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 // end::sgw-repl-pull-callouts[]
 
@@ -5225,7 +5243,7 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
     // tag::sgw-act-rep-initialize[]
     // initialize the replicator configuration
 
-    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); <i class="conum" data-value="111"></i><b>(111)</b>
+    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); <i class="conum" data-value="114"></i><b>(114)</b>
     var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
     // end::sgw-act-rep-initialize[]</code></pre>
@@ -6548,12 +6566,12 @@ var query =
         // tag::replication-set-heartbeat[]
             config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="20"></i><b>(20)</b>
         // end::replication-set-heartbeat[]
-        // tag::replication-set-maxretries[]
-            config.MaxRetries = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
-        // end::replication-set-maxretries[]
-        // tag::replication-set-maxretrywaittime[]
-            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
-        // end::replication-set-maxretrywaittime[]
+        // tag::replication-set-maxattempts[]
+            config.Maxattempts = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
+        // end::replication-set-maxattempts[]
+        // tag::replication-set-maxattemptwaittime[]
+            config.MaxAttemptWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
+        // end::replication-set-maxattemptwaittime[]
 
         //  other config as required . . .
 
@@ -6916,36 +6934,54 @@ var query =
 
 // N1QL QUERY
 
-
-  public  List&lt;Result&gt; testN1QLQueryString (Database argDB)
+  public List&lt;Result&gt; docsonly_N1QLQueryString(Database argDB)
   {
-      // For Documentation
+      var doc_type = "hotel";
+
       DatabaseConfiguration dbCfg = new DatabaseConfiguration();
       dbCfg.Directory =
           Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
-      // tag::query-syntax-n1ql[]
+
       Database thisDb = new Database(dbName, dbCfg);
 
+      // For Documentation -- N1QL Query
+      // tag::query-syntax-n1ql[]
+      // Declared elsewhere: Database argDB
+
       var thisQuery =
-          thisDb.CreateQuery(
-              "SELECT META().id AS thisId FROM $thisDb.name " +
-              "WHERE type = $type"); <i class="conum" data-value="23"></i><b>(23)</b>
+          thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); <i class="conum" data-value="23"></i><b>(23)</b>
 
-      thisQuery.Parameters.SetString("type", "hotel"); <i class="conum" data-value="24"></i><b>(24)</b>
+      return thisQuery.Execute().AllResults();
 
-      var results = thisQuery.Execute().AllResults();
-
-      return results;
       // end::query-syntax-n1ql[]
   }
 
-    // tag::query-syntax-n1ql-params[]
-    tbd
-    // end::query-syntax-n1ql-params[]
 
-    // tag::query-access-n1ql[]
-    tbd
-    // end::query-access-n1ql[]
+  public  List&lt;Result&gt; docsonly_N1QLQueryStringParams(Database argDB)
+  {
+      var doc_type = "hotel";
+
+      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
+      dbCfg.Directory =
+          Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
+
+      Database thisDb = new Database(dbName, dbCfg);
+
+      // For Documentation -- N1QL Query
+      // tag::query-syntax-n1ql-params[]
+      // Declared elsewhere: Database argDB
+
+      var thisQuery =
+          thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = $type"); <i class="conum" data-value="24"></i><b>(24)</b>
+
+      var n1qlParams = new Parameters();
+      n1qlParams.SetString("type", "hotel"); <i class="conum" data-value="25"></i><b>(25)</b>
+      thisQuery.Parameters = n1qlParams;
+
+      return thisQuery.Execute().AllResults();
+
+      // end::query-syntax-n1ql-params[]
+  }
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
@@ -6979,11 +7015,11 @@ var query =
             foreach (var result in results)
             {
                 // get the result into our dictionary object
-                var thisDocsProps = result.GetDictionary(dbName); <i class="conum" data-value="25"></i><b>(25)</b>
+                var thisDocsProps = result.GetDictionary(dbName); <i class="conum" data-value="26"></i><b>(26)</b>
 
                 if (thisDocsProps != null)
                 {
-                    thisDocsId = thisDocsProps.GetString("id"); <i class="conum" data-value="26"></i><b>(26)</b>
+                    thisDocsId = thisDocsProps.GetString("id"); <i class="conum" data-value="27"></i><b>(27)</b>
                     thisDocsName = thisDocsProps.GetString("name");
                     thisDocsCity = thisDocsProps.GetString("city");
                     thisDocsType = thisDocsProps.GetString("type");
@@ -7000,13 +7036,13 @@ var query =
     foreach (var result in query.Execute().AsEnumerable()) {
 
         // get the result into a JSON String
-                var thisDocsJSONString = result.ToJSON();<i class="conum" data-value="27"></i><b>(27)</b>
+                var thisDocsJSONString = result.ToJSON();<i class="conum" data-value="28"></i><b>(28)</b>
 
         // Get a native dictionary object using the JSON string
         var dictFromJSONstring =
               JsonConvert.
                 DeserializeObject&lt;Dictionary&lt;string, object&gt;&gt;
-                  (thisDocsJSONString); <i class="conum" data-value="28"></i><b>(28)</b>
+                  (thisDocsJSONString); <i class="conum" data-value="29"></i><b>(29)</b>
 
         // use the created dictionary
         if (dictFromJSONstring != null)
@@ -7019,7 +7055,7 @@ var query =
 
         //Get a custom object using the JSON string
         Hotel this_hotel =
-            JsonConvert.DeserializeObject&lt;Hotel&gt;(thisDocsJSONString); <i class="conum" data-value="29"></i><b>(29)</b>
+            JsonConvert.DeserializeObject&lt;Hotel&gt;(thisDocsJSONString); <i class="conum" data-value="30"></i><b>(30)</b>
 
         // Store this hotel object in a list of hotels
         hotels.Add(
@@ -7090,7 +7126,7 @@ var query =
 
         var query =
           QueryBuilder
-            .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) <i class="conum" data-value="30"></i><b>(30)</b>
+            .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) <i class="conum" data-value="31"></i><b>(31)</b>
             .From(DataSource.Database(this_Db));
 
         // end::query-syntax-count-only[]
@@ -7103,7 +7139,7 @@ var query =
         foreach (var result in results)
         {
 
-            var numberOfDocs = result.GetInt("mycount"); <i class="conum" data-value="31"></i><b>(31)</b>
+            var numberOfDocs = result.GetInt("mycount"); <i class="conum" data-value="32"></i><b>(32)</b>
 
         }
 
@@ -7139,7 +7175,7 @@ var query =
         foreach (var result in results)
         {
 
-            var thisDocsID = result.GetString("this_ID"); <i class="conum" data-value="32"></i><b>(32)</b>
+            var thisDocsID = result.GetString("this_ID"); <i class="conum" data-value="33"></i><b>(33)</b>
             var doc = this_Db.GetDocument(thisDocsID);
         }
 
@@ -7178,7 +7214,7 @@ var query =
               QueryBuilder
                   .Select(SelectResult.All())
                   .From(DataSource.Database(this_Db))
-                  .Limit(Expression.Int(thisLimit), Expression.Int(thisOffset)); <i class="conum" data-value="33"></i><b>(33)</b>
+                  .Limit(Expression.Int(thisLimit), Expression.Int(thisOffset)); <i class="conum" data-value="34"></i><b>(34)</b>
 
           foreach (var result in listQuery.Execute().AllResults())
           {
@@ -7209,7 +7245,7 @@ var query =
             var thisDoc = this_Db.GetDocument("hotel_10025");
 
             // Get document data as JSON String
-            var thisDocAsJsonString = thisDoc?.ToJSON(); <i class="conum" data-value="34"></i><b>(34)</b>
+            var thisDocAsJsonString = thisDoc?.ToJSON(); <i class="conum" data-value="35"></i><b>(35)</b>
 
             // Get Json Object from the Json String
             JObject myJsonObj = JObject.Parse(thisDocAsJsonString);
@@ -7230,7 +7266,7 @@ var query =
 
             // Update new document with JSOn String
             MutableDocument newhotel =
-                new MutableDocument(anhotel.Id, newJsonString); <i class="conum" data-value="35"></i><b>(35)</b>
+                new MutableDocument(anhotel.Id, newJsonString); <i class="conum" data-value="36"></i><b>(36)</b>
 
             foreach (string key in newhotel.ToDictionary().Keys)
             {
@@ -7240,7 +7276,7 @@ var query =
 
             newDb.Save(newhotel);
 
-            var thatDoc = newDb.GetDocument("2001").ToJSON(); <i class="conum" data-value="36"></i><b>(36)</b>
+            var thatDoc = newDb.GetDocument("2001").ToJSON(); <i class="conum" data-value="37"></i><b>(37)</b>
             System.Console.Write(thatDoc);
 
             // end::tojson-document[]
@@ -7283,7 +7319,7 @@ var query =
 
             // Create mutable array using JSON String Array
             var myArray = new MutableArrayObject();
-            myArray.SetJSON(thisJSONstring);  <i class="conum" data-value="37"></i><b>(37)</b>
+            myArray.SetJSON(thisJSONstring);  <i class="conum" data-value="38"></i><b>(38)</b>
 
 
             // Create a new documenty for each array element
@@ -7291,19 +7327,19 @@ var query =
             {
                 var dict = myArray.GetDictionary(i);
                 var docid = myArray[i].Dictionary.GetString("id");
-                var newdoc = new MutableDocument(docid, dict.ToDictionary()); <i class="conum" data-value="38"></i><b>(38)</b>
+                var newdoc = new MutableDocument(docid, dict.ToDictionary()); <i class="conum" data-value="39"></i><b>(39)</b>
                 dbNew.Save(newdoc);
             }
 
             // Get one of the created docs and iterate through one of the embedded arrays
             var extendedDoc = dbNew.GetDocument("1002");
             var features = extendedDoc.GetArray("features");
-            <i class="conum" data-value="39"></i><b>(39)</b>
+            <i class="conum" data-value="40"></i><b>(40)</b>
             foreach (string feature in features) {
                 System.Console.Write(feature);
                 //process array item as required
             }
-            var featuresJSON = extendedDoc.GetArray("features").ToJSON(); <i class="conum" data-value="40"></i><b>(40)</b>
+            var featuresJSON = extendedDoc.GetArray("features").ToJSON(); <i class="conum" data-value="41"></i><b>(41)</b>
 
             // end::tojson-array[]
         }
@@ -7324,7 +7360,7 @@ var query =
 
             // Get dictionary from JSONstring
             var aJSONstring = "{'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDict = new MutableDictionaryObject(json: aJSONstring); <i class="conum" data-value="41"></i><b>(41)</b>
+            var myDict = new MutableDictionaryObject(json: aJSONstring); <i class="conum" data-value="42"></i><b>(42)</b>
 
             // use dictionary to get name value
             var name = myDict.GetString("name");
@@ -7378,7 +7414,7 @@ var query =
                 "'city':'Balmain','country':'Australia'," +
                 "'description':'Undefined description for Hotel Ned'," +
                 "'features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDoc = new MutableDocument(docId, aJSONstring); <i class="conum" data-value="42"></i><b>(42)</b>
+            var myDoc = new MutableDocument(docId, aJSONstring); <i class="conum" data-value="43"></i><b>(43)</b>
 
 
             // Get the content (an image), create blob and add to doc)
@@ -7388,8 +7424,8 @@ var query =
                                 userName);
             var myImagePath = Path.Combine(defaultDirectory, "avatarimage.jpg");
             var myImageUri = new Uri(myImagePath.ToString());
-            var myBlob = new Blob("image/jpg", myImageUri); <i class="conum" data-value="43"></i><b>(43)</b>
-            myDoc.SetBlob("avatar", myBlob); <i class="conum" data-value="44"></i><b>(44)</b>
+            var myBlob = new Blob("image/jpg", myImageUri); <i class="conum" data-value="44"></i><b>(44)</b>
+            myDoc.SetBlob("avatar", myBlob); <i class="conum" data-value="45"></i><b>(45)</b>
 
 
             // This example generates a 'blob not saved' exception
@@ -7400,16 +7436,16 @@ var query =
             dbNew.Save(myDoc);
 
             // Alternatively -- depending on use case
-            dbNew.SaveBlob(new Blob("image/jpg", myImageUri)); <i class="conum" data-value="45"></i><b>(45)</b>
+            dbNew.SaveBlob(new Blob("image/jpg", myImageUri)); <i class="conum" data-value="46"></i><b>(46)</b>
 
 
             // Retrieve saved doc, get blob as JSON andheck its still a 'blob'
             var sameDoc = dbNew.GetDocument(docId);
             var reconstitutedBlob = new MutableDictionaryObject().
-                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON())); <i class="conum" data-value="46"></i><b>(46)</b>
+                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON())); <i class="conum" data-value="47"></i><b>(47)</b>
 
             if (Blob.IsBlob(
-                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))  <i class="conum" data-value="47"></i><b>(47)</b>
+                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))  <i class="conum" data-value="48"></i><b>(48)</b>
             {
                //... process accordingly
                Console.WriteLine("Its a Blob!!");
@@ -7477,7 +7513,7 @@ var query =
 
 
 // tag::listener-simple[]
-var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="48"></i><b>(48)</b>
+var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="49"></i><b>(49)</b>
 
 thisConfig.Authenticator =
   new ListenerPasswordAuthenticator(
@@ -7485,29 +7521,29 @@ thisConfig.Authenticator =
       {
       return username.equals("valid.user")  &amp;&amp; (password == validPassword);
       }
-  ); <i class="conum" data-value="49"></i><b>(49)</b>
+  ); <i class="conum" data-value="50"></i><b>(50)</b>
 
-_thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="50"></i><b>(50)</b>
+_thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="51"></i><b>(51)</b>
 
-_thisListener.Start(); <i class="conum" data-value="51"></i><b>(51)</b>
+_thisListener.Start(); <i class="conum" data-value="52"></i><b>(52)</b>
 
 // end::listener-simple[]
 
 
 
 // tag::replicator-simple[]
-var theListenerEndpoint = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="52"></i><b>(52)</b>
+var theListenerEndpoint = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="53"></i><b>(53)</b>
 
-var thisConfig = new ReplicatorConfiguration(thisDB, theListenerEndpoint); <i class="conum" data-value="53"></i><b>(53)</b>
+var thisConfig = new ReplicatorConfiguration(thisDB, theListenerEndpoint); <i class="conum" data-value="54"></i><b>(54)</b>
 
-thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="54"></i><b>(54)</b>
+thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="55"></i><b>(55)</b>
 
 thisConfig.Authenticator =
-  new BasicAuthenticator("valid.user", "valid.password.string"); <i class="conum" data-value="55"></i><b>(55)</b>
+  new BasicAuthenticator("valid.user", "valid.password.string"); <i class="conum" data-value="56"></i><b>(56)</b>
 
-var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="56"></i><b>(56)</b>
+var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="57"></i><b>(57)</b>
 
-thisReplicator.Start(); <i class="conum" data-value="57"></i><b>(57)</b>
+thisReplicator.Start(); <i class="conum" data-value="58"></i><b>(58)</b>
 
 // end::replicator-simple[]
 
@@ -7570,34 +7606,34 @@ namespace api_walkthrough
 
     // tag::listener-config-db[]
     // Initialize the listener config
-    var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="58"></i><b>(58)</b>
+    var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="59"></i><b>(59)</b>
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
-    thisConfig.Port = 55990; <i class="conum" data-value="59"></i><b>(59)</b>
+    thisConfig.Port = 55990; <i class="conum" data-value="60"></i><b>(60)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
-    thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="60"></i><b>(60)</b>
+    thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="61"></i><b>(61)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    thisConfig.EnableDeltaSync = true; <i class="conum" data-value="61"></i><b>(61)</b>
+    thisConfig.EnableDeltaSync = true; <i class="conum" data-value="62"></i><b>(62)</b>
 
     // end::listener-config-delta-sync[]
     // tag::listener-config-tls-full[]
     // tag::listener-config-tls-enable[]
-    thisConfig.DisableTLS = false; <i class="conum" data-value="62"></i><b>(62)</b>
+    thisConfig.DisableTLS = false; <i class="conum" data-value="63"></i><b>(63)</b>
 
     // end::listener-config-tls-enable[]
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
-    thisConfig.TlsIdentity = null; <i class="conum" data-value="63"></i><b>(63)</b>
+    thisConfig.TlsIdentity = null; <i class="conum" data-value="64"></i><b>(64)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
     // Configure the client authenticator
-    // Here we are using Basic Authentication) <i class="conum" data-value="64"></i><b>(64)</b>
+    // Here we are using Basic Authentication) <i class="conum" data-value="65"></i><b>(65)</b>
     SecureString validPassword =  new SecureString(); /* example only */
     // Get SecureString input for validPassword
     var validUser = "valid.username";
@@ -7611,10 +7647,10 @@ namespace api_walkthrough
     // end::listener-config-client-auth-pwd[]
     // tag::listener-start[]
     // Initialize the listener
-    _thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="65"></i><b>(65)</b>
+    _thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="66"></i><b>(66)</b>
 
     // Start the listener
-    thisListener.Start(); <i class="conum" data-value="66"></i><b>(66)</b>
+    thisListener.Start(); <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::listener-start[]
     // end::listener-initialize[]
@@ -7637,8 +7673,8 @@ namespace api_walkthrough
 
 
   // tag::listener-status-check[]
-  int connectionCount = thisListener.Status.ConnectionCount; <i class="conum" data-value="67"></i><b>(67)</b>
-  int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  <i class="conum" data-value="68"></i><b>(68)</b>
+  int connectionCount = thisListener.Status.ConnectionCount; <i class="conum" data-value="68"></i><b>(68)</b>
+  int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  <i class="conum" data-value="69"></i><b>(69)</b>
 
   // end::listener-status-check[]
 
@@ -7675,7 +7711,7 @@ _thisListener.Start();
 // end::listener-get-url-list[]
 
     // tag::listener-config-tls-disable[]
-    thisConfig.DisableTLS = true; <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.DisableTLS = true; <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::listener-config-tls-disable[]
 
@@ -7697,13 +7733,13 @@ _thisListener.Start();
 
     // Get keys and certificates from PKCS12 data
     byte[] thisIdData =
-      File.ReadAllBytes("c:client.p12"); <i class="conum" data-value="70"></i><b>(70)</b>
+      File.ReadAllBytes("c:client.p12"); <i class="conum" data-value="71"></i><b>(71)</b>
     // . . . other user code . . .
 
     // tag::import-tls-identity[]
     thisIdentity = TLSIdentity.ImportIdentity(
       _store,
-      thisIdData, <i class="conum" data-value="71"></i><b>(71)</b>
+      thisIdData, <i class="conum" data-value="72"></i><b>(72)</b>
       "123", // Password to access certificate data
       "couchbase-demo-cert",
       null); // Label to get cert in certificate map
@@ -7716,12 +7752,12 @@ _thisListener.Start();
 
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
-    thisConfig.TlsIdentity = null; <i class="conum" data-value="72"></i><b>(72)</b>
+    thisConfig.TlsIdentity = null; <i class="conum" data-value="73"></i><b>(73)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-tls-id-set[]
     // Set the TLS Identity
-    thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="73"></i><b>(73)</b>
+    thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="74"></i><b>(74)</b>
 
     // end::listener-config-tls-id-set[]
     // end::listener-config-tls-id-full[]
@@ -7732,17 +7768,17 @@ _thisListener.Start();
 
     // Get the valid cert chain, in this instance from
     // PKCS12 data containing private key, public key
-    // and certificates <i class="conum" data-value="74"></i><b>(74)</b>
+    // and certificates <i class="conum" data-value="75"></i><b>(75)</b>
     var clientData = File.ReadAllBytes("c:client.p12");
     var ourCaData = File.ReadAllBytes("c:client-ca.der");
 
     // Get the root certs from the data
-    var thisRootCert = new X509Certificate2(ourCaData); <i class="conum" data-value="75"></i><b>(75)</b>
+    var thisRootCert = new X509Certificate2(ourCaData); <i class="conum" data-value="76"></i><b>(76)</b>
 
     // Configure the authenticator to use the root certs
     var thisAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(thisRootCert));
 
-    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="76"></i><b>(76)</b>
+    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="77"></i><b>(77)</b>
 
     // Initialize the listener using the config
     _listener = new URLEndpointListener(thisConfig);
@@ -7754,7 +7790,7 @@ _thisListener.Start();
 
     // Get the valid cert chain, in this instance from
     // PKCS12 data containing private key, public key
-    // and certificates <i class="conum" data-value="77"></i><b>(77)</b>
+    // and certificates <i class="conum" data-value="78"></i><b>(78)</b>
     clientData = File.ReadAllBytes("c:client.p12");
     ourCaData = File.ReadAllBytes("c:client-ca.der");
 
@@ -7768,9 +7804,9 @@ _thisListener.Start();
         new X509Certificate2Collection(thisRootCert) =&gt; {
           // . . . user supplied code block
           // . . . returns boolean value (true=authenticated)
-        }); <i class="conum" data-value="78"></i><b>(78)</b>
+        }); <i class="conum" data-value="79"></i><b>(79)</b>
 
-    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="79"></i><b>(79)</b>
+    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="80"></i><b>(80)</b>
 
     // end::listener-config-client-auth-lambda[]
 
@@ -7928,7 +7964,7 @@ public class Examples {
     // tag::p2p-act-rep-initialize[]
     // initialize the replicator configuration
 
-    var thisUrl = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="80"></i><b>(80)</b>
+    var thisUrl = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="81"></i><b>(81)</b>
     var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
     // end::p2p-act-rep-initialize[]
@@ -7941,7 +7977,7 @@ public class Examples {
     // tag::autopurge-override[]
     // Set autopurge option
     // here we override its default
-    thisConfig.EnableAutoPurge = false; <i class="conum" data-value="81"></i><b>(81)</b>
+    thisConfig.EnableAutoPurge = false; <i class="conum" data-value="82"></i><b>(82)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -7951,10 +7987,10 @@ public class Examples {
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="82"></i><b>(82)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="83"></i><b>(83)</b>
 
     // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Security <i class="conum" data-value="83"></i><b>(83)</b>
+    // Configure Client Security <i class="conum" data-value="84"></i><b>(84)</b>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
@@ -7962,7 +7998,7 @@ public class Examples {
     // end::p2p-act-rep-auth[]
     // tag::p2p-act-rep-config-conflict-full[]
     // tag::p2p-act-rep-config-conflict-builtin[]
-    /* Optionally set a conflict resolver call back */ <i class="conum" data-value="84"></i><b>(84)</b>
+    /* Optionally set a conflict resolver call back */ <i class="conum" data-value="85"></i><b>(85)</b>
     // Use built-in resolver
     thisConfig.ConflictResolver = new LocalWinConflictResolver();  //
 
@@ -7980,11 +8016,11 @@ public class Examples {
     // tag::p2p-act-rep-start-full[]
     // Initialize and start a replicator
     // Initialize replicator with configuration data
-    var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="85"></i><b>(85)</b>
+    var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="86"></i><b>(86)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    //Optionally add a change listener <i class="conum" data-value="86"></i><b>(86)</b>
+    //Optionally add a change listener <i class="conum" data-value="87"></i><b>(87)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     _thisListenerToken =
       thisReplicator.AddChangeListener((sender, args) =&gt;
@@ -7997,7 +8033,7 @@ public class Examples {
     // end::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-start[]
     // Start replicator
-    thisReplicator.Start(); <i class="conum" data-value="87"></i><b>(87)</b>
+    thisReplicator.Start(); <i class="conum" data-value="88"></i><b>(88)</b>
 
     // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -8009,7 +8045,7 @@ public class Examples {
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="88"></i><b>(88)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="89"></i><b>(89)</b>
 
     // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-pinnedcert[]
@@ -8017,7 +8053,7 @@ public class Examples {
     // Return the remote pinned cert (the listener's cert)
     byte returnedCert = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
     // end::p2p-act-rep-config-pinnedcert[]
-    // Configure Client Security <i class="conum" data-value="89"></i><b>(89)</b>
+    // Configure Client Security <i class="conum" data-value="90"></i><b>(90)</b>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
@@ -8028,13 +8064,13 @@ public class Examples {
     // tag::p2p-act-rep-config-cacert-pinned[]
     // Only CA Certs accepted
     thisConfig.AcceptOnlySelfSignedServerCertificate =
-      false; <i class="conum" data-value="90"></i><b>(90)</b>
+      false; <i class="conum" data-value="91"></i><b>(91)</b>
 
     var thisCert =
-      new X509Certificate2(caData); <i class="conum" data-value="91"></i><b>(91)</b>
+      new X509Certificate2(caData); <i class="conum" data-value="92"></i><b>(92)</b>
 
     thisConfig.PinnedServerCertificate =
-      thisCert; <i class="conum" data-value="92"></i><b>(92)</b>
+      thisCert; <i class="conum" data-value="93"></i><b>(93)</b>
 
     // end::p2p-act-rep-config-cacert-pinned[]
 
@@ -8070,7 +8106,7 @@ public class Examples {
 
       // tag::p2p-act-rep-stop[]
       // Stop replication.
-      thisReplicator.Stop(); <i class="conum" data-value="93"></i><b>(93)</b>
+      thisReplicator.Stop(); <i class="conum" data-value="94"></i><b>(94)</b>
       // end::p2p-act-rep-stop[]
 
 
@@ -8078,7 +8114,7 @@ public class Examples {
 
 {
   CouchbaseLite.init(context);
-  Database thisDB = new Database("passivepeerdb");  <i class="conum" data-value="94"></i><b>(94)</b>
+  Database thisDB = new Database("passivepeerdb");  <i class="conum" data-value="95"></i><b>(95)</b>
   // Initialize the listener config
   final URLEndpointListenerConfiguration thisConfig = new URLEndpointListenerConfiguration(database);
   thisConfig.Port(55990)             // &lt;.&gt; Default- port is selected
@@ -8086,14 +8122,14 @@ public class Examples {
   thisConfig.EnableDeltaSync(true)   // &lt;.&gt; Optional. Defaults to false.
 
   // Configure the client authenticator (if using basic auth)
-  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "Our Username", "Our Password"}; <i class="conum" data-value="95"></i><b>(95)</b>
-  thisConfig.Authenticator(auth); <i class="conum" data-value="96"></i><b>(96)</b>
+  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "Our Username", "Our Password"}; <i class="conum" data-value="96"></i><b>(96)</b>
+  thisConfig.Authenticator(auth); <i class="conum" data-value="97"></i><b>(97)</b>
 
   // Initialize the listener
-  final URLEndpointListener listener = new URLEndpointListener( thisConfig ); <i class="conum" data-value="97"></i><b>(97)</b>
+  final URLEndpointListener listener = new URLEndpointListener( thisConfig ); <i class="conum" data-value="98"></i><b>(98)</b>
 
   // Start the listener
-  listener.Start(); <i class="conum" data-value="98"></i><b>(98)</b>
+  listener.Start(); <i class="conum" data-value="99"></i><b>(99)</b>
     }
 
 
@@ -8133,7 +8169,7 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
     // String validUser = new String("validUsername"); // an example username
     // String validPassword = new String("validPasswordValue"); // an example password
 
-    // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( <i class="conum" data-value="99"></i><b>(99)</b>
+    // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( <i class="conum" data-value="100"></i><b>(100)</b>
     //   validUser, validPassword -&gt; validUser == "validUsername" &amp;&amp; validPassword == "validPasswordValue" );
 
     // if (thisAuth) {
@@ -8148,7 +8184,7 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 
 
     // tag::old-p2p-act-rep-add-change-listener[]
-    ListenerToken thisListener = new thisReplicator.addChangeListener(change -&gt; { <i class="conum" data-value="100"></i><b>(100)</b>
+    ListenerToken thisListener = new thisReplicator.addChangeListener(change -&gt; { <i class="conum" data-value="101"></i><b>(101)</b>
       if (change.Status().getError() != null) {
         Log.i(TAG, "Error code ::  " + change.Status().getError().getCode());
       }
@@ -8193,10 +8229,10 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 // tag::old-deleteTlsIdentity[]
 
 String thisAlias = "alias-to-delete";
-KeyStore thisKeystore = KeyStore.getInstance("PKCS12"); <i class="conum" data-value="101"></i><b>(101)</b>
+KeyStore thisKeystore = KeyStore.getInstance("PKCS12"); <i class="conum" data-value="102"></i><b>(102)</b>
 thisKeyStore.load= null;
 if (thisAlias != null) {
-   thisKeystore.deleteEntry(thisAlias);  <i class="conum" data-value="102"></i><b>(102)</b>
+   thisKeystore.deleteEntry(thisAlias);  <i class="conum" data-value="103"></i><b>(103)</b>
 }
 
 // end::old-deleteTlsIdentity[]
@@ -8241,7 +8277,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // tag::old-listener-config-client-root-ca[]
     // Configure the client authenticator
-    // to validate using ROOT CA <i class="conum" data-value="103"></i><b>(103)</b>
+    // to validate using ROOT CA <i class="conum" data-value="104"></i><b>(104)</b>
     byte[] thisCaData; // byte array for CA data
     using (var thisReader = new BinaryReader(stream)) {
       thisCaData = thisReader.ReadBytes(int stream.Length);
@@ -8267,7 +8303,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // Configure the expected server-supplied
     // credentials -- only accept CA Certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="104"></i><b>(104)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="105"></i><b>(105)</b>
 
     // Client identity
     thisIdentity =
@@ -8275,10 +8311,10 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         clientData,
         "123",
         "CBL-Client-Cert",
-        null); <i class="conum" data-value="105"></i><b>(105)</b>
+        null); <i class="conum" data-value="106"></i><b>(106)</b>
 
     thisConfig.Authenticator =
-      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="106"></i><b>(106)</b>
+      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="107"></i><b>(107)</b>
 
     // end::client-cert-authenticator-root-certs[]
 
@@ -8287,7 +8323,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
 
     byte[] thisCaData, thisClientData;
-    thisClientData = File.ReadAllBytes("C:\\client.p12"); <i class="conum" data-value="107"></i><b>(107)</b>
+    thisClientData = File.ReadAllBytes("C:\\client.p12"); <i class="conum" data-value="108"></i><b>(108)</b>
     thisCaData = File.ReadAllBytes("C:\\client-ca.der");
 
     // Root certs
@@ -8298,7 +8334,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // Create URL Endpoint Listener
     var thisConfig = new URLEndpointListenerConfiguration(_Database);
-    thisConfig.DisableTLS = false; <i class="conum" data-value="108"></i><b>(108)</b>
+    thisConfig.DisableTLS = false; <i class="conum" data-value="109"></i><b>(109)</b>
     thisConfig.Authenticator = thisAuth;
     _listener = new URLEndpointListener(thisConfig);
     _listener.Start();
@@ -8348,10 +8384,10 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         clientData,
         "123",
         "CBL-Client-Cert",
-        null); <i class="conum" data-value="109"></i><b>(109)</b>
+        null); <i class="conum" data-value="110"></i><b>(110)</b>
 
     thisConfig.Authenticator =
-      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="110"></i><b>(110)</b>
+      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="111"></i><b>(111)</b>
 
     // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -8365,11 +8401,11 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 public class MyClass
 {
     public Database Database { get; set; }
-    public Replicator Replicator { get; set; } <i class="conum" data-value="1"></i><b>(1)</b>
+    public Replicator Replicator { get; set; } <i class="conum" data-value="112"></i><b>(112)</b>
 
     public void StartReplication()
     {
-        var url = new Uri("ws://localhost:4984/db"); <i class="conum" data-value="2"></i><b>(2)</b>
+        var url = new Uri("wss://localhost:4984/db"); <i class="conum" data-value="113"></i><b>(113)</b>
         var target = new URLEndpoint(url);
         var config = new ReplicatorConfiguration(Database, target)
         {
@@ -8384,9 +8420,9 @@ public class MyClass
 // end::sgw-repl-pull[]
 
 // tag::sgw-repl-pull-callouts[]
-&lt;1&gt; A replication is an asynchronous operation.
+&lt;.&gt; A replication is an asynchronous operation.
 To keep a reference to the `replicator` object, you can set it as an instance property.
-&lt;2&gt; The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+&lt;.&gt; The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 // end::sgw-repl-pull-callouts[]
 
@@ -8394,7 +8430,7 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
     // tag::sgw-act-rep-initialize[]
     // initialize the replicator configuration
 
-    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); <i class="conum" data-value="111"></i><b>(111)</b>
+    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); <i class="conum" data-value="114"></i><b>(114)</b>
     var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
     // end::sgw-act-rep-initialize[]</code></pre>
@@ -9717,12 +9753,12 @@ var query =
         // tag::replication-set-heartbeat[]
             config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="20"></i><b>(20)</b>
         // end::replication-set-heartbeat[]
-        // tag::replication-set-maxretries[]
-            config.MaxRetries = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
-        // end::replication-set-maxretries[]
-        // tag::replication-set-maxretrywaittime[]
-            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
-        // end::replication-set-maxretrywaittime[]
+        // tag::replication-set-maxattempts[]
+            config.Maxattempts = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
+        // end::replication-set-maxattempts[]
+        // tag::replication-set-maxattemptwaittime[]
+            config.MaxAttemptWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
+        // end::replication-set-maxattemptwaittime[]
 
         //  other config as required . . .
 
@@ -10085,36 +10121,54 @@ var query =
 
 // N1QL QUERY
 
-
-  public  List&lt;Result&gt; testN1QLQueryString (Database argDB)
+  public List&lt;Result&gt; docsonly_N1QLQueryString(Database argDB)
   {
-      // For Documentation
+      var doc_type = "hotel";
+
       DatabaseConfiguration dbCfg = new DatabaseConfiguration();
       dbCfg.Directory =
           Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
-      // tag::query-syntax-n1ql[]
+
       Database thisDb = new Database(dbName, dbCfg);
 
+      // For Documentation -- N1QL Query
+      // tag::query-syntax-n1ql[]
+      // Declared elsewhere: Database argDB
+
       var thisQuery =
-          thisDb.CreateQuery(
-              "SELECT META().id AS thisId FROM $thisDb.name " +
-              "WHERE type = $type"); <i class="conum" data-value="23"></i><b>(23)</b>
+          thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); <i class="conum" data-value="23"></i><b>(23)</b>
 
-      thisQuery.Parameters.SetString("type", "hotel"); <i class="conum" data-value="24"></i><b>(24)</b>
+      return thisQuery.Execute().AllResults();
 
-      var results = thisQuery.Execute().AllResults();
-
-      return results;
       // end::query-syntax-n1ql[]
   }
 
-    // tag::query-syntax-n1ql-params[]
-    tbd
-    // end::query-syntax-n1ql-params[]
 
-    // tag::query-access-n1ql[]
-    tbd
-    // end::query-access-n1ql[]
+  public  List&lt;Result&gt; docsonly_N1QLQueryStringParams(Database argDB)
+  {
+      var doc_type = "hotel";
+
+      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
+      dbCfg.Directory =
+          Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
+
+      Database thisDb = new Database(dbName, dbCfg);
+
+      // For Documentation -- N1QL Query
+      // tag::query-syntax-n1ql-params[]
+      // Declared elsewhere: Database argDB
+
+      var thisQuery =
+          thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = $type"); <i class="conum" data-value="24"></i><b>(24)</b>
+
+      var n1qlParams = new Parameters();
+      n1qlParams.SetString("type", "hotel"); <i class="conum" data-value="25"></i><b>(25)</b>
+      thisQuery.Parameters = n1qlParams;
+
+      return thisQuery.Execute().AllResults();
+
+      // end::query-syntax-n1ql-params[]
+  }
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
@@ -10148,11 +10202,11 @@ var query =
             foreach (var result in results)
             {
                 // get the result into our dictionary object
-                var thisDocsProps = result.GetDictionary(dbName); <i class="conum" data-value="25"></i><b>(25)</b>
+                var thisDocsProps = result.GetDictionary(dbName); <i class="conum" data-value="26"></i><b>(26)</b>
 
                 if (thisDocsProps != null)
                 {
-                    thisDocsId = thisDocsProps.GetString("id"); <i class="conum" data-value="26"></i><b>(26)</b>
+                    thisDocsId = thisDocsProps.GetString("id"); <i class="conum" data-value="27"></i><b>(27)</b>
                     thisDocsName = thisDocsProps.GetString("name");
                     thisDocsCity = thisDocsProps.GetString("city");
                     thisDocsType = thisDocsProps.GetString("type");
@@ -10169,13 +10223,13 @@ var query =
     foreach (var result in query.Execute().AsEnumerable()) {
 
         // get the result into a JSON String
-                var thisDocsJSONString = result.ToJSON();<i class="conum" data-value="27"></i><b>(27)</b>
+                var thisDocsJSONString = result.ToJSON();<i class="conum" data-value="28"></i><b>(28)</b>
 
         // Get a native dictionary object using the JSON string
         var dictFromJSONstring =
               JsonConvert.
                 DeserializeObject&lt;Dictionary&lt;string, object&gt;&gt;
-                  (thisDocsJSONString); <i class="conum" data-value="28"></i><b>(28)</b>
+                  (thisDocsJSONString); <i class="conum" data-value="29"></i><b>(29)</b>
 
         // use the created dictionary
         if (dictFromJSONstring != null)
@@ -10188,7 +10242,7 @@ var query =
 
         //Get a custom object using the JSON string
         Hotel this_hotel =
-            JsonConvert.DeserializeObject&lt;Hotel&gt;(thisDocsJSONString); <i class="conum" data-value="29"></i><b>(29)</b>
+            JsonConvert.DeserializeObject&lt;Hotel&gt;(thisDocsJSONString); <i class="conum" data-value="30"></i><b>(30)</b>
 
         // Store this hotel object in a list of hotels
         hotels.Add(
@@ -10259,7 +10313,7 @@ var query =
 
         var query =
           QueryBuilder
-            .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) <i class="conum" data-value="30"></i><b>(30)</b>
+            .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) <i class="conum" data-value="31"></i><b>(31)</b>
             .From(DataSource.Database(this_Db));
 
         // end::query-syntax-count-only[]
@@ -10272,7 +10326,7 @@ var query =
         foreach (var result in results)
         {
 
-            var numberOfDocs = result.GetInt("mycount"); <i class="conum" data-value="31"></i><b>(31)</b>
+            var numberOfDocs = result.GetInt("mycount"); <i class="conum" data-value="32"></i><b>(32)</b>
 
         }
 
@@ -10308,7 +10362,7 @@ var query =
         foreach (var result in results)
         {
 
-            var thisDocsID = result.GetString("this_ID"); <i class="conum" data-value="32"></i><b>(32)</b>
+            var thisDocsID = result.GetString("this_ID"); <i class="conum" data-value="33"></i><b>(33)</b>
             var doc = this_Db.GetDocument(thisDocsID);
         }
 
@@ -10347,7 +10401,7 @@ var query =
               QueryBuilder
                   .Select(SelectResult.All())
                   .From(DataSource.Database(this_Db))
-                  .Limit(Expression.Int(thisLimit), Expression.Int(thisOffset)); <i class="conum" data-value="33"></i><b>(33)</b>
+                  .Limit(Expression.Int(thisLimit), Expression.Int(thisOffset)); <i class="conum" data-value="34"></i><b>(34)</b>
 
           foreach (var result in listQuery.Execute().AllResults())
           {
@@ -10378,7 +10432,7 @@ var query =
             var thisDoc = this_Db.GetDocument("hotel_10025");
 
             // Get document data as JSON String
-            var thisDocAsJsonString = thisDoc?.ToJSON(); <i class="conum" data-value="34"></i><b>(34)</b>
+            var thisDocAsJsonString = thisDoc?.ToJSON(); <i class="conum" data-value="35"></i><b>(35)</b>
 
             // Get Json Object from the Json String
             JObject myJsonObj = JObject.Parse(thisDocAsJsonString);
@@ -10399,7 +10453,7 @@ var query =
 
             // Update new document with JSOn String
             MutableDocument newhotel =
-                new MutableDocument(anhotel.Id, newJsonString); <i class="conum" data-value="35"></i><b>(35)</b>
+                new MutableDocument(anhotel.Id, newJsonString); <i class="conum" data-value="36"></i><b>(36)</b>
 
             foreach (string key in newhotel.ToDictionary().Keys)
             {
@@ -10409,7 +10463,7 @@ var query =
 
             newDb.Save(newhotel);
 
-            var thatDoc = newDb.GetDocument("2001").ToJSON(); <i class="conum" data-value="36"></i><b>(36)</b>
+            var thatDoc = newDb.GetDocument("2001").ToJSON(); <i class="conum" data-value="37"></i><b>(37)</b>
             System.Console.Write(thatDoc);
 
             // end::tojson-document[]
@@ -10452,7 +10506,7 @@ var query =
 
             // Create mutable array using JSON String Array
             var myArray = new MutableArrayObject();
-            myArray.SetJSON(thisJSONstring);  <i class="conum" data-value="37"></i><b>(37)</b>
+            myArray.SetJSON(thisJSONstring);  <i class="conum" data-value="38"></i><b>(38)</b>
 
 
             // Create a new documenty for each array element
@@ -10460,19 +10514,19 @@ var query =
             {
                 var dict = myArray.GetDictionary(i);
                 var docid = myArray[i].Dictionary.GetString("id");
-                var newdoc = new MutableDocument(docid, dict.ToDictionary()); <i class="conum" data-value="38"></i><b>(38)</b>
+                var newdoc = new MutableDocument(docid, dict.ToDictionary()); <i class="conum" data-value="39"></i><b>(39)</b>
                 dbNew.Save(newdoc);
             }
 
             // Get one of the created docs and iterate through one of the embedded arrays
             var extendedDoc = dbNew.GetDocument("1002");
             var features = extendedDoc.GetArray("features");
-            <i class="conum" data-value="39"></i><b>(39)</b>
+            <i class="conum" data-value="40"></i><b>(40)</b>
             foreach (string feature in features) {
                 System.Console.Write(feature);
                 //process array item as required
             }
-            var featuresJSON = extendedDoc.GetArray("features").ToJSON(); <i class="conum" data-value="40"></i><b>(40)</b>
+            var featuresJSON = extendedDoc.GetArray("features").ToJSON(); <i class="conum" data-value="41"></i><b>(41)</b>
 
             // end::tojson-array[]
         }
@@ -10493,7 +10547,7 @@ var query =
 
             // Get dictionary from JSONstring
             var aJSONstring = "{'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDict = new MutableDictionaryObject(json: aJSONstring); <i class="conum" data-value="41"></i><b>(41)</b>
+            var myDict = new MutableDictionaryObject(json: aJSONstring); <i class="conum" data-value="42"></i><b>(42)</b>
 
             // use dictionary to get name value
             var name = myDict.GetString("name");
@@ -10547,7 +10601,7 @@ var query =
                 "'city':'Balmain','country':'Australia'," +
                 "'description':'Undefined description for Hotel Ned'," +
                 "'features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDoc = new MutableDocument(docId, aJSONstring); <i class="conum" data-value="42"></i><b>(42)</b>
+            var myDoc = new MutableDocument(docId, aJSONstring); <i class="conum" data-value="43"></i><b>(43)</b>
 
 
             // Get the content (an image), create blob and add to doc)
@@ -10557,8 +10611,8 @@ var query =
                                 userName);
             var myImagePath = Path.Combine(defaultDirectory, "avatarimage.jpg");
             var myImageUri = new Uri(myImagePath.ToString());
-            var myBlob = new Blob("image/jpg", myImageUri); <i class="conum" data-value="43"></i><b>(43)</b>
-            myDoc.SetBlob("avatar", myBlob); <i class="conum" data-value="44"></i><b>(44)</b>
+            var myBlob = new Blob("image/jpg", myImageUri); <i class="conum" data-value="44"></i><b>(44)</b>
+            myDoc.SetBlob("avatar", myBlob); <i class="conum" data-value="45"></i><b>(45)</b>
 
 
             // This example generates a 'blob not saved' exception
@@ -10569,16 +10623,16 @@ var query =
             dbNew.Save(myDoc);
 
             // Alternatively -- depending on use case
-            dbNew.SaveBlob(new Blob("image/jpg", myImageUri)); <i class="conum" data-value="45"></i><b>(45)</b>
+            dbNew.SaveBlob(new Blob("image/jpg", myImageUri)); <i class="conum" data-value="46"></i><b>(46)</b>
 
 
             // Retrieve saved doc, get blob as JSON andheck its still a 'blob'
             var sameDoc = dbNew.GetDocument(docId);
             var reconstitutedBlob = new MutableDictionaryObject().
-                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON())); <i class="conum" data-value="46"></i><b>(46)</b>
+                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON())); <i class="conum" data-value="47"></i><b>(47)</b>
 
             if (Blob.IsBlob(
-                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))  <i class="conum" data-value="47"></i><b>(47)</b>
+                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))  <i class="conum" data-value="48"></i><b>(48)</b>
             {
                //... process accordingly
                Console.WriteLine("Its a Blob!!");
@@ -10646,7 +10700,7 @@ var query =
 
 
 // tag::listener-simple[]
-var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="48"></i><b>(48)</b>
+var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="49"></i><b>(49)</b>
 
 thisConfig.Authenticator =
   new ListenerPasswordAuthenticator(
@@ -10654,29 +10708,29 @@ thisConfig.Authenticator =
       {
       return username.equals("valid.user")  &amp;&amp; (password == validPassword);
       }
-  ); <i class="conum" data-value="49"></i><b>(49)</b>
+  ); <i class="conum" data-value="50"></i><b>(50)</b>
 
-_thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="50"></i><b>(50)</b>
+_thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="51"></i><b>(51)</b>
 
-_thisListener.Start(); <i class="conum" data-value="51"></i><b>(51)</b>
+_thisListener.Start(); <i class="conum" data-value="52"></i><b>(52)</b>
 
 // end::listener-simple[]
 
 
 
 // tag::replicator-simple[]
-var theListenerEndpoint = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="52"></i><b>(52)</b>
+var theListenerEndpoint = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="53"></i><b>(53)</b>
 
-var thisConfig = new ReplicatorConfiguration(thisDB, theListenerEndpoint); <i class="conum" data-value="53"></i><b>(53)</b>
+var thisConfig = new ReplicatorConfiguration(thisDB, theListenerEndpoint); <i class="conum" data-value="54"></i><b>(54)</b>
 
-thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="54"></i><b>(54)</b>
+thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="55"></i><b>(55)</b>
 
 thisConfig.Authenticator =
-  new BasicAuthenticator("valid.user", "valid.password.string"); <i class="conum" data-value="55"></i><b>(55)</b>
+  new BasicAuthenticator("valid.user", "valid.password.string"); <i class="conum" data-value="56"></i><b>(56)</b>
 
-var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="56"></i><b>(56)</b>
+var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="57"></i><b>(57)</b>
 
-thisReplicator.Start(); <i class="conum" data-value="57"></i><b>(57)</b>
+thisReplicator.Start(); <i class="conum" data-value="58"></i><b>(58)</b>
 
 // end::replicator-simple[]
 
@@ -10739,34 +10793,34 @@ namespace api_walkthrough
 
     // tag::listener-config-db[]
     // Initialize the listener config
-    var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="58"></i><b>(58)</b>
+    var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="59"></i><b>(59)</b>
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
-    thisConfig.Port = 55990; <i class="conum" data-value="59"></i><b>(59)</b>
+    thisConfig.Port = 55990; <i class="conum" data-value="60"></i><b>(60)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
-    thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="60"></i><b>(60)</b>
+    thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="61"></i><b>(61)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    thisConfig.EnableDeltaSync = true; <i class="conum" data-value="61"></i><b>(61)</b>
+    thisConfig.EnableDeltaSync = true; <i class="conum" data-value="62"></i><b>(62)</b>
 
     // end::listener-config-delta-sync[]
     // tag::listener-config-tls-full[]
     // tag::listener-config-tls-enable[]
-    thisConfig.DisableTLS = false; <i class="conum" data-value="62"></i><b>(62)</b>
+    thisConfig.DisableTLS = false; <i class="conum" data-value="63"></i><b>(63)</b>
 
     // end::listener-config-tls-enable[]
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
-    thisConfig.TlsIdentity = null; <i class="conum" data-value="63"></i><b>(63)</b>
+    thisConfig.TlsIdentity = null; <i class="conum" data-value="64"></i><b>(64)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
     // Configure the client authenticator
-    // Here we are using Basic Authentication) <i class="conum" data-value="64"></i><b>(64)</b>
+    // Here we are using Basic Authentication) <i class="conum" data-value="65"></i><b>(65)</b>
     SecureString validPassword =  new SecureString(); /* example only */
     // Get SecureString input for validPassword
     var validUser = "valid.username";
@@ -10780,10 +10834,10 @@ namespace api_walkthrough
     // end::listener-config-client-auth-pwd[]
     // tag::listener-start[]
     // Initialize the listener
-    _thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="65"></i><b>(65)</b>
+    _thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="66"></i><b>(66)</b>
 
     // Start the listener
-    thisListener.Start(); <i class="conum" data-value="66"></i><b>(66)</b>
+    thisListener.Start(); <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::listener-start[]
     // end::listener-initialize[]
@@ -10806,8 +10860,8 @@ namespace api_walkthrough
 
 
   // tag::listener-status-check[]
-  int connectionCount = thisListener.Status.ConnectionCount; <i class="conum" data-value="67"></i><b>(67)</b>
-  int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  <i class="conum" data-value="68"></i><b>(68)</b>
+  int connectionCount = thisListener.Status.ConnectionCount; <i class="conum" data-value="68"></i><b>(68)</b>
+  int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  <i class="conum" data-value="69"></i><b>(69)</b>
 
   // end::listener-status-check[]
 
@@ -10844,7 +10898,7 @@ _thisListener.Start();
 // end::listener-get-url-list[]
 
     // tag::listener-config-tls-disable[]
-    thisConfig.DisableTLS = true; <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.DisableTLS = true; <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::listener-config-tls-disable[]
 
@@ -10866,13 +10920,13 @@ _thisListener.Start();
 
     // Get keys and certificates from PKCS12 data
     byte[] thisIdData =
-      File.ReadAllBytes("c:client.p12"); <i class="conum" data-value="70"></i><b>(70)</b>
+      File.ReadAllBytes("c:client.p12"); <i class="conum" data-value="71"></i><b>(71)</b>
     // . . . other user code . . .
 
     // tag::import-tls-identity[]
     thisIdentity = TLSIdentity.ImportIdentity(
       _store,
-      thisIdData, <i class="conum" data-value="71"></i><b>(71)</b>
+      thisIdData, <i class="conum" data-value="72"></i><b>(72)</b>
       "123", // Password to access certificate data
       "couchbase-demo-cert",
       null); // Label to get cert in certificate map
@@ -10885,12 +10939,12 @@ _thisListener.Start();
 
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
-    thisConfig.TlsIdentity = null; <i class="conum" data-value="72"></i><b>(72)</b>
+    thisConfig.TlsIdentity = null; <i class="conum" data-value="73"></i><b>(73)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-tls-id-set[]
     // Set the TLS Identity
-    thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="73"></i><b>(73)</b>
+    thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="74"></i><b>(74)</b>
 
     // end::listener-config-tls-id-set[]
     // end::listener-config-tls-id-full[]
@@ -10901,17 +10955,17 @@ _thisListener.Start();
 
     // Get the valid cert chain, in this instance from
     // PKCS12 data containing private key, public key
-    // and certificates <i class="conum" data-value="74"></i><b>(74)</b>
+    // and certificates <i class="conum" data-value="75"></i><b>(75)</b>
     var clientData = File.ReadAllBytes("c:client.p12");
     var ourCaData = File.ReadAllBytes("c:client-ca.der");
 
     // Get the root certs from the data
-    var thisRootCert = new X509Certificate2(ourCaData); <i class="conum" data-value="75"></i><b>(75)</b>
+    var thisRootCert = new X509Certificate2(ourCaData); <i class="conum" data-value="76"></i><b>(76)</b>
 
     // Configure the authenticator to use the root certs
     var thisAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(thisRootCert));
 
-    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="76"></i><b>(76)</b>
+    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="77"></i><b>(77)</b>
 
     // Initialize the listener using the config
     _listener = new URLEndpointListener(thisConfig);
@@ -10923,7 +10977,7 @@ _thisListener.Start();
 
     // Get the valid cert chain, in this instance from
     // PKCS12 data containing private key, public key
-    // and certificates <i class="conum" data-value="77"></i><b>(77)</b>
+    // and certificates <i class="conum" data-value="78"></i><b>(78)</b>
     clientData = File.ReadAllBytes("c:client.p12");
     ourCaData = File.ReadAllBytes("c:client-ca.der");
 
@@ -10937,9 +10991,9 @@ _thisListener.Start();
         new X509Certificate2Collection(thisRootCert) =&gt; {
           // . . . user supplied code block
           // . . . returns boolean value (true=authenticated)
-        }); <i class="conum" data-value="78"></i><b>(78)</b>
+        }); <i class="conum" data-value="79"></i><b>(79)</b>
 
-    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="79"></i><b>(79)</b>
+    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="80"></i><b>(80)</b>
 
     // end::listener-config-client-auth-lambda[]
 
@@ -11097,7 +11151,7 @@ public class Examples {
     // tag::p2p-act-rep-initialize[]
     // initialize the replicator configuration
 
-    var thisUrl = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="80"></i><b>(80)</b>
+    var thisUrl = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="81"></i><b>(81)</b>
     var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
     // end::p2p-act-rep-initialize[]
@@ -11110,7 +11164,7 @@ public class Examples {
     // tag::autopurge-override[]
     // Set autopurge option
     // here we override its default
-    thisConfig.EnableAutoPurge = false; <i class="conum" data-value="81"></i><b>(81)</b>
+    thisConfig.EnableAutoPurge = false; <i class="conum" data-value="82"></i><b>(82)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -11120,10 +11174,10 @@ public class Examples {
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="82"></i><b>(82)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="83"></i><b>(83)</b>
 
     // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Security <i class="conum" data-value="83"></i><b>(83)</b>
+    // Configure Client Security <i class="conum" data-value="84"></i><b>(84)</b>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
@@ -11131,7 +11185,7 @@ public class Examples {
     // end::p2p-act-rep-auth[]
     // tag::p2p-act-rep-config-conflict-full[]
     // tag::p2p-act-rep-config-conflict-builtin[]
-    /* Optionally set a conflict resolver call back */ <i class="conum" data-value="84"></i><b>(84)</b>
+    /* Optionally set a conflict resolver call back */ <i class="conum" data-value="85"></i><b>(85)</b>
     // Use built-in resolver
     thisConfig.ConflictResolver = new LocalWinConflictResolver();  //
 
@@ -11149,11 +11203,11 @@ public class Examples {
     // tag::p2p-act-rep-start-full[]
     // Initialize and start a replicator
     // Initialize replicator with configuration data
-    var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="85"></i><b>(85)</b>
+    var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="86"></i><b>(86)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    //Optionally add a change listener <i class="conum" data-value="86"></i><b>(86)</b>
+    //Optionally add a change listener <i class="conum" data-value="87"></i><b>(87)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     _thisListenerToken =
       thisReplicator.AddChangeListener((sender, args) =&gt;
@@ -11166,7 +11220,7 @@ public class Examples {
     // end::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-start[]
     // Start replicator
-    thisReplicator.Start(); <i class="conum" data-value="87"></i><b>(87)</b>
+    thisReplicator.Start(); <i class="conum" data-value="88"></i><b>(88)</b>
 
     // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -11178,7 +11232,7 @@ public class Examples {
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="88"></i><b>(88)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="89"></i><b>(89)</b>
 
     // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-pinnedcert[]
@@ -11186,7 +11240,7 @@ public class Examples {
     // Return the remote pinned cert (the listener's cert)
     byte returnedCert = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
     // end::p2p-act-rep-config-pinnedcert[]
-    // Configure Client Security <i class="conum" data-value="89"></i><b>(89)</b>
+    // Configure Client Security <i class="conum" data-value="90"></i><b>(90)</b>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
@@ -11197,13 +11251,13 @@ public class Examples {
     // tag::p2p-act-rep-config-cacert-pinned[]
     // Only CA Certs accepted
     thisConfig.AcceptOnlySelfSignedServerCertificate =
-      false; <i class="conum" data-value="90"></i><b>(90)</b>
+      false; <i class="conum" data-value="91"></i><b>(91)</b>
 
     var thisCert =
-      new X509Certificate2(caData); <i class="conum" data-value="91"></i><b>(91)</b>
+      new X509Certificate2(caData); <i class="conum" data-value="92"></i><b>(92)</b>
 
     thisConfig.PinnedServerCertificate =
-      thisCert; <i class="conum" data-value="92"></i><b>(92)</b>
+      thisCert; <i class="conum" data-value="93"></i><b>(93)</b>
 
     // end::p2p-act-rep-config-cacert-pinned[]
 
@@ -11239,7 +11293,7 @@ public class Examples {
 
       // tag::p2p-act-rep-stop[]
       // Stop replication.
-      thisReplicator.Stop(); <i class="conum" data-value="93"></i><b>(93)</b>
+      thisReplicator.Stop(); <i class="conum" data-value="94"></i><b>(94)</b>
       // end::p2p-act-rep-stop[]
 
 
@@ -11247,7 +11301,7 @@ public class Examples {
 
 {
   CouchbaseLite.init(context);
-  Database thisDB = new Database("passivepeerdb");  <i class="conum" data-value="94"></i><b>(94)</b>
+  Database thisDB = new Database("passivepeerdb");  <i class="conum" data-value="95"></i><b>(95)</b>
   // Initialize the listener config
   final URLEndpointListenerConfiguration thisConfig = new URLEndpointListenerConfiguration(database);
   thisConfig.Port(55990)             // &lt;.&gt; Default- port is selected
@@ -11255,14 +11309,14 @@ public class Examples {
   thisConfig.EnableDeltaSync(true)   // &lt;.&gt; Optional. Defaults to false.
 
   // Configure the client authenticator (if using basic auth)
-  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "Our Username", "Our Password"}; <i class="conum" data-value="95"></i><b>(95)</b>
-  thisConfig.Authenticator(auth); <i class="conum" data-value="96"></i><b>(96)</b>
+  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "Our Username", "Our Password"}; <i class="conum" data-value="96"></i><b>(96)</b>
+  thisConfig.Authenticator(auth); <i class="conum" data-value="97"></i><b>(97)</b>
 
   // Initialize the listener
-  final URLEndpointListener listener = new URLEndpointListener( thisConfig ); <i class="conum" data-value="97"></i><b>(97)</b>
+  final URLEndpointListener listener = new URLEndpointListener( thisConfig ); <i class="conum" data-value="98"></i><b>(98)</b>
 
   // Start the listener
-  listener.Start(); <i class="conum" data-value="98"></i><b>(98)</b>
+  listener.Start(); <i class="conum" data-value="99"></i><b>(99)</b>
     }
 
 
@@ -11302,7 +11356,7 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
     // String validUser = new String("validUsername"); // an example username
     // String validPassword = new String("validPasswordValue"); // an example password
 
-    // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( <i class="conum" data-value="99"></i><b>(99)</b>
+    // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( <i class="conum" data-value="100"></i><b>(100)</b>
     //   validUser, validPassword -&gt; validUser == "validUsername" &amp;&amp; validPassword == "validPasswordValue" );
 
     // if (thisAuth) {
@@ -11317,7 +11371,7 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 
 
     // tag::old-p2p-act-rep-add-change-listener[]
-    ListenerToken thisListener = new thisReplicator.addChangeListener(change -&gt; { <i class="conum" data-value="100"></i><b>(100)</b>
+    ListenerToken thisListener = new thisReplicator.addChangeListener(change -&gt; { <i class="conum" data-value="101"></i><b>(101)</b>
       if (change.Status().getError() != null) {
         Log.i(TAG, "Error code ::  " + change.Status().getError().getCode());
       }
@@ -11362,10 +11416,10 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 // tag::old-deleteTlsIdentity[]
 
 String thisAlias = "alias-to-delete";
-KeyStore thisKeystore = KeyStore.getInstance("PKCS12"); <i class="conum" data-value="101"></i><b>(101)</b>
+KeyStore thisKeystore = KeyStore.getInstance("PKCS12"); <i class="conum" data-value="102"></i><b>(102)</b>
 thisKeyStore.load= null;
 if (thisAlias != null) {
-   thisKeystore.deleteEntry(thisAlias);  <i class="conum" data-value="102"></i><b>(102)</b>
+   thisKeystore.deleteEntry(thisAlias);  <i class="conum" data-value="103"></i><b>(103)</b>
 }
 
 // end::old-deleteTlsIdentity[]
@@ -11410,7 +11464,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // tag::old-listener-config-client-root-ca[]
     // Configure the client authenticator
-    // to validate using ROOT CA <i class="conum" data-value="103"></i><b>(103)</b>
+    // to validate using ROOT CA <i class="conum" data-value="104"></i><b>(104)</b>
     byte[] thisCaData; // byte array for CA data
     using (var thisReader = new BinaryReader(stream)) {
       thisCaData = thisReader.ReadBytes(int stream.Length);
@@ -11436,7 +11490,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // Configure the expected server-supplied
     // credentials -- only accept CA Certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="104"></i><b>(104)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="105"></i><b>(105)</b>
 
     // Client identity
     thisIdentity =
@@ -11444,10 +11498,10 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         clientData,
         "123",
         "CBL-Client-Cert",
-        null); <i class="conum" data-value="105"></i><b>(105)</b>
+        null); <i class="conum" data-value="106"></i><b>(106)</b>
 
     thisConfig.Authenticator =
-      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="106"></i><b>(106)</b>
+      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="107"></i><b>(107)</b>
 
     // end::client-cert-authenticator-root-certs[]
 
@@ -11456,7 +11510,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
 
     byte[] thisCaData, thisClientData;
-    thisClientData = File.ReadAllBytes("C:\\client.p12"); <i class="conum" data-value="107"></i><b>(107)</b>
+    thisClientData = File.ReadAllBytes("C:\\client.p12"); <i class="conum" data-value="108"></i><b>(108)</b>
     thisCaData = File.ReadAllBytes("C:\\client-ca.der");
 
     // Root certs
@@ -11467,7 +11521,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // Create URL Endpoint Listener
     var thisConfig = new URLEndpointListenerConfiguration(_Database);
-    thisConfig.DisableTLS = false; <i class="conum" data-value="108"></i><b>(108)</b>
+    thisConfig.DisableTLS = false; <i class="conum" data-value="109"></i><b>(109)</b>
     thisConfig.Authenticator = thisAuth;
     _listener = new URLEndpointListener(thisConfig);
     _listener.Start();
@@ -11517,10 +11571,10 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         clientData,
         "123",
         "CBL-Client-Cert",
-        null); <i class="conum" data-value="109"></i><b>(109)</b>
+        null); <i class="conum" data-value="110"></i><b>(110)</b>
 
     thisConfig.Authenticator =
-      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="110"></i><b>(110)</b>
+      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="111"></i><b>(111)</b>
 
     // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -11534,11 +11588,11 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 public class MyClass
 {
     public Database Database { get; set; }
-    public Replicator Replicator { get; set; } <i class="conum" data-value="1"></i><b>(1)</b>
+    public Replicator Replicator { get; set; } <i class="conum" data-value="112"></i><b>(112)</b>
 
     public void StartReplication()
     {
-        var url = new Uri("ws://localhost:4984/db"); <i class="conum" data-value="2"></i><b>(2)</b>
+        var url = new Uri("wss://localhost:4984/db"); <i class="conum" data-value="113"></i><b>(113)</b>
         var target = new URLEndpoint(url);
         var config = new ReplicatorConfiguration(Database, target)
         {
@@ -11553,9 +11607,9 @@ public class MyClass
 // end::sgw-repl-pull[]
 
 // tag::sgw-repl-pull-callouts[]
-&lt;1&gt; A replication is an asynchronous operation.
+&lt;.&gt; A replication is an asynchronous operation.
 To keep a reference to the `replicator` object, you can set it as an instance property.
-&lt;2&gt; The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+&lt;.&gt; The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 // end::sgw-repl-pull-callouts[]
 
@@ -11563,7 +11617,7 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
     // tag::sgw-act-rep-initialize[]
     // initialize the replicator configuration
 
-    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); <i class="conum" data-value="111"></i><b>(111)</b>
+    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); <i class="conum" data-value="114"></i><b>(114)</b>
     var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
     // end::sgw-act-rep-initialize[]</code></pre>
@@ -12886,12 +12940,12 @@ var query =
         // tag::replication-set-heartbeat[]
             config.Heartbeat = TimeSpan.FromSeconds(120); //  <i class="conum" data-value="20"></i><b>(20)</b>
         // end::replication-set-heartbeat[]
-        // tag::replication-set-maxretries[]
-            config.MaxRetries = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
-        // end::replication-set-maxretries[]
-        // tag::replication-set-maxretrywaittime[]
-            config.MaxRetryWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
-        // end::replication-set-maxretrywaittime[]
+        // tag::replication-set-maxattempts[]
+            config.Maxattempts = 20; //  <i class="conum" data-value="21"></i><b>(21)</b>
+        // end::replication-set-maxattempts[]
+        // tag::replication-set-maxattemptwaittime[]
+            config.MaxAttemptWaitTime = TimeSpan.FromSeconds(600); //  <i class="conum" data-value="22"></i><b>(22)</b>
+        // end::replication-set-maxattemptwaittime[]
 
         //  other config as required . . .
 
@@ -13254,36 +13308,54 @@ var query =
 
 // N1QL QUERY
 
-
-  public  List&lt;Result&gt; testN1QLQueryString (Database argDB)
+  public List&lt;Result&gt; docsonly_N1QLQueryString(Database argDB)
   {
-      // For Documentation
+      var doc_type = "hotel";
+
       DatabaseConfiguration dbCfg = new DatabaseConfiguration();
       dbCfg.Directory =
           Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
-      // tag::query-syntax-n1ql[]
+
       Database thisDb = new Database(dbName, dbCfg);
 
+      // For Documentation -- N1QL Query
+      // tag::query-syntax-n1ql[]
+      // Declared elsewhere: Database argDB
+
       var thisQuery =
-          thisDb.CreateQuery(
-              "SELECT META().id AS thisId FROM $thisDb.name " +
-              "WHERE type = $type"); <i class="conum" data-value="23"></i><b>(23)</b>
+          thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = \"hotel\""); <i class="conum" data-value="23"></i><b>(23)</b>
 
-      thisQuery.Parameters.SetString("type", "hotel"); <i class="conum" data-value="24"></i><b>(24)</b>
+      return thisQuery.Execute().AllResults();
 
-      var results = thisQuery.Execute().AllResults();
-
-      return results;
       // end::query-syntax-n1ql[]
   }
 
-    // tag::query-syntax-n1ql-params[]
-    tbd
-    // end::query-syntax-n1ql-params[]
 
-    // tag::query-access-n1ql[]
-    tbd
-    // end::query-access-n1ql[]
+  public  List&lt;Result&gt; docsonly_N1QLQueryStringParams(Database argDB)
+  {
+      var doc_type = "hotel";
+
+      DatabaseConfiguration dbCfg = new DatabaseConfiguration();
+      dbCfg.Directory =
+          Path.Combine(Service.GetInstance&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory(), username);
+
+      Database thisDb = new Database(dbName, dbCfg);
+
+      // For Documentation -- N1QL Query
+      // tag::query-syntax-n1ql-params[]
+      // Declared elsewhere: Database argDB
+
+      var thisQuery =
+          thisDb.CreateQuery("SELECT META().id AS thisId FROM _ WHERE type = $type"); <i class="conum" data-value="24"></i><b>(24)</b>
+
+      var n1qlParams = new Parameters();
+      n1qlParams.SetString("type", "hotel"); <i class="conum" data-value="25"></i><b>(25)</b>
+      thisQuery.Parameters = n1qlParams;
+
+      return thisQuery.Execute().AllResults();
+
+      // end::query-syntax-n1ql-params[]
+  }
 
 
 // QUERY RESULT SET HANDLING EXAMPLES
@@ -13317,11 +13389,11 @@ var query =
             foreach (var result in results)
             {
                 // get the result into our dictionary object
-                var thisDocsProps = result.GetDictionary(dbName); <i class="conum" data-value="25"></i><b>(25)</b>
+                var thisDocsProps = result.GetDictionary(dbName); <i class="conum" data-value="26"></i><b>(26)</b>
 
                 if (thisDocsProps != null)
                 {
-                    thisDocsId = thisDocsProps.GetString("id"); <i class="conum" data-value="26"></i><b>(26)</b>
+                    thisDocsId = thisDocsProps.GetString("id"); <i class="conum" data-value="27"></i><b>(27)</b>
                     thisDocsName = thisDocsProps.GetString("name");
                     thisDocsCity = thisDocsProps.GetString("city");
                     thisDocsType = thisDocsProps.GetString("type");
@@ -13338,13 +13410,13 @@ var query =
     foreach (var result in query.Execute().AsEnumerable()) {
 
         // get the result into a JSON String
-                var thisDocsJSONString = result.ToJSON();<i class="conum" data-value="27"></i><b>(27)</b>
+                var thisDocsJSONString = result.ToJSON();<i class="conum" data-value="28"></i><b>(28)</b>
 
         // Get a native dictionary object using the JSON string
         var dictFromJSONstring =
               JsonConvert.
                 DeserializeObject&lt;Dictionary&lt;string, object&gt;&gt;
-                  (thisDocsJSONString); <i class="conum" data-value="28"></i><b>(28)</b>
+                  (thisDocsJSONString); <i class="conum" data-value="29"></i><b>(29)</b>
 
         // use the created dictionary
         if (dictFromJSONstring != null)
@@ -13357,7 +13429,7 @@ var query =
 
         //Get a custom object using the JSON string
         Hotel this_hotel =
-            JsonConvert.DeserializeObject&lt;Hotel&gt;(thisDocsJSONString); <i class="conum" data-value="29"></i><b>(29)</b>
+            JsonConvert.DeserializeObject&lt;Hotel&gt;(thisDocsJSONString); <i class="conum" data-value="30"></i><b>(30)</b>
 
         // Store this hotel object in a list of hotels
         hotels.Add(
@@ -13428,7 +13500,7 @@ var query =
 
         var query =
           QueryBuilder
-            .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) <i class="conum" data-value="30"></i><b>(30)</b>
+            .Select(SelectResult.Expression(Function.Count(Expression.All())).As("mycount")) <i class="conum" data-value="31"></i><b>(31)</b>
             .From(DataSource.Database(this_Db));
 
         // end::query-syntax-count-only[]
@@ -13441,7 +13513,7 @@ var query =
         foreach (var result in results)
         {
 
-            var numberOfDocs = result.GetInt("mycount"); <i class="conum" data-value="31"></i><b>(31)</b>
+            var numberOfDocs = result.GetInt("mycount"); <i class="conum" data-value="32"></i><b>(32)</b>
 
         }
 
@@ -13477,7 +13549,7 @@ var query =
         foreach (var result in results)
         {
 
-            var thisDocsID = result.GetString("this_ID"); <i class="conum" data-value="32"></i><b>(32)</b>
+            var thisDocsID = result.GetString("this_ID"); <i class="conum" data-value="33"></i><b>(33)</b>
             var doc = this_Db.GetDocument(thisDocsID);
         }
 
@@ -13516,7 +13588,7 @@ var query =
               QueryBuilder
                   .Select(SelectResult.All())
                   .From(DataSource.Database(this_Db))
-                  .Limit(Expression.Int(thisLimit), Expression.Int(thisOffset)); <i class="conum" data-value="33"></i><b>(33)</b>
+                  .Limit(Expression.Int(thisLimit), Expression.Int(thisOffset)); <i class="conum" data-value="34"></i><b>(34)</b>
 
           foreach (var result in listQuery.Execute().AllResults())
           {
@@ -13547,7 +13619,7 @@ var query =
             var thisDoc = this_Db.GetDocument("hotel_10025");
 
             // Get document data as JSON String
-            var thisDocAsJsonString = thisDoc?.ToJSON(); <i class="conum" data-value="34"></i><b>(34)</b>
+            var thisDocAsJsonString = thisDoc?.ToJSON(); <i class="conum" data-value="35"></i><b>(35)</b>
 
             // Get Json Object from the Json String
             JObject myJsonObj = JObject.Parse(thisDocAsJsonString);
@@ -13568,7 +13640,7 @@ var query =
 
             // Update new document with JSOn String
             MutableDocument newhotel =
-                new MutableDocument(anhotel.Id, newJsonString); <i class="conum" data-value="35"></i><b>(35)</b>
+                new MutableDocument(anhotel.Id, newJsonString); <i class="conum" data-value="36"></i><b>(36)</b>
 
             foreach (string key in newhotel.ToDictionary().Keys)
             {
@@ -13578,7 +13650,7 @@ var query =
 
             newDb.Save(newhotel);
 
-            var thatDoc = newDb.GetDocument("2001").ToJSON(); <i class="conum" data-value="36"></i><b>(36)</b>
+            var thatDoc = newDb.GetDocument("2001").ToJSON(); <i class="conum" data-value="37"></i><b>(37)</b>
             System.Console.Write(thatDoc);
 
             // end::tojson-document[]
@@ -13621,7 +13693,7 @@ var query =
 
             // Create mutable array using JSON String Array
             var myArray = new MutableArrayObject();
-            myArray.SetJSON(thisJSONstring);  <i class="conum" data-value="37"></i><b>(37)</b>
+            myArray.SetJSON(thisJSONstring);  <i class="conum" data-value="38"></i><b>(38)</b>
 
 
             // Create a new documenty for each array element
@@ -13629,19 +13701,19 @@ var query =
             {
                 var dict = myArray.GetDictionary(i);
                 var docid = myArray[i].Dictionary.GetString("id");
-                var newdoc = new MutableDocument(docid, dict.ToDictionary()); <i class="conum" data-value="38"></i><b>(38)</b>
+                var newdoc = new MutableDocument(docid, dict.ToDictionary()); <i class="conum" data-value="39"></i><b>(39)</b>
                 dbNew.Save(newdoc);
             }
 
             // Get one of the created docs and iterate through one of the embedded arrays
             var extendedDoc = dbNew.GetDocument("1002");
             var features = extendedDoc.GetArray("features");
-            <i class="conum" data-value="39"></i><b>(39)</b>
+            <i class="conum" data-value="40"></i><b>(40)</b>
             foreach (string feature in features) {
                 System.Console.Write(feature);
                 //process array item as required
             }
-            var featuresJSON = extendedDoc.GetArray("features").ToJSON(); <i class="conum" data-value="40"></i><b>(40)</b>
+            var featuresJSON = extendedDoc.GetArray("features").ToJSON(); <i class="conum" data-value="41"></i><b>(41)</b>
 
             // end::tojson-array[]
         }
@@ -13662,7 +13734,7 @@ var query =
 
             // Get dictionary from JSONstring
             var aJSONstring = "{'id':'1002','type':'hotel','name':'Hotel Ned','city':'Balmain','country':'Australia','description':'Undefined description for Hotel Ned','features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDict = new MutableDictionaryObject(json: aJSONstring); <i class="conum" data-value="41"></i><b>(41)</b>
+            var myDict = new MutableDictionaryObject(json: aJSONstring); <i class="conum" data-value="42"></i><b>(42)</b>
 
             // use dictionary to get name value
             var name = myDict.GetString("name");
@@ -13716,7 +13788,7 @@ var query =
                 "'city':'Balmain','country':'Australia'," +
                 "'description':'Undefined description for Hotel Ned'," +
                 "'features':['Cable TV','Toaster','Microwave']}".Replace("'", "\"");
-            var myDoc = new MutableDocument(docId, aJSONstring); <i class="conum" data-value="42"></i><b>(42)</b>
+            var myDoc = new MutableDocument(docId, aJSONstring); <i class="conum" data-value="43"></i><b>(43)</b>
 
 
             // Get the content (an image), create blob and add to doc)
@@ -13726,8 +13798,8 @@ var query =
                                 userName);
             var myImagePath = Path.Combine(defaultDirectory, "avatarimage.jpg");
             var myImageUri = new Uri(myImagePath.ToString());
-            var myBlob = new Blob("image/jpg", myImageUri); <i class="conum" data-value="43"></i><b>(43)</b>
-            myDoc.SetBlob("avatar", myBlob); <i class="conum" data-value="44"></i><b>(44)</b>
+            var myBlob = new Blob("image/jpg", myImageUri); <i class="conum" data-value="44"></i><b>(44)</b>
+            myDoc.SetBlob("avatar", myBlob); <i class="conum" data-value="45"></i><b>(45)</b>
 
 
             // This example generates a 'blob not saved' exception
@@ -13738,16 +13810,16 @@ var query =
             dbNew.Save(myDoc);
 
             // Alternatively -- depending on use case
-            dbNew.SaveBlob(new Blob("image/jpg", myImageUri)); <i class="conum" data-value="45"></i><b>(45)</b>
+            dbNew.SaveBlob(new Blob("image/jpg", myImageUri)); <i class="conum" data-value="46"></i><b>(46)</b>
 
 
             // Retrieve saved doc, get blob as JSON andheck its still a 'blob'
             var sameDoc = dbNew.GetDocument(docId);
             var reconstitutedBlob = new MutableDictionaryObject().
-                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON())); <i class="conum" data-value="46"></i><b>(46)</b>
+                SetDictionary("blobCOPY", new MutableDictionaryObject(sameDoc.GetBlob("avatar").ToJSON())); <i class="conum" data-value="47"></i><b>(47)</b>
 
             if (Blob.IsBlob(
-                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))  <i class="conum" data-value="47"></i><b>(47)</b>
+                    reconstitutedBlob.GetDictionary("blobCOPY").ToDictionary()))  <i class="conum" data-value="48"></i><b>(48)</b>
             {
                //... process accordingly
                Console.WriteLine("Its a Blob!!");
@@ -13815,7 +13887,7 @@ var query =
 
 
 // tag::listener-simple[]
-var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="48"></i><b>(48)</b>
+var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="49"></i><b>(49)</b>
 
 thisConfig.Authenticator =
   new ListenerPasswordAuthenticator(
@@ -13823,29 +13895,29 @@ thisConfig.Authenticator =
       {
       return username.equals("valid.user")  &amp;&amp; (password == validPassword);
       }
-  ); <i class="conum" data-value="49"></i><b>(49)</b>
+  ); <i class="conum" data-value="50"></i><b>(50)</b>
 
-_thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="50"></i><b>(50)</b>
+_thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="51"></i><b>(51)</b>
 
-_thisListener.Start(); <i class="conum" data-value="51"></i><b>(51)</b>
+_thisListener.Start(); <i class="conum" data-value="52"></i><b>(52)</b>
 
 // end::listener-simple[]
 
 
 
 // tag::replicator-simple[]
-var theListenerEndpoint = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="52"></i><b>(52)</b>
+var theListenerEndpoint = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="53"></i><b>(53)</b>
 
-var thisConfig = new ReplicatorConfiguration(thisDB, theListenerEndpoint); <i class="conum" data-value="53"></i><b>(53)</b>
+var thisConfig = new ReplicatorConfiguration(thisDB, theListenerEndpoint); <i class="conum" data-value="54"></i><b>(54)</b>
 
-thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="54"></i><b>(54)</b>
+thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="55"></i><b>(55)</b>
 
 thisConfig.Authenticator =
-  new BasicAuthenticator("valid.user", "valid.password.string"); <i class="conum" data-value="55"></i><b>(55)</b>
+  new BasicAuthenticator("valid.user", "valid.password.string"); <i class="conum" data-value="56"></i><b>(56)</b>
 
-var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="56"></i><b>(56)</b>
+var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="57"></i><b>(57)</b>
 
-thisReplicator.Start(); <i class="conum" data-value="57"></i><b>(57)</b>
+thisReplicator.Start(); <i class="conum" data-value="58"></i><b>(58)</b>
 
 // end::replicator-simple[]
 
@@ -13908,34 +13980,34 @@ namespace api_walkthrough
 
     // tag::listener-config-db[]
     // Initialize the listener config
-    var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="58"></i><b>(58)</b>
+    var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="59"></i><b>(59)</b>
 
     // end::listener-config-db[]
     // tag::listener-config-port[]
-    thisConfig.Port = 55990; <i class="conum" data-value="59"></i><b>(59)</b>
+    thisConfig.Port = 55990; <i class="conum" data-value="60"></i><b>(60)</b>
 
     // end::listener-config-port[]
     // tag::listener-config-netw-iface[]
-    thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="60"></i><b>(60)</b>
+    thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="61"></i><b>(61)</b>
 
     // end::listener-config-netw-iface[]
     // tag::listener-config-delta-sync[]
-    thisConfig.EnableDeltaSync = true; <i class="conum" data-value="61"></i><b>(61)</b>
+    thisConfig.EnableDeltaSync = true; <i class="conum" data-value="62"></i><b>(62)</b>
 
     // end::listener-config-delta-sync[]
     // tag::listener-config-tls-full[]
     // tag::listener-config-tls-enable[]
-    thisConfig.DisableTLS = false; <i class="conum" data-value="62"></i><b>(62)</b>
+    thisConfig.DisableTLS = false; <i class="conum" data-value="63"></i><b>(63)</b>
 
     // end::listener-config-tls-enable[]
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
-    thisConfig.TlsIdentity = null; <i class="conum" data-value="63"></i><b>(63)</b>
+    thisConfig.TlsIdentity = null; <i class="conum" data-value="64"></i><b>(64)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-client-auth-pwd[]
     // Configure the client authenticator
-    // Here we are using Basic Authentication) <i class="conum" data-value="64"></i><b>(64)</b>
+    // Here we are using Basic Authentication) <i class="conum" data-value="65"></i><b>(65)</b>
     SecureString validPassword =  new SecureString(); /* example only */
     // Get SecureString input for validPassword
     var validUser = "valid.username";
@@ -13949,10 +14021,10 @@ namespace api_walkthrough
     // end::listener-config-client-auth-pwd[]
     // tag::listener-start[]
     // Initialize the listener
-    _thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="65"></i><b>(65)</b>
+    _thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="66"></i><b>(66)</b>
 
     // Start the listener
-    thisListener.Start(); <i class="conum" data-value="66"></i><b>(66)</b>
+    thisListener.Start(); <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::listener-start[]
     // end::listener-initialize[]
@@ -13975,8 +14047,8 @@ namespace api_walkthrough
 
 
   // tag::listener-status-check[]
-  int connectionCount = thisListener.Status.ConnectionCount; <i class="conum" data-value="67"></i><b>(67)</b>
-  int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  <i class="conum" data-value="68"></i><b>(68)</b>
+  int connectionCount = thisListener.Status.ConnectionCount; <i class="conum" data-value="68"></i><b>(68)</b>
+  int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  <i class="conum" data-value="69"></i><b>(69)</b>
 
   // end::listener-status-check[]
 
@@ -14013,7 +14085,7 @@ _thisListener.Start();
 // end::listener-get-url-list[]
 
     // tag::listener-config-tls-disable[]
-    thisConfig.DisableTLS = true; <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.DisableTLS = true; <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::listener-config-tls-disable[]
 
@@ -14035,13 +14107,13 @@ _thisListener.Start();
 
     // Get keys and certificates from PKCS12 data
     byte[] thisIdData =
-      File.ReadAllBytes("c:client.p12"); <i class="conum" data-value="70"></i><b>(70)</b>
+      File.ReadAllBytes("c:client.p12"); <i class="conum" data-value="71"></i><b>(71)</b>
     // . . . other user code . . .
 
     // tag::import-tls-identity[]
     thisIdentity = TLSIdentity.ImportIdentity(
       _store,
-      thisIdData, <i class="conum" data-value="71"></i><b>(71)</b>
+      thisIdData, <i class="conum" data-value="72"></i><b>(72)</b>
       "123", // Password to access certificate data
       "couchbase-demo-cert",
       null); // Label to get cert in certificate map
@@ -14054,12 +14126,12 @@ _thisListener.Start();
 
     // tag::listener-config-tls-id-anon[]
     // Use an Anonymous Self-Signed Cert
-    thisConfig.TlsIdentity = null; <i class="conum" data-value="72"></i><b>(72)</b>
+    thisConfig.TlsIdentity = null; <i class="conum" data-value="73"></i><b>(73)</b>
 
     // end::listener-config-tls-id-anon[]
     // tag::listener-config-tls-id-set[]
     // Set the TLS Identity
-    thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="73"></i><b>(73)</b>
+    thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="74"></i><b>(74)</b>
 
     // end::listener-config-tls-id-set[]
     // end::listener-config-tls-id-full[]
@@ -14070,17 +14142,17 @@ _thisListener.Start();
 
     // Get the valid cert chain, in this instance from
     // PKCS12 data containing private key, public key
-    // and certificates <i class="conum" data-value="74"></i><b>(74)</b>
+    // and certificates <i class="conum" data-value="75"></i><b>(75)</b>
     var clientData = File.ReadAllBytes("c:client.p12");
     var ourCaData = File.ReadAllBytes("c:client-ca.der");
 
     // Get the root certs from the data
-    var thisRootCert = new X509Certificate2(ourCaData); <i class="conum" data-value="75"></i><b>(75)</b>
+    var thisRootCert = new X509Certificate2(ourCaData); <i class="conum" data-value="76"></i><b>(76)</b>
 
     // Configure the authenticator to use the root certs
     var thisAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(thisRootCert));
 
-    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="76"></i><b>(76)</b>
+    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="77"></i><b>(77)</b>
 
     // Initialize the listener using the config
     _listener = new URLEndpointListener(thisConfig);
@@ -14092,7 +14164,7 @@ _thisListener.Start();
 
     // Get the valid cert chain, in this instance from
     // PKCS12 data containing private key, public key
-    // and certificates <i class="conum" data-value="77"></i><b>(77)</b>
+    // and certificates <i class="conum" data-value="78"></i><b>(78)</b>
     clientData = File.ReadAllBytes("c:client.p12");
     ourCaData = File.ReadAllBytes("c:client-ca.der");
 
@@ -14106,9 +14178,9 @@ _thisListener.Start();
         new X509Certificate2Collection(thisRootCert) =&gt; {
           // . . . user supplied code block
           // . . . returns boolean value (true=authenticated)
-        }); <i class="conum" data-value="78"></i><b>(78)</b>
+        }); <i class="conum" data-value="79"></i><b>(79)</b>
 
-    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="79"></i><b>(79)</b>
+    thisConfig.Authenticator = thisAuth; <i class="conum" data-value="80"></i><b>(80)</b>
 
     // end::listener-config-client-auth-lambda[]
 
@@ -14266,7 +14338,7 @@ public class Examples {
     // tag::p2p-act-rep-initialize[]
     // initialize the replicator configuration
 
-    var thisUrl = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="80"></i><b>(80)</b>
+    var thisUrl = new URLEndpoint("wss://listener.com:4984/otherDB"); <i class="conum" data-value="81"></i><b>(81)</b>
     var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
     // end::p2p-act-rep-initialize[]
@@ -14279,7 +14351,7 @@ public class Examples {
     // tag::autopurge-override[]
     // Set autopurge option
     // here we override its default
-    thisConfig.EnableAutoPurge = false; <i class="conum" data-value="81"></i><b>(81)</b>
+    thisConfig.EnableAutoPurge = false; <i class="conum" data-value="82"></i><b>(82)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -14289,10 +14361,10 @@ public class Examples {
     // end::p2p-act-rep-config-cont[]
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Security -- only accept self-signed certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="82"></i><b>(82)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="83"></i><b>(83)</b>
 
     // end::p2p-act-rep-config-self-cert[]
-    // Configure Client Security <i class="conum" data-value="83"></i><b>(83)</b>
+    // Configure Client Security <i class="conum" data-value="84"></i><b>(84)</b>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
@@ -14300,7 +14372,7 @@ public class Examples {
     // end::p2p-act-rep-auth[]
     // tag::p2p-act-rep-config-conflict-full[]
     // tag::p2p-act-rep-config-conflict-builtin[]
-    /* Optionally set a conflict resolver call back */ <i class="conum" data-value="84"></i><b>(84)</b>
+    /* Optionally set a conflict resolver call back */ <i class="conum" data-value="85"></i><b>(85)</b>
     // Use built-in resolver
     thisConfig.ConflictResolver = new LocalWinConflictResolver();  //
 
@@ -14318,11 +14390,11 @@ public class Examples {
     // tag::p2p-act-rep-start-full[]
     // Initialize and start a replicator
     // Initialize replicator with configuration data
-    var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="85"></i><b>(85)</b>
+    var thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="86"></i><b>(86)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    //Optionally add a change listener <i class="conum" data-value="86"></i><b>(86)</b>
+    //Optionally add a change listener <i class="conum" data-value="87"></i><b>(87)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     _thisListenerToken =
       thisReplicator.AddChangeListener((sender, args) =&gt;
@@ -14335,7 +14407,7 @@ public class Examples {
     // end::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-start[]
     // Start replicator
-    thisReplicator.Start(); <i class="conum" data-value="87"></i><b>(87)</b>
+    thisReplicator.Start(); <i class="conum" data-value="88"></i><b>(88)</b>
 
     // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -14347,7 +14419,7 @@ public class Examples {
     // tag::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="88"></i><b>(88)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="89"></i><b>(89)</b>
 
     // end::p2p-act-rep-config-cacert[]
     // tag::p2p-act-rep-config-pinnedcert[]
@@ -14355,7 +14427,7 @@ public class Examples {
     // Return the remote pinned cert (the listener's cert)
     byte returnedCert = new byte(thisConfig.getPinnedCertificate()); // Get listener cert if pinned
     // end::p2p-act-rep-config-pinnedcert[]
-    // Configure Client Security <i class="conum" data-value="89"></i><b>(89)</b>
+    // Configure Client Security <i class="conum" data-value="90"></i><b>(90)</b>
     // tag::p2p-act-rep-auth[]
     // Configure basic auth using user credentials
     thisConfig.Authenticator = new BasicAuthenticator("Our Username", "Our Password");
@@ -14366,13 +14438,13 @@ public class Examples {
     // tag::p2p-act-rep-config-cacert-pinned[]
     // Only CA Certs accepted
     thisConfig.AcceptOnlySelfSignedServerCertificate =
-      false; <i class="conum" data-value="90"></i><b>(90)</b>
+      false; <i class="conum" data-value="91"></i><b>(91)</b>
 
     var thisCert =
-      new X509Certificate2(caData); <i class="conum" data-value="91"></i><b>(91)</b>
+      new X509Certificate2(caData); <i class="conum" data-value="92"></i><b>(92)</b>
 
     thisConfig.PinnedServerCertificate =
-      thisCert; <i class="conum" data-value="92"></i><b>(92)</b>
+      thisCert; <i class="conum" data-value="93"></i><b>(93)</b>
 
     // end::p2p-act-rep-config-cacert-pinned[]
 
@@ -14408,7 +14480,7 @@ public class Examples {
 
       // tag::p2p-act-rep-stop[]
       // Stop replication.
-      thisReplicator.Stop(); <i class="conum" data-value="93"></i><b>(93)</b>
+      thisReplicator.Stop(); <i class="conum" data-value="94"></i><b>(94)</b>
       // end::p2p-act-rep-stop[]
 
 
@@ -14416,7 +14488,7 @@ public class Examples {
 
 {
   CouchbaseLite.init(context);
-  Database thisDB = new Database("passivepeerdb");  <i class="conum" data-value="94"></i><b>(94)</b>
+  Database thisDB = new Database("passivepeerdb");  <i class="conum" data-value="95"></i><b>(95)</b>
   // Initialize the listener config
   final URLEndpointListenerConfiguration thisConfig = new URLEndpointListenerConfiguration(database);
   thisConfig.Port(55990)             // &lt;.&gt; Default- port is selected
@@ -14424,14 +14496,14 @@ public class Examples {
   thisConfig.EnableDeltaSync(true)   // &lt;.&gt; Optional. Defaults to false.
 
   // Configure the client authenticator (if using basic auth)
-  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "Our Username", "Our Password"}; <i class="conum" data-value="95"></i><b>(95)</b>
-  thisConfig.Authenticator(auth); <i class="conum" data-value="96"></i><b>(96)</b>
+  ListenerPasswordAuthenticator auth = new ListenerPasswordAuthenticator { "Our Username", "Our Password"}; <i class="conum" data-value="96"></i><b>(96)</b>
+  thisConfig.Authenticator(auth); <i class="conum" data-value="97"></i><b>(97)</b>
 
   // Initialize the listener
-  final URLEndpointListener listener = new URLEndpointListener( thisConfig ); <i class="conum" data-value="97"></i><b>(97)</b>
+  final URLEndpointListener listener = new URLEndpointListener( thisConfig ); <i class="conum" data-value="98"></i><b>(98)</b>
 
   // Start the listener
-  listener.Start(); <i class="conum" data-value="98"></i><b>(98)</b>
+  listener.Start(); <i class="conum" data-value="99"></i><b>(99)</b>
     }
 
 
@@ -14471,7 +14543,7 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
     // String validUser = new String("validUsername"); // an example username
     // String validPassword = new String("validPasswordValue"); // an example password
 
-    // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( <i class="conum" data-value="99"></i><b>(99)</b>
+    // ListenerPasswordAuthenticator thisAuth = new ListenerPasswordAuthenticator( <i class="conum" data-value="100"></i><b>(100)</b>
     //   validUser, validPassword -&gt; validUser == "validUsername" &amp;&amp; validPassword == "validPasswordValue" );
 
     // if (thisAuth) {
@@ -14486,7 +14558,7 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 
 
     // tag::old-p2p-act-rep-add-change-listener[]
-    ListenerToken thisListener = new thisReplicator.addChangeListener(change -&gt; { <i class="conum" data-value="100"></i><b>(100)</b>
+    ListenerToken thisListener = new thisReplicator.addChangeListener(change -&gt; { <i class="conum" data-value="101"></i><b>(101)</b>
       if (change.Status().getError() != null) {
         Log.i(TAG, "Error code ::  " + change.Status().getError().getCode());
       }
@@ -14531,10 +14603,10 @@ TLSIdentity thisIdentity = new TLSIdentity.getIdentity("CBL-Demo-Server-Cert")
 // tag::old-deleteTlsIdentity[]
 
 String thisAlias = "alias-to-delete";
-KeyStore thisKeystore = KeyStore.getInstance("PKCS12"); <i class="conum" data-value="101"></i><b>(101)</b>
+KeyStore thisKeystore = KeyStore.getInstance("PKCS12"); <i class="conum" data-value="102"></i><b>(102)</b>
 thisKeyStore.load= null;
 if (thisAlias != null) {
-   thisKeystore.deleteEntry(thisAlias);  <i class="conum" data-value="102"></i><b>(102)</b>
+   thisKeystore.deleteEntry(thisAlias);  <i class="conum" data-value="103"></i><b>(103)</b>
 }
 
 // end::old-deleteTlsIdentity[]
@@ -14579,7 +14651,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // tag::old-listener-config-client-root-ca[]
     // Configure the client authenticator
-    // to validate using ROOT CA <i class="conum" data-value="103"></i><b>(103)</b>
+    // to validate using ROOT CA <i class="conum" data-value="104"></i><b>(104)</b>
     byte[] thisCaData; // byte array for CA data
     using (var thisReader = new BinaryReader(stream)) {
       thisCaData = thisReader.ReadBytes(int stream.Length);
@@ -14605,7 +14677,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // Configure the expected server-supplied
     // credentials -- only accept CA Certs
-    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="104"></i><b>(104)</b>
+    thisConfig.AcceptOnlySelfSignedServerCertificate = false; <i class="conum" data-value="105"></i><b>(105)</b>
 
     // Client identity
     thisIdentity =
@@ -14613,10 +14685,10 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         clientData,
         "123",
         "CBL-Client-Cert",
-        null); <i class="conum" data-value="105"></i><b>(105)</b>
+        null); <i class="conum" data-value="106"></i><b>(106)</b>
 
     thisConfig.Authenticator =
-      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="106"></i><b>(106)</b>
+      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="107"></i><b>(107)</b>
 
     // end::client-cert-authenticator-root-certs[]
 
@@ -14625,7 +14697,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
 
     byte[] thisCaData, thisClientData;
-    thisClientData = File.ReadAllBytes("C:\\client.p12"); <i class="conum" data-value="107"></i><b>(107)</b>
+    thisClientData = File.ReadAllBytes("C:\\client.p12"); <i class="conum" data-value="108"></i><b>(108)</b>
     thisCaData = File.ReadAllBytes("C:\\client-ca.der");
 
     // Root certs
@@ -14636,7 +14708,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
     // Create URL Endpoint Listener
     var thisConfig = new URLEndpointListenerConfiguration(_Database);
-    thisConfig.DisableTLS = false; <i class="conum" data-value="108"></i><b>(108)</b>
+    thisConfig.DisableTLS = false; <i class="conum" data-value="109"></i><b>(109)</b>
     thisConfig.Authenticator = thisAuth;
     _listener = new URLEndpointListener(thisConfig);
     _listener.Start();
@@ -14686,10 +14758,10 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         clientData,
         "123",
         "CBL-Client-Cert",
-        null); <i class="conum" data-value="109"></i><b>(109)</b>
+        null); <i class="conum" data-value="110"></i><b>(110)</b>
 
     thisConfig.Authenticator =
-      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="110"></i><b>(110)</b>
+      new ClientCertificateAuthenticator(thisIdentity); <i class="conum" data-value="111"></i><b>(111)</b>
 
     // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -14703,11 +14775,11 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 public class MyClass
 {
     public Database Database { get; set; }
-    public Replicator Replicator { get; set; } <i class="conum" data-value="1"></i><b>(1)</b>
+    public Replicator Replicator { get; set; } <i class="conum" data-value="112"></i><b>(112)</b>
 
     public void StartReplication()
     {
-        var url = new Uri("ws://localhost:4984/db"); <i class="conum" data-value="2"></i><b>(2)</b>
+        var url = new Uri("wss://localhost:4984/db"); <i class="conum" data-value="113"></i><b>(113)</b>
         var target = new URLEndpoint(url);
         var config = new ReplicatorConfiguration(Database, target)
         {
@@ -14722,9 +14794,9 @@ public class MyClass
 // end::sgw-repl-pull[]
 
 // tag::sgw-repl-pull-callouts[]
-&lt;1&gt; A replication is an asynchronous operation.
+&lt;.&gt; A replication is an asynchronous operation.
 To keep a reference to the `replicator` object, you can set it as an instance property.
-&lt;2&gt; The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
+&lt;.&gt; The URL scheme for remote database URLs has changed in Couchbase Lite 2.0.
 You should now use `ws:`, or `wss:` for SSL/TLS connections.
 // end::sgw-repl-pull-callouts[]
 
@@ -14732,7 +14804,7 @@ You should now use `ws:`, or `wss:` for SSL/TLS connections.
     // tag::sgw-act-rep-initialize[]
     // initialize the replicator configuration
 
-    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); <i class="conum" data-value="111"></i><b>(111)</b>
+    var thisUrl = new URLEndpoint("wss://l10.0.2.2:4984/anotherDB"); <i class="conum" data-value="114"></i><b>(114)</b>
     var config = new ReplicatorConfiguration(thisDB, thisUrl);
 
     // end::sgw-act-rep-initialize[]</code></pre>

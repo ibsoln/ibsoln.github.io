@@ -435,7 +435,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-c">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -2003,7 +2003,16 @@ You can embed the call inside your app, or use it interactively within a <code>c
 <div class="tab-pane" aria-labelledby="tabset1_in-app">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// NOTE: No error handling, for brevity (see getting started)
+
+CBLError err;
+CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+    FLSTR("SELECT * FROM _ WHERE type = \"hotel\" GROUP BY country ORDER BY title ASC LIMIT 10"),
+    NULL, &amp;err);
+
+FLSliceResult explanation = CBLQuery_Explain(query);
+printf("%.*s", (int)explanation.size, (const char *)explanation.buf);
+FLSliceResult_Release(explanation);</code></pre>
 </div>
 </div>
 <div class="colist arabic">

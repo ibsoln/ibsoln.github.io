@@ -435,7 +435,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-c">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -2068,7 +2068,7 @@ To change default settings use database&#8217;s <a href="https://ibsoln.github.i
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">Placeholder for code to increase level of console logging for all domains</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">//Placeholder for code to increase level of console logging for all domains</code></pre>
 </div>
 </div>
 </div>
@@ -2159,7 +2159,21 @@ You can over ride that where necessary and output a plain text log.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// NOTE: No error handling, for brevity (see getting started)
+// NOTE: You will need to use a platform appropriate method for finding
+// a temporary directory
+
+FLString tempFolder = FLSTR("/tmp/cbllog");
+
+CBLLogFileConfiguration config; // Don't bother zeroing, since we set all properties
+config.level = kCBLLogInfo;
+config.directory = tempFolder;
+config.maxRotateCount = 5;
+config.maxSize = 10240;
+config.usePlaintext = false;
+
+CBLError err;
+CBLLog_SetFileConfig(config, &amp;err);</code></pre>
 </div>
 </div>
 </div>
@@ -2222,7 +2236,10 @@ Further, you can no longer set a log level for a specific domain.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">static void custom_log_callback(CBLLogDomain domain, CBLLogLevel level, FLString message) {
+    // handle the message, for example piping it to
+    // a third party framework
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2235,7 +2252,7 @@ Further, you can no longer set a log level for a specific domain.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">CBLLog_SetCallback(custom_log_callback);</code></pre>
 </div>
 </div>
 </div>

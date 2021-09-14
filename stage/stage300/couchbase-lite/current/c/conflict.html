@@ -435,7 +435,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-c">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -2179,7 +2179,15 @@ While this is true of any user defined functions, app developers must be strongl
 <div class="tab-pane" aria-labelledby="tabset1_local-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Purpose -- illustrate a simple conflict resolver function
+static const CBLDocument* simpleConflictResolver_localWins(
+        void* context, FLString documentID,
+        const CBLDocument* localDocument,
+        const CBLDocument* remoteDocument) {
+        return localDocument;
+    }
+
+static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
     const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
     return localDocument;
 }</code></pre>
@@ -2434,7 +2442,8 @@ In the event of conflicting keys, it will pick the key value from <code>new</cod
 
 CBLError err;
 CBLDocument* mutableDocument = CBLDatabase_GetMutableDocument(database, FLSTR("xyz"), &amp;err);
-FLDict properties = CBLDocument_MutableProperties(mutableDocument);
+FLMutableDict properties = CBLDocument_MutableProperties(mutableDocument);
+FLMutableDict_SetString(properties, FLSTR("name"), FLSTR("apples"));
 
 /*
 static bool custom_conflict_handler(void* context, CBLDocument* documentBeingSaved,
