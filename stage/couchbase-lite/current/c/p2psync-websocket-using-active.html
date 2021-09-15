@@ -3001,26 +3001,7 @@ The implementation of this storage differs from platform to platform&#8201;&#821
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// Purpose -- illustrate a simple change listener
-static void simpleChangeListener(
-                void* context,
-                CBLReplicator* repl,
-                const CBLReplicatorStatus* status) {
-     if(status-&gt;error.code != 0) {
-         printf("Error %d / %d\n",
-                status-&gt;error.domain,
-                status-&gt;error.code);
-     }
- }
-
-
-// Purpose -- illustrate a simple conflict resolver function
-static const CBLDocument* simpleConflictResolver_localWins(
-        void* context, FLString documentID,
-        const CBLDocument* localDocument,
-        const CBLDocument* remoteDocument) {
-        return localDocument;
-    }</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
 </div>
 </div>
 </div>
@@ -3096,7 +3077,7 @@ Here we say to provide <em>Basic Authentication</em> credentials. Other options 
 <h3 id="lbl-cfg-tgt"><a class="anchor" href="#lbl-cfg-tgt"></a>Configure Target</h3>
 <div class="paragraph">
 <p>Use the
-Initialize and define the replication configuration with local and remote database locations using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/struct_c_b_l_replicator_configuration.html">CBLReplicatorConfiguration</a> object.</p>
+<a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/struct_c_b_l_replicator_configuration.html">CBLReplicatorConfiguration</a> class and <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/struct_c_b_l_replicator_configuration.html#(im)initWithDatabase:target:">-initWithDatabase:target:</a> constructor to initialize the replication configuration with local and remote database locations.</p>
 </div>
 <div class="paragraph">
 <p>The constructor provides:</p>
@@ -3126,16 +3107,7 @@ Initialize and define the replication configuration with local and remote databa
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// Initialize the configuration object and set db target
-CBLError err;
-FLString url = FLSTR("ws://localhost:4984/db");
-CBLEndpoint* target =
-    CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="1"></i><b>(1)</b>
-
-CBLReplicatorConfiguration config;
-memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
-config.database = db;
-config.endpoint = target; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
 </div>
 </div>
 </div>
@@ -3144,8 +3116,7 @@ config.endpoint = target; <i class="conum" data-value="2"></i><b>(2)</b></code><
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Note use of the scheme prefix (<code>wss://</code>
-to ensure TLS encryption&#8201;&#8212;&#8201;strongly recommended in production&#8201;&#8212;&#8201;or <code>ws://</code>)</td>
+<td>Note use of the <code>wss://</code> prefix to ensure TLS encryption (strongly recommended in production)</td>
 </tr>
 </table>
 </div>
@@ -3162,11 +3133,11 @@ to ensure TLS encryption&#8201;&#8212;&#8201;strongly recommended in production&
 <div class="ulist">
 <ul>
 <li>
-<p>The type (or direction) of the replication:
+<p>The direction of the replication:
 <code><strong>pushAndPull</strong></code>; <code>pull</code>; <code>push</code></p>
 </li>
 <li>
-<p>The replication mode, that is:</p>
+<p>The type of replication, that is:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -3185,8 +3156,7 @@ to ensure TLS encryption&#8201;&#8212;&#8201;strongly recommended in production&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">config.replicatorType = kCBLReplicatorTypePull;
-config.continuous = true;</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
 </div>
 </div>
 </div>
@@ -3307,10 +3277,7 @@ config.continuous = true;</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// Configure replication retries
-config.heartbeat = 120; //  <i class="conum" data-value="1"></i><b>(1)</b>
-config.maxAttempts = 20; //  <i class="conum" data-value="2"></i><b>(2)</b>
-config.maxAttemptWaitTime = 600; //  <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
 </div>
 </div>
 </div>
@@ -3456,12 +3423,7 @@ You can, optionally, add a change listener (see <a href="#lbl-repl-mon">Monitor 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">
-CBLReplicator* thisRepl =
-    CBLReplicator_Create(&amp;argConfig, &amp;err); <i class="conum" data-value="1"></i><b>(1)</b>
-
-
-  CBLReplicator_Start(thisRepl,false); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
 </div>
 </div>
 </div>
@@ -3573,41 +3535,14 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <div class="tab-pane" aria-labelledby="tabset2_adding-a-change-listener">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Purpose -- illustrate a simple change listener
-static void simpleChangeListener(
-                void* context,
-                CBLReplicator* repl,
-                const CBLReplicatorStatus* status) {
-     if(status-&gt;error.code != 0) {
-         printf("Error %d / %d\n",
-                status-&gt;error.domain,
-                status-&gt;error.code);
-     }
- }
-
-    // Purpose -- illustrate addition of a Replicator change listener
-    CBLListenerToken* token_ReplChangeListener =
-            CBLReplicator_AddChangeListener(thisRepl,
-                                            simpleChangeListener,
-                                            NULL);</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c"></code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_using-replicator-status">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Purpose -- illustrate use of CBLReplicator_Status()
-
-CBLReplicatorStatus thisState = CBLReplicator_Status(thisRepl);
-
-if(thisState.activity==kCBLReplicatorStopped) {
-    if(thisState.error.code==0) {
-        CBLReplicator_Start(thisRepl,false);
-    } else {
-        printf("Replicator stopped -- code %d", thisState.error.code);
-        // ... handle error ...
-    }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c"></code></pre>
 </div>
 </div>
 </div>
@@ -3705,44 +3640,7 @@ Use it in preference to returning a list of pending document IDs, where possible
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">
-FLDict thisPendingIdList =
-    CBLReplicator_PendingDocumentIDs(thisRepl, &amp;err); <i class="conum" data-value="1"></i><b>(1)</b>
-
-if(!FLDict_IsEmpty(thisPendingIdList)) {
-    FLDictIterator item;
-    FLDictIterator_Begin(thisPendingIdList, &amp;item);
-    FLValue itemValue;
-    FLString pendingId;
-
-    while(NULL != (FLDictIterator_GetValue(&amp;item))) {
-        pendingId = FLValue_AsString(itemValue);
-
-        if(CBLReplicator_IsDocumentPending(thisRepl,
-                                           pendingId,
-                                           &amp;err)) {
-            // ... process the still pending docid as required <i class="conum" data-value="2"></i><b>(2)</b>
-
-        } else {
-            // Doc Id no longer pending
-            if(err.code==0) {
-                // No fail so must have already been pushed
-                printf("Document already pushed");
-            } else {
-                // Error detected so handle it
-                printf("Error code %d checking for pendingId", err.code);
-                break;
-            }
-        }
-        FLDictIterator_Next(&amp;item);
-    }
-
-    FLDictIterator_End(&amp;item);
-    FLValue_Release(itemValue);
-
-} else {
-    printf("No Pending Id Docs to process");
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
 </div>
 </div>
 </div>
@@ -3770,21 +3668,42 @@ This is a snapshot and may have changed by the time the response is received and
 <p>Stopping a replication is straightforward.
 It is done using <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__replication.html#ga548ce284032009546d4092745e89fa8e">CBLReplicator_Stop()</a>.
 This initiates an asynchronous operation and so is not necessarily immediate.
-Your app should account for this potential delay before attempting any subsequent operations.</p>
+Your app should account for this potential delay before attempting any subsequent operations, for example closing the database.</p>
 </div>
 <div class="paragraph">
 <p>You can find further information on database operations in {xref-cbl-gp-database}.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="title">Best Practice</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>When you start a change listener, save the returned token, you will need it when you remove the listener</p>
+</li>
+<li>
+<p>Remove any active change listener prior to stopping your replication</p>
+</li>
+<li>
+<p>Ensure the replication has completely stopped by checking for a replication status = STOPPED, before closing any associated database</p>
+</li>
+</ol>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="exampleblock">
 <div class="title">Example 9. Stop replicator</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// Purpose -- show how to stop a replication
-
-if(CBLReplicator_Status(argRepl).activity!=kCBLReplicatorStopped) {
-    CBLReplicator_Stop(argRepl);
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
 </div>
 </div>
 </div>
@@ -3793,8 +3712,12 @@ if(CBLReplicator_Status(argRepl).activity!=kCBLReplicatorStopped) {
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we initiate the stopping of the replication using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__replication.html#ga548ce284032009546d4092745e89fa8e">CBLReplicator_Stop()</a> method.
-It will stop any active <a href="#lbl-repl-chng">change listener</a> once the replication is stopped.</td>
+<td>First we stop our change listener</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Here we initiate the stopping of the replication using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__replication.html#ga548ce284032009546d4092745e89fa8e">CBLReplicator_Stop()</a> method.<br>
+Remove any active <a href="#lbl-repl-chng">change listener</a> before stopping the replicator.</td>
 </tr>
 </table>
 </div>
@@ -3833,15 +3756,7 @@ It will stop any active <a href="#lbl-repl-chng">change listener</a> once the re
 <div class="tab-pane" aria-labelledby="tabset3_local-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Purpose -- illustrate a simple conflict resolver function
-static const CBLDocument* simpleConflictResolver_localWins(
-        void* context, FLString documentID,
-        const CBLDocument* localDocument,
-        const CBLDocument* remoteDocument) {
-        return localDocument;
-    }
-
-static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
     const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
     return localDocument;
 }</code></pre>

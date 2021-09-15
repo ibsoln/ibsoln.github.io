@@ -3084,9 +3084,9 @@ See the <a href="indexing.html" class="page">Indexing</a> topic to learn more ab
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLValueIndexItem <strong>type = [CBLValueIndexItem property:@"type"];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLValueIndexItem *type = [CBLValueIndexItem property:@"type"];
 CBLValueIndexItem *name = [CBLValueIndexItem property:@"name"];
-CBLIndex</strong> index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
+CBLIndex* index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
 [database createIndex:index withName:@"TypeNameIndex" error:&amp;error];</code></pre>
 </div>
 </div>
@@ -3312,13 +3312,13 @@ In the example below, we use the <code>equalTo</code> operator to query document
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQuery <strong>query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
                                      from:[CBLQueryDataSource database:database]
                                     where:[[CBLQueryExpression property:@"type"] equalTo:[CBLQueryExpression string:@"hotel"]]
                                   groupBy:nil having:nil orderBy:nil
                                     limit:[CBLQueryLimit limit:[CBLQueryExpression integer:10]]];
 
-NSEnumerator</strong> rs = [query execute:&amp;error];
+NSEnumerator* rs = [query execute:&amp;error];
 for (CBLQueryResult *result in rs) {
     CBLDictionary *dict = [result valueForKey:@"travel-sample"];
     NSLog(@"document name :: %@", [dict stringForKey:@"name"]);
@@ -3425,7 +3425,7 @@ To perform case insensitive matching, use <code>Function.lower</code> or <code>F
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQuerySelectResult <strong>id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQuerySelectResult *id = [CBLQuerySelectResult expression:[CBLQueryMeta id]];
 CBLQuerySelectResult *country = [CBLQuerySelectResult property:@"country"];
 CBLQuerySelectResult *name = [CBLQuerySelectResult property:@"name"];
 
@@ -3436,7 +3436,7 @@ CBLQuery *query = [CBLQueryBuilder select:@[id, country, name]
                                      from:[CBLQueryDataSource database:database]
                                     where:[type andExpression: like]];
 
-NSEnumerator</strong> rs = [query execute:&amp;error];
+NSEnumerator* rs = [query execute:&amp;error];
 for (CBLQueryResult *result in rs) {
     NSLog(@"name property :: %@", [result stringForKey:@"name"]);
 }</code></pre>
@@ -4135,13 +4135,13 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">
-CBLDictionary <strong>match;
+CBLDictionary *match;
 
-CBLMutableArray</strong> matches = [[CBLMutableArray alloc] init];
+CBLMutableArray* matches = [[CBLMutableArray alloc] init];
 
 CBLQueryResultSet* resultset = [listQuery execute:&amp;error];
 
-for (CBLQueryResult <strong>result in resultset) {
+for (CBLQueryResult *result in resultset) {
 
   *match = [result toDictionary];
 
@@ -4149,7 +4149,7 @@ for (CBLQueryResult <strong>result in resultset) {
 
   // Now you can get the document using its ID
   // for example using
-  CBLMutableDocument</strong> thisDoc =
+  CBLMutableDocument* thisDoc =
     [thisDB documentWithID: thisDocsId]
 
 } // end for</code></pre>
@@ -4233,9 +4233,9 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDictionary <strong>match;
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDictionary *match;
 
-CBLMutableArray</strong> matches = [[CBLMutableArray alloc] init];
+CBLMutableArray* matches = [[CBLMutableArray alloc] init];
 
 CBLQueryResultSet* resultset = [listQuery execute:&amp;error];
 
@@ -4273,9 +4273,9 @@ Use the <code>limit</code> and <code>offset</code> feature, to return a defined 
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">int thisOffset = 0;
 int thisLimit = 20;
-CBLDatabase <strong>db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
+CBLDatabase *db = [[CBLDatabase alloc] initWithName:@"hotels" error: &amp;error];
 
-CBLQuery</strong> listQuery =
+CBLQuery* listQuery =
             [CBLQueryBuilder
                 select: @[[CBLQuerySelectResult all]]
                 from: [CBLQueryDataSource database: db]
@@ -4324,8 +4324,8 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">NSMutableArray&lt;Hotel <strong>&gt; *hotels = NSMutableArray.new;
-for (CBLQueryResult</strong> result in [listQuery execute:&amp;error]) {
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">NSMutableArray&lt;Hotel *&gt; *hotels = NSMutableArray.new;
+for (CBLQueryResult* result in [listQuery execute:&amp;error]) {
 
     // Get result as a JSON string
 
@@ -4472,7 +4472,7 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">// <code>myMLModel</code> is a fake implementation
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">// `myMLModel` is a fake implementation
 // this would be the implementation of the ml model you have chosen
 @interface myMLModel : NSObject
 
@@ -4492,7 +4492,7 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
     CBLBlob* blob = [input blobForKey:@"photo"];
 
     NSData* imageData = blob.content;
-    // <code>myMLModel</code> is a fake implementation
+    // `myMLModel` is a fake implementation
     // this would be the implementation of the ml model you have chosen
     NSDictionary* modelOutput = [myMLModel predictImage:imageData];
 

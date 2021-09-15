@@ -4012,9 +4012,9 @@ For example to combine airline details with route details, linked by the airline
     SelectResult.expression(Expression.property("stops").from("route")),
     SelectResult.expression(Expression.property("airline").from("route"))
 )
-    .from(DataSource.database(database).<code>as</code>("airline"))
+    .from(DataSource.database(database).`as`("airline"))
     .join(
-        Join.join(DataSource.database(database).<code>as</code>("route"))
+        Join.join(DataSource.database(database).`as`("route"))
             .on(
                 Meta.id.from("airline")
                     .equalTo(Expression.property("airlineid").from("route"))
@@ -4108,7 +4108,7 @@ for (Result result : rs) { Log.w("Sample", String.format("%s", result.toMap().to
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder.select(
-    SelectResult.expression(Function.count(Expression.string("<strong>"))),
+    SelectResult.expression(Function.count(Expression.string("*"))),
     SelectResult.property("country"),
     SelectResult.property("tz")
 )
@@ -4120,7 +4120,7 @@ for (Result result : rs) { Log.w("Sample", String.format("%s", result.toMap().to
     .groupBy(
         Expression.property("country"), Expression.property("tz")
     )
-    .orderBy(Ordering.expression(Function.count(Expression.string("</strong>"))).descending())
+    .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending())
     .execute()
 
 for (result in rs) {
@@ -4141,7 +4141,7 @@ for (result in rs) {
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">Query query = QueryBuilder.select(
-    SelectResult.expression(Function.count(Expression.string("<strong>"))),
+    SelectResult.expression(Function.count(Expression.string("*"))),
     SelectResult.property("country"),
     SelectResult.property("tz"))
     .from(DataSource.database(database))
@@ -4150,7 +4150,7 @@ for (result in rs) {
     .groupBy(
         Expression.property("country"),
         Expression.property("tz"))
-    .orderBy(Ordering.expression(Function.count(Expression.string("</strong>"))).descending());
+    .orderBy(Ordering.expression(Function.count(Expression.string("*"))).descending());
 ResultSet rs = query.execute();
 for (Result result : rs) {
     Log.i(
@@ -5285,554 +5285,28 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 <div class="tab-pane" aria-labelledby="tabset25_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">
-
-
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
-
-
-
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
-//
-// Copyright (c) 2021 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// <a href="http://www.apache.org/licenses/LICENSE-2.0" class="bare">http://www.apache.org/licenses/LICENSE-2.0</a>
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-package com.couchbase.code_snippets
-
-import android.util.Log
-import com.couchbase.lite.ArrayFunction
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.DataSource
-import com.couchbase.lite.Database
-import com.couchbase.lite.Expression
-import com.couchbase.lite.FullTextExpression
-import com.couchbase.lite.FullTextIndexItem
-import com.couchbase.lite.Function
-import com.couchbase.lite.IndexBuilder
-import com.couchbase.lite.Join
-import com.couchbase.lite.Meta
-import com.couchbase.lite.Ordering
-import com.couchbase.lite.Query
-import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.SelectResult
-import com.couchbase.lite.ValueIndexItem
-import com.fasterxml.jackson.databind.ObjectMapper
-import org.json.JSONException
-
-
-private const val TAG = "QUERY"
-private const val DATABASE_NAME = "database"
-
-data class Hotel(
-    var description: String? = null,
-    var country: String? = null,
-    var city: String? = null,
-    var name: String? = null,
-    var type: String? = null,
-    var id: String? = null
-)
-
-@Suppress("unused")
-class QueryExamples(private val database: Database) {
-
-    // <mark># Indexing
-    @Throws(CouchbaseLiteException::class)
-    fun testIndexing() {
-        database.createIndex(
-            "TypeNameIndex",
-            IndexBuilder.valueIndex(
-                ValueIndexItem.property("type"),
-                ValueIndexItem.property("name")
-            )
-        )
-    }
-
-    // </mark># SELECT statement
-    fun testSelectStatement() {
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("name"),
-                SelectResult.property("type")
-            )
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-            .orderBy(Ordering.expression(Meta.id))
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "hotel id -&gt;${result.getString("id")}")
-            Log.i(TAG, "hotel name -&gt; ${result.getString("name")}")
-        }
-    }
-
-    // META function
-    @Throws(CouchbaseLiteException::class)
-    fun testMetaFunction() {
-        val rs = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("airport")))
-            .orderBy(Ordering.expression(Meta.id))
-            .execute()
-
-        for (result in rs) {
-            Log.w(TAG, "airport id -&gt;${result.getString("id")}")
-            Log.w(TAG, "airport id -&gt; ${result.getString(0)}")
-        }
-    }
-
-    // <mark># all(<strong>)
-    @Throws(CouchbaseLiteException::class)
-    fun testSelectAll() {
-        val queryAll = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-
-        val query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-
-        // Adds a query change listener.
-        // Changes will be posted on the main queue.
-        val token = query.addChangeListener { change -&gt;
-            change.results?.let {
-                for (result in it) {
-                    Log.d(TAG, "results: ${result.keys}")
-                    /</strong> Update UI <strong>/
-                }
-            }
-        }
-
-        // Start live query.
-        query.execute() <i class="conum" data-value="1"></i><b>(1)</b>
-
-        query.removeChangeListener(token)
-
-        for (result in query.execute()) {
-            Log.i(TAG, "hotel -&gt; ${result.getDictionary(DATABASE_NAME)?.toMap()}")
-        }
-    }
-
-
-    // </mark>#　WHERE statement
-    @Throws(CouchbaseLiteException::class)
-    fun testWhereStatement() {
-        val rs = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-            .limit(Expression.intValue(10))
-            .execute()
-        for (result in rs) {
-            result.getDictionary(DATABASE_NAME)?.let {
-                Log.i(TAG, "name -&gt; ${it.getString("name")}")
-                Log.i(TAG, "type -&gt; ${it.getString("type")}")
-            }
-        }
-    }
-
-    fun testQueryDeletedDocuments() {
-        // Query documents that have been deleted
-        val query = QueryBuilder
-            .select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(Meta.deleted)
-    }
-
-    // <mark><mark>#　Collection Operators
-    @Throws(CouchbaseLiteException::class)
-    fun testCollectionStatement() {
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("name"),
-                SelectResult.property("public_likes")
-            )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("hotel"))
-                    .and(
-                        ArrayFunction.contains(
-                            Expression.property("public_likes"),
-                            Expression.string("Armani Langworth")
-                        )
-                    )
-            )
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "public_likes -&gt; ${result.getArray("public_likes")?.toList()}")
-        }
-    }
-
-    // IN operator
-    @Throws(CouchbaseLiteException::class)
-    fun testInOperator() {
-        val rs = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(
-                Expression.string("Armani").<code>in</code>(
-                    Expression.property("first"),
-                    Expression.property("last"),
-                    Expression.property("username")
-                )
-            )
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "public_likes -&gt; ${result.toMap()}")
-        }
-    }
-
-    // Pattern Matching
-    @Throws(CouchbaseLiteException::class)
-    fun testPatternMatching() {
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(
-                        Function.lower(Expression.property("name"))
-                            .like(Expression.string("royal engineers museum"))
-                    )
-            )
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "name -&gt; ${result.getString("name")}")
-        }
-    }
-
-    // </mark></mark> Wildcard Match
-    @Throws(CouchbaseLiteException::class)
-    fun testWildcardMatch() {
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(
-                        Function.lower(Expression.property("name"))
-                            .like(Expression.string("eng%e%"))
-                    )
-            )
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "name -&gt; ${result.getString("name")}")
-        }
-    }
-
-    // Wildcard Character Match
-    @Throws(CouchbaseLiteException::class)
-    fun testWildCharacterMatch() {
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(
-                        Function.lower(Expression.property("name"))
-                            .like(Expression.string("eng____r"))
-                    )
-            )
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "name -&gt; ${result.getString("name")}")
-        }
-    }
-
-    // <mark># Regex Match
-    @Throws(CouchbaseLiteException::class)
-    fun testRegexMatch() {
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("country"),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("landmark"))
-                    .and(
-                        Function.lower(Expression.property("name"))
-                            .regex(Expression.string("\\beng.*r\\b"))
-                    )
-            )
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "name -&gt; ${result.getString("name")}")
-        }
-    }
-
-    // JOIN statement
-    @Throws(CouchbaseLiteException::class)
-    fun testJoinStatement() {
-        val rs = QueryBuilder.select(
-            SelectResult.expression(Expression.property("name").from("airline")),
-            SelectResult.expression(Expression.property("callsign").from("airline")),
-            SelectResult.expression(Expression.property("destinationairport").from("route")),
-            SelectResult.expression(Expression.property("stops").from("route")),
-            SelectResult.expression(Expression.property("airline").from("route"))
-        )
-            .from(DataSource.database(database).<code>as</code>("airline"))
-            .join(
-                Join.join(DataSource.database(database).<code>as</code>("route"))
-                    .on(
-                        Meta.id.from("airline")
-                            .equalTo(Expression.property("airlineid").from("route"))
-                    )
-            )
-            .where(
-                Expression.property("type").from("route").equalTo(Expression.string("route"))
-                    .and(
-                        Expression.property("type").from("airline")
-                            .equalTo(Expression.string("airline"))
-                    )
-                    .and(
-                        Expression.property("sourceairport").from("route")
-                            .equalTo(Expression.string("RIX"))
-                    )
-            )
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "name -&gt; ${result.toMap()}")
-        }
-    }
-
-
-    // </mark># GROUPBY statement
-    @Throws(CouchbaseLiteException::class)
-    fun testGroupByStatement() {
-        val rs = QueryBuilder.select(
-            SelectResult.expression(Function.count(Expression.string("</strong>"))),
-            SelectResult.property("country"),
-            SelectResult.property("tz")
-        )
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").equalTo(Expression.string("airport"))
-                    .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300)))
-            )
-            .groupBy(
-                Expression.property("country"), Expression.property("tz")
-            )
-            .orderBy(Ordering.expression(Function.count(Expression.string("<strong>"))).descending())
-            .execute()
-
-        for (result in rs) {
-            result.let {
-                Log.i(
-                    TAG,
-                    "There are ${it.getInt("$1")} airports on the ${
-                        it.getString("tz")
-                    } timezone located in ${
-                        it.getString("country")
-                    } and above 300ft"
-                )
-            }
-        }
-    }
-
-    // <mark># ORDER BY statement
-    @Throws(CouchbaseLiteException::class)
-    fun testOrderByStatement() {
-        val rs = QueryBuilder
-            .select(
-                SelectResult.expression(Meta.id),
-                SelectResult.property("name")
-            )
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel")))
-            .orderBy(Ordering.property("name").ascending())
-            .limit(Expression.intValue(10))
-            .execute()
-
-        for (result in rs) {
-            Log.i(TAG, "${result.toMap()}")
-        }
-    }
-
-
-    // </mark># EXPLAIN statement
-    @Throws(CouchbaseLiteException::class)
-    fun testExplainStatement() {
-        var query: Query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("university")))
-            .groupBy(Expression.property("country"))
-            .orderBy(Ordering.property("name").descending()) <i class="conum" data-value="1"></i><b>(1)</b>
-        Log.i(TAG, query.explain()) <i class="conum" data-value="2"></i><b>(2)</b>
-
-        query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").like(Expression.string("%hotel%"))) <i class="conum" data-value="3"></i><b>(3)</b>
-        Log.i(TAG, query.explain())
-
-        query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(
-                Expression.property("type").like(Expression.string("hotel%")) <i class="conum" data-value="4"></i><b>(4)</b>
-                    .and(Expression.property("name").like(Expression.string("%royal%")))
-            )
-        Log.i(TAG, query.explain())
-
-        query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(
-                Function.lower(
-                    Expression.property("type").equalTo(Expression.string("hotel"))
-                )
-            ) <i class="conum" data-value="5"></i><b>(5)</b>
-        Log.i(TAG, query.explain())
-
-        query = QueryBuilder
-            .select(SelectResult.all())
-            .from(DataSource.database(database))
-            .where(Expression.property("type").equalTo(Expression.string("hotel"))) <i class="conum" data-value="6"></i><b>(6)</b>
-        Log.i(TAG, query.explain())
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun prepareIndex() {
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false)
-        )
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun testFTS() {
-        val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(FullTextExpression.index("nameFTSIndex").match("buy"))
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
-        }
-    }
-
-
-    fun testQuerySyntaxAll(currentUser: String) {
-
-//        try {
-//            this_Db = new Database("hotels");
-//        } catch (CouchbaseLiteException e) {
-//            e.printStackTrace();
-//        }
-
-        val listQuery: Query = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.database(openOrCreateDatabaseForUser(currentUser)))
-
-        val hotels: HashMap&lt;String, Hotel&gt; = HashMap()
-
-        for (result in listQuery.execute().allResults()) {
-            // get the k-v pairs from the 'hotel' key's value into a dictionary
-            val thisDocsProps = result.getDictionary(0) <i class="conum" data-value="7"></i><b>(7)</b>
-            val thisDocsId = thisDocsProps!!.getString("id")
-            val thisDocsName = thisDocsProps.getString("name")
-            val thisDocsType = thisDocsProps.getString("type")
-            val thisDocsCity = thisDocsProps.getString("city")
-
-            // Alternatively, access results value dictionary directly
-            val id = result.getDictionary(0)?.getString("id").toString() <i class="conum" data-value="8"></i><b>(8)</b>
-            hotels[id] = Hotel(
-                id,
-                result.getDictionary(0)?.getString("type"),
-                result.getDictionary(0)?.getString("name"),
-                result.getDictionary(0)?.getString("city"),
-                result.getDictionary(0)?.getString("country"),
-                result.getDictionary(0)?.getString("description")
-            )
-        }
-
-    }
-
-    @Throws(CouchbaseLiteException::class, JSONException::class)
-    fun testQuerySyntaxJson(currentUser: String) {
-        val db = openOrCreateDatabaseForUser(currentUser)
-        // Example assumes Hotel class object defined elsewhere
-//        Database db = null;
-//        try {
-//                db = new Database(dbName);
-//        } catch (CouchbaseLiteException e) {
-//            e.printStackTrace();
-//        }
-
-        // Build the query
-        val listQuery: Query = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.database(db))
-
-
-        // Uses Jackson JSON processor
-        val mapper = ObjectMapper()
-        val hotels: ArrayList&lt;Hotel&gt; = ArrayList()
-
-        for (result in listQuery.execute()) {
-
-            // Get result as JSON string
-            val json = result.toJSON() <i class="conum" data-value="9"></i><b>(9)</b>
-
-            // Get Hashmap from JSON string
-            val dictFromJSONstring = mapper.readValue(json, HashMap::class.java) <i class="conum" data-value="10"></i><b>(10)</b>
-
-            // Use created hashmap
-            val hotelId = dictFromJSONstring["id"].toString() //
-            val hotelType = dictFromJSONstring["type"].toString()
-            val hotelname = dictFromJSONstring["name"].toString()
-
-
-            // Get custom object from JSON string
-            val thisHotel = mapper.readValue(json, Hotel::class.java) <i class="conum" data-value="11"></i><b>(11)</b>
-            hotels.add(thisHotel)
-        }
-    }
-/</strong> end func testQuerySyntaxJson */
-
-    fun openOrCreateDatabaseForUser(user: String): Database = Database(user)
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// tensorFlowModel is a fake implementation
+object TensorFlowModel {
+    fun predictImage(data: ByteArray?) = mapOf&lt;String, Any?&gt;()
 }
 
+object ImageClassifierModel : PredictiveModel {
+    const val name = "ImageClassifier"
 
+    override fun predict(input: Dictionary): Dictionary? {
+        val blob: Blob = input.getBlob("photo") ?: return null
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt</code></pre>
+        // this would be the implementation of the ml model you have chosen
+        return MutableDictionary(TensorFlowModel.predictImage(blob.content)) <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset25_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// <code>tensorFlowModel</code> is a fake implementation
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// tensorflowmodel is a fake implementation
 // this would be the implementation of the ml model you have chosen
 class ImageClassifierModel implements PredictiveModel {
     @Override
@@ -5840,7 +5314,7 @@ class ImageClassifierModel implements PredictiveModel {
         Blob blob = input.getBlob("photo");
         if (blob == null) { return null; }
 
-        // <code>tensorFlowModel</code> is a fake implementation
+        // tensorflowmodel is a fake implementation
         // this would be the implementation of the ml model you have chosen
         return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); <i class="conum" data-value="1"></i><b>(1)</b>
     }

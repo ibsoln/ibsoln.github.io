@@ -3046,7 +3046,7 @@ listenerConfig.tlsIdentity = nil</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3382,11 +3382,11 @@ object MergeConflictResolver : ConflictResolver {
                     // tag::replication-heartbeat-config[]
                     heartbeat = 150, <i class="conum" data-value="1"></i><b>(1)</b>
                     // end::replication-heartbeat-config[]
-                    // tag::replication-maxattempts-config[]
+                    // tag::replication-maxretries-config[]
                     maxAttempts = 20,
-                    // end::replication-maxattempts-config[]
+                    // end::replication-maxretries-config[]
                     maxAttemptWaitTime = 600
-                    // end::replication-maxattemptwaittime-config[]
+                    // end::replication-maxretrywaittime-config[]
                 )
             )
 
@@ -3450,11 +3450,11 @@ object MergeConflictResolver : ConflictResolver {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3515,14 +3515,15 @@ private const val TAG = "BASIC"
 
 // tag::custom-logging[]
 class LogTestLogger(private val level: LogLevel) : Logger {
-    override fun getLevel() = level
+  override fun getLevel() = level
 
-    override fun log(level: LogLevel, domain: LogDomain, message: String) {
-        // this method will never be called if param level &lt; this.level
-        // handle the message, for example piping it to a third party framework
-    }
+  override fun log(level: LogLevel, domain: LogDomain, message: String) {
+    // this method will never be called if param level &lt; this.level
+    // handle the message, for example piping it to a third party framework
+  }
 }
 
+// end::custom-logging[]
 // tag::example-app[]
 @Suppress("unused")
 class BasicExamples(private val context: Context) {
@@ -3588,6 +3589,11 @@ class BasicExamples(private val context: Context) {
         replicator.start()
 
         // end::getting-started[]
+
+        // tag::database-close[]
+        database.close()
+
+        // end::database-close[]
         database.delete()
     }
     // end::example-app[]
@@ -3664,6 +3670,11 @@ class BasicExamples(private val context: Context) {
         Database.log.console.domains = LogDomain.ALL_DOMAINS <i class="conum" data-value="9"></i><b>(9)</b>
         Database.log.console.level = LogLevel.VERBOSE <i class="conum" data-value="10"></i><b>(10)</b>
         // end::console-logging[]
+        // tag::console-logging-db[]
+        Database.log.console.domains = LogDomain.DATABASE
+
+        // end::console-logging-db[]
+
     }
 
     // ### File logging
@@ -3838,11 +3849,11 @@ class BasicExamples(private val context: Context) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3880,8 +3891,8 @@ import com.couchbase.lite.ValueIndexItem
 
 
 private const val TAG = "PREDICT"
-
-// `tensorFlowModel` is a fake implementation
+// tag::predictive-model[]
+// tensorFlowModel is a fake implementation
 object TensorFlowModel {
     fun predictImage(data: ByteArray?) = mapOf&lt;String, Any?&gt;()
 }
@@ -3895,7 +3906,8 @@ object ImageClassifierModel : PredictiveModel {
         // this would be the implementation of the ml model you have chosen
         return MutableDictionary(TensorFlowModel.predictImage(blob.content)) <i class="conum" data-value="1"></i><b>(1)</b>
     }
-} // end::predictive-model[]
+}
+// end::predictive-model[]
 
 
 @Suppress("unused")
@@ -3960,11 +3972,11 @@ class PredictiveQueryExamples {
 }
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -4018,11 +4030,11 @@ class PendingDocsExample(private var replicator: Replicator) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -4552,11 +4564,11 @@ Although `wss:` protocol URLs are not affected, in order to use the `ws:` protoc
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -4865,11 +4877,11 @@ class PasswordAuthListener {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -5053,15 +5065,15 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 
-} // tag::predictive-model[]
+}
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -5650,7 +5662,7 @@ class QueryExamples(private val database: Database) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt</code></pre>
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt </code></pre>
 </div>
 </div>
 </div>
@@ -5664,7 +5676,7 @@ class QueryExamples(private val database: Database) {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -6000,11 +6012,11 @@ object MergeConflictResolver : ConflictResolver {
                     // tag::replication-heartbeat-config[]
                     heartbeat = 150, <i class="conum" data-value="1"></i><b>(1)</b>
                     // end::replication-heartbeat-config[]
-                    // tag::replication-maxattempts-config[]
+                    // tag::replication-maxretries-config[]
                     maxAttempts = 20,
-                    // end::replication-maxattempts-config[]
+                    // end::replication-maxretries-config[]
                     maxAttemptWaitTime = 600
-                    // end::replication-maxattemptwaittime-config[]
+                    // end::replication-maxretrywaittime-config[]
                 )
             )
 
@@ -6068,11 +6080,11 @@ object MergeConflictResolver : ConflictResolver {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -6133,14 +6145,15 @@ private const val TAG = "BASIC"
 
 // tag::custom-logging[]
 class LogTestLogger(private val level: LogLevel) : Logger {
-    override fun getLevel() = level
+  override fun getLevel() = level
 
-    override fun log(level: LogLevel, domain: LogDomain, message: String) {
-        // this method will never be called if param level &lt; this.level
-        // handle the message, for example piping it to a third party framework
-    }
+  override fun log(level: LogLevel, domain: LogDomain, message: String) {
+    // this method will never be called if param level &lt; this.level
+    // handle the message, for example piping it to a third party framework
+  }
 }
 
+// end::custom-logging[]
 // tag::example-app[]
 @Suppress("unused")
 class BasicExamples(private val context: Context) {
@@ -6206,6 +6219,11 @@ class BasicExamples(private val context: Context) {
         replicator.start()
 
         // end::getting-started[]
+
+        // tag::database-close[]
+        database.close()
+
+        // end::database-close[]
         database.delete()
     }
     // end::example-app[]
@@ -6282,6 +6300,11 @@ class BasicExamples(private val context: Context) {
         Database.log.console.domains = LogDomain.ALL_DOMAINS <i class="conum" data-value="9"></i><b>(9)</b>
         Database.log.console.level = LogLevel.VERBOSE <i class="conum" data-value="10"></i><b>(10)</b>
         // end::console-logging[]
+        // tag::console-logging-db[]
+        Database.log.console.domains = LogDomain.DATABASE
+
+        // end::console-logging-db[]
+
     }
 
     // ### File logging
@@ -6456,11 +6479,11 @@ class BasicExamples(private val context: Context) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -6498,8 +6521,8 @@ import com.couchbase.lite.ValueIndexItem
 
 
 private const val TAG = "PREDICT"
-
-// `tensorFlowModel` is a fake implementation
+// tag::predictive-model[]
+// tensorFlowModel is a fake implementation
 object TensorFlowModel {
     fun predictImage(data: ByteArray?) = mapOf&lt;String, Any?&gt;()
 }
@@ -6513,7 +6536,8 @@ object ImageClassifierModel : PredictiveModel {
         // this would be the implementation of the ml model you have chosen
         return MutableDictionary(TensorFlowModel.predictImage(blob.content)) <i class="conum" data-value="1"></i><b>(1)</b>
     }
-} // end::predictive-model[]
+}
+// end::predictive-model[]
 
 
 @Suppress("unused")
@@ -6578,11 +6602,11 @@ class PredictiveQueryExamples {
 }
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -6636,11 +6660,11 @@ class PendingDocsExample(private var replicator: Replicator) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -7170,11 +7194,11 @@ Although `wss:` protocol URLs are not affected, in order to use the `ws:` protoc
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -7483,11 +7507,11 @@ class PasswordAuthListener {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -7671,15 +7695,15 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 
-} // tag::predictive-model[]
+}
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -8268,7 +8292,7 @@ class QueryExamples(private val database: Database) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt</code></pre>
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt </code></pre>
 </div>
 </div>
 </div>
@@ -8282,7 +8306,7 @@ class QueryExamples(private val database: Database) {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -8618,11 +8642,11 @@ object MergeConflictResolver : ConflictResolver {
                     // tag::replication-heartbeat-config[]
                     heartbeat = 150, <i class="conum" data-value="1"></i><b>(1)</b>
                     // end::replication-heartbeat-config[]
-                    // tag::replication-maxattempts-config[]
+                    // tag::replication-maxretries-config[]
                     maxAttempts = 20,
-                    // end::replication-maxattempts-config[]
+                    // end::replication-maxretries-config[]
                     maxAttemptWaitTime = 600
-                    // end::replication-maxattemptwaittime-config[]
+                    // end::replication-maxretrywaittime-config[]
                 )
             )
 
@@ -8686,11 +8710,11 @@ object MergeConflictResolver : ConflictResolver {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -8751,14 +8775,15 @@ private const val TAG = "BASIC"
 
 // tag::custom-logging[]
 class LogTestLogger(private val level: LogLevel) : Logger {
-    override fun getLevel() = level
+  override fun getLevel() = level
 
-    override fun log(level: LogLevel, domain: LogDomain, message: String) {
-        // this method will never be called if param level &lt; this.level
-        // handle the message, for example piping it to a third party framework
-    }
+  override fun log(level: LogLevel, domain: LogDomain, message: String) {
+    // this method will never be called if param level &lt; this.level
+    // handle the message, for example piping it to a third party framework
+  }
 }
 
+// end::custom-logging[]
 // tag::example-app[]
 @Suppress("unused")
 class BasicExamples(private val context: Context) {
@@ -8824,6 +8849,11 @@ class BasicExamples(private val context: Context) {
         replicator.start()
 
         // end::getting-started[]
+
+        // tag::database-close[]
+        database.close()
+
+        // end::database-close[]
         database.delete()
     }
     // end::example-app[]
@@ -8900,6 +8930,11 @@ class BasicExamples(private val context: Context) {
         Database.log.console.domains = LogDomain.ALL_DOMAINS <i class="conum" data-value="9"></i><b>(9)</b>
         Database.log.console.level = LogLevel.VERBOSE <i class="conum" data-value="10"></i><b>(10)</b>
         // end::console-logging[]
+        // tag::console-logging-db[]
+        Database.log.console.domains = LogDomain.DATABASE
+
+        // end::console-logging-db[]
+
     }
 
     // ### File logging
@@ -9074,11 +9109,11 @@ class BasicExamples(private val context: Context) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -9116,8 +9151,8 @@ import com.couchbase.lite.ValueIndexItem
 
 
 private const val TAG = "PREDICT"
-
-// `tensorFlowModel` is a fake implementation
+// tag::predictive-model[]
+// tensorFlowModel is a fake implementation
 object TensorFlowModel {
     fun predictImage(data: ByteArray?) = mapOf&lt;String, Any?&gt;()
 }
@@ -9131,7 +9166,8 @@ object ImageClassifierModel : PredictiveModel {
         // this would be the implementation of the ml model you have chosen
         return MutableDictionary(TensorFlowModel.predictImage(blob.content)) <i class="conum" data-value="1"></i><b>(1)</b>
     }
-} // end::predictive-model[]
+}
+// end::predictive-model[]
 
 
 @Suppress("unused")
@@ -9196,11 +9232,11 @@ class PredictiveQueryExamples {
 }
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -9254,11 +9290,11 @@ class PendingDocsExample(private var replicator: Replicator) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -9788,11 +9824,11 @@ Although `wss:` protocol URLs are not affected, in order to use the `ws:` protoc
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -10101,11 +10137,11 @@ class PasswordAuthListener {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -10289,15 +10325,15 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 
-} // tag::predictive-model[]
+}
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -10886,7 +10922,7 @@ class QueryExamples(private val database: Database) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt</code></pre>
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt </code></pre>
 </div>
 </div>
 </div>
@@ -10900,7 +10936,7 @@ class QueryExamples(private val database: Database) {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -11236,11 +11272,11 @@ object MergeConflictResolver : ConflictResolver {
                     // tag::replication-heartbeat-config[]
                     heartbeat = 150, <i class="conum" data-value="1"></i><b>(1)</b>
                     // end::replication-heartbeat-config[]
-                    // tag::replication-maxattempts-config[]
+                    // tag::replication-maxretries-config[]
                     maxAttempts = 20,
-                    // end::replication-maxattempts-config[]
+                    // end::replication-maxretries-config[]
                     maxAttemptWaitTime = 600
-                    // end::replication-maxattemptwaittime-config[]
+                    // end::replication-maxretrywaittime-config[]
                 )
             )
 
@@ -11304,11 +11340,11 @@ object MergeConflictResolver : ConflictResolver {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ReplicationExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -11369,14 +11405,15 @@ private const val TAG = "BASIC"
 
 // tag::custom-logging[]
 class LogTestLogger(private val level: LogLevel) : Logger {
-    override fun getLevel() = level
+  override fun getLevel() = level
 
-    override fun log(level: LogLevel, domain: LogDomain, message: String) {
-        // this method will never be called if param level &lt; this.level
-        // handle the message, for example piping it to a third party framework
-    }
+  override fun log(level: LogLevel, domain: LogDomain, message: String) {
+    // this method will never be called if param level &lt; this.level
+    // handle the message, for example piping it to a third party framework
+  }
 }
 
+// end::custom-logging[]
 // tag::example-app[]
 @Suppress("unused")
 class BasicExamples(private val context: Context) {
@@ -11442,6 +11479,11 @@ class BasicExamples(private val context: Context) {
         replicator.start()
 
         // end::getting-started[]
+
+        // tag::database-close[]
+        database.close()
+
+        // end::database-close[]
         database.delete()
     }
     // end::example-app[]
@@ -11518,6 +11560,11 @@ class BasicExamples(private val context: Context) {
         Database.log.console.domains = LogDomain.ALL_DOMAINS <i class="conum" data-value="9"></i><b>(9)</b>
         Database.log.console.level = LogLevel.VERBOSE <i class="conum" data-value="10"></i><b>(10)</b>
         // end::console-logging[]
+        // tag::console-logging-db[]
+        Database.log.console.domains = LogDomain.DATABASE
+
+        // end::console-logging-db[]
+
     }
 
     // ### File logging
@@ -11692,11 +11739,11 @@ class BasicExamples(private val context: Context) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BasicExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -11734,8 +11781,8 @@ import com.couchbase.lite.ValueIndexItem
 
 
 private const val TAG = "PREDICT"
-
-// `tensorFlowModel` is a fake implementation
+// tag::predictive-model[]
+// tensorFlowModel is a fake implementation
 object TensorFlowModel {
     fun predictImage(data: ByteArray?) = mapOf&lt;String, Any?&gt;()
 }
@@ -11749,7 +11796,8 @@ object ImageClassifierModel : PredictiveModel {
         // this would be the implementation of the ml model you have chosen
         return MutableDictionary(TensorFlowModel.predictImage(blob.content)) <i class="conum" data-value="1"></i><b>(1)</b>
     }
-} // end::predictive-model[]
+}
+// end::predictive-model[]
 
 
 @Suppress("unused")
@@ -11814,11 +11862,11 @@ class PredictiveQueryExamples {
 }
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PredictiveQueryExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -11872,11 +11920,11 @@ class PendingDocsExample(private var replicator: Replicator) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/PendingDocsExample.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -12406,11 +12454,11 @@ Although `wss:` protocol URLs are not affected, in order to use the `ws:` protoc
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -12719,11 +12767,11 @@ class PasswordAuthListener {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -12907,15 +12955,15 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
         // end::passive-peer-receive[]
     }
 
-} // tag::predictive-model[]
+}
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -13504,7 +13552,7 @@ class QueryExamples(private val database: Database) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt</code></pre>
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt </code></pre>
 </div>
 </div>
 </div>
