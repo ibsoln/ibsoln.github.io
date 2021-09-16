@@ -3073,11 +3073,11 @@ Although <code>wss:</code> protocol URLs are not affected, in order to use the <
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/IBExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3380,11 +3380,11 @@ class PasswordAuthListener {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/ListenerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3539,11 +3539,11 @@ class PassivePeerConnection private constructor() : MessageEndpointConnection {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3996,13 +3996,6 @@ class QueryExamples(private val database: Database) {
 
 
     fun testQuerySyntaxAll(currentUser: String) {
-
-//        try {
-//            this_Db = new Database("hotels");
-//        } catch (CouchbaseLiteException e) {
-//            e.printStackTrace();
-//        }
-
         val listQuery: Query = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database(openOrCreateDatabaseForUser(currentUser)))
 
@@ -4031,20 +4024,13 @@ class QueryExamples(private val database: Database) {
     }
 
     @Throws(CouchbaseLiteException::class, JSONException::class)
-    fun testQuerySyntaxJson(currentUser: String) {
-        val db = openOrCreateDatabaseForUser(currentUser)
+    fun testQuerySyntaxJson(currentUser: String, argDb: Database) {
+        Database db = argDb
         // Example assumes Hotel class object defined elsewhere
-//        Database db = null;
-//        try {
-//                db = new Database(dbName);
-//        } catch (CouchbaseLiteException e) {
-//            e.printStackTrace();
-//        }
 
         // Build the query
         val listQuery: Query = QueryBuilder.select(SelectResult.all())
             .from(DataSource.database(db))
-
 
         // Uses Jackson JSON processor
         val mapper = ObjectMapper()
@@ -4071,12 +4057,94 @@ class QueryExamples(private val database: Database) {
     }
 /</strong> end func testQuerySyntaxJson */
 
-    fun openOrCreateDatabaseForUser(user: String): Database = Database(user)
+  fun docsOnlyQuerySyntaxN1QL(argDb: Database): List&lt;Result&gt; {
+      // For Documentation -- N1QL Query using parameters
+      Database db=argDb
+      val thisQuery = dbcreateQuery(
+            "SELECT META().id AS id FROM _ WHERE type = \"hotel\"") <i class="conum" data-value="41"></i><b>(41)</b>
+
+      return thisQuery.execute().allResults()
+
+  }
+
+  fun docsOnlyQuerySyntaxN1QLParams(argDb: Database): List&lt;Result&gt; {
+      // For Documentation -- N1QL Query using parameters
+      val thisQuery = dbcreateQuery(
+            "SELECT META().id AS id FROM _ WHERE type = \$type") <i class="conum" data-value="42"></i><b>(42)</b>
+
+      thisQuery.parameters = Parameters().setString("type", "hotel") <i class="conum" data-value="43"></i><b>(43)</b>
+
+      return thisQuery.execute().allResults()
+
+  }
+
+    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser)
 }
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt</code></pre>
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+
+
+
+// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
+//
+// Copyright (c) 2021 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// <a href="http://www.apache.org/licenses/LICENSE-2.0" class="bare">http://www.apache.org/licenses/LICENSE-2.0</a>
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.code_snippets
+
+import android.content.Context
+import android.util.Log
+import com.couchbase.lite.Blob
+import com.couchbase.lite.Database
+import com.couchbase.lite.MutableDictionary
+
+class BlobExamples {
+
+    // Example 2: Using Blobs
+    fun example2(context: Context, db: Database) {
+        val doc = db.getDocument("1000") ?: return
+
+        // Create a blob from an asset
+        val blob = Blob("image/png", context.assets.open("couchbaseimage.png"))
+
+        // This will fail:
+        // IllegalStateException("A Blob may be encoded as JSON only after it has been saved in a database")
+        blob.toJSON()
+
+        // Save the blob as part of a document
+        db.save(doc.toMutable().setBlob("avatar", blob))
+
+        // Experts only!!!
+        db.saveBlob(blob)
+
+        // Retrieve saved blob and get as JSON again
+        val blobAsJSONString = db.getDocument("1000")?.getBlob("avatar")?.toJSON() ?: return
+
+        // reconstitute
+        val blobAsMap = MutableDictionary().setJSON(blobAsJSONString).toMap()
+
+        // show the contents of the reconstituted blob
+        for key, value) in blobAsMap) {             Log.d("BLOB", "Data: $key -&gt; $value")         }          // verify that the reconstitued thing is still blob         if (Blob.isBlob(blobAsMap {
+            Log.d("BLOB", blobAsJSONString)
+        }
+    }
+}
+
+
+// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt </code></pre>
 </div>
 </div>
 </div>
