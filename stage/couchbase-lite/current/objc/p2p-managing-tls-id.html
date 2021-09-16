@@ -4077,14 +4077,14 @@ listenerConfig.tlsIdentity = nil</code></pre>
         config.heartbeat = 150; <i class="conum" data-value="20"></i><b>(20)</b>
 
         // end::replication-heartbeat[]
-        // tag::replication-maxretries[]
-        config.maxretries = 20; <i class="conum" data-value="21"></i><b>(21)</b>
+        // tag::replication-maxattempts[]
+        config.maxattempts = 20; <i class="conum" data-value="21"></i><b>(21)</b>
 
-        // end::replication-maxretries[]
-        // tag::replication-maxretrywaittime[]
-        config.maxretrywaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
+        // end::replication-maxattempts[]
+        // tag::replication-maxattemptwaittime[]
+        config.maxattemptwaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
 
-        // end::replication-maxretrywaittime[]
+        // end::replication-maxattemptwaittime[]
         //  other config as required . . .
         repl = [[CBLReplicator alloc] initWithConfig: config];
 
@@ -5266,12 +5266,14 @@ class myActPeerClass {
     // tag::p2p-act-rep-func[]
     // tag::p2p-act-rep-initialize[]
     // Set listener DB endpoint
-    NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-    CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
+    NSURL *url =
+      [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+    CBLURLEndpoint *thisListener =
+      [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="66"></i><b>(66)</b>
 
-    CBLReplicatorConfiguration *thisConfig
-      = [[CBLReplicatorConfiguration alloc]
-          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="66"></i><b>(66)</b>
+    CBLReplicatorConfiguration *thisConfig =
+      [[CBLReplicatorConfiguration alloc]
+        initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -5281,7 +5283,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="67"></i><b>(67)</b>
+    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="68"></i><b>(68)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -5292,7 +5294,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication
     // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="68"></i><b>(68)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="69"></i><b>(69)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // Configure Client Authentication
@@ -5300,23 +5302,23 @@ class myActPeerClass {
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="70"></i><b>(70)</b>
+    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::p2p-act-rep-config-conflict[]    //
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="71"></i><b>(71)</b>
+    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="72"></i><b>(72)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <i class="conum" data-value="72"></i><b>(72)</b>
+    // Optionally add a change listener <i class="conum" data-value="73"></i><b>(73)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     // Retain token for use in deletion
     id&lt;CBLListenerToken&gt; thisListenerToken
@@ -5332,7 +5334,7 @@ class myActPeerClass {
 // end::p2p-act-rep-add-change-listener[]
 // tag::p2p-act-rep-start[]
     // Run the replicator using the config settings
-    [thisReplicator start]; <i class="conum" data-value="73"></i><b>(73)</b>
+    [thisReplicator start]; <i class="conum" data-value="74"></i><b>(74)</b>
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -5352,7 +5354,7 @@ class myActPeerClass {
 // Additional Snippets from above
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="74"></i><b>(74)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="75"></i><b>(75)</b>
 
     // end::p2p-act-rep-config-cacert[]
 
@@ -5403,11 +5405,11 @@ class cMyGetCert1{
         // tag::p2p-tlsid-check-keychain[]
         // Check if Id exists in keychain and if so, use it
         CBLTLSIdentity* identity =
-          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="75"></i><b>(75)</b>
+          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="76"></i><b>(76)</b>
 
         // end::p2p-tlsid-check-keychain[]
         thisConfig.authenticator =
-          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="76"></i><b>(76)</b>
+          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="77"></i><b>(77)</b>
 
         // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -5592,7 +5594,7 @@ CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="77"></i><b>(77)</b>
+      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="78"></i><b>(78)</b>
 
 // end::sgw-act-rep-initialize[]
 // END -- snippets --
@@ -5652,7 +5654,7 @@ NSString* thisJSONstring = @"[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hot
 
     NSError* error = nil;
     [db saveDocument: thisDoc error: &amp;error];
-    [db saveBlob: thisBlob error: &amp;error]; <i class="conum" data-value="78"></i><b>(78)</b>
+    [db saveBlob: thisBlob error: &amp;error]; <i class="conum" data-value="79"></i><b>(79)</b>
 
     // Retrieve saved blob as a JSON, reconstitue and check still blob
 
@@ -6763,14 +6765,14 @@ NSString* thisJSONstring = @"[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hot
         config.heartbeat = 150; <i class="conum" data-value="20"></i><b>(20)</b>
 
         // end::replication-heartbeat[]
-        // tag::replication-maxretries[]
-        config.maxretries = 20; <i class="conum" data-value="21"></i><b>(21)</b>
+        // tag::replication-maxattempts[]
+        config.maxattempts = 20; <i class="conum" data-value="21"></i><b>(21)</b>
 
-        // end::replication-maxretries[]
-        // tag::replication-maxretrywaittime[]
-        config.maxretrywaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
+        // end::replication-maxattempts[]
+        // tag::replication-maxattemptwaittime[]
+        config.maxattemptwaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
 
-        // end::replication-maxretrywaittime[]
+        // end::replication-maxattemptwaittime[]
         //  other config as required . . .
         repl = [[CBLReplicator alloc] initWithConfig: config];
 
@@ -7952,12 +7954,14 @@ class myActPeerClass {
     // tag::p2p-act-rep-func[]
     // tag::p2p-act-rep-initialize[]
     // Set listener DB endpoint
-    NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-    CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
+    NSURL *url =
+      [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+    CBLURLEndpoint *thisListener =
+      [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="66"></i><b>(66)</b>
 
-    CBLReplicatorConfiguration *thisConfig
-      = [[CBLReplicatorConfiguration alloc]
-          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="66"></i><b>(66)</b>
+    CBLReplicatorConfiguration *thisConfig =
+      [[CBLReplicatorConfiguration alloc]
+        initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -7967,7 +7971,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="67"></i><b>(67)</b>
+    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="68"></i><b>(68)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -7978,7 +7982,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication
     // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="68"></i><b>(68)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="69"></i><b>(69)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // Configure Client Authentication
@@ -7986,23 +7990,23 @@ class myActPeerClass {
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="70"></i><b>(70)</b>
+    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::p2p-act-rep-config-conflict[]    //
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="71"></i><b>(71)</b>
+    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="72"></i><b>(72)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <i class="conum" data-value="72"></i><b>(72)</b>
+    // Optionally add a change listener <i class="conum" data-value="73"></i><b>(73)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     // Retain token for use in deletion
     id&lt;CBLListenerToken&gt; thisListenerToken
@@ -8018,7 +8022,7 @@ class myActPeerClass {
 // end::p2p-act-rep-add-change-listener[]
 // tag::p2p-act-rep-start[]
     // Run the replicator using the config settings
-    [thisReplicator start]; <i class="conum" data-value="73"></i><b>(73)</b>
+    [thisReplicator start]; <i class="conum" data-value="74"></i><b>(74)</b>
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -8038,7 +8042,7 @@ class myActPeerClass {
 // Additional Snippets from above
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="74"></i><b>(74)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="75"></i><b>(75)</b>
 
     // end::p2p-act-rep-config-cacert[]
 
@@ -8089,11 +8093,11 @@ class cMyGetCert1{
         // tag::p2p-tlsid-check-keychain[]
         // Check if Id exists in keychain and if so, use it
         CBLTLSIdentity* identity =
-          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="75"></i><b>(75)</b>
+          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="76"></i><b>(76)</b>
 
         // end::p2p-tlsid-check-keychain[]
         thisConfig.authenticator =
-          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="76"></i><b>(76)</b>
+          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="77"></i><b>(77)</b>
 
         // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -8278,7 +8282,7 @@ CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="77"></i><b>(77)</b>
+      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="78"></i><b>(78)</b>
 
 // end::sgw-act-rep-initialize[]
 // END -- snippets --
@@ -8338,7 +8342,7 @@ NSString* thisJSONstring = @"[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hot
 
     NSError* error = nil;
     [db saveDocument: thisDoc error: &amp;error];
-    [db saveBlob: thisBlob error: &amp;error]; <i class="conum" data-value="78"></i><b>(78)</b>
+    [db saveBlob: thisBlob error: &amp;error]; <i class="conum" data-value="79"></i><b>(79)</b>
 
     // Retrieve saved blob as a JSON, reconstitue and check still blob
 
@@ -9449,14 +9453,14 @@ NSString* thisJSONstring = @"[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hot
         config.heartbeat = 150; <i class="conum" data-value="20"></i><b>(20)</b>
 
         // end::replication-heartbeat[]
-        // tag::replication-maxretries[]
-        config.maxretries = 20; <i class="conum" data-value="21"></i><b>(21)</b>
+        // tag::replication-maxattempts[]
+        config.maxattempts = 20; <i class="conum" data-value="21"></i><b>(21)</b>
 
-        // end::replication-maxretries[]
-        // tag::replication-maxretrywaittime[]
-        config.maxretrywaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
+        // end::replication-maxattempts[]
+        // tag::replication-maxattemptwaittime[]
+        config.maxattemptwaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
 
-        // end::replication-maxretrywaittime[]
+        // end::replication-maxattemptwaittime[]
         //  other config as required . . .
         repl = [[CBLReplicator alloc] initWithConfig: config];
 
@@ -10638,12 +10642,14 @@ class myActPeerClass {
     // tag::p2p-act-rep-func[]
     // tag::p2p-act-rep-initialize[]
     // Set listener DB endpoint
-    NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-    CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
+    NSURL *url =
+      [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+    CBLURLEndpoint *thisListener =
+      [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="66"></i><b>(66)</b>
 
-    CBLReplicatorConfiguration *thisConfig
-      = [[CBLReplicatorConfiguration alloc]
-          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="66"></i><b>(66)</b>
+    CBLReplicatorConfiguration *thisConfig =
+      [[CBLReplicatorConfiguration alloc]
+        initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -10653,7 +10659,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="67"></i><b>(67)</b>
+    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="68"></i><b>(68)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -10664,7 +10670,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication
     // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="68"></i><b>(68)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="69"></i><b>(69)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // Configure Client Authentication
@@ -10672,23 +10678,23 @@ class myActPeerClass {
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="70"></i><b>(70)</b>
+    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::p2p-act-rep-config-conflict[]    //
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="71"></i><b>(71)</b>
+    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="72"></i><b>(72)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <i class="conum" data-value="72"></i><b>(72)</b>
+    // Optionally add a change listener <i class="conum" data-value="73"></i><b>(73)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     // Retain token for use in deletion
     id&lt;CBLListenerToken&gt; thisListenerToken
@@ -10704,7 +10710,7 @@ class myActPeerClass {
 // end::p2p-act-rep-add-change-listener[]
 // tag::p2p-act-rep-start[]
     // Run the replicator using the config settings
-    [thisReplicator start]; <i class="conum" data-value="73"></i><b>(73)</b>
+    [thisReplicator start]; <i class="conum" data-value="74"></i><b>(74)</b>
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -10724,7 +10730,7 @@ class myActPeerClass {
 // Additional Snippets from above
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="74"></i><b>(74)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="75"></i><b>(75)</b>
 
     // end::p2p-act-rep-config-cacert[]
 
@@ -10775,11 +10781,11 @@ class cMyGetCert1{
         // tag::p2p-tlsid-check-keychain[]
         // Check if Id exists in keychain and if so, use it
         CBLTLSIdentity* identity =
-          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="75"></i><b>(75)</b>
+          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="76"></i><b>(76)</b>
 
         // end::p2p-tlsid-check-keychain[]
         thisConfig.authenticator =
-          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="76"></i><b>(76)</b>
+          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="77"></i><b>(77)</b>
 
         // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -10964,7 +10970,7 @@ CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="77"></i><b>(77)</b>
+      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="78"></i><b>(78)</b>
 
 // end::sgw-act-rep-initialize[]
 // END -- snippets --
@@ -11024,7 +11030,7 @@ NSString* thisJSONstring = @"[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hot
 
     NSError* error = nil;
     [db saveDocument: thisDoc error: &amp;error];
-    [db saveBlob: thisBlob error: &amp;error]; <i class="conum" data-value="78"></i><b>(78)</b>
+    [db saveBlob: thisBlob error: &amp;error]; <i class="conum" data-value="79"></i><b>(79)</b>
 
     // Retrieve saved blob as a JSON, reconstitue and check still blob
 
@@ -12135,14 +12141,14 @@ NSString* thisJSONstring = @"[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hot
         config.heartbeat = 150; <i class="conum" data-value="20"></i><b>(20)</b>
 
         // end::replication-heartbeat[]
-        // tag::replication-maxretries[]
-        config.maxretries = 20; <i class="conum" data-value="21"></i><b>(21)</b>
+        // tag::replication-maxattempts[]
+        config.maxattempts = 20; <i class="conum" data-value="21"></i><b>(21)</b>
 
-        // end::replication-maxretries[]
-        // tag::replication-maxretrywaittime[]
-        config.maxretrywaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
+        // end::replication-maxattempts[]
+        // tag::replication-maxattemptwaittime[]
+        config.maxattemptwaittime = 600; <i class="conum" data-value="22"></i><b>(22)</b>
 
-        // end::replication-maxretrywaittime[]
+        // end::replication-maxattemptwaittime[]
         //  other config as required . . .
         repl = [[CBLReplicator alloc] initWithConfig: config];
 
@@ -13324,12 +13330,14 @@ class myActPeerClass {
     // tag::p2p-act-rep-func[]
     // tag::p2p-act-rep-initialize[]
     // Set listener DB endpoint
-    NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-    CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
+    NSURL *url =
+      [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+    CBLURLEndpoint *thisListener =
+      [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="66"></i><b>(66)</b>
 
-    CBLReplicatorConfiguration *thisConfig
-      = [[CBLReplicatorConfiguration alloc]
-          initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="66"></i><b>(66)</b>
+    CBLReplicatorConfiguration *thisConfig =
+      [[CBLReplicatorConfiguration alloc]
+        initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="67"></i><b>(67)</b>
 
     // end::p2p-act-rep-initialize[]
     // tag::p2p-act-rep-config[]
@@ -13339,7 +13347,7 @@ class myActPeerClass {
     // end::p2p-act-rep-config-type[]
     // tag::autopurge-override[]
     // set auto-purge behavior (here we override default)
-    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="67"></i><b>(67)</b>
+    thisConfig.enableAutoPurge = NO; <i class="conum" data-value="68"></i><b>(68)</b>
 
     // end::autopurge-override[]
     // tag::p2p-act-rep-config-cont[]
@@ -13350,7 +13358,7 @@ class myActPeerClass {
     // tag::p2p-act-rep-config-self-cert[]
     // Configure Server Authentication
     // Here - expect and accept self-signed certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="68"></i><b>(68)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="69"></i><b>(69)</b>
 
     // end::p2p-act-rep-config-self-cert[]
     // Configure Client Authentication
@@ -13358,23 +13366,23 @@ class myActPeerClass {
     // Here set client to use basic authentication
     // Providing username and password credentials
     // If prompted for them by server
-    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="69"></i><b>(69)</b>
+    thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="70"></i><b>(70)</b>
 
     // end::p2p-act-rep-auth[]
     // end::p2p-act-rep-config-tls-full[]
     // tag::p2p-act-rep-config-conflict[]
     /* Optionally set custom conflict resolver call back */
-    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="70"></i><b>(70)</b>
+    thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="71"></i><b>(71)</b>
 
     // end::p2p-act-rep-config-conflict[]    //
     // end::p2p-act-rep-config[]
     // tag::p2p-act-rep-start-full[]
     // Apply configuration settings to the replicator
-    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="71"></i><b>(71)</b>
+    _thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="72"></i><b>(72)</b>
 
     // tag::p2p-act-rep-add-change-listener[]
     // tag::p2p-act-rep-add-change-listener-label[]
-    // Optionally add a change listener <i class="conum" data-value="72"></i><b>(72)</b>
+    // Optionally add a change listener <i class="conum" data-value="73"></i><b>(73)</b>
     // end::p2p-act-rep-add-change-listener-label[]
     // Retain token for use in deletion
     id&lt;CBLListenerToken&gt; thisListenerToken
@@ -13390,7 +13398,7 @@ class myActPeerClass {
 // end::p2p-act-rep-add-change-listener[]
 // tag::p2p-act-rep-start[]
     // Run the replicator using the config settings
-    [thisReplicator start]; <i class="conum" data-value="73"></i><b>(73)</b>
+    [thisReplicator start]; <i class="conum" data-value="74"></i><b>(74)</b>
 
 // end::p2p-act-rep-start[]
 // end::p2p-act-rep-start-full[]
@@ -13410,7 +13418,7 @@ class myActPeerClass {
 // Additional Snippets from above
     // tag::p2p-act-rep-config-cacert[]
     // Configure Server Security -- only accept CA Certs
-    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="74"></i><b>(74)</b>
+    thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="75"></i><b>(75)</b>
 
     // end::p2p-act-rep-config-cacert[]
 
@@ -13461,11 +13469,11 @@ class cMyGetCert1{
         // tag::p2p-tlsid-check-keychain[]
         // Check if Id exists in keychain and if so, use it
         CBLTLSIdentity* identity =
-          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="75"></i><b>(75)</b>
+          [CBLTLSIdentity identityWithLabel: @"doco-sync-server" error: &amp;error]; <i class="conum" data-value="76"></i><b>(76)</b>
 
         // end::p2p-tlsid-check-keychain[]
         thisConfig.authenticator =
-          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="76"></i><b>(76)</b>
+          [[CBLClientCertificateAuthenticator alloc] initWithIdentity: identity]; <i class="conum" data-value="77"></i><b>(77)</b>
 
         // end::p2p-tlsid-tlsidentity-with-label[]
 
@@ -13650,7 +13658,7 @@ CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
 
 CBLReplicatorConfiguration *thisConfig
   = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="77"></i><b>(77)</b>
+      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="78"></i><b>(78)</b>
 
 // end::sgw-act-rep-initialize[]
 // END -- snippets --
@@ -13710,7 +13718,7 @@ NSString* thisJSONstring = @"[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hot
 
     NSError* error = nil;
     [db saveDocument: thisDoc error: &amp;error];
-    [db saveBlob: thisBlob error: &amp;error]; <i class="conum" data-value="78"></i><b>(78)</b>
+    [db saveBlob: thisBlob error: &amp;error]; <i class="conum" data-value="79"></i><b>(79)</b>
 
     // Retrieve saved blob as a JSON, reconstitue and check still blob
 

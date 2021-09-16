@@ -3005,12 +3005,14 @@ The implementation of this storage differs from platform to platform&#8201;&#821
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">// Set listener DB endpoint
-NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
+NSURL <strong>url =
+  [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+CBLURLEndpoint *thisListener =
+  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="1"></i><b>(1)</b>
 
-CBLReplicatorConfiguration *thisConfig
-  = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="1"></i><b>(1)</b>
+CBLReplicatorConfiguration *thisConfig =
+  [[CBLReplicatorConfiguration alloc]
+    initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="2"></i><b>(2)</b>
 
 thisConfig.replicatorType = kCBLReplicatorTypePush;
 
@@ -3018,21 +3020,21 @@ thisConfig.continuous = YES;
 
 // Configure Server Authentication
 // Here - expect and accept self-signed certs
-thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="2"></i><b>(2)</b>
+thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="3"></i><b>(3)</b>
 
 // Configure Client Authentication
 // Here set client to use basic authentication
 // Providing username and password credentials
 // If prompted for them by server
-thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="3"></i><b>(3)</b>
+thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="4"></i><b>(4)</b>
 
-/* Optionally set custom conflict resolver call back */
-thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="4"></i><b>(4)</b>
+/</strong> Optionally set custom conflict resolver call back */
+thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="5"></i><b>(5)</b>
 
 // Apply configuration settings to the replicator
-_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="5"></i><b>(5)</b>
+_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="6"></i><b>(6)</b>
 
-// Optionally add a change listener <i class="conum" data-value="6"></i><b>(6)</b>
+// Optionally add a change listener <i class="conum" data-value="7"></i><b>(7)</b>
 // Retain token for use in deletion
 id&lt;CBLListenerToken&gt; thisListenerToken
   = [thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
@@ -3043,7 +3045,7 @@ id&lt;CBLListenerToken&gt; thisListenerToken
         };
     }];
 // Run the replicator using the config settings
-[thisReplicator start]; <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
+[thisReplicator start]; <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
 </div>
 </div>
 </div>
@@ -3122,7 +3124,7 @@ Here we say to provide <em>Basic Authentication</em> credentials. Other options 
 <h3 id="lbl-cfg-tgt"><a class="anchor" href="#lbl-cfg-tgt"></a>Configure Target</h3>
 <div class="paragraph">
 <p>Use the
-<a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html">ReplicatorConfiguration</a> class and <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(im)initWithDatabase:target:">-initWithDatabase:target:</a> constructor to initialize the replication configuration with local and remote database locations.</p>
+Initialize and define the replication configuration with local and remote database locations using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html">ReplicatorConfiguration</a> object.</p>
 </div>
 <div class="paragraph">
 <p>The constructor provides:</p>
@@ -3167,7 +3169,8 @@ CBLReplicatorConfiguration *thisConfig
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Note use of the <code>wss://</code> prefix to ensure TLS encryption (strongly recommended in production)</td>
+<td>Note use of the scheme prefix (<code>wss://</code>
+to ensure TLS encryption&#8201;&#8212;&#8201;strongly recommended in production&#8201;&#8212;&#8201;or <code>ws://</code>)</td>
 </tr>
 </table>
 </div>
@@ -3184,11 +3187,11 @@ CBLReplicatorConfiguration *thisConfig
 <div class="ulist">
 <ul>
 <li>
-<p>The direction of the replication:
+<p>The type (or direction) of the replication:
 <code><strong>pushAndPull</strong></code>; <code>pull</code>; <code>push</code></p>
 </li>
 <li>
-<p>The type of replication, that is:</p>
+<p>The replication mode, that is:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -3265,7 +3268,7 @@ thisConfig.continuous = YES;</code></pre>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxRetries">maxRetries()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxattempts">maxattempts()</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Change this to limit or extend the number of retry attempts.</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>The maximum number of retry attempts</p>
@@ -3298,7 +3301,7 @@ thisConfig.continuous = YES;</code></pre>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxRetryWaitTime">maxRetryWaitTime()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxAttemptWaitTime">maxAttemptWaitTime()</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Change this to adjust the interval between retries.</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>The maximum interval between retry attempts</p>
@@ -3341,9 +3344,9 @@ config.continuous: YES;
 
 config.heartbeat = 150; <i class="conum" data-value="1"></i><b>(1)</b>
 
-config.maxretries = 20; <i class="conum" data-value="2"></i><b>(2)</b>
+config.maxattempts = 20; <i class="conum" data-value="2"></i><b>(2)</b>
 
-config.maxretrywaittime = 600; <i class="conum" data-value="3"></i><b>(3)</b>
+config.maxattemptwaittime = 600; <i class="conum" data-value="3"></i><b>(3)</b>
 
 //  other config as required . . .
 repl = [[CBLReplicator alloc] initWithConfig: config];
@@ -3362,11 +3365,11 @@ repl = nil;</code></pre>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxRetries">maxRetries()</a> to set the required number of retry attempts</td>
+<td>Here we use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxattempts">maxattempts()</a> to set the required number of retry attempts</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Here we use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxRetryWaitTime">maxRetryWaitTime()</a> to set the required interval between retry attempts.</td>
+<td>Here we use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicatorConfiguration.html#/c:objc(cs)CBLReplicatorConfiguration(py)maxAttemptWaitTime">maxAttemptWaitTime()</a> to set the required interval between retry attempts.</td>
 </tr>
 </table>
 </div>
@@ -3463,7 +3466,7 @@ Any certificates that are not self-signed are rejected.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m#L2481-L2500">NSURL *certURL =
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m#L2483-L2502">NSURL *certURL =
   [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
 NSData *data =
   [[NSData alloc] initWithContentsOfURL: certURL];
@@ -3842,7 +3845,7 @@ Use it in preference to returning a list of pending document IDs, where possible
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">
-CBLDatabase *database = self.db;
+CBLDatabase <strong>database = self.db;
 NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
 CBLURLEndpoint *target =
   [[CBLURLEndpoint alloc] initWithURL: url];
@@ -3857,8 +3860,8 @@ CBLReplicator *replicator =
   [[CBLReplicator alloc] initWithConfig:config];
 
 // Get list of pending doc IDs
-NSError* err = nil;
-NSSet *mydocids =
+NSError</strong> err = nil;
+NSSet <strong>mydocids =
   [NSSet setWithSet:[replicator pendingDocumentIDs:&amp;err]]; <i class="conum" data-value="1"></i><b>(1)</b>
 
 
@@ -3872,7 +3875,7 @@ if ([mydocids count] &gt; 0) {
     // iterate and report-on the pending doc IDs  in 'mydocids'
     for (thisid in mydocids) {
 
-      NSError* err = nil;
+      NSError</strong> err = nil;
       if (![replicator isDocumentPending: thisid error: &amp;err]) { <i class="conum" data-value="2"></i><b>(2)</b>
         NSLog(@"Doc ID %@ now pushed", thisid);
       }
@@ -3909,35 +3912,10 @@ This is a snapshot and may have changed by the time the response is received and
 <p>Stopping a replication is straightforward.
 It is done using <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)stop">stop()</a>.
 This initiates an asynchronous operation and so is not necessarily immediate.
-Your app should account for this potential delay before attempting any subsequent operations, for example closing the database.</p>
+Your app should account for this potential delay before attempting any subsequent operations.</p>
 </div>
 <div class="paragraph">
 <p>You can find further information on database operations in {xref-cbl-gp-database}.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="title">Best Practice</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>When you start a change listener, save the returned token, you will need it when you remove the listener</p>
-</li>
-<li>
-<p>Remove any active change listener prior to stopping your replication</p>
-</li>
-<li>
-<p>Ensure the replication has completely stopped by checking for a replication status = STOPPED, before closing any associated database</p>
-</li>
-</ol>
-</div>
-</td>
-</tr>
-</table>
 </div>
 <div class="exampleblock">
 <div class="title">Example 11. Stop replicator</div>
@@ -3957,12 +3935,8 @@ Your app should account for this potential delay before attempting any subsequen
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>First we stop our change listener</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we initiate the stopping of the replication using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)stop">stop()</a> method.<br>
-Remove any active <a href="#lbl-repl-chng">change listener</a> before stopping the replicator.</td>
+<td>Here we initiate the stopping of the replication using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-objc/Classes/CBLReplicator.html#/c:objc(cs)CBLReplicator(im)stop">stop()</a> method.
+It will stop any active <a href="#lbl-repl-chng">change listener</a> once the replication is stopped.</td>
 </tr>
 </table>
 </div>

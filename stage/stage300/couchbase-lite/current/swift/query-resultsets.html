@@ -2151,20 +2151,44 @@ The properties are presented in the value as an array of key-value pairs (proper
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">let yourQuery = QueryBuilder.select(SelectResult.all)
-            .from(DataSource.database(yourDb))
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">
+do {
 
-for dataRow in try yourQuery.execute() {
-  if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
-      let docid = yourDoc["id"]
-      let name = yourDoc["name"]
-      let type = yourDoc["type"]
-      let city = yourDoc["city"]
-  }
-}</code></pre>
+    for row in try! listQuery.execute() {
+
+        let thisDocsProps =
+            row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="1"></i><b>(1)</b>
+
+        let docid = thisDocsProps!["id"] as! String
+
+        let name = thisDocsProps!["name"] as! String
+
+        let type = thisDocsProps!["type"] as! String
+
+        let city = thisDocsProps!["city"] as! String
+
+        let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="2"></i><b>(2)</b>
+        let hotelId = hotel!["id"] as! String
+        hotels[hotelId] = hotel
+    } // end for
+
+} //end do-block</code></pre>
 </div>
 </div>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we get the dictionary of document properties using the database name as the key.
+You can add this dictionary to an array of returned matches, for processing elsewhere in the app.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -2179,27 +2203,46 @@ for dataRow in try yourQuery.execute() {
 <p>In this case each array element is a dictionary structure where <code>ID</code> is the key and the required document ID is the value.</p>
 </div>
 <div class="paragraph">
-<p>Access the required document properties by retrieving the document from the database using its document ID&#8201;&#8212;&#8201;as shown in <a href="#ex-acc-all">Example 4</a>.</p>
+<p>Access the required document properties by retrieving the document from the database using its document ID&#8201;&#8212;&#8201;as shown in <a href="#ex-acc-id">[ex-acc-id]</a>.</p>
 </div>
 <div id="ex-acc-id" class="exampleblock">
-<div class="title">Example 5. Access Properties using Doc ID</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">let yourQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(yourDb))
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">for (_, result) in try! listQuery.execute().enumerated() {
 
-for dataRow in try yourQuery.execute() {
-  if let yourDocID = dict[dataRow["id"] {
-      let yourDoc = try yourDb.document(withID: yourDocId)
-      let name = yourDoc.name
-      let type = yourDoc.type
-      let city = yourDoc.city
-  }
-}</code></pre>
+    print(result.toDictionary())
+    print("Document Id is -- ", result["metaId"].string!)
+
+    let thisDocsId = result["metaId"].string! <i class="conum" data-value="1"></i><b>(1)</b>
+
+    // Now you can get the document using the ID
+    var thisDoc = db.document(withID: thisDocsId)!.toDictionary()
+
+    let hotelId = thisDoc["id"] as! String
+
+    let name = thisDoc["name"] as! String
+
+    let city = thisDoc["city"] as! String
+
+    let type = thisDoc["type"] as! String
+
+    // ... process document properties as required
+    print("Result properties are: ", hotelId,name, city, type)
+
+
+} // end for</code></pre>
 </div>
 </div>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Extract the Id value from the dictionary and use it to get the document from the database</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -2211,27 +2254,33 @@ for dataRow in try yourQuery.execute() {
 <p>In this case each array element is an array of key value pairs (property name/property value).</p>
 </div>
 <div class="paragraph">
-<p>Access the retrieved properties by converting each row into a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-acc-all">Example 4</a>.</p>
+<p>Access the retrieved properties by converting each row into a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-acc-specific">[ex-acc-specific]</a>.</p>
 </div>
-<div id="ex-acc-all" class="exampleblock">
-<div class="title">Example 6. Access All Properties</div>
+<div id="ex-acc-specific" class="exampleblock">
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">let yoursearchQuery = QueryBuilder
-            .select(SelectResult.expression(Meta.id),
-                    SelectResult.expression(Expression.property("name")),
-                    SelectResult.expression(Expression.property("city")),
-                    SelectResult.expression(Expression.property("type")))
-            .from(DataSource.database(yourDb))
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">for (_, result) in try! listQuery.execute().enumerated() {
 
-for dataRow in try yourQuery.execute() {
-  if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
-      let docid = yourDoc["id"]
-      let name = yourDoc["name"]
-      let type = yourDoc["type"]
-  }
-}</code></pre>
+
+    let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="1"></i><b>(1)</b>
+        // Store dictionary data in hotel object and save in arry
+    hotel.id = thisDoc!["id"] as! String
+    hotel.name = thisDoc!["name"] as! String
+    hotel.city = thisDoc!["city"] as! String
+    hotel.type = thisDoc!["type"] as! String
+    hotels[hotel.id] = hotel
+
+    // Use result content directly
+    let docid = result.string(forKey: "metaId")
+    let hotelId = result.string(forKey: "id")
+    let name = result.string(forKey: "name")
+    let city = result.string(forKey: "city")
+    let type = result.string(forKey: "type")
+
+    // ... process document properties as required
+    print("Result properties are: ", docid, hotelId,name, city, type)
+  } // end for</code></pre>
 </div>
 </div>
 </div>
@@ -2243,7 +2292,7 @@ for dataRow in try yourQuery.execute() {
 <h2 id="json-result-sets"><a class="anchor" href="#json-result-sets"></a>JSON Result Sets</h2>
 <div class="sectionbody">
 <div id="ex-json" class="exampleblock">
-<div class="title">Example 7. Using JSON Results</div>
+<div class="title">Example 5. Using JSON Results</div>
 <div class="content">
 <div class="paragraph">
 <p>Use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/Result.htmls:18CouchbaseLiteSwift6ResultC6toJSONSSyF">result.toJSON()</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.</p>

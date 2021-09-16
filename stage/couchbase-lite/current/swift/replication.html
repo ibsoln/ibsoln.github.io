@@ -2966,12 +2966,14 @@ Use them as inspiration and adapt these examples to best practice when developin
 <div class="sectionbody">
 <div class="paragraph">
 <p>Couchbase Lite for Swift provides API support for secure, bi-directional, synchronization of data changes between mobile applications and a central server database.
-It does so by using a replicator to interact with Sync Gateway.
-Simply put, the replicator is designed to send documents from a source to a target database.
-In this case, between a local Couchbase Lite database and remote Sync Gateway database (server or cloud).</p>
+It does so by using a <em>replicator</em> to interact with Sync Gateway.</p>
 </div>
 <div class="paragraph">
-<p>This content provides sample code and configuration examples covering the implementation of a replication using Sync Gateway.</p>
+<p>The <em>replicator</em> is designed to manage replication of documents and-or document changes between a source and a target database.
+For example, between a local Couchbase Lite database and remote Sync Gateway database, which is ultimately mapped to a bucket in a Couchbase Server instance in the cloud or on a server.</p>
+</div>
+<div class="paragraph">
+<p>This page shows sample code and configuration examples covering the implementation of a replication using Sync Gateway.</p>
 </div>
 <div class="paragraph">
 <p>Your application runs a replicator (also referred to here as a client), which  will initiate connection with a Sync Gateway (also referred to here as a server) and participate in the replication of database changes to bring both local and remote databases into sync.</p>
@@ -2987,7 +2989,7 @@ In this case, between a local Couchbase Lite database and remote Sync Gateway da
 <div class="sect2">
 <h3 id="scheme"><a class="anchor" href="#scheme"></a>Scheme</h3>
 <div class="paragraph">
-<p>Couchbase Mobile uses a replication protocol based on WebSockets fof replication.
+<p>Couchbase Mobile uses a replication protocol based on WebSockets for replication.
 To use this protocol the replication URL should specify WebSockets as the URL scheme (see the <a href="#lbl-cfg-tgt">Configure Target</a> section below).</p>
 </div>
 <div class="dlist">
@@ -3070,8 +3072,8 @@ config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value
 let thisAuthenticator = BasicAuthenticator(username: "Our Username", password: "Our Password")
 config.authenticator = thisAuthenticator
 
-/* Optionally set custom conflict resolver call back */
-config.conflictResolver = ( /* define resolver function */); <i class="conum" data-value="5"></i><b>(5)</b>
+/* Optionally set custom conflict resolver call back <strong>/
+config.conflictResolver = ( /</strong> define resolver function */); <i class="conum" data-value="5"></i><b>(5)</b>
 
 // Apply configuration settings to the replicator
 thisReplicator = Replicator.init( config: config) <i class="conum" data-value="6"></i><b>(6)</b>
@@ -3101,38 +3103,44 @@ let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (c
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html">ReplicatorConfiguration</a> class&#8217;s constructor&#8201;&#8212;&#8201;<a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC8database6targetAcA8DatabaseC_AA8Endpoint_ptcfc">init(database:, target:)</a>&#8201;&#8212;&#8201;to initialize the replicator configuration with the local database&#8201;&#8212;&#8201;see also: <a href="#lbl-cfg-tgt">Configure Target</a></td>
+<td>get endpoint for target DB</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html">ReplicatorConfiguration</a> class&#8217;s constructor&#8201;&#8212;&#8201;<a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC8database6targetAcA8DatabaseC_AA8Endpoint_ptcfc">init(database:, target:)</a>&#8201;&#8212;&#8201;to initialize the replicator configuration with the local database&#8201;&#8212;&#8201;see also: <a href="#lbl-cfg-tgt">Configure Target</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>The default is to auto-purge documents that this user no longer has access to&#8201;&#8212;&#8201;see: <a href="#anchor-auto-purge-on-revoke">Auto-purge on Channel Access Revocation</a>.
 Here we over-ride this behavior by setting its flag false.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Configure how the client will authenticate the server.
 Here we say connect only to servers presenting a self-signed certificate.
 By default, clients accept only servers presenting certificates that can be verified using the OS bundled Root CA Certificates&#8201;&#8212;&#8201;see: <a href="#lbl-svr-auth">Server Authentication</a>.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Configure the credentials the client will present to the server.
-Here we say to provide <em>Basic Authentication</em> credentials. Other options are available&#8201;&#8212;&#8201;see: <a href="#lbl-client-auth">Client Authentication</a>.</td>
-</tr>
-<tr>
 <td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Configure how the replication should handle conflict resolution&#8201;&#8212;&#8201;see: <a href="conflict.html" class="page">Handling Data Conflicts</a> topic for mor on conflict resolution.</td>
+<td>Configure the client-authentication credentials (if required).
+These are the credential the client will present to sync&#160;gateway if requested to do so.<br>
+Here we configure to provide <em>Basic Authentication</em> credentials.
+Other options are available&#8201;&#8212;&#8201;see: <a href="#lbl-client-auth">Client Authentication</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="6"></i><b>6</b></td>
-<td>Initialize the replicator using your configuration object&#8201;&#8212;&#8201;see: <a href="#lbl-init-repl">Initialize</a>.</td>
+<td>Configure how the replication should handle conflict resolution&#8201;&#8212;&#8201;see: <a href="conflict.html" class="page">Handling Data Conflicts</a> topic for mor on conflict resolution.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="7"></i><b>7</b></td>
-<td>Optionally, register an observer, which will notify you of changes to the replication status&#8201;&#8212;&#8201;see: <a href="#lbl-repl-mon">Monitor</a></td>
+<td>Initialize the replicator using your configuration&#8201;&#8212;&#8201;see: <a href="#lbl-init-repl">Initialize</a>.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Optionally, register an observer, which will notify you of changes to the replication status&#8201;&#8212;&#8201;see: <a href="#lbl-repl-mon">Monitor</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
 <td>Start the replicator &#8201;&#8212;&#8201;see: <a href="#lbl-repl-start">Start Replicator</a>.</td>
 </tr>
 </table>
@@ -3152,6 +3160,7 @@ Here we say to provide <em>Basic Authentication</em> credentials. Other options 
 <p><a href="#lbl-cfg-tgt">Configure Target</a>
 |  <a href="#lbl-cfg-sync">Sync Mode</a>
 |  <a href="#lbl-cfg-keep-alive">Retry Configuration</a>
+|  <a href="#lbl-user-auth">User Authorization</a>
 |  <a href="#lbl-svr-auth">Server Authentication</a>
 |  <a href="#lbl-client-auth">Client Authentication</a>
 |  <a href="#lbl-repl-evnts">Monitor Document Changes</a>
@@ -3171,7 +3180,7 @@ Here we say to provide <em>Basic Authentication</em> credentials. Other options 
 <h3 id="lbl-cfg-tgt"><a class="anchor" href="#lbl-cfg-tgt"></a>Configure Target</h3>
 <div class="paragraph">
 <p>Use the
-<a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html">ReplicatorConfiguration</a> class and <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC8database6targetAcA8DatabaseC_AA8Endpoint_ptcfc">init(database:, target:)</a> constructor to initialize the replication configuration with local and remote database locations.</p>
+Initialize and define the replication configuration with local and remote database locations using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html">ReplicatorConfiguration</a> object.</p>
 </div>
 <div class="paragraph">
 <p>The constructor provides:</p>
@@ -3212,7 +3221,8 @@ var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Note use of the <code>wss://</code> prefix to ensure TLS encryption (strongly recommended in production)</td>
+<td>Note use of the scheme prefix (<code>wss://</code>
+to ensure TLS encryption&#8201;&#8212;&#8201;strongly recommended in production&#8201;&#8212;&#8201;or <code>ws://</code>)</td>
 </tr>
 </table>
 </div>
@@ -3229,11 +3239,11 @@ var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <
 <div class="ulist">
 <ul>
 <li>
-<p>The direction of the replication:
+<p>The type (or direction) of the replication:
 <code><strong>pushAndPull</strong></code>; <code>pull</code>; <code>push</code></p>
 </li>
 <li>
-<p>The type of replication, that is:</p>
+<p>The replication mode, that is:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -3311,7 +3321,7 @@ config.continuous = true</code></pre>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC10maxRetriesSivp">maxRetries()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC10maxattemptsSivp">maxattempts()</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Change this to limit or extend the number of retry attempts.</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>The maximum number of retry attempts</p>
@@ -3344,7 +3354,7 @@ config.continuous = true</code></pre>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16maxRetryWaitTimeSdvp">maxRetryWaitTime()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16maxAttemptWaitTimeSdvp">maxAttemptWaitTime()</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Change this to adjust the interval between retries.</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>The maximum interval between retry attempts</p>
@@ -3384,9 +3394,9 @@ config.type = .pushAndPull
 config.continuous = true
 config.heartbeat = 150 <i class="conum" data-value="1"></i><b>(1)</b>
 
-config.maxretries = 20 <i class="conum" data-value="2"></i><b>(2)</b>
+config.maxattempts = 20 <i class="conum" data-value="2"></i><b>(2)</b>
 
-config.maxretrywaittime = 600 <i class="conum" data-value="3"></i><b>(3)</b>
+config.maxattemptwaittime = 600 <i class="conum" data-value="3"></i><b>(3)</b>
 repl = Replicator(config: config)</code></pre>
 </div>
 </div>
@@ -3400,13 +3410,38 @@ repl = Replicator(config: config)</code></pre>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC10maxRetriesSivp">maxRetries()</a> to set the required number of retry attempts</td>
+<td>Here we use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC10maxattemptsSivp">maxattempts()</a> to set the required number of retry attempts</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Here we use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16maxRetryWaitTimeSdvp">maxRetryWaitTime()</a> to set the required interval between retry attempts.</td>
+<td>Here we use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/ReplicatorConfiguration.html#/s:18CouchbaseLiteSwift23ReplicatorConfigurationC16maxAttemptWaitTimeSdvp">maxAttemptWaitTime()</a> to set the required interval between retry attempts.</td>
 </tr>
 </table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-user-auth"><a class="anchor" href="#lbl-user-auth"></a>User Authorization</h3>
+<div class="paragraph">
+<p>By default, Sync Gateway does not enable user authorization.
+This is to make it easier to get up and running with synchronization.
+You can enable authorization with the following properties in the configuration file:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "databases": {
+    "mydatabase": {
+      "users": {
+        "GUEST": {"disabled": true}
+      }
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To authorize with Sync Gateway, an associated user must first be created.
+Sync Gateway users can be created through the <a href="../../../sync-gateway/current/rest-api-admin.html#/user/post__db___user_" class="page"><code>POST /{tkn-db}/_user</code></a> endpoint on the Admin REST API.</p>
 </div>
 </div>
 <div class="sect2">
@@ -3533,27 +3568,7 @@ config.pinnedServerCertificate = pinnedCert</code></pre>
 <div class="sect2">
 <h3 id="lbl-client-auth"><a class="anchor" href="#lbl-client-auth"></a>Client Authentication</h3>
 <div class="paragraph">
-<p>By default, Sync Gateway does not enable authentication.
-This is to make it easier to get up and running with synchronization.
-You can enable authentication with the following properties in the configuration file:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
-  "databases": {
-    "mydatabase": {
-      "users": {
-        "GUEST": {"disabled": true}
-      }
-    }
-  }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>To authenticate with Sync Gateway, an associated user must first be created.
-Sync Gateway users can be created through the <a href="../../../sync-gateway/current/rest-api-admin.html#/user/post__db___user_" class="page"><code>POST /{tkn-db}/_user</code></a> endpoint on the Admin REST API.
-Provided that the user exists on Sync Gateway, there are two ways to authenticate from a Couchbase Lite client: Basic Authentication or Session Authentication.</p>
+<p>There are two ways to authenticate from a Couchbase Lite client: <a href="#basic-authentication">Basic Authentication</a> or <a href="#session-authentication">Session Authentication</a>.</p>
 </div>
 <div class="sect3">
 <h4 id="basic-authentication"><a class="anchor" href="#basic-authentication"></a>Basic Authentication</h4>
@@ -3638,10 +3653,8 @@ config.headers = ["CustomHeaderName": "Value"]</code></pre>
 <p>A push filter allows an app to push a subset of a database to the server, which can be very useful in some circumstances.
 For instance, high-priority documents could be pushed first, or documents in a "draft" state could be skipped.</p>
 </div>
-<div class="paragraph">
-<p>The following example filters out documents whose <code>type</code> property is equal to <code>draft</code>.</p>
-</div>
 <div class="listingblock">
+<div class="title">Push Filter</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/swift/examples/code_snippets/SampleCodeTest.swift">let url = URL(string: "ws://localhost:4984/mydatabase")!
 let target = URLEndpoint(url: url)
@@ -4449,35 +4462,10 @@ This is a snapshot and may have changed by the time the response is received and
 <p>Stopping a replication is straightforward.
 It is done using <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC4stopyyF">stop()</a>.
 This initiates an asynchronous operation and so is not necessarily immediate.
-Your app should account for this potential delay before attempting any subsequent operations, for example closing the database.</p>
+Your app should account for this potential delay before attempting any subsequent operations.</p>
 </div>
 <div class="paragraph">
 <p>You can find further information on database operations in {xref-cbl-gp-database}.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="title">Best Practice</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>When you start a change listener, save the returned token, you will need it when you remove the listener</p>
-</li>
-<li>
-<p>Remove any active change listener prior to stopping your replication</p>
-</li>
-<li>
-<p>Ensure the replication has completely stopped by checking for a replication status = STOPPED, before closing any associated database</p>
-</li>
-</ol>
-</div>
-</td>
-</tr>
-</table>
 </div>
 <div class="exampleblock">
 <div class="title">Example 16. Stop replicator</div>
@@ -4497,12 +4485,8 @@ thisReplicator?.stop()</code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>First we stop our change listener</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we initiate the stopping of the replication using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC4stopyyF">stop()</a> method.<br>
-Remove any active <a href="#lbl-repl-chng">change listener</a> before stopping the replicator.</td>
+<td>Here we initiate the stopping of the replication using the <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-swift/Classes/Replicator.html#/s:18CouchbaseLiteSwift10ReplicatorC4stopyyF">stop()</a> method.
+It will stop any active <a href="#lbl-repl-chng">change listener</a> once the replication is stopped.</td>
 </tr>
 </table>
 </div>

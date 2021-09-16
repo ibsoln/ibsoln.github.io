@@ -5760,7 +5760,7 @@ To access a specific metadata property, use the dot expression.</p>
 <h2 id="lbl-query-params"><a class="anchor" href="#lbl-query-params"></a>Query Parameters</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You can provide runtime parameters to yur N1QL query to make it more flexible.</p>
+<p>You can provide runtime parameters to your N1QL query to make it more flexible.</p>
 </div>
 <div class="paragraph">
 <p>To specify substitutable parameters within your query string prefix the name with <strong><code>$</code></strong>, <code>$type</code>&#8201;&#8212;&#8201;see: <a href="#ex-sample-params">Example 18</a>.</p>
@@ -5791,11 +5791,53 @@ if(!query) {
     /* Do appropriate error handling ...
         Note that (where applicable) errorPos contains the position
         in the N1QL string that the parse failed
-    */
+    <strong>/
+    FLMutableDict_Release(n1qlparams);
+    CBLQuery_Release(query);
     return;
 }
 
-CBLResultSet* result = CBLQuery_Execute(query, &amp;err);
+CBLResultSet</strong> result = CBLQuery_Execute(query, &amp;err);
+if(!result) {
+    // Failed to run query, do error handling ...
+    return;
+}
+
+// Release query when finished with
+FLMutableDict_Release(n1qlparams);
+CBLQuery_Release(query);
+
+// ... process results as required
+
+// Release result set then finished with
+CBLResultSet_Release(result);
+
+int errorPos;
+
+CBLError err;
+
+FLString n1qlstr = FLSTR("SELECT * FROM _ WHERE type = $type");
+
+FLMutableDict n1qlparams = FLMutableDict_New();
+FLMutableDict_SetString(n1qlparams, FLSTR("type"), FLSTR("hotel"));
+
+CBLQuery* query = CBLDatabase_CreateQuery(database,
+                      kCBLN1QLLanguage,
+                      n1qlstr,
+                      &amp;errorPos,
+                      &amp;err);
+
+CBLQuery_SetParameters(query, n1qlparams);
+
+if(!query) {
+    /* Do appropriate error handling ...
+        Note that (where applicable) errorPos contains the position
+        in the N1QL string that the parse failed
+    <strong>/
+    return;
+}
+
+CBLResultSet</strong> result = CBLQuery_Execute(query, &amp;err);
 if(!result) {
     // Failed to run query, do error handling ...
     return;

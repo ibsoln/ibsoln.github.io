@@ -3077,7 +3077,7 @@ Dates are a common data type, but JSON doesn&#8217;t natively support them, so t
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// Placeholder for Date accessors.</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">//Placeholder for Date accessors.</code></pre>
 </div>
 </div>
 </div>
@@ -3102,7 +3102,6 @@ Dates are a common data type, but JSON doesn&#8217;t natively support them, so t
 <dt class="hdlist1">In this section</dt>
 <dd>
 <p><a href="#lbl-array">Arrays</a>
-| <a href="#lbl-blob">Blobs</a>
 | <a href="#lbl-dictionary">Dictionaries</a>
 | <a href="#lbl-document">Documents</a>
 | <a href="#lbl-result">Query Results as JSON</a></p>
@@ -3139,7 +3138,32 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// NOTE: No error handling, for brevity (see getting started)
+
+FLString json = FLSTR("[\"Hotel Ned\", \"Hotel Ted\"]");
+
+// Create an array from the JSON string
+FLError err;
+FLSliceResult jsonData1 = FLData_ConvertJSON(json, &amp;err);
+FLArray hotels = FLValue_AsArray(FLValue_FromData(FLSliceResult_AsSlice(jsonData1), kFLTrusted));
+
+// Iterate through the array
+FLArrayIterator iter;
+FLArrayIterator_Begin(hotels, &amp;iter);
+FLValue value;
+while (NULL != (value = FLArrayIterator_GetValue(&amp;iter))) {
+    FLString hotel = FLValue_AsString(value);
+    printf("Hotel :: %.*s\n", (int)hotel.size, (const char *)hotel.buf);
+    FLArrayIterator_Next(&amp;iter);
+}
+
+// Convert the array to JSON
+FLSliceResult jsonData2 = FLValue_ToJSON((FLValue)hotels);
+printf("Hotels in JSON :: %.*s\n", (int)jsonData2.size, (const char *)jsonData2.buf);
+
+// Release JSON data after finish using it
+FLSliceResult_Release(jsonData1);
+FLSliceResult_Release(jsonData2);</code></pre>
 </div>
 </div>
 </div>
@@ -3172,34 +3196,9 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 </div>
 </div>
 <div class="sect2">
-<h3 id="lbl-blob"><a class="anchor" href="#lbl-blob"></a>Blobs</h3>
-<div class="paragraph">
-<p>Convert a <code>Blob</code> to JSON using the <code>toJSON</code> method&#8201;&#8212;&#8201;see <a href="#ex-blob">Example 5</a>.</p>
-</div>
-<div class="paragraph">
-<p>You can also check whether a given dictionary object is a blob, or not, using <code>isBlob()</code>&#8201;&#8212;&#8201;again, see <a href="#ex-blob">Example 5</a>.</p>
-</div>
-<div class="paragraph">
-<p>Note that the blob object must first be saved to the database (generating required metadata) before you can use the <code>toJSON</code> method.</p>
-</div>
-<div id="ex-blob" class="exampleblock">
-<div class="title">Example 5. Blobs as JSON strings</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>See also: <a href="blob.html" class="page">Blobs</a></p>
-</div>
-</div>
-<div class="sect2">
 <h3 id="lbl-dictionary"><a class="anchor" href="#lbl-dictionary"></a>Dictionaries</h3>
 <div class="paragraph">
-<p>Convert a <code>DictionaryObject</code> to and from JSON using the <code>toJSON</code> and <code>toDictionary</code> methods&#8201;&#8212;&#8201;see <a href="#ex-dictionary">Example 6</a>.</p>
+<p>Convert a <code>DictionaryObject</code> to and from JSON using the <code>toJSON</code> and <code>toDictionary</code> methods&#8201;&#8212;&#8201;see <a href="#ex-dictionary">Example 5</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -3208,7 +3207,7 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 <ul>
 <li>
 <p>Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-dictionary">Example 6</a></p>
+This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-dictionary">Example 5</a></p>
 </li>
 <li>
 <p>Set data with a JSON string using <code>setJSON()</code></p>
@@ -3216,11 +3215,37 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 </ul>
 </div>
 <div id="ex-dictionary" class="exampleblock">
-<div class="title">Example 6. Dictionaries as JSON strings</div>
+<div class="title">Example 5. Dictionaries as JSON strings</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// NOTE: No error handling, for brevity (see getting started)
+
+FLString json = FLSTR("{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",\"country\":\"Australia\"}");
+
+// Create a dictionary from the JSON string
+FLError err;
+FLSliceResult jsonData1 = FLData_ConvertJSON(json, &amp;err);
+FLDict hotel = FLValue_AsDict(FLValue_FromData(FLSliceResult_AsSlice(jsonData1), kFLTrusted));
+
+// Iterate through the dictionary
+FLDictIterator iter;
+FLDictIterator_Begin(hotel, &amp;iter);
+FLValue value;
+while (NULL != (value = FLDictIterator_GetValue(&amp;iter))) {
+    FLString key = FLDictIterator_GetKeyString(&amp;iter);
+    FLString strValue = FLValue_AsString(value);
+    printf("%.<strong>s :: %.*s\n", (int)key.size, (const char</strong>)key.buf, (int)strValue.size, (const char*)strValue.buf);
+    FLDictIterator_Next(&amp;iter);
+}
+
+// Convert the dictionary to JSON
+FLSliceResult jsonData2 = FLValue_ToJSON((FLValue)hotel);
+printf("Hotel in JSON :: %.*s\n", (int)jsonData2.size, (const char *)jsonData2.buf);
+
+// Release JSON data after finish using it
+FLSliceResult_Release(jsonData1);
+FLSliceResult_Release(jsonData2);</code></pre>
 </div>
 </div>
 </div>
@@ -3243,7 +3268,7 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 <div class="sect2">
 <h3 id="lbl-document"><a class="anchor" href="#lbl-document"></a>Documents</h3>
 <div class="paragraph">
-<p>Convert a <code>Document</code> to and from JSON strings using the <code>toJSON()</code> and <code>setJSON()</code> methods&#8201;&#8212;&#8201;see <a href="#ex-document">Example 7</a>.</p>
+<p>Convert a <code>Document</code> to and from JSON strings using the <code>toJSON()</code> and <code>setJSON()</code> methods&#8201;&#8212;&#8201;see <a href="#ex-document">Example 6</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -3252,7 +3277,7 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 <ul>
 <li>
 <p>Initialize a 'MutableDocument' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> and-or <code>init(id: json:)</code> constructor-- see: <a href="#ex-document">Example 7</a></p>
+This is done using the <code>init(json)</code> and-or <code>init(id: json:)</code> constructor-- see: <a href="#ex-document">Example 6</a></p>
 </li>
 <li>
 <p>Set data with a JSON string using <code>setJSON()</code></p>
@@ -3260,11 +3285,37 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 </ul>
 </div>
 <div id="ex-document" class="exampleblock">
-<div class="title">Example 7. Documents as JSON strings</div>
+<div class="title">Example 6. Documents as JSON strings</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// NOTE: No error handling, for brevity (see getting started)
+
+FLString json = FLSTR("{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",\"country\":\"Australia\"}");
+
+// Create a document and set the JSON data to the document
+CBLError err;
+CBLDocument* newDoc = CBLDocument_CreateWithID(FLSTR("hotel_1002"));
+CBLDocument_SetJSON(newDoc, json, &amp;err);
+
+// Save the document to the database
+CBLDatabase_SaveDocument(db, newDoc, &amp;err);
+
+// Release created doc after using it
+CBLDocument_Release(newDoc);
+
+// Get the document from the database
+const CBLDocument* doc = CBLDatabase_GetDocument(db, FLSTR("hotel_1002"), &amp;err);
+
+// Get document body as JSON
+FLSliceResult docJson = CBLDocument_CreateJSON(doc);
+printf("Document in JSON :: %.*s\n", (int)docJson.size, (const char *)docJson.buf);
+
+// Release JSON data after using it
+FLSliceResult_Release(docJson);
+
+// Release doc read from the database after using it
+CBLDocument_Release(doc);</code></pre>
 </div>
 </div>
 </div>
@@ -3298,7 +3349,7 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 <p>Convert a <code>Query Result</code> to JSON using its <code>toJSON()</code> accessor method.</p>
 </div>
 <div id="ex-json" class="exampleblock">
-<div class="title">Example 8. Using JSON Results</div>
+<div class="title">Example 7. Using JSON Results</div>
 <div class="content">
 <div class="paragraph">
 <p>Use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__QueryResult.html#QueryResult(im)toJSON">Result.toJSON</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.</p>
@@ -3371,7 +3422,7 @@ CBLResultSet_Release(results);</code></pre>
 The following example persists a few documents in batch.</p>
 </div>
 <div id="ex-batch-ops" class="exampleblock">
-<div class="title">Example 9. Batch operations</div>
+<div class="title">Example 8. Batch operations</div>
 <div class="content">
 <div class="paragraph">
 <p>Use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__QueryResult.html#QueryResult(im)toJSON">Result.toJSON</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.</p>
@@ -3414,7 +3465,7 @@ But Couchbase Mobile is a distributed system, and due to the way replication wor
 The following example registers for changes to the document with ID <code>user.john</code> and prints the <code>verified_account</code> property.</p>
 </div>
 <div id="ex-doc-events" class="exampleblock">
-<div class="title">Example 10. Document change events</div>
+<div class="title">Example 9. Document change events</div>
 <div class="content">
 <div class="paragraph">
 <p>Use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__QueryResult.html#QueryResult(im)toJSON">Result.toJSON</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.</p>
@@ -3427,12 +3478,11 @@ static void document_listener(void* context, const CBLDatabase* db, FLString id)
     const CBLDocument* doc = CBLDatabase_GetDocument(db, id, &amp;err);
     FLDict properties = CBLDocument_Properties(doc);
     FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account")));
-    printf("Status :: %.*s\n", (int)verified_account.size, (const char *)verified_account.buf);
+    printf("Status :: %.<strong>s\n", (int)verified_account.size, (const char *)verified_account.buf);
     CBLDocument_Release(doc);
 }
 */
-
-CBLListenerToken* token = CBLDatabase_AddDocumentChangeListener(db, FLSTR("user.john"),
+CBLListenerToken</strong> token = CBLDatabase_AddDocumentChangeListener(db, FLSTR("user.john"),
     document_listener, NULL);</code></pre>
 </div>
 </div>
@@ -3449,7 +3499,7 @@ When the document is expired, the document will be purged from the database.
 The purge will not be replicated to Sync Gateway.</p>
 </div>
 <div id="ex-set-doc-exp" class="exampleblock">
-<div class="title">Example 11. Set document expiration</div>
+<div class="title">Example 10. Set document expiration</div>
 <div class="content">
 <div class="paragraph">
 <p>This example sets the TTL for a document to 5 minutes from the current time.</p>
@@ -3462,7 +3512,7 @@ The purge will not be replicated to Sync Gateway.</p>
 // NOTE: API takes milliseconds
 // NOTE: No error handling, for brevity (see getting started)
 time_t ttl = time(NULL) + 24 * 60 * 60;
-ttl *= 1000;
+ttl <strong>= 1000;
 
 CBLError err;
 CBLDatabase_SetDocumentExpiration(db, FLSTR("doc123"), ttl, &amp;err);
@@ -3476,7 +3526,7 @@ fiveMinutesFromNow *= 1000;
 FLMutableDict parameters = FLMutableDict_New();
 FLMutableDict_SetInt(parameters, FLSTR("five_minutes"), fiveMinutesFromNow);
 
-CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+CBLQuery</strong> query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
     FLSTR("SELECT meta().id FROM _ WHERE meta().expiration &lt; $five_minutes"), NULL, &amp;err);
 CBLQuery_SetParameters(query, parameters);
 FLMutableDict_Release(parameters);</code></pre>
@@ -3500,7 +3550,7 @@ This is to facilitate the creation of documents for use either in <em>local only
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-"_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes&#8201;&#8212;&#8201;see <a href="#res-keys">Example 12</a>.
+"_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes&#8201;&#8212;&#8201;see <a href="#res-keys">Example 11</a>.
 </td>
 </tr>
 </table>
@@ -3514,7 +3564,7 @@ Use of these attributes for user-level data may result in undefined system behav
 <p>For more guidance&#8201;&#8212;&#8201;see: <a href="../../../sync-gateway/current/data-modeling.html" class="page">Sync Gateway - data modeling guidelines</a></p>
 </div>
 <div id="res-keys" class="exampleblock">
-<div class="title">Example 12. Reserved Keys List</div>
+<div class="title">Example 11. Reserved Keys List</div>
 <div class="content">
 <div class="ulist">
 <ul>

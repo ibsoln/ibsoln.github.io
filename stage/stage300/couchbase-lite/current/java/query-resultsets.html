@@ -2151,20 +2151,45 @@ The properties are presented in the value as an array of key-value pairs (proper
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">let yourQuery = QueryBuilder.select(SelectResult.all)
-            .from(DataSource.database(yourDb))
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java">try {
+    for (Result result : listQuery.execute().allResults()) {
+                     // get the k-v pairs from the 'hotel' key's value into a dictionary
+        thisDocsProps = result.getDictionary(0)); <i class="conum" data-value="1"></i><b>(1)</b>
+        thisDocsId = thisDocsProps.getString("id");
+        thisDocsName = thisDocsProps.getString("Name");
+        thisDocsType = thisDocsProps.getString("Type");
+        thisDocsCity = thisDocsProps.getString("City");
 
-for dataRow in try yourQuery.execute() {
-  if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
-      let docid = yourDoc["id"]
-      let name = yourDoc["name"]
-      let type = yourDoc["type"]
-      let city = yourDoc["city"]
-  }
+        // Alternatively, access results value dictionary directly
+        final Hotel hotel = new Hotel();
+        hotel.Id = result.getDictionary(0).getString("id"); <i class="conum" data-value="2"></i><b>(2)</b>
+        hotel.Type = result.getDictionary(0).getString("Type");
+        hotel.Name = result.getDictionary(0).getString("Name");
+        hotel.City = result.getDictionary(0).getString("City");
+        hotel.Country= result.getDictionary(0).getString("Country");
+        hotel.Description = result.getDictionary(0).getString("Description");
+        hotels.put(hotel.Id, hotel);
+
+    }
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
 }</code></pre>
 </div>
 </div>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we get the dictionary of document properties using the database name as the key.
+You can add this dictionary to an array of returned matches, for processing elsewhere in the app.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Alternatively you can access the document properties here, by using the property names as keys to the dictionary object.</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -2179,27 +2204,40 @@ for dataRow in try yourQuery.execute() {
 <p>In this case each array element is a dictionary structure where <code>ID</code> is the key and the required document ID is the value.</p>
 </div>
 <div class="paragraph">
-<p>Access the required document properties by retrieving the document from the database using its document ID&#8201;&#8212;&#8201;as shown in <a href="#ex-acc-all">Example 4</a>.</p>
+<p>Access the required document properties by retrieving the document from the database using its document ID&#8201;&#8212;&#8201;as shown in <a href="#ex-acc-id">[ex-acc-id]</a>.</p>
 </div>
 <div id="ex-acc-id" class="exampleblock">
-<div class="title">Example 5. Access Properties using Doc ID</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">let yourQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(yourDb))
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java">
+try {
+    for (Result result : listQuery.execute().allResults()) {
 
-for dataRow in try yourQuery.execute() {
-  if let yourDocID = dict[dataRow["id"] {
-      let yourDoc = try yourDb.document(withID: yourDocId)
-      let name = yourDoc.name
-      let type = yourDoc.type
-      let city = yourDoc.city
-  }
+        // get the ID form the result's k-v pair array
+        thisDocsId = result.getString("metaID"); <i class="conum" data-value="1"></i><b>(1)</b>
+
+        // Get document from DB using retrieved ID
+        Document thisDoc = this_Db.getDocument(thisDocsId);
+
+        // Process document as required
+        thisDocsName = thisDoc.getString("Name");
+
+    }
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
 }</code></pre>
 </div>
 </div>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Extract the Id value from the dictionary and use it to get the document from the database</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -2211,26 +2249,40 @@ for dataRow in try yourQuery.execute() {
 <p>In this case each array element is an array of key value pairs (property name/property value).</p>
 </div>
 <div class="paragraph">
-<p>Access the retrieved properties by converting each row into a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-acc-all">Example 4</a>.</p>
+<p>Access the retrieved properties by converting each row into a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-acc-specific">[ex-acc-specific]</a>.</p>
 </div>
-<div id="ex-acc-all" class="exampleblock">
-<div class="title">Example 6. Access All Properties</div>
+<div id="ex-acc-specific" class="exampleblock">
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">let yoursearchQuery = QueryBuilder
-            .select(SelectResult.expression(Meta.id),
-                    SelectResult.expression(Expression.property("name")),
-                    SelectResult.expression(Expression.property("city")),
-                    SelectResult.expression(Expression.property("type")))
-            .from(DataSource.database(yourDb))
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/code_snippets/Examples.java">
+try {
+    for (Result result : listQuery.execute().allResults()) {
 
-for dataRow in try yourQuery.execute() {
-  if let yourDoc = dict[dataRow.toDictionary()] as? [String:Any] {
-      let docid = yourDoc["id"]
-      let name = yourDoc["name"]
-      let type = yourDoc["type"]
-  }
+        // get data direct from result k-v pairs
+        final Hotel hotel = new Hotel();
+        hotel.Id = result.getString("id");
+        hotel.Type = result.getString("Type");
+        hotel.Name = result.getString("Name");
+        hotel.City = result.getString("City");
+
+        // Store created hotel object in a hashmap of hotels
+        hotels.put(hotel.Id, hotel);
+
+        // Get result k-v pairs into a 'dictionary' object
+        Map &lt;String, Object&gt; thisDocsProps = result.toMap();
+        thisDocsId =
+                thisDocsProps.getOrDefault("id",null).toString();
+        thisDocsName =
+                thisDocsProps.getOrDefault("Name",null).toString();
+        thisDocsType =
+                thisDocsProps.getOrDefault("Type",null).toString();
+        thisDocsCity =
+                thisDocsProps.getOrDefault("City",null).toString();
+
+    }
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
 }</code></pre>
 </div>
 </div>
@@ -2243,7 +2295,7 @@ for dataRow in try yourQuery.execute() {
 <h2 id="json-result-sets"><a class="anchor" href="#json-result-sets"></a>JSON Result Sets</h2>
 <div class="sectionbody">
 <div id="ex-json" class="exampleblock">
-<div class="title">Example 7. Using JSON Results</div>
+<div class="title">Example 5. Using JSON Results</div>
 <div class="content">
 <div class="paragraph">
 <p>Use <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-java/index.html?com/couchbase/lite/Result.html#toJSON--">Result.toJSON()</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.</p>
