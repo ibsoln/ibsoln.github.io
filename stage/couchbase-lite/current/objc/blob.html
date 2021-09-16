@@ -3084,7 +3084,38 @@ We use the key to retrieve the blob object later.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m]</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m">
+// Get a document
+CBLMutableDocument* thisDoc = [[db documentWithID: @"1000"] toMutable];
+
+// Get the image and add as a blob to the document
+NSString* contentType = @"";
+UIImage* ourImage = [UIImage imageNamed: @"couchbaseimage.png"];
+NSData* imageData = UIImageJPEGRepresentation(ourImage, 1);
+CBLBlob* thisBlob = [[CBLBlob alloc] initWithContentType: contentType data: imageData];
+[thisDoc setBlob: thisBlob forKey: @"avatar"];
+
+NSString* theBlobAsJSONstringFails = [[thisDoc blobForKey: @"avatar"] toJSON];
+
+// Save blob as part of doc or alternatively as a blob
+
+NSError* error = nil;
+[db saveDocument: thisDoc error: &amp;error];
+[db saveBlob: thisBlob error: &amp;error]; <i class="conum" data-value="1"></i><b>(1)</b>
+
+// Retrieve saved blob as a JSON, reconstitue and check still blob
+
+CBLDocument* sameDoc = [db documentWithID: @"1000"];
+CBLBlob* sameBlob = [sameDoc blobForKey: @"avatar"];
+NSString* theBlobAsJSONstring = [sameBlob toJSON];
+NSDictionary* dict = sameDoc.toDictionary;
+for (id key in dict) {
+    NSLog(@"Data -- {%@) = {%@}", key, [dict valueForKey: key]);
+}
+
+if ([CBLBlob isBlob: sameBlob.properties]) {
+    NSLog(@"%@", theBlobAsJSONstring);
+}</code></pre>
 </div>
 </div>
 </div>
