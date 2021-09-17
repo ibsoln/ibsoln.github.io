@@ -2160,7 +2160,7 @@ Both Push and Pull replication transform Couchbase Lite&#8217;s encryptable dict
 <div class="content">
 <div class="paragraph">
 <p>Server SDK&#8217;s field (property) level encryption uses key mangling, by add a prefix to the field name (<code>encrypted$</code>).
-Its directory structure differs CBL&#8217;s encryptable dictionary when serializing the encrypted fields&#8201;&#8212;&#8201;see: <a href="#ex-server-encryptable">Example 3</a>.</p>
+Its directory structure differs CBL&#8217;s encryptable dictionary when serializing the encrypted fields; as shown here.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2223,7 +2223,14 @@ See <a href="#ex-get-att">Example 4</a> for an example decryptor callback functi
 static FLSliceResult my_cipher_function(FLSlice input) {
     FLSliceResult result = FLSliceResult_New(input.size);
     for(int i = 0; i &lt; input.size; ++i) {
-        uint8_t*)(result.buf[i] = uint8_t*)input.buf)[i] ^ 'K';}     return result; }   static FLSliceResult property_encryptor(void* context, FLString docID, FLDict props, FLString path,                                         FLSlice input, FLStringResult* algorithm, FLStringResult* keyID, CBLError* error) {     <strong>algorithm = FLSlice_Copy(FLSTR("MyEnc";
+        uint8_t*)(result.buf[i] = uint8_t*)(input.buf[i] ^ 'K';}
+    return result;
+}
+
+
+static FLSliceResult property_encryptor(void* context, FLString docID, FLDict props, FLString path,
+                                        FLSlice input, FLStringResult* algorithm, FLStringResult* keyID, CBLError* error) {
+    <strong>algorithm = FLSlice_Copy(FLSTR("MyEnc"));
     return my_cipher_function(input);
 }
 
@@ -2267,7 +2274,14 @@ static FLSliceResult property_decryptor(void</strong> context, FLString document
 static FLSliceResult my_cipher_function(FLSlice input) {
     FLSliceResult result = FLSliceResult_New(input.size);
     for(int i = 0; i &lt; input.size; ++i) {
-        uint8_t*)(result.buf[i] = uint8_t*)input.buf)[i] ^ 'K';}     return result; }   static FLSliceResult property_encryptor(void* context, FLString docID, FLDict props, FLString path,                                         FLSlice input, FLStringResult* algorithm, FLStringResult* keyID, CBLError* error) {     <strong>algorithm = FLSlice_Copy(FLSTR("MyEnc";
+        uint8_t*)(result.buf[i] = uint8_t*)(input.buf[i] ^ 'K';}
+    return result;
+}
+
+
+static FLSliceResult property_encryptor(void* context, FLString docID, FLDict props, FLString path,
+                                        FLSlice input, FLStringResult* algorithm, FLStringResult* keyID, CBLError* error) {
+    <strong>algorithm = FLSlice_Copy(FLSTR("MyEnc"));
     return my_cipher_function(input);
 }
 
