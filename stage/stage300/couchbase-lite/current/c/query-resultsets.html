@@ -2151,7 +2151,25 @@ The properties are presented in the value as an array of key-value pairs (proper
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// NOTE: No error handling, for brevity (see getting started)
+
+CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+while(CBLResultSet_Next(results)) {
+    FLDict dict = FLValue_AsDict(CBLResultSet_ValueForKey(results, FLSTR("_")));
+    
+    FLString id = FLValue_AsString(FLDict_Get(dict, FLSTR("id")));
+    FLString type = FLValue_AsString(FLDict_Get(dict, FLSTR("type")));
+    FLString name = FLValue_AsString(FLDict_Get(dict, FLSTR("name")));
+    FLString city = FLValue_AsString(FLDict_Get(dict, FLSTR("city")));
+    
+    printf("ID :: %.*s\n", (int)id.size, (const char *)id.buf);
+    printf("Type :: %.*s\n", (int)type.size, (const char *)type.buf);
+    printf("Name :: %.*s\n", (int)name.size, (const char *)name.buf);
+    printf("City :: %.*s\n", (int)city.size, (const char *)city.buf);
+}
+
+// All results will be available from the above query
+CBLResultSet_Release(results);</code></pre>
 </div>
 </div>
 </div>
@@ -2188,7 +2206,13 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// NOTE: No error handling, for brevity (see getting started)
+
+CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+while(CBLResultSet_Next(results)) {
+    FLString id = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("id")));
+    printf("Document ID :: %.*s\n", (int)id.size, (const char *)id.buf);
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2217,7 +2241,22 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// NOTE: No error handling, for brevity (see getting started)
+
+CBLError err;
+CBLQuery* query = CBLDatabase_CreateQuery(db, kCBLN1QLLanguage,
+    FLSTR("SELECT type, name, city FROM _"), NULL, &amp;err);
+
+CBLResultSet* results = CBLQuery_Execute(query, &amp;err);
+while(CBLResultSet_Next(results)) {
+    FLString type = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("type")));
+    FLString name = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("name")));
+    FLString city = FLValue_AsString(CBLResultSet_ValueForKey(results, FLSTR("city")));
+    
+    printf("Type :: %.*s\n", (int)type.size, (const char *)type.buf);
+    printf("Name :: %.*s\n", (int)name.size, (const char *)name.buf);
+    printf("City :: %.*s\n", (int)city.size, (const char *)city.buf);
+}</code></pre>
 </div>
 </div>
 </div>
