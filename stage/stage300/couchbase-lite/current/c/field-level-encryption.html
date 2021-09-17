@@ -10,7 +10,7 @@
 <meta name="description" content="Client-side Field Level Encryption on Couchbase Lite C Clients">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="couchbase-lite">
-<meta name="dcterms.identifier" content="3.0 BETA">
+<meta name="dcterms.identifier" content="3.0 BETA01">
 <meta name="page-url" content="/couchbase-lite/current/c/field-level-encryption.html">
 <meta name="generator" content="Antora 3.0.0-alpha.6">
 <link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
@@ -110,10 +110,10 @@
       <div class="component_list-version">
         <span class="component_list_title">Couchbase Lite</span>
         <select class="version_list" data-component="couchbase-lite">
-          <option value="3.0 BETA" data-url="../index.html" selected>3.0 BETA</option>
+          <option value="3.0 BETA01" data-url="../index.html" selected>3.0 BETA01</option>
         </select>
       </div>
-      <div class="version_items hide" data-version="3.0 BETA">
+      <div class="version_items hide" data-version="3.0 BETA01">
 <ul class="menu_row">
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1954,7 +1954,7 @@
 <div class="labels">
 <ul>
 <li class="edition"><a href="https://www.couchbase.com/products/editions">3.0</a></li>
-<li class="status"><span>BETA</span></li>
+<li class="status"><span>BETA Enterprise</span></li>
 </ul>
 </div>
 </div>
@@ -1962,18 +1962,58 @@
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div class="sect1">
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+This is an <a href="https://www.couchbase.com/products/editions">Enterprise Edition</a> feature.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="title">Community Edition</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The push replicator will detect encryptable values inside a document. It will fail to replicate unencrypted encryptable values with a crypto error.</p>
+</li>
+<li>
+<p>The pull replicator will <strong>not</strong> detect encryptable values inside pulled documents.
+The document will be saved as it was received.
+This <strong>may</strong> include Server SDK encrypted fields</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Couchbase Lite for C 3.x supports client-side, field-Level encryption on replications, allowing applications to encrypt/decrypt sensitive fields in documents using an encryption framework of choice.</p>
+<p>Couchbase Lite for C 3.0.0-BETA supports client-side, field-Level encryption on replications, allowing applications to encrypt/decrypt sensitive fields in documents using an encryption framework of choice.</p>
 </div>
 <div class="paragraph">
 <p>Using the new client-side encryption capability, Couchbase Lite C applications can
-designate selected fields for encryption and have the client automatically handle the encryption and-or decryption process prior to syncing with Couchbase Server.</p>
+designate selected fields for encryption and have the client automatically handle the encryption and-or decryption at property level during the replication.</p>
 </div>
 <div class="paragraph">
-<p>This means only clients with access to the correct encryption keys can decrypt and read the protected data.</p>
+<p>Only clients with access to the correct encryption keys can decrypt and read the protected data.</p>
 </div>
 <div class="paragraph">
 <p>The client-side encryption is compatible with the Couchbase server SDK field-level encryption format&#8201;&#8212;&#8201;see, for example, <a href="https://docs.couchbase.com/python-sdk/current/concept-docs/encryption.html#format" class="bare">https://docs.couchbase.com/python-sdk/current/concept-docs/encryption.html#format</a></p>
@@ -1981,71 +2021,356 @@ designate selected fields for encryption and have the client automatically handl
 </div>
 </div>
 <div class="sect1">
-<h2 id="use"><a class="anchor" href="#use"></a>Use</h2>
+<h2 id="encryptable-type"><a class="anchor" href="#encryptable-type"></a>Encryptable Type</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Encrypted properties are created using a new dictionary structure, which represents a property value that will be automatically recognized by the replicator for encryption.</p>
+<p>The API includes a <code>CBLEncryptable</code> type, representing an encryptable value to be automatically encrypted/decryped the replicator&#8201;&#8212;&#8201;see <a href="#ex-encryptabe-type">Example 1</a>.</p>
 </div>
-<div id="ex-fldlevenc" class="listingblock">
-<div class="title">Format</div>
+<div class="paragraph">
+<p>You declare  properties requiring encryption by the replicator, as a dictionary with the structure shown in <a href="#ex-encryptabe-type">Example 1</a>.</p>
+</div>
+<div id="ex-encryptabe-type" class="exampleblock">
+<div class="title">Example 1. Encryptable-type Dictionary Structure</div>
+<div class="content">
+<div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-{source-langauge} hljs" data-lang="{source-langauge}">{
-  "@type": "EncryptedProperty",
-  "value": &lt;Non-Encrypted Value&gt;
-}</code></pre>
+  "@type": "encryptable",
+  “value” : &lt;Decrypted Value&gt;
+} <i class="conum" data-value="1"></i><b>(1)</b>
+
+{
+  "@type": "encryptable",
+  “ciphertext”: &lt;Encrypted Value in BASE64 String&gt;
+} <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Construct properties requiring encryption by the replicator, as a dictionary with the structure shown in <a href="#ex-fldlevenc">Format</a>.</p>
+<p>The key for the value can be either of the following:</p>
 </div>
-<div class="paragraph">
-<p>Replicator will replace the <em>value</em> key with <code>encrypted_value</code> in BASE64 format. The result dictionary for the encrypted value is as follows:</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Use <code>value</code> as the key when storing a decrypted value, which can be any type (string, number, boolean, dictionary, array or null).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use <code>cyphertext</code> as the key when storing a encrypted value, which must be a BASE-64 String.</td>
+</tr>
+</table>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">{
-  "@type": "EncryptedProperty",
-  "encrypted_value": "&lt;BASE64&gt;"
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>When the replicator pulls and saves a document into the local database, it will automatically recognize the EncryptedProperty dictionary and use it to decrypt the value.</p>
-</div>
-<div class="paragraph">
-<p>Encrypted properties can be queried using the value, for example:<br></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">SELECT ssn.value FROM db WHERE ssn.value = "123-45-6789"</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="encryption-callback"><a class="anchor" href="#encryption-callback"></a>Encryption Callback</h2>
+<h2 id="replicator-decryption"><a class="anchor" href="#replicator-decryption"></a>Replicator Decryption</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Use the following callback to set the replicator&#8217;s configuration for encryption/decryption.</p>
+<p>Pull replication detects <code>encryptable</code> values before saving them to the local database and decrypts them using the property decryption callback function&#8201;&#8212;&#8201;see: <a href="#lbl-decryption-callback">Decryption</a> for more on the decryption callback function.</p>
+</div>
+<div class="paragraph">
+<p>On successful decryption the replicator saves the property in encryptable dictionary format (removing the <code>encrypted$</code> prefix)&#8201;&#8212;&#8201;see: <a href="#ex-encryptabe-type">Example 1</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="replicator-encryption"><a class="anchor" href="#replicator-encryption"></a>Replicator Encryption</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Push replication detects <code>encryptable</code> values before pushing them to the remote database and encrypts them using the property encryption callback function&#8201;&#8212;&#8201;see: <a href="#lbl-encryption-callback">Encryption</a>.</p>
+</div>
+<div class="paragraph">
+<p>On successful encryption the replicator transforms the property into a format compatible with Couchbase Server SDK&#8201;&#8212;&#8201;see: <a href="#ex-server-encryptable">Example 3</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="server-sdk-compatibility"><a class="anchor" href="#server-sdk-compatibility"></a>Server SDK compatibility</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Lite&#8217;s replicator ensures compatibility with Server SDK’s field level.
+Both Push and Pull replication transform Couchbase Lite&#8217;s encryptable dictionary to-and-from Server SDK Encrypted Field dictionary structure&#8201;&#8212;&#8201;see: <a href="#ex-server-encryptable">Example 3</a>.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Push replicator</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Adds the prefix <code>encrypted$</code> to the key.</p>
+</li>
+<li>
+<p>Sets the SDK'` <code>alg</code> either to a user-specified algorithm name or the default <code>CB_MOBILE_CUSTOM</code>.</p>
+</li>
+<li>
+<p>Set the value&#8217;s key as <code>ciphertext</code></p>
+</li>
+<li>
+<p>Stores the encrypted value as a BASE64 string.</p>
+<div class="exampleblock">
+<div class="title">Example 2. Stored Encryptable</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">{
+    “alg”: &lt;User-Specified or CB_MOBILE_CUSTOM&gt;,
+    “ciphertext” : &lt;Encrypted Value in BASE64 String&gt;
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Pull replicator</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Detects encrypted encryptable values by looking for  dictionary keys prefixed with “encrypted$”.</p>
+</li>
+<li>
+<p>Transforms the dictionary by:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Removing <code>alg</code></p>
+</li>
+<li>
+<p>Replacing the <code>ciphertext</code> key with the <code>value</code></p>
+</li>
+<li>
+<p>Storing the decrypted key/value in <a href="#ex-encryptabe-type">CBLEncryptable</a> format</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</dd>
+</dl>
+</div>
+<div id="ex-server-encryptable" class="exampleblock">
+<div class="title">Example 3. Server SDK Encrypted Field Structure</div>
+<div class="content">
+<div class="paragraph">
+<p>Server SDK&#8217;s field (property) level encryption uses key mangling, by add a prefix to the field name (<code>encrypted$</code>).
+Its directory structure differs CBL&#8217;s encryptable dictionary when serializing the encrypted fields&#8201;&#8212;&#8201;see: <a href="#ex-server-encryptable">Example 3</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">bool (*CBLPropertyEncryption)(
-     void *context,
-     boolean isEncrypting,
-     FLString docID,
-     FLDict properties,
-     FLString keyPath,
-     FLSlice input,
-     void *output,
-     size_t *outLen);</code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">{
+    encrypted$mykey: {
+        “alg” : “AEAD_AES_256_CBC_HMAC_SHA512”, <i class="conum" data-value="1"></i><b>(1)</b>
+        “kid” : “my-key-id”,
+        “ciphertext”: “&lt;BASE64-TEXT&gt;”
+    }
+}</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here <code>alg</code> identifies the encryption algorithm and is the only required field.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="callback-definition"><a class="anchor" href="#callback-definition"></a>Callback Definition</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="lbl-encryption-callback"><a class="anchor" href="#lbl-encryption-callback"></a>Encryption</h3>
+<div class="paragraph">
+<p>Provide an encryption callback function <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__replication.html#gab116a23be8bd24b86349379f370ef60c">CBLPropertyEncryptor</a> to encrypt encryptable properties during replication.</p>
 </div>
 <div class="paragraph">
-<p>When the callback returns false, the document will fail to replicate with a crypto error; the replicator will skip the document and report the error.</p>
+<p>After encryption the FLSliceResult is released and the returned value zeroed.
+See <a href="#ex-get-att">Example 4</a> for an example encryptor callback function.</p>
 </div>
 <div class="paragraph">
-<p>If the replicator detects an EncryptedProperty but there is no callback set to the replicator, the document will be failed to replicate with a crypto error as well.</p>
+<p>If you return a null slice the replicator will fail and log a crypto error message.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-decryption-callback"><a class="anchor" href="#lbl-decryption-callback"></a>Decryption</h3>
+<div class="paragraph">
+<p>Provide a decryption callback function <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__replication.html#ga24a60a3d6f9816e1d32464cc31a15c0c">CBLPropertyDecryptor</a> to decrypt any encryptable properties.
+After decryption the FLSliceResult is released and the returned value zeroed.
+See <a href="#ex-get-att">Example 4</a> for an example decryptor callback function.</p>
+</div>
+<div class="paragraph">
+<p>If you return a null slice without an error the replicator skips and saves the property as received.</p>
+</div>
+<div class="paragraph">
+<p>If you return a null slice with an error the replicator logs the error and does not replicate the document.</p>
+</div>
+<div id="ex-get-att" class="exampleblock">
+<div class="title">Example 4. Simple Encryption-Decryption Callback</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// Purpose: Declare property-level encryptor callback functions
+static FLSliceResult my_cipher_function(FLSlice input) {
+    FLSliceResult result = FLSliceResult_New(input.size);
+    for(int i = 0; i &lt; input.size; ++i) {
+        uint8_t*)(result.buf[i] = uint8_t*)input.buf)[i] ^ 'K';}     return result; }   static FLSliceResult property_encryptor(void* context, FLString docID, FLDict props, FLString path,                                         FLSlice input, FLStringResult* algorithm, FLStringResult* keyID, CBLError* error) {     <strong>algorithm = FLSlice_Copy(FLSTR("MyEnc";
+    return my_cipher_function(input);
+}
+
+
+static FLSliceResult property_decryptor(void</strong> context, FLString documentID, FLDict properties, FLString keyPath,
+                                        FLSlice input, FLString algorithm, FLString keyID, CBLError* error) {
+    return my_cipher_function(input);
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="callback-configuration"><a class="anchor" href="#callback-configuration"></a>Callback Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You register the callback function for use by declaring them in the replicator configuration using <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/struct_c_b_l_replicator_configuration.html#ab731bf9f140158d6967c1af645d8744a">propertyEncryptor()</a> and-or <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/struct_c_b_l_replicator_configuration.html#ab6a0d9e0830755d284039018a09c27d6">propertyDecryptor()</a>&#8201;&#8212;&#8201;see: <a href="#ex-callback-config">Example 5</a></p>
+</div>
+<div class="paragraph">
+<p>If you do not provide an encryption callback:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The push replicator always detects encrypted encryptable values in a document and will fail the document replication, flagging a crypto error.</p>
+</li>
+<li>
+<p>The pull replicator does <strong>not</strong> detect encrypted encryptables in pulled documents and will save documents as received; this could include SDK encrypted field dictionaries.</p>
+</li>
+</ul>
+</div>
+<div id="ex-callback-config" class="exampleblock">
+<div class="title">Example 5. Simple Callback Replicator Configuration</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// Purpose: Declare property-level encryptor callback functions
+static FLSliceResult my_cipher_function(FLSlice input) {
+    FLSliceResult result = FLSliceResult_New(input.size);
+    for(int i = 0; i &lt; input.size; ++i) {
+        uint8_t*)(result.buf[i] = uint8_t*)input.buf)[i] ^ 'K';}     return result; }   static FLSliceResult property_encryptor(void* context, FLString docID, FLDict props, FLString path,                                         FLSlice input, FLStringResult* algorithm, FLStringResult* keyID, CBLError* error) {     <strong>algorithm = FLSlice_Copy(FLSTR("MyEnc";
+    return my_cipher_function(input);
+}
+
+
+static FLSliceResult property_decryptor(void</strong> context, FLString documentID, FLDict properties, FLString keyPath,
+                                        FLSlice input, FLString algorithm, FLString keyID, CBLError* error) {
+    return my_cipher_function(input);
+}
+
+    // Purpose: Show how to declare en(de)cryptors in replicator config
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    FLString url = FLSTR("ws://localhost:4984/db");
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err);
+
+    CBLReplicatorConfiguration config;
+    memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
+
+    config.database = db;
+    config.endpoint = target;
+    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="1"></i><b>(1)</b>
+    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="2"></i><b>(2)</b>
+
+    CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
+    CBLEndpoint_Free(target);
+
+    CBLReplicator_Start(replicator, false);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="querying-encryptables"><a class="anchor" href="#querying-encryptables"></a>Querying Encryptables</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Encrypted values can be queried&#8201;&#8212;&#8201;see <a href="#ex-query">Example 6</a>.
+The query result of an encryptable value is <code>CBLEncryptable</code></p>
+</div>
+<div class="paragraph">
+<p>CBLEncryptable exposes a <em>value</em> property for query purposes.
+If this value is encrypted the query will return <em>MISSING</em>.</p>
+</div>
+<div id="ex-query" class="exampleblock">
+<div class="title">Example 6. A Simple Encryptabe Query</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-nql hljs" data-lang="nql">SELECT  ssn,  <i class="conum" data-value="1"></i><b>(1)</b>
+        ssn.value  <i class="conum" data-value="2"></i><b>(2)</b>
+FROM db WHERE ssn.value = "123-45-6789"</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The returned <code>ssn</code> columm is in the form of an encryptable dictionary</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The returned <code>ssn.value</code> columm is the actual value, unless it is still encrypted in which case it returns MISSING</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="constraints"><a class="anchor" href="#constraints"></a>Constraints</h2>
+<div class="sectionbody">
+<div class="sect3">
+<h4 id="nesting"><a class="anchor" href="#nesting"></a>Nesting</h4>
+<div class="paragraph">
+<p>In the case of nested <code>encryptable</code> types, the replicator only encrypts the outer <code>encryptable</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="arrays"><a class="anchor" href="#arrays"></a>Arrays</h4>
+<div class="paragraph">
+<p>For compatibility with Server SDKS, encryptables are not supported within arrays.</p>
+</div>
+<div class="paragraph">
+<p>The push replicator should detect and report an error if an encrypted property is found in an array.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="blobs"><a class="anchor" href="#blobs"></a>Blobs</h4>
+<div class="paragraph">
+<p>Encrypting blob’s content is not supported.</p>
+</div>
+<div class="paragraph">
+<p>Where a Blob as a Fleece dictionary is specified in the encrypted property value, only the dictionary is encrypted; <strong>not</strong> the blob’s content.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="delta-sync"><a class="anchor" href="#delta-sync"></a>Delta Sync</h4>
+<div class="paragraph">
+<p>Delta Sync will be disabled and a warning message logged when <code>propertyEncryption</code> is configured.</p>
+</div>
 </div>
 </div>
 </div>
