@@ -122,7 +122,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/cbl-whatsnew.html">New at 3.0 BETA</a>
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/cbl-whatsnew.html">New in 3.0 BETA</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -343,6 +343,11 @@
     <span class="menu_title menu_text">Start Here!</span>
   </span>
 <ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/c/gs-downloads.html">BETA Downloads</a>
+  </span>
+</li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../../couchbase-lite/current/c/gs-install.html">Install</a>
@@ -1968,7 +1973,7 @@
 <blockquote>
 <div class="paragraph">
 <p>Securing Couchbase Sync Gateway with TLS Authentication<br>
-This content explains how to implement TLS Certificate Authentication for Sync Gateway</p>
+This content explains how to create an TLS certificates</p>
 </div>
 </blockquote>
 </div>
@@ -1978,71 +1983,21 @@ This content explains how to implement TLS Certificate Authentication for Sync G
 </div>
 </div>
 <div class="sect1">
-<h2 id="data-access"><a class="anchor" href="#data-access"></a>Data Access</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><strong>Authentication</strong></p>
-</div>
-<div class="paragraph">
-<p>In a Couchbase Mobile production deployment, administrators typically perform operations on the Admin REST API.
-If Sync Gateway is deployed on an internal network, you can bind the <a href="configuration-properties.html#server" class="page">adminInterface</a> of Sync Gateway to the internal network.
-In this case, the firewall should also be configured to allow external connections to the public <a href="configuration-properties.html#server" class="page">interface</a> port.</p>
-</div>
-<div class="paragraph">
-<p>To access the Admin REST API from an entirely different network or from a remote desktop we recommend to use <a href="https://whatbox.ca/wiki/SSH_Tunneling">SSH tunneling</a>.</p>
-</div>
-<div class="paragraph">
-<p><strong>Authorization</strong></p>
-</div>
-<div class="paragraph">
-<p>In addition to the Admin REST API, a user can be assigned to a role with additional privileges.
-The role and the user assigned to it can be created in the configuration file.
-Then, the Sync Function&#8217;s <a href="sync-function-api-require-role-cmd.html" class="page">requireRole()</a> helper function can be used to allow certain operations only if the user has that role.</p>
-</div>
-<div class="paragraph">
-<p><strong>Data Model Validation</strong></p>
-</div>
-<div class="paragraph">
-<p>In a NoSQL database, it is the application&#8217;s responsibility to ensure that the documents are created in accordance with the data model adopted throughout the system.
-As an additional check, the Sync Function&#8217;s <a href="sync-function-api-throw-cmd.html" class="page">throw()</a> method can be used to reject documents that do not follow the pre-defined data model.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="connection-to-sync-gateway"><a class="anchor" href="#connection-to-sync-gateway"></a>Connection to Sync Gateway</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can run Sync Gateway behind a reverse proxy, such as NGINX, which supports HTTPS connections and route internal traffic to Sync Gateway over HTTP.
-The advantage of this approach is that NGINX can proxy both HTTP and HTTPS connections to a single Sync Gateway instance.</p>
-</div>
-<div class="paragraph">
-<p>Sync Gateway also supports serving connections over SSL.
-To enable SSL, you need to add two properties to the config file:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><code>"SSLCert"</code></dt>
-<dd>
-<p>A path to a PEM-format file containing an X.509 certificate or a certificate chain.</p>
-</dd>
-<dt class="hdlist1"><code>"SSLKey"</code></dt>
-<dd>
-<p>A path to a PEM-format file containing the certificate&#8217;s matching private key.</p>
-</dd>
-</dl>
-</div>
-<div class="paragraph">
-<p>If both properties are present, the server will respond to SSL (and only SSL) over both the public and admin ports.
-If you want to support both HTTP and HTTPS connections you will need to run two separate instances of Sync Gateway.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="how-to-create-an-ssl-certificate"><a class="anchor" href="#how-to-create-an-ssl-certificate"></a>How to Create an SSL Certificate</h2>
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Certificates are a complex topic.
-There are basically two routes you can go: request a certificate from a Certificate Authority (CA), or create your own "self-signed" certificate.</p>
+There are basically two routes you can go:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Request a certificate from a Certificate Authority (CA)</p>
+</li>
+<li>
+<p>Create your own <em>self-signed</em> certificate.</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -2107,16 +2062,34 @@ The private key is very sensitive (it&#8217;s not encrypted) so make sure the fi
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">{
-  "SSLCert": "cert.pem",
-  "SSLKey": "privkey.pem",
-  "databases": {
-    "todo": {
-      "server": "http://localhost:8091",
-      "users": {"GUEST": {"disabled": false, "admin_channels": ["*"]}}
-    }
+    bootstrap: {
+    // ... other bootstrap config
+
+      api: {
+        https: {
+          tls_minimum_version: "1.3",
+          tls_cert_path: "cert.pem", <i class="conum" data-value="1"></i><b>(1)</b>
+          tls_key_path: "privkey.pem" <i class="conum" data-value="2"></i><b>(2)</b>
+        },
+        // ... other api config
+      }
+
   }
+  // ... other config
 }</code></pre>
 </div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="configuration-schema-bootstrap.html#api-https-tls_cert_path" class="page">api.api.https.tls_cert_path</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="configuration-schema-bootstrap.html#api-https-tls_key_path" class="page">api.api.https.tls_key_path</a></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>Start Sync Gateway and access the public port over <code>https</code> on https://localhost:4984.</p>
@@ -2188,8 +2161,39 @@ You will use the following files to configure Sync Gateway:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">Unresolved include directive in modules/ROOT/pages/authentication-certs.adoc - include::example$/x509-config.json[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/undefined/modules/ROOT/examples/configuration/x509-config.json">{
+  "bootstrap": {
+    // ... other bootstrap config
+
+    "cacertpath": "./ca.pem", <i class="conum" data-value="1"></i><b>(1)</b>
+    "x509_cert_path": "./clientcertfiles/travel-sample.pem", <i class="conum" data-value="2"></i><b>(2)</b>
+    "x509_key_path": "./clientcertfiles/travel-sample.key", <i class="conum" data-value="3"></i><b>(3)</b>
+
+    // ... other bootstrap config
+
+  }
+  // ... other config
+}</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>More detail on the configuration properties for x.509 authentication can be found below.</p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><a href="configuration-schema-bootstrap.html#bootstrap-ca_cert_path" class="page">bootstrap.ca_cert_path</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><a href="configuration-schema-bootstrap.html#bootstrap-x509_cert_path" class="page">bootstrap.x509_cert_path</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><a href="configuration-schema-bootstrap.html#bootstrap-x509_key_path" class="page">bootstrap.x509_key_path</a></td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>If the connection is successful, you should see the following in the logs.</p>
@@ -2205,23 +2209,35 @@ You will use the following files to configure Sync Gateway:</p>
 <p>If Sync Gateway cannot connect, you may refer to the <a href="../../server/current/manage/manage-security/handle-certificate-errors.html#cluster-certificate-errors" class="page">Cluster Certificate Errors</a> table.</p>
 </div>
 <div class="paragraph">
-<p>More detail on the configuration properties for x.509 authentication can be found below.</p>
+<p>If the <strong>username</strong>/<strong>password</strong> properties are also specified in the configuration file then Sync Gateway will use password-based authentication and also include the client certificate in the TLS handshake.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="configuration-properties.html#databases-this_db-certpath" class="page">databases.$db.certpath</a></p>
-</li>
-<li>
-<p><a href="configuration-properties.html#databases-this_db-keypath" class="page">databases.$db.keypath</a></p>
-</li>
-<li>
-<p><a href="configuration-properties.html#databases-this_db-cacertpath" class="page">databases.$db.cacertpath</a></p>
-</li>
-</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="other-secure-access-methods"><a class="anchor" href="#other-secure-access-methods"></a>Other Secure Access Methods</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Sync&#160;Gateway Admin API comes with out of the box support for TLS encryption and provides for secure user authorization through Couchbase Server RBAC-users&#8201;&#8212;&#8201;for more on this see: <a href="secure-sgw-access.html" class="page">Secure Sync Gateway Access</a> and or <a href="rest-api-access.html" class="page">REST API Access</a></p>
 </div>
 <div class="paragraph">
-<p>If the <strong>username</strong>/<strong>password</strong> properties are also specified in the configuration file then Sync Gateway will use password-based authentication and also include the client certificate in the TLS handshake.</p>
+<p>You might also consider these additional options.</p>
+</div>
+<div class="sect2">
+<h3 id="port-binding"><a class="anchor" href="#port-binding"></a>Port Binding</h3>
+<div class="paragraph">
+<p>If Sync Gateway is deployed on an internal network, you can bind the <a href="configuration-properties.html#server" class="page">adminInterface</a> of Sync Gateway to the internal network.
+In this case, the firewall should also be configured to allow external connections to the public <a href="configuration-properties.html#server" class="page">interface</a> port.</p>
+</div>
+<div class="paragraph">
+<p>To access the Admin REST API from an entirely different network or from a remote desktop we recommend to use <a href="https://whatbox.ca/wiki/SSH_Tunneling">SSH tunneling</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="reverse-proxy"><a class="anchor" href="#reverse-proxy"></a>Reverse Proxy</h3>
+<div class="paragraph">
+<p>You can run Sync Gateway behind a reverse proxy, such as NGINX, which supports HTTPS connections and route internal traffic to Sync Gateway over HTTP.
+The advantage of this approach is that NGINX can proxy both HTTP and HTTPS connections to a single Sync Gateway instance.</p>
 </div>
 <hr>
 </div>
