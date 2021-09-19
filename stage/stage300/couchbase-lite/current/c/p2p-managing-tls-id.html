@@ -440,7 +440,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-c">API&#160;References</a>
+    <span class="menu_title menu_text">{url-api-references}[API&#160;References]</span>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -465,11 +465,6 @@
   </span>
 </li>
 </ul>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="refer-glossary.html">Glossary</a>
-  </span>
 </li>
 </ul>
 </li>
@@ -2078,7 +2073,6 @@ listenerConfig.tlsIdentity = nil</code></pre>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// CBL Version 3.0.0 BETA
 #include &lt;cbl/CouchbaseLite.h&gt;
-
 #include &lt;time.h&gt;
 #include &lt;inttypes.h&gt;
 #ifdef _MSC_VER
@@ -2674,19 +2668,22 @@ static void use_blob() {
 
     uint8_t buffer[128000];
     FILE* avatar_file = fopen("avatar.jpg", "rb");
-    size_t read = fread(buffer, 1, 128000, avatar_file);
+    size_t read = fread(buffer, 1, 128000, avatar_file); <i class="conum" data-value="2"></i><b>(2)</b>
 
     FLSliceResult avatar = FLSliceResult_CreateWith(buffer, read);
-    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar));
+    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar)); <i class="conum" data-value="3"></i><b>(3)</b>
     FLSliceResult_Release(avatar);
 
     // TODO: Create shortcut blob method
     CBLError err;
     FLMutableDict properties = CBLDocument_MutableProperties(newTask);
     FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
-    CBLDatabase_SaveDocument(db, newTask, &amp;err);
+    CBLDatabase_SaveDocument(db, newTask, &amp;err); <i class="conum" data-value="4"></i><b>(4)</b>
+    
     // end::blob[]
 
+    
+    
     CBLDocument_Release(newTask);
     CBLBlob_Release(blob);
 }
@@ -3495,37 +3492,37 @@ static void docs_act_replication(CBLDatabase* argDb)
 
     CBLError err;
     FLString url = FLSTR("ws://localhost:4984/db");
-    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="2"></i><b>(2)</b>
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="5"></i><b>(5)</b>
 
     CBLReplicatorConfiguration config;
     memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
     config.database = database;
-    config.endpoint = target; <i class="conum" data-value="3"></i><b>(3)</b>
+    config.endpoint = target; <i class="conum" data-value="6"></i><b>(6)</b>
 
     // tag::p2p-act-rep-config-cont[]
     // Set replication direction and mode
-    config.replicatorType = kCBLReplicatorTypePull; <i class="conum" data-value="4"></i><b>(4)</b>
+    config.replicatorType = kCBLReplicatorTypePull; <i class="conum" data-value="7"></i><b>(7)</b>
     config.continuous = true;
 
     // end::p2p-act-rep-config-cont[]
 
     // Optionally, set auto-purge behavior (here we override default)
-    config.disableAutoPurge = true; <i class="conum" data-value="5"></i><b>(5)</b>
+    config.disableAutoPurge = true; <i class="conum" data-value="8"></i><b>(8)</b>
 
     // Optionally, configure Client Authentication
     // Here we are using to Basic Authentication,
     // Providing username and password credentials
     CBLAuthenticator* basicAuth =
         CBLAuth_CreatePassword(FLSTR("username"),
-                               FLSTR("passwd")); <i class="conum" data-value="6"></i><b>(6)</b>
+                               FLSTR("passwd")); <i class="conum" data-value="9"></i><b>(9)</b>
     config.authenticator = basicAuth;
 
     // Optionally, configure how we handle conflicts
-    config.conflictResolver = simpleConflictResolver_localWins; <i class="conum" data-value="7"></i><b>(7)</b>
+    config.conflictResolver = simpleConflictResolver_localWins; <i class="conum" data-value="10"></i><b>(10)</b>
 
     // Initialize replicator with created config
     CBLReplicator* replicator =
-        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="8"></i><b>(8)</b>
+        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="11"></i><b>(11)</b>
 
     CBLEndpoint_Free(target);
 
@@ -3533,10 +3530,10 @@ static void docs_act_replication(CBLDatabase* argDb)
     CBLListenerToken* token =
             CBLReplicator_AddChangeListener(replicator,
                                             simpleChangeListener,
-                                            NULL); <i class="conum" data-value="9"></i><b>(9)</b>
+                                            NULL); <i class="conum" data-value="12"></i><b>(12)</b>
 
     // Start replication
-    CBLReplicator_Start(replicator, false); <i class="conum" data-value="10"></i><b>(10)</b>
+    CBLReplicator_Start(replicator, false); <i class="conum" data-value="13"></i><b>(13)</b>
 
     // end::p2p-act-rep-func[]
 
@@ -3587,12 +3584,12 @@ static void docs_act_replication_config_section_snippets()
     CBLError err;
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target =
-        CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="11"></i><b>(11)</b>
+        CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="14"></i><b>(14)</b>
 
     CBLReplicatorConfiguration config;
     memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
     config.database = db;
-    config.endpoint = target; <i class="conum" data-value="12"></i><b>(12)</b>
+    config.endpoint = target; <i class="conum" data-value="15"></i><b>(15)</b>
 
     // end::sgw-act-rep-initialize[]
 
@@ -3607,15 +3604,15 @@ static void docs_act_replication_config_section_snippets()
     // tag::replication-retry-config[]
     // Configure replication retries
     // tag::replication-set-heartbeat[]
-    config.heartbeat = 120; //  <i class="conum" data-value="13"></i><b>(13)</b>
+    config.heartbeat = 120; //  <i class="conum" data-value="16"></i><b>(16)</b>
 
     // end::replication-set-heartbeat[]
     // tag::replication-set-maxattempts[]
-    config.maxAttempts = 20; //  <i class="conum" data-value="14"></i><b>(14)</b>
+    config.maxAttempts = 20; //  <i class="conum" data-value="17"></i><b>(17)</b>
 
     // end::replication-set-maxattempts[]
     // tag::replication-set-maxattemptwaittime[]
-    config.maxAttemptWaitTime = 600; //  <i class="conum" data-value="15"></i><b>(15)</b>
+    config.maxAttemptWaitTime = 600; //  <i class="conum" data-value="18"></i><b>(18)</b>
 
     // end::replication-set-maxattemptwaittime[]
     // end::replication-retry-config[]
@@ -3626,7 +3623,7 @@ static void docs_act_replication_config_section_snippets()
         CBLAuthenticator* basicAuth =
             CBLAuth_CreatePassword(FLSTR("username"),
                                    FLSTR("passwd"));
-        config.authenticator = basicAuth; <i class="conum" data-value="16"></i><b>(16)</b>
+        config.authenticator = basicAuth; <i class="conum" data-value="19"></i><b>(19)</b>
     }
     // end::basic-authentication[]
 
@@ -3635,7 +3632,7 @@ static void docs_act_replication_config_section_snippets()
         CBLAuthenticator* sessionAuth =
             CBLAuth_CreateSession(FLSTR("904ac010862f37c8dd99015a33ab5a3565fd8447"),
                                   FLSTR("optionalCookieName"));
-        config.authenticator = sessionAuth; <i class="conum" data-value="17"></i><b>(17)</b>
+        config.authenticator = sessionAuth; <i class="conum" data-value="20"></i><b>(20)</b>
     }
 
     // end::session-authentication[]
@@ -3663,12 +3660,12 @@ static void docs_act_replication_config_section_snippets()
 
     //  Auto-purge over-ride
     // tag::autopurge-override[]
-    config.disableAutoPurge = true; <i class="conum" data-value="18"></i><b>(18)</b>
+    config.disableAutoPurge = true; <i class="conum" data-value="21"></i><b>(21)</b>
 
     // end::autopurge-override[]
     // Initialize replicator with created config
     CBLReplicator* replicator =
-        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="19"></i><b>(19)</b>
+        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="22"></i><b>(22)</b>
 
     CBLEndpoint_Free(target);
 
@@ -3676,7 +3673,7 @@ static void docs_act_replication_config_section_snippets()
     CBLListenerToken* token_ReplChangeListener =
         CBLReplicator_AddChangeListener(replicator,
                                         simpleChangeListener,
-                                        NULL); <i class="conum" data-value="20"></i><b>(20)</b>
+                                        NULL); <i class="conum" data-value="23"></i><b>(23)</b>
 }
 // END replication.html &gt;&gt; configure section
 
@@ -3692,17 +3689,17 @@ static CBLReplicator* docs_act_replication_Intialize(
     bool docs_example_resetRequired = argResetRequired;
     // tag::p2p-act-rep-start-full[]
     CBLReplicator* thisRepl =
-    CBLReplicator_Create(&amp;argConfig, &amp;err); <i class="conum" data-value="21"></i><b>(21)</b>
+    CBLReplicator_Create(&amp;argConfig, &amp;err); <i class="conum" data-value="24"></i><b>(24)</b>
 
     // end::p2p-act-rep-start-full[]
     if(!docs_example_resetRequired) {
     // tag::p2p-act-rep-start-full[]
-      CBLReplicator_Start(thisRepl, false); <i class="conum" data-value="22"></i><b>(22)</b>
+      CBLReplicator_Start(thisRepl, false); <i class="conum" data-value="25"></i><b>(25)</b>
 
     // end::p2p-act-rep-start-full[]
     } else {
     // tag::replication-reset-checkpoint[]
-      CBLReplicator_Start(thisRepl, true); <i class="conum" data-value="23"></i><b>(23)</b>
+      CBLReplicator_Start(thisRepl, true); <i class="conum" data-value="26"></i><b>(26)</b>
 
     // end::replication-reset-checkpoint[]
     }
@@ -3757,7 +3754,7 @@ static void docs_act_replication_Monitor(
     // end::p2p-act-rep-status[]
     // tag::replication-pendingdocuments[]
     FLDict thisPendingIdList =
-        CBLReplicator_PendingDocumentIDs(thisRepl, &amp;err); <i class="conum" data-value="24"></i><b>(24)</b>
+        CBLReplicator_PendingDocumentIDs(thisRepl, &amp;err); <i class="conum" data-value="27"></i><b>(27)</b>
     if(!FLDict_IsEmpty(thisPendingIdList)) {
         FLDictIterator item;
         FLDictIterator_Begin(thisPendingIdList, &amp;item);
@@ -3768,7 +3765,7 @@ static void docs_act_replication_Monitor(
             if(CBLReplicator_IsDocumentPending(thisRepl,
                                                pendingId,
                                                &amp;err)) {
-                // ... process the still pending docid as required <i class="conum" data-value="25"></i><b>(25)</b>
+                // ... process the still pending docid as required <i class="conum" data-value="28"></i><b>(28)</b>
             } else {
                 // Doc Id no longer pending
                 if(err.code==0) {
@@ -3979,8 +3976,8 @@ static void replicator_property_encryption() {
 
     config.database = db;
     config.endpoint = target;
-    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="26"></i><b>(26)</b>
-    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="27"></i><b>(27)</b>
+    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="29"></i><b>(29)</b>
+    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="30"></i><b>(30)</b>
 
     CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
     CBLEndpoint_Free(target);
@@ -4043,7 +4040,6 @@ int main(int argc, char** argv) {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// CBL Version 3.0.0 BETA
 #include &lt;cbl/CouchbaseLite.h&gt;
-
 #include &lt;time.h&gt;
 #include &lt;inttypes.h&gt;
 #ifdef _MSC_VER
@@ -4639,19 +4635,22 @@ static void use_blob() {
 
     uint8_t buffer[128000];
     FILE* avatar_file = fopen("avatar.jpg", "rb");
-    size_t read = fread(buffer, 1, 128000, avatar_file);
+    size_t read = fread(buffer, 1, 128000, avatar_file); <i class="conum" data-value="2"></i><b>(2)</b>
 
     FLSliceResult avatar = FLSliceResult_CreateWith(buffer, read);
-    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar));
+    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar)); <i class="conum" data-value="3"></i><b>(3)</b>
     FLSliceResult_Release(avatar);
 
     // TODO: Create shortcut blob method
     CBLError err;
     FLMutableDict properties = CBLDocument_MutableProperties(newTask);
     FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
-    CBLDatabase_SaveDocument(db, newTask, &amp;err);
+    CBLDatabase_SaveDocument(db, newTask, &amp;err); <i class="conum" data-value="4"></i><b>(4)</b>
+    
     // end::blob[]
 
+    
+    
     CBLDocument_Release(newTask);
     CBLBlob_Release(blob);
 }
@@ -5460,37 +5459,37 @@ static void docs_act_replication(CBLDatabase* argDb)
 
     CBLError err;
     FLString url = FLSTR("ws://localhost:4984/db");
-    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="2"></i><b>(2)</b>
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="5"></i><b>(5)</b>
 
     CBLReplicatorConfiguration config;
     memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
     config.database = database;
-    config.endpoint = target; <i class="conum" data-value="3"></i><b>(3)</b>
+    config.endpoint = target; <i class="conum" data-value="6"></i><b>(6)</b>
 
     // tag::p2p-act-rep-config-cont[]
     // Set replication direction and mode
-    config.replicatorType = kCBLReplicatorTypePull; <i class="conum" data-value="4"></i><b>(4)</b>
+    config.replicatorType = kCBLReplicatorTypePull; <i class="conum" data-value="7"></i><b>(7)</b>
     config.continuous = true;
 
     // end::p2p-act-rep-config-cont[]
 
     // Optionally, set auto-purge behavior (here we override default)
-    config.disableAutoPurge = true; <i class="conum" data-value="5"></i><b>(5)</b>
+    config.disableAutoPurge = true; <i class="conum" data-value="8"></i><b>(8)</b>
 
     // Optionally, configure Client Authentication
     // Here we are using to Basic Authentication,
     // Providing username and password credentials
     CBLAuthenticator* basicAuth =
         CBLAuth_CreatePassword(FLSTR("username"),
-                               FLSTR("passwd")); <i class="conum" data-value="6"></i><b>(6)</b>
+                               FLSTR("passwd")); <i class="conum" data-value="9"></i><b>(9)</b>
     config.authenticator = basicAuth;
 
     // Optionally, configure how we handle conflicts
-    config.conflictResolver = simpleConflictResolver_localWins; <i class="conum" data-value="7"></i><b>(7)</b>
+    config.conflictResolver = simpleConflictResolver_localWins; <i class="conum" data-value="10"></i><b>(10)</b>
 
     // Initialize replicator with created config
     CBLReplicator* replicator =
-        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="8"></i><b>(8)</b>
+        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="11"></i><b>(11)</b>
 
     CBLEndpoint_Free(target);
 
@@ -5498,10 +5497,10 @@ static void docs_act_replication(CBLDatabase* argDb)
     CBLListenerToken* token =
             CBLReplicator_AddChangeListener(replicator,
                                             simpleChangeListener,
-                                            NULL); <i class="conum" data-value="9"></i><b>(9)</b>
+                                            NULL); <i class="conum" data-value="12"></i><b>(12)</b>
 
     // Start replication
-    CBLReplicator_Start(replicator, false); <i class="conum" data-value="10"></i><b>(10)</b>
+    CBLReplicator_Start(replicator, false); <i class="conum" data-value="13"></i><b>(13)</b>
 
     // end::p2p-act-rep-func[]
 
@@ -5552,12 +5551,12 @@ static void docs_act_replication_config_section_snippets()
     CBLError err;
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target =
-        CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="11"></i><b>(11)</b>
+        CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="14"></i><b>(14)</b>
 
     CBLReplicatorConfiguration config;
     memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
     config.database = db;
-    config.endpoint = target; <i class="conum" data-value="12"></i><b>(12)</b>
+    config.endpoint = target; <i class="conum" data-value="15"></i><b>(15)</b>
 
     // end::sgw-act-rep-initialize[]
 
@@ -5572,15 +5571,15 @@ static void docs_act_replication_config_section_snippets()
     // tag::replication-retry-config[]
     // Configure replication retries
     // tag::replication-set-heartbeat[]
-    config.heartbeat = 120; //  <i class="conum" data-value="13"></i><b>(13)</b>
+    config.heartbeat = 120; //  <i class="conum" data-value="16"></i><b>(16)</b>
 
     // end::replication-set-heartbeat[]
     // tag::replication-set-maxattempts[]
-    config.maxAttempts = 20; //  <i class="conum" data-value="14"></i><b>(14)</b>
+    config.maxAttempts = 20; //  <i class="conum" data-value="17"></i><b>(17)</b>
 
     // end::replication-set-maxattempts[]
     // tag::replication-set-maxattemptwaittime[]
-    config.maxAttemptWaitTime = 600; //  <i class="conum" data-value="15"></i><b>(15)</b>
+    config.maxAttemptWaitTime = 600; //  <i class="conum" data-value="18"></i><b>(18)</b>
 
     // end::replication-set-maxattemptwaittime[]
     // end::replication-retry-config[]
@@ -5591,7 +5590,7 @@ static void docs_act_replication_config_section_snippets()
         CBLAuthenticator* basicAuth =
             CBLAuth_CreatePassword(FLSTR("username"),
                                    FLSTR("passwd"));
-        config.authenticator = basicAuth; <i class="conum" data-value="16"></i><b>(16)</b>
+        config.authenticator = basicAuth; <i class="conum" data-value="19"></i><b>(19)</b>
     }
     // end::basic-authentication[]
 
@@ -5600,7 +5599,7 @@ static void docs_act_replication_config_section_snippets()
         CBLAuthenticator* sessionAuth =
             CBLAuth_CreateSession(FLSTR("904ac010862f37c8dd99015a33ab5a3565fd8447"),
                                   FLSTR("optionalCookieName"));
-        config.authenticator = sessionAuth; <i class="conum" data-value="17"></i><b>(17)</b>
+        config.authenticator = sessionAuth; <i class="conum" data-value="20"></i><b>(20)</b>
     }
 
     // end::session-authentication[]
@@ -5628,12 +5627,12 @@ static void docs_act_replication_config_section_snippets()
 
     //  Auto-purge over-ride
     // tag::autopurge-override[]
-    config.disableAutoPurge = true; <i class="conum" data-value="18"></i><b>(18)</b>
+    config.disableAutoPurge = true; <i class="conum" data-value="21"></i><b>(21)</b>
 
     // end::autopurge-override[]
     // Initialize replicator with created config
     CBLReplicator* replicator =
-        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="19"></i><b>(19)</b>
+        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="22"></i><b>(22)</b>
 
     CBLEndpoint_Free(target);
 
@@ -5641,7 +5640,7 @@ static void docs_act_replication_config_section_snippets()
     CBLListenerToken* token_ReplChangeListener =
         CBLReplicator_AddChangeListener(replicator,
                                         simpleChangeListener,
-                                        NULL); <i class="conum" data-value="20"></i><b>(20)</b>
+                                        NULL); <i class="conum" data-value="23"></i><b>(23)</b>
 }
 // END replication.html &gt;&gt; configure section
 
@@ -5657,17 +5656,17 @@ static CBLReplicator* docs_act_replication_Intialize(
     bool docs_example_resetRequired = argResetRequired;
     // tag::p2p-act-rep-start-full[]
     CBLReplicator* thisRepl =
-    CBLReplicator_Create(&amp;argConfig, &amp;err); <i class="conum" data-value="21"></i><b>(21)</b>
+    CBLReplicator_Create(&amp;argConfig, &amp;err); <i class="conum" data-value="24"></i><b>(24)</b>
 
     // end::p2p-act-rep-start-full[]
     if(!docs_example_resetRequired) {
     // tag::p2p-act-rep-start-full[]
-      CBLReplicator_Start(thisRepl, false); <i class="conum" data-value="22"></i><b>(22)</b>
+      CBLReplicator_Start(thisRepl, false); <i class="conum" data-value="25"></i><b>(25)</b>
 
     // end::p2p-act-rep-start-full[]
     } else {
     // tag::replication-reset-checkpoint[]
-      CBLReplicator_Start(thisRepl, true); <i class="conum" data-value="23"></i><b>(23)</b>
+      CBLReplicator_Start(thisRepl, true); <i class="conum" data-value="26"></i><b>(26)</b>
 
     // end::replication-reset-checkpoint[]
     }
@@ -5722,7 +5721,7 @@ static void docs_act_replication_Monitor(
     // end::p2p-act-rep-status[]
     // tag::replication-pendingdocuments[]
     FLDict thisPendingIdList =
-        CBLReplicator_PendingDocumentIDs(thisRepl, &amp;err); <i class="conum" data-value="24"></i><b>(24)</b>
+        CBLReplicator_PendingDocumentIDs(thisRepl, &amp;err); <i class="conum" data-value="27"></i><b>(27)</b>
     if(!FLDict_IsEmpty(thisPendingIdList)) {
         FLDictIterator item;
         FLDictIterator_Begin(thisPendingIdList, &amp;item);
@@ -5733,7 +5732,7 @@ static void docs_act_replication_Monitor(
             if(CBLReplicator_IsDocumentPending(thisRepl,
                                                pendingId,
                                                &amp;err)) {
-                // ... process the still pending docid as required <i class="conum" data-value="25"></i><b>(25)</b>
+                // ... process the still pending docid as required <i class="conum" data-value="28"></i><b>(28)</b>
             } else {
                 // Doc Id no longer pending
                 if(err.code==0) {
@@ -5944,8 +5943,8 @@ static void replicator_property_encryption() {
 
     config.database = db;
     config.endpoint = target;
-    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="26"></i><b>(26)</b>
-    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="27"></i><b>(27)</b>
+    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="29"></i><b>(29)</b>
+    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="30"></i><b>(30)</b>
 
     CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
     CBLEndpoint_Free(target);
@@ -6008,7 +6007,6 @@ int main(int argc, char** argv) {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// CBL Version 3.0.0 BETA
 #include &lt;cbl/CouchbaseLite.h&gt;
-
 #include &lt;time.h&gt;
 #include &lt;inttypes.h&gt;
 #ifdef _MSC_VER
@@ -6604,19 +6602,22 @@ static void use_blob() {
 
     uint8_t buffer[128000];
     FILE* avatar_file = fopen("avatar.jpg", "rb");
-    size_t read = fread(buffer, 1, 128000, avatar_file);
+    size_t read = fread(buffer, 1, 128000, avatar_file); <i class="conum" data-value="2"></i><b>(2)</b>
 
     FLSliceResult avatar = FLSliceResult_CreateWith(buffer, read);
-    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar));
+    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar)); <i class="conum" data-value="3"></i><b>(3)</b>
     FLSliceResult_Release(avatar);
 
     // TODO: Create shortcut blob method
     CBLError err;
     FLMutableDict properties = CBLDocument_MutableProperties(newTask);
     FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
-    CBLDatabase_SaveDocument(db, newTask, &amp;err);
+    CBLDatabase_SaveDocument(db, newTask, &amp;err); <i class="conum" data-value="4"></i><b>(4)</b>
+    
     // end::blob[]
 
+    
+    
     CBLDocument_Release(newTask);
     CBLBlob_Release(blob);
 }
@@ -7425,37 +7426,37 @@ static void docs_act_replication(CBLDatabase* argDb)
 
     CBLError err;
     FLString url = FLSTR("ws://localhost:4984/db");
-    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="2"></i><b>(2)</b>
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="5"></i><b>(5)</b>
 
     CBLReplicatorConfiguration config;
     memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
     config.database = database;
-    config.endpoint = target; <i class="conum" data-value="3"></i><b>(3)</b>
+    config.endpoint = target; <i class="conum" data-value="6"></i><b>(6)</b>
 
     // tag::p2p-act-rep-config-cont[]
     // Set replication direction and mode
-    config.replicatorType = kCBLReplicatorTypePull; <i class="conum" data-value="4"></i><b>(4)</b>
+    config.replicatorType = kCBLReplicatorTypePull; <i class="conum" data-value="7"></i><b>(7)</b>
     config.continuous = true;
 
     // end::p2p-act-rep-config-cont[]
 
     // Optionally, set auto-purge behavior (here we override default)
-    config.disableAutoPurge = true; <i class="conum" data-value="5"></i><b>(5)</b>
+    config.disableAutoPurge = true; <i class="conum" data-value="8"></i><b>(8)</b>
 
     // Optionally, configure Client Authentication
     // Here we are using to Basic Authentication,
     // Providing username and password credentials
     CBLAuthenticator* basicAuth =
         CBLAuth_CreatePassword(FLSTR("username"),
-                               FLSTR("passwd")); <i class="conum" data-value="6"></i><b>(6)</b>
+                               FLSTR("passwd")); <i class="conum" data-value="9"></i><b>(9)</b>
     config.authenticator = basicAuth;
 
     // Optionally, configure how we handle conflicts
-    config.conflictResolver = simpleConflictResolver_localWins; <i class="conum" data-value="7"></i><b>(7)</b>
+    config.conflictResolver = simpleConflictResolver_localWins; <i class="conum" data-value="10"></i><b>(10)</b>
 
     // Initialize replicator with created config
     CBLReplicator* replicator =
-        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="8"></i><b>(8)</b>
+        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="11"></i><b>(11)</b>
 
     CBLEndpoint_Free(target);
 
@@ -7463,10 +7464,10 @@ static void docs_act_replication(CBLDatabase* argDb)
     CBLListenerToken* token =
             CBLReplicator_AddChangeListener(replicator,
                                             simpleChangeListener,
-                                            NULL); <i class="conum" data-value="9"></i><b>(9)</b>
+                                            NULL); <i class="conum" data-value="12"></i><b>(12)</b>
 
     // Start replication
-    CBLReplicator_Start(replicator, false); <i class="conum" data-value="10"></i><b>(10)</b>
+    CBLReplicator_Start(replicator, false); <i class="conum" data-value="13"></i><b>(13)</b>
 
     // end::p2p-act-rep-func[]
 
@@ -7517,12 +7518,12 @@ static void docs_act_replication_config_section_snippets()
     CBLError err;
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target =
-        CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="11"></i><b>(11)</b>
+        CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="14"></i><b>(14)</b>
 
     CBLReplicatorConfiguration config;
     memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
     config.database = db;
-    config.endpoint = target; <i class="conum" data-value="12"></i><b>(12)</b>
+    config.endpoint = target; <i class="conum" data-value="15"></i><b>(15)</b>
 
     // end::sgw-act-rep-initialize[]
 
@@ -7537,15 +7538,15 @@ static void docs_act_replication_config_section_snippets()
     // tag::replication-retry-config[]
     // Configure replication retries
     // tag::replication-set-heartbeat[]
-    config.heartbeat = 120; //  <i class="conum" data-value="13"></i><b>(13)</b>
+    config.heartbeat = 120; //  <i class="conum" data-value="16"></i><b>(16)</b>
 
     // end::replication-set-heartbeat[]
     // tag::replication-set-maxattempts[]
-    config.maxAttempts = 20; //  <i class="conum" data-value="14"></i><b>(14)</b>
+    config.maxAttempts = 20; //  <i class="conum" data-value="17"></i><b>(17)</b>
 
     // end::replication-set-maxattempts[]
     // tag::replication-set-maxattemptwaittime[]
-    config.maxAttemptWaitTime = 600; //  <i class="conum" data-value="15"></i><b>(15)</b>
+    config.maxAttemptWaitTime = 600; //  <i class="conum" data-value="18"></i><b>(18)</b>
 
     // end::replication-set-maxattemptwaittime[]
     // end::replication-retry-config[]
@@ -7556,7 +7557,7 @@ static void docs_act_replication_config_section_snippets()
         CBLAuthenticator* basicAuth =
             CBLAuth_CreatePassword(FLSTR("username"),
                                    FLSTR("passwd"));
-        config.authenticator = basicAuth; <i class="conum" data-value="16"></i><b>(16)</b>
+        config.authenticator = basicAuth; <i class="conum" data-value="19"></i><b>(19)</b>
     }
     // end::basic-authentication[]
 
@@ -7565,7 +7566,7 @@ static void docs_act_replication_config_section_snippets()
         CBLAuthenticator* sessionAuth =
             CBLAuth_CreateSession(FLSTR("904ac010862f37c8dd99015a33ab5a3565fd8447"),
                                   FLSTR("optionalCookieName"));
-        config.authenticator = sessionAuth; <i class="conum" data-value="17"></i><b>(17)</b>
+        config.authenticator = sessionAuth; <i class="conum" data-value="20"></i><b>(20)</b>
     }
 
     // end::session-authentication[]
@@ -7593,12 +7594,12 @@ static void docs_act_replication_config_section_snippets()
 
     //  Auto-purge over-ride
     // tag::autopurge-override[]
-    config.disableAutoPurge = true; <i class="conum" data-value="18"></i><b>(18)</b>
+    config.disableAutoPurge = true; <i class="conum" data-value="21"></i><b>(21)</b>
 
     // end::autopurge-override[]
     // Initialize replicator with created config
     CBLReplicator* replicator =
-        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="19"></i><b>(19)</b>
+        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="22"></i><b>(22)</b>
 
     CBLEndpoint_Free(target);
 
@@ -7606,7 +7607,7 @@ static void docs_act_replication_config_section_snippets()
     CBLListenerToken* token_ReplChangeListener =
         CBLReplicator_AddChangeListener(replicator,
                                         simpleChangeListener,
-                                        NULL); <i class="conum" data-value="20"></i><b>(20)</b>
+                                        NULL); <i class="conum" data-value="23"></i><b>(23)</b>
 }
 // END replication.html &gt;&gt; configure section
 
@@ -7622,17 +7623,17 @@ static CBLReplicator* docs_act_replication_Intialize(
     bool docs_example_resetRequired = argResetRequired;
     // tag::p2p-act-rep-start-full[]
     CBLReplicator* thisRepl =
-    CBLReplicator_Create(&amp;argConfig, &amp;err); <i class="conum" data-value="21"></i><b>(21)</b>
+    CBLReplicator_Create(&amp;argConfig, &amp;err); <i class="conum" data-value="24"></i><b>(24)</b>
 
     // end::p2p-act-rep-start-full[]
     if(!docs_example_resetRequired) {
     // tag::p2p-act-rep-start-full[]
-      CBLReplicator_Start(thisRepl, false); <i class="conum" data-value="22"></i><b>(22)</b>
+      CBLReplicator_Start(thisRepl, false); <i class="conum" data-value="25"></i><b>(25)</b>
 
     // end::p2p-act-rep-start-full[]
     } else {
     // tag::replication-reset-checkpoint[]
-      CBLReplicator_Start(thisRepl, true); <i class="conum" data-value="23"></i><b>(23)</b>
+      CBLReplicator_Start(thisRepl, true); <i class="conum" data-value="26"></i><b>(26)</b>
 
     // end::replication-reset-checkpoint[]
     }
@@ -7687,7 +7688,7 @@ static void docs_act_replication_Monitor(
     // end::p2p-act-rep-status[]
     // tag::replication-pendingdocuments[]
     FLDict thisPendingIdList =
-        CBLReplicator_PendingDocumentIDs(thisRepl, &amp;err); <i class="conum" data-value="24"></i><b>(24)</b>
+        CBLReplicator_PendingDocumentIDs(thisRepl, &amp;err); <i class="conum" data-value="27"></i><b>(27)</b>
     if(!FLDict_IsEmpty(thisPendingIdList)) {
         FLDictIterator item;
         FLDictIterator_Begin(thisPendingIdList, &amp;item);
@@ -7698,7 +7699,7 @@ static void docs_act_replication_Monitor(
             if(CBLReplicator_IsDocumentPending(thisRepl,
                                                pendingId,
                                                &amp;err)) {
-                // ... process the still pending docid as required <i class="conum" data-value="25"></i><b>(25)</b>
+                // ... process the still pending docid as required <i class="conum" data-value="28"></i><b>(28)</b>
             } else {
                 // Doc Id no longer pending
                 if(err.code==0) {
@@ -7909,8 +7910,8 @@ static void replicator_property_encryption() {
 
     config.database = db;
     config.endpoint = target;
-    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="26"></i><b>(26)</b>
-    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="27"></i><b>(27)</b>
+    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="29"></i><b>(29)</b>
+    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="30"></i><b>(30)</b>
 
     CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
     CBLEndpoint_Free(target);
@@ -7973,7 +7974,6 @@ int main(int argc, char** argv) {
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// CBL Version 3.0.0 BETA
 #include &lt;cbl/CouchbaseLite.h&gt;
-
 #include &lt;time.h&gt;
 #include &lt;inttypes.h&gt;
 #ifdef _MSC_VER
@@ -8569,19 +8569,22 @@ static void use_blob() {
 
     uint8_t buffer[128000];
     FILE* avatar_file = fopen("avatar.jpg", "rb");
-    size_t read = fread(buffer, 1, 128000, avatar_file);
+    size_t read = fread(buffer, 1, 128000, avatar_file); <i class="conum" data-value="2"></i><b>(2)</b>
 
     FLSliceResult avatar = FLSliceResult_CreateWith(buffer, read);
-    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar));
+    CBLBlob* blob = CBLBlob_CreateWithData(FLSTR("image/jpeg"), FLSliceResult_AsSlice(avatar)); <i class="conum" data-value="3"></i><b>(3)</b>
     FLSliceResult_Release(avatar);
 
     // TODO: Create shortcut blob method
     CBLError err;
     FLMutableDict properties = CBLDocument_MutableProperties(newTask);
     FLSlot_SetBlob(FLMutableDict_Set(properties, FLSTR("avatar")), blob);
-    CBLDatabase_SaveDocument(db, newTask, &amp;err);
+    CBLDatabase_SaveDocument(db, newTask, &amp;err); <i class="conum" data-value="4"></i><b>(4)</b>
+    
     // end::blob[]
 
+    
+    
     CBLDocument_Release(newTask);
     CBLBlob_Release(blob);
 }
@@ -9390,37 +9393,37 @@ static void docs_act_replication(CBLDatabase* argDb)
 
     CBLError err;
     FLString url = FLSTR("ws://localhost:4984/db");
-    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="2"></i><b>(2)</b>
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="5"></i><b>(5)</b>
 
     CBLReplicatorConfiguration config;
     memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
     config.database = database;
-    config.endpoint = target; <i class="conum" data-value="3"></i><b>(3)</b>
+    config.endpoint = target; <i class="conum" data-value="6"></i><b>(6)</b>
 
     // tag::p2p-act-rep-config-cont[]
     // Set replication direction and mode
-    config.replicatorType = kCBLReplicatorTypePull; <i class="conum" data-value="4"></i><b>(4)</b>
+    config.replicatorType = kCBLReplicatorTypePull; <i class="conum" data-value="7"></i><b>(7)</b>
     config.continuous = true;
 
     // end::p2p-act-rep-config-cont[]
 
     // Optionally, set auto-purge behavior (here we override default)
-    config.disableAutoPurge = true; <i class="conum" data-value="5"></i><b>(5)</b>
+    config.disableAutoPurge = true; <i class="conum" data-value="8"></i><b>(8)</b>
 
     // Optionally, configure Client Authentication
     // Here we are using to Basic Authentication,
     // Providing username and password credentials
     CBLAuthenticator* basicAuth =
         CBLAuth_CreatePassword(FLSTR("username"),
-                               FLSTR("passwd")); <i class="conum" data-value="6"></i><b>(6)</b>
+                               FLSTR("passwd")); <i class="conum" data-value="9"></i><b>(9)</b>
     config.authenticator = basicAuth;
 
     // Optionally, configure how we handle conflicts
-    config.conflictResolver = simpleConflictResolver_localWins; <i class="conum" data-value="7"></i><b>(7)</b>
+    config.conflictResolver = simpleConflictResolver_localWins; <i class="conum" data-value="10"></i><b>(10)</b>
 
     // Initialize replicator with created config
     CBLReplicator* replicator =
-        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="8"></i><b>(8)</b>
+        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="11"></i><b>(11)</b>
 
     CBLEndpoint_Free(target);
 
@@ -9428,10 +9431,10 @@ static void docs_act_replication(CBLDatabase* argDb)
     CBLListenerToken* token =
             CBLReplicator_AddChangeListener(replicator,
                                             simpleChangeListener,
-                                            NULL); <i class="conum" data-value="9"></i><b>(9)</b>
+                                            NULL); <i class="conum" data-value="12"></i><b>(12)</b>
 
     // Start replication
-    CBLReplicator_Start(replicator, false); <i class="conum" data-value="10"></i><b>(10)</b>
+    CBLReplicator_Start(replicator, false); <i class="conum" data-value="13"></i><b>(13)</b>
 
     // end::p2p-act-rep-func[]
 
@@ -9482,12 +9485,12 @@ static void docs_act_replication_config_section_snippets()
     CBLError err;
     FLString url = FLSTR("ws://localhost:4984/db");
     CBLEndpoint* target =
-        CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="11"></i><b>(11)</b>
+        CBLEndpoint_CreateWithURL(url, &amp;err); <i class="conum" data-value="14"></i><b>(14)</b>
 
     CBLReplicatorConfiguration config;
     memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
     config.database = db;
-    config.endpoint = target; <i class="conum" data-value="12"></i><b>(12)</b>
+    config.endpoint = target; <i class="conum" data-value="15"></i><b>(15)</b>
 
     // end::sgw-act-rep-initialize[]
 
@@ -9502,15 +9505,15 @@ static void docs_act_replication_config_section_snippets()
     // tag::replication-retry-config[]
     // Configure replication retries
     // tag::replication-set-heartbeat[]
-    config.heartbeat = 120; //  <i class="conum" data-value="13"></i><b>(13)</b>
+    config.heartbeat = 120; //  <i class="conum" data-value="16"></i><b>(16)</b>
 
     // end::replication-set-heartbeat[]
     // tag::replication-set-maxattempts[]
-    config.maxAttempts = 20; //  <i class="conum" data-value="14"></i><b>(14)</b>
+    config.maxAttempts = 20; //  <i class="conum" data-value="17"></i><b>(17)</b>
 
     // end::replication-set-maxattempts[]
     // tag::replication-set-maxattemptwaittime[]
-    config.maxAttemptWaitTime = 600; //  <i class="conum" data-value="15"></i><b>(15)</b>
+    config.maxAttemptWaitTime = 600; //  <i class="conum" data-value="18"></i><b>(18)</b>
 
     // end::replication-set-maxattemptwaittime[]
     // end::replication-retry-config[]
@@ -9521,7 +9524,7 @@ static void docs_act_replication_config_section_snippets()
         CBLAuthenticator* basicAuth =
             CBLAuth_CreatePassword(FLSTR("username"),
                                    FLSTR("passwd"));
-        config.authenticator = basicAuth; <i class="conum" data-value="16"></i><b>(16)</b>
+        config.authenticator = basicAuth; <i class="conum" data-value="19"></i><b>(19)</b>
     }
     // end::basic-authentication[]
 
@@ -9530,7 +9533,7 @@ static void docs_act_replication_config_section_snippets()
         CBLAuthenticator* sessionAuth =
             CBLAuth_CreateSession(FLSTR("904ac010862f37c8dd99015a33ab5a3565fd8447"),
                                   FLSTR("optionalCookieName"));
-        config.authenticator = sessionAuth; <i class="conum" data-value="17"></i><b>(17)</b>
+        config.authenticator = sessionAuth; <i class="conum" data-value="20"></i><b>(20)</b>
     }
 
     // end::session-authentication[]
@@ -9558,12 +9561,12 @@ static void docs_act_replication_config_section_snippets()
 
     //  Auto-purge over-ride
     // tag::autopurge-override[]
-    config.disableAutoPurge = true; <i class="conum" data-value="18"></i><b>(18)</b>
+    config.disableAutoPurge = true; <i class="conum" data-value="21"></i><b>(21)</b>
 
     // end::autopurge-override[]
     // Initialize replicator with created config
     CBLReplicator* replicator =
-        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="19"></i><b>(19)</b>
+        CBLReplicator_Create(&amp;config, &amp;err); <i class="conum" data-value="22"></i><b>(22)</b>
 
     CBLEndpoint_Free(target);
 
@@ -9571,7 +9574,7 @@ static void docs_act_replication_config_section_snippets()
     CBLListenerToken* token_ReplChangeListener =
         CBLReplicator_AddChangeListener(replicator,
                                         simpleChangeListener,
-                                        NULL); <i class="conum" data-value="20"></i><b>(20)</b>
+                                        NULL); <i class="conum" data-value="23"></i><b>(23)</b>
 }
 // END replication.html &gt;&gt; configure section
 
@@ -9587,17 +9590,17 @@ static CBLReplicator* docs_act_replication_Intialize(
     bool docs_example_resetRequired = argResetRequired;
     // tag::p2p-act-rep-start-full[]
     CBLReplicator* thisRepl =
-    CBLReplicator_Create(&amp;argConfig, &amp;err); <i class="conum" data-value="21"></i><b>(21)</b>
+    CBLReplicator_Create(&amp;argConfig, &amp;err); <i class="conum" data-value="24"></i><b>(24)</b>
 
     // end::p2p-act-rep-start-full[]
     if(!docs_example_resetRequired) {
     // tag::p2p-act-rep-start-full[]
-      CBLReplicator_Start(thisRepl, false); <i class="conum" data-value="22"></i><b>(22)</b>
+      CBLReplicator_Start(thisRepl, false); <i class="conum" data-value="25"></i><b>(25)</b>
 
     // end::p2p-act-rep-start-full[]
     } else {
     // tag::replication-reset-checkpoint[]
-      CBLReplicator_Start(thisRepl, true); <i class="conum" data-value="23"></i><b>(23)</b>
+      CBLReplicator_Start(thisRepl, true); <i class="conum" data-value="26"></i><b>(26)</b>
 
     // end::replication-reset-checkpoint[]
     }
@@ -9652,7 +9655,7 @@ static void docs_act_replication_Monitor(
     // end::p2p-act-rep-status[]
     // tag::replication-pendingdocuments[]
     FLDict thisPendingIdList =
-        CBLReplicator_PendingDocumentIDs(thisRepl, &amp;err); <i class="conum" data-value="24"></i><b>(24)</b>
+        CBLReplicator_PendingDocumentIDs(thisRepl, &amp;err); <i class="conum" data-value="27"></i><b>(27)</b>
     if(!FLDict_IsEmpty(thisPendingIdList)) {
         FLDictIterator item;
         FLDictIterator_Begin(thisPendingIdList, &amp;item);
@@ -9663,7 +9666,7 @@ static void docs_act_replication_Monitor(
             if(CBLReplicator_IsDocumentPending(thisRepl,
                                                pendingId,
                                                &amp;err)) {
-                // ... process the still pending docid as required <i class="conum" data-value="25"></i><b>(25)</b>
+                // ... process the still pending docid as required <i class="conum" data-value="28"></i><b>(28)</b>
             } else {
                 // Doc Id no longer pending
                 if(err.code==0) {
@@ -9874,8 +9877,8 @@ static void replicator_property_encryption() {
 
     config.database = db;
     config.endpoint = target;
-    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="26"></i><b>(26)</b>
-    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="27"></i><b>(27)</b>
+    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="29"></i><b>(29)</b>
+    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="30"></i><b>(30)</b>
 
     CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
     CBLEndpoint_Free(target);

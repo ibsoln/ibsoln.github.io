@@ -442,7 +442,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-c">API&#160;References</a>
+    <span class="menu_title menu_text">{url-api-references}[API&#160;References]</span>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -467,11 +467,6 @@
   </span>
 </li>
 </ul>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="refer-glossary.html">Glossary</a>
-  </span>
 </li>
 </ul>
 </li>
@@ -2962,7 +2957,326 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="beta-platform-availability"><a class="anchor" href="#beta-platform-availability"></a>Beta Platform Availability</h2>
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Couchbase Lite for C</em> <strong>beta</strong> is available for all supported platorms&#8201;&#8212;&#8201;see: <a href="#lbl-beta-platforms">Beta Platform Availability</a>.
+You can obtain the downloads here <a href="#tbl-beta-downloads">Table 1</a> .</p>
+</div>
+<div class="paragraph">
+<p>The binary release download comprises a root directory (<code>libcblite-community-3.0.0</code> or <code>libcblite-3.0.0</code>), which contains:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>For Linux, Windows and Mac OS:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>lib</code>&#8201;&#8212;&#8201; the core library binaries</p>
+</li>
+<li>
+<p><code>include</code>&#8201;&#8212;&#8201; the header files for <em>inclusion</em></p>
+</li>
+<li>
+<p><code>bin</code>&#8201;&#8212;&#8201;the Couchbase Lite for C <code>.dll</code> files (Microsoft&#160; Windows-only) .</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>For iOS, an xcframework.</p>
+</li>
+<li>
+<p>For Android, a <em>ready-to-adapt</em>, skeleton application project.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="linux"><a class="anchor" href="#linux"></a>Linux</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="linux-deb-package"><a class="anchor" href="#linux-deb-package"></a>Linux .deb package</h3>
+<div class="paragraph">
+<p>Use your package manager to install from a local <code>.deb</code> file.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Just <code>wget</code> the appropriate <code>.deb</code> package &#8201;&#8212;&#8201;see <a href="#tbl-beta-downloads">Table 1</a>  for a BETA package URL.</p>
+</li>
+<li>
+<p>Install the package and its dependency, using <code>apt install</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>For community version:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo apt install ./libcblite-community-3.0.0
+
+sudo apt install ./libcblite-dev-community-3.0.0</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>For enterprise version:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo apt install ./libcblite-3.0.0
+
+sudo apt install ./libcblite-dev-3.0.0</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>That&#8217;s it.<br>
+You just need to pass the <code>-lcblite</code> command-line flag to the compiler when you build.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>At this point you are ready to start building the <a href="gs-build.html" class="page">Getting Started</a> app.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="linux-manual"><a class="anchor" href="#linux-manual"></a>Linux (manual)</h3>
+<div id="lbl-linux-steps" class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Install dependencies</p>
+<div class="paragraph">
+<p>Users of <code>.zip</code> downloads will need to use their package manager to install the following dependencies: <code>libatomic1</code>, <code>libicu57</code> and <code>zlib1g</code>.</p>
+</div>
+<div class="paragraph">
+<p>For example to install for ARM32 on ARM64, you might do:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo dpkg --add-architecture armhf
+sudo apt install -y libatomic1:armhf libicu57:armhf zlib1g:armhf</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>Download</strong> and <strong>Unpack</strong> the binary release&#8201;&#8212;&#8201;see: <a href="#tbl-beta-downloads">Table 1</a></p>
+</li>
+<li>
+<p>Copy <code>libcblite-community-3.0.0</code> or <code>libcblite-3.0.0</code> to an appropriate location, for example <code>/usr/</code></p>
+</li>
+<li>
+<p>Confirm that <code>LD_LIBRARY_PATH</code> contains the path to either
+<code>libcblite-community-3.0.0/lib/</code> or <code>libcblite-3.0.0/lib/</code></p>
+</li>
+<li>
+<p>Add the appropriate <code>libcblite-community-3.0.0/lib/</code> or <code>libcblite-3.0.0/lib/</code> path to your
+compiler library search path (<code>-L</code>)</p>
+</li>
+<li>
+<p>Add the appropriate <code>libcblite-community-3.0.0/include/</code> or <code>libcblite-3.0.0/include/</code> path to your compiler&#8217;s include path (<code>-I</code>)</p>
+</li>
+<li>
+<p>Link with the binaries library using <code>-lcblite</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>At this point you are ready to start building the <a href="gs-build.html" class="page">Getting Started</a> app.</p>
+</div>
+<div class="paragraph">
+<p>If you are familiar with <em>CMake</em>, then you can use this as a method of creating cross-platform projects; including Couchbase Lite itself.
+As a convenience, the release package includes a <em>CMake</em> file in <code>lib/cmake/CouchbaseLite</code></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="windows"><a class="anchor" href="#windows"></a>Windows</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To install the Couchbase for C libraries on Windows from a downloaded release binary:</p>
+</div>
+<div id="lbl-windows-steps" class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Download and extract the release package&#8201;&#8212;&#8201;see: <a href="#tbl-beta-downloads">Table 1</a></p>
+</li>
+<li>
+<p>From within the root directory, libcblite-community-3.0.0, deploy the <code>lib</code>, <code>include</code> and <code>bin</code> libraries to a location accessible to your compiler.</p>
+</li>
+<li>
+<p>Within  <em>Visual Studio</em>:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><strong>Create</strong> a new C++ project</p>
+<div class="paragraph">
+<p>Be sure to select x64 for 64-bit builds</p>
+</div>
+</li>
+<li>
+<p>Within <strong>Project Properties</strong> &#8594; <strong>C++ directories</strong> &#8594; <strong>Library Directories</strong>, <strong>Add</strong> <code>&lt;path-to-deployed-directories&gt;/lib</code></p>
+</li>
+<li>
+<p>Within <strong>Project Properties</strong> &#8594; <strong>C++ directories</strong> &#8594; <strong>Include Directories</strong>, <strong>Add</strong> <code>&lt;path-to-deployed-directories&gt;/include</code></p>
+</li>
+<li>
+<p>Within <strong>Project Properties</strong> &#8594; <strong>Linker</strong> &#8594; <strong>Input</strong> &#8594; <strong>Additional Dependencies</strong>, <strong>Add</strong> <code>cblite.lib</code></p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><strong>Copy</strong> <code>&lt;path-to-deployed-directories&gt;/bin/cblite.dll</code> to your build location</p>
+<div class="paragraph">
+<p>Couchbase Lite for C does not have any preferred installation path for the <code>.dll</code>.
+It is up to you to determine where best to place it so it is available during execution, though copying to a location on the system path is not recommended on Windows</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="mac-os"><a class="anchor" href="#mac-os"></a>Mac OS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To install the Couchbase for C libraries on Mac OS X from a downloaded release package:</p>
+</div>
+<div id="lbl-mac-steps" class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Download and extract the release package&#8201;&#8212;&#8201;see: <a href="#tbl-beta-downloads">Table 1</a></p>
+</li>
+<li>
+<p>Optionally &#8230;&#8203; From within the root directory, libcblite-community-3.0.0, <strong>Copy</strong> the <code>include</code> and <code>lib</code> directories to <code>/usr/local/</code></p>
+</li>
+<li>
+<p>Within  <em>Xcode</em>:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p><strong>Create</strong> a new project</p>
+</li>
+<li>
+<p><strong>Add</strong> <code>&lt;path/to&gt;/include</code> to the project&#8217;s <em>Header Search Path</em></p>
+</li>
+<li>
+<p><strong>Add</strong> <code>&lt;path/to&gt;/lib</code> to the project&#8217;s <em>Library Search Path</em></p>
+</li>
+<li>
+<p><strong>Drag</strong> <code>libcblite.3.dylib</code> into your Xcode project, within the dialog:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p><strong>Select</strong> <em>Create Directory References If Needed</em></p>
+</li>
+<li>
+<p><strong>Check</strong> the correct target is selected</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>At this point you are ready to start building the <a href="gs-build.html" class="page">Getting Started</a> app.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="ios"><a class="anchor" href="#ios"></a>iOS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>To install the Couchbase for C libraries on iOS from a downloaded release package:</p>
+</div>
+<div id="lbl-mac-steps" class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Download and extract the release package&#8201;&#8212;&#8201;see: <a href="#tbl-beta-downloads">Table 1</a></p>
+</li>
+<li>
+<p><strong>Drag</strong> <code>CouchbaseLite.xcframework</code> into your Xcode project, then within the dialog:</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p><strong>Select</strong> <em>Create Directory References If Needed</em></p>
+</li>
+<li>
+<p><strong>Check</strong> the correct target is selected</p>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>At this point you are ready to start building the <a href="gs-build.html" class="page">Getting Started</a> app.</p>
+</div>
+<div class="paragraph">
+<p>If you encounter a build error&#8201;&#8212;&#8201;Include of non-modular header inside framework module&#8201;&#8212;&#8201;You may need to change the build setting
+<code>allow non-modular includes in framework module</code> to <code>Yes</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="android"><a class="anchor" href="#android"></a>Android</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This install assumes use of the <em>Android Studio</em> IDE.
+In addition to the Couchbase Lite for C download you also require the following tool chain dependencies, all installable from within <em>Android Studio</em> if necessary:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>CMake 3.18.1</p>
+</li>
+<li>
+<p>NDK 21.4.7075529</p>
+</li>
+<li>
+<p>Build tools 30.0.2</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In this instance the release comprises a <em>ready to adapt</em> application project.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Download</strong> and <strong>Unpack</strong> the binary release&#8201;&#8212;&#8201;see: <a href="#tbl-beta-downloads">Table 1</a></p>
+</li>
+<li>
+<p>Within <em>Android Studio</em>, select and open the project folder (within the <code>libcblite-community-3.0.0</code> or <code>libcblite-3.0.0</code> folder)</p>
+</li>
+<li>
+<p><span class="menuseq"><b class="menu">Tools</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">SDK Manager</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">SDK Tools</b></span></p>
+</li>
+<li>
+<p>Check the above dependencies are installed, select any that are not<br>
+<b class="button">OK</b> to Continue</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Once the install is finished, you can build and run this skeleton app.</p>
+</div>
+<div class="paragraph">
+<p>At this point you are ready to start building the <a href="gs-build.html" class="page">Getting Started</a> app.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-beta-platforms"><a class="anchor" href="#lbl-beta-platforms"></a>Beta Platform Availability</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The BETA version of Couchbase Lite for C is available on the platforms shown in the tables below.</p>
@@ -2981,7 +3295,7 @@ BETA releases are available only as compressed binary downloads; additional inst
 </table>
 </div>
 <div class="sect2">
-<h3 id="android"><a class="anchor" href="#android"></a>Android</h3>
+<h3 id="android-2"><a class="anchor" href="#android-2"></a>Android</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -3011,7 +3325,7 @@ BETA releases are available only as compressed binary downloads; additional inst
 </table>
 </div>
 <div class="sect2">
-<h3 id="ios"><a class="anchor" href="#ios"></a>iOS</h3>
+<h3 id="ios-2"><a class="anchor" href="#ios-2"></a>iOS</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -3035,7 +3349,7 @@ BETA releases are available only as compressed binary downloads; additional inst
 </table>
 </div>
 <div class="sect2">
-<h3 id="mac-os"><a class="anchor" href="#mac-os"></a>Mac OS</h3>
+<h3 id="mac-os-2"><a class="anchor" href="#mac-os-2"></a>Mac OS</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 33.3333%;">
@@ -3059,7 +3373,7 @@ BETA releases are available only as compressed binary downloads; additional inst
 </table>
 </div>
 <div class="sect2">
-<h3 id="linux"><a class="anchor" href="#linux"></a>Linux</h3>
+<h3 id="linux-2"><a class="anchor" href="#linux-2"></a>Linux</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 20%;">
@@ -3134,7 +3448,7 @@ BETA releases are available only as compressed binary downloads; additional inst
 </table>
 </div>
 <div class="sect2">
-<h3 id="windows"><a class="anchor" href="#windows"></a>Windows</h3>
+<h3 id="windows-2"><a class="anchor" href="#windows-2"></a>Windows</h3>
 <table class="tableblock frame-all grid-all stretch">
 <colgroup>
 <col style="width: 50%;">
@@ -3153,312 +3467,6 @@ BETA releases are available only as compressed binary downloads; additional inst
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="download"><a class="anchor" href="#download"></a>Download</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><em>Couchbase Lite for C</em> <strong>beta</strong> is available for all <a href="supported-os.html" class="page">Supported Platforms</a>.
-You can obtain the downloads here <a href="gs-downloads.html" class="page">BETA Downloads</a>.</p>
-</div>
-<div class="paragraph">
-<p>The unpacked release comprises a root directory (<code>libcblite-community-3.0.0</code> or <code>libcblite-3.0.0</code>), which contains:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>lib</code>&#8201;&#8212;&#8201; the core library binaries</p>
-</li>
-<li>
-<p><code>include</code>&#8201;&#8212;&#8201; the header files for <em>inclusion</em></p>
-</li>
-<li>
-<p><code>bin</code>&#8201;&#8212;&#8201;the Couchbase Lite for C <code>.dll</code> files (Microsoft&#160; Windows-only) .</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="linux-2"><a class="anchor" href="#linux-2"></a>Linux</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="linux-deb-package"><a class="anchor" href="#linux-deb-package"></a>Linux .deb package</h3>
-<div class="paragraph">
-<p>Use your package manager to install from a local <code>.deb</code> file.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Just <code>wget</code> the appropriate <code>.deb</code> package &#8201;&#8212;&#8201;see <a href="gs-downloads.html" class="page">BETA Downloads</a> for a BETA package URL.</p>
-</li>
-<li>
-<p>Install the package and its dependency, using <code>apt install</code></p>
-<div class="ulist">
-<ul>
-<li>
-<p>For community version:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo apt install ./libcblite-community-3.0.0
-
-sudo apt install ./libcblite-dev-community-3.0.0</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p>For enterprise version:</p>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo apt install ./libcblite-3.0.0
-
-sudo apt install ./libcblite-dev-3.0.0</code></pre>
-</div>
-</div>
-</li>
-</ul>
-</div>
-</li>
-<li>
-<p>That&#8217;s it.<br>
-You just need to pass the <code>-lcblite</code> command-line flag to the compiler when you build.</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>At this point you are ready to start building the <a href="gs-build.html" class="page">Getting Started</a> app.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="linux-manual"><a class="anchor" href="#linux-manual"></a>Linux (manual)</h3>
-<div id="lbl-linux-steps" class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Install dependencies</p>
-<div class="paragraph">
-<p>Users of <code>.zip</code> downloads will need to use their package manager to install the following dependencies: <code>libatomic1</code>, <code>libicu57</code> and <code>zlib1g</code>.</p>
-</div>
-<div class="paragraph">
-<p>For example to install for ARM32 on ARM64, you might do:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">sudo dpkg --add-architecture armhf
-sudo apt install -y libatomic1:armhf libicu57:armhf zlib1g:armhf</code></pre>
-</div>
-</div>
-</li>
-<li>
-<p><strong>Download</strong> and <strong>Unpack</strong> the binary release from <a href="https://www.couchbase.com/downloads#extend-with-mobile" class="bare">https://www.couchbase.com/downloads#extend-with-mobile</a></p>
-</li>
-<li>
-<p>Copy <code>libcblite-community-3.0.0</code> or <code>libcblite-3.0.0</code> to an appropriate location, for example <code>/usr/</code></p>
-</li>
-<li>
-<p>Confirm that <code>LD_LIBRARY_PATH</code> contains the path to either
-<code>libcblite-community-3.0.0/lib/</code> or <code>libcblite-3.0.0/lib/</code></p>
-</li>
-<li>
-<p>Add the appropriate <code>libcblite-community-3.0.0/lib/</code> or <code>libcblite-3.0.0/lib/</code> path to your
-compiler library search path (<code>-L</code>)</p>
-</li>
-<li>
-<p>Add the appropriate <code>libcblite-community-3.0.0/include/</code> or <code>libcblite-3.0.0/include/</code> path to your compiler&#8217;s include path (<code>-I</code>)</p>
-</li>
-<li>
-<p>Link with the binaries library using <code>-lcblite</code></p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>At this point you are ready to start building the <a href="gs-build.html" class="page">Getting Started</a> app.</p>
-</div>
-<div class="paragraph">
-<p>If you are familiar with <em>CMake</em>, then you can use this as a method of creating cross-platform projects; including Couchbase Lite itself.
-As a convenience, the release package includes a <em>CMake</em> file in <code>lib/cmake/CouchbaseLite</code></p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="windows-2"><a class="anchor" href="#windows-2"></a>Windows</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To install the Couchbase for C libraries on Windows from a downloaded release binary:</p>
-</div>
-<div id="lbl-windows-steps" class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Download and extract the release package&#8201;&#8212;&#8201;see: <a href="gs-downloads.html" class="page">BETA Downloads</a></p>
-</li>
-<li>
-<p>From within the root directory, libcblite-community-3.0.0, deploy the <code>lib</code>, <code>include</code> and <code>bin</code> libraries to a location accessible to your compiler.</p>
-</li>
-<li>
-<p>Within  <em>Visual Studio</em>:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p><strong>Create</strong> a new C++ project</p>
-<div class="paragraph">
-<p>Be sure to select x64 for 64-bit builds</p>
-</div>
-</li>
-<li>
-<p>Within <strong>Project Properties</strong> &#8594; <strong>C++ directories</strong> &#8594; <strong>Library Directories</strong>, <strong>Add</strong> <code>&lt;path-to-deployed-directories&gt;/lib</code></p>
-</li>
-<li>
-<p>Within <strong>Project Properties</strong> &#8594; <strong>C++ directories</strong> &#8594; <strong>Include Directories</strong>, <strong>Add</strong> <code>&lt;path-to-deployed-directories&gt;/include</code></p>
-</li>
-<li>
-<p>Within <strong>Project Properties</strong> &#8594; <strong>Linker</strong> &#8594; <strong>Input</strong> &#8594; <strong>Additional Dependencies</strong>, <strong>Add</strong> <code>cblite.lib</code></p>
-</li>
-</ol>
-</div>
-</li>
-<li>
-<p><strong>Copy</strong> <code>&lt;path-to-deployed-directories&gt;/bin/cblite.dll</code> to your build location</p>
-<div class="paragraph">
-<p>Couchbase Lite for C does not have any preferred installation path for the <code>.dll</code>.
-It is up to you to determine where best to place it so it is available during execution, though copying to a location on the system path is not recommended on Windows</p>
-</div>
-</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="mac-os-2"><a class="anchor" href="#mac-os-2"></a>Mac OS</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To install the Couchbase for C libraries on Mac OS X from a downloaded release package:</p>
-</div>
-<div id="lbl-mac-steps" class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Download and extract the release package&#8201;&#8212;&#8201;see: <a href="gs-downloads.html" class="page">BETA Downloads</a></p>
-</li>
-<li>
-<p>Optionally &#8230;&#8203; From within the root directory, libcblite-community-3.0.0, <strong>Copy</strong> the <code>include</code> and <code>lib</code> directories to <code>/usr/local/</code></p>
-</li>
-<li>
-<p>Within  <em>Xcode</em>:</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p><strong>Create</strong> a new project</p>
-</li>
-<li>
-<p><strong>Add</strong> <code>&lt;path/to&gt;/include</code> to the project&#8217;s <em>Header Search Path</em></p>
-</li>
-<li>
-<p><strong>Add</strong> <code>&lt;path/to&gt;/lib</code> to the project&#8217;s <em>Library Search Path</em></p>
-</li>
-<li>
-<p><strong>Drag</strong> <code>libcblite.3.dylib</code> into your Xcode project, within the dialog:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p><strong>Select</strong> <em>Create Directory References If Needed</em></p>
-</li>
-<li>
-<p><strong>Check</strong> the correct target is selected</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>At this point you are ready to start building the <a href="gs-build.html" class="page">Getting Started</a> app.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ios-2"><a class="anchor" href="#ios-2"></a>iOS</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>To install the Couchbase for C libraries on iOS from a downloaded release package:</p>
-</div>
-<div id="lbl-mac-steps" class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Download and extract the release package&#8201;&#8212;&#8201;see: <a href="#lbl-beta-downloads">[lbl-beta-downloads]</a></p>
-</li>
-<li>
-<p><strong>Drag</strong> <code>CouchbaseLite.xcframework</code> into your Xcode project, then within the dialog:</p>
-<div class="olist lowerroman">
-<ol class="lowerroman" type="i">
-<li>
-<p><strong>Select</strong> <em>Create Directory References If Needed</em></p>
-</li>
-<li>
-<p><strong>Check</strong> the correct target is selected</p>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>At this point you are ready to start building the <a href="gs-build.html" class="page">Getting Started</a> app.</p>
-</div>
-<div class="paragraph">
-<p>If you encounter a build error&#8201;&#8212;&#8201;Include of non-modular header inside framework module&#8201;&#8212;&#8201;You may need to change the build setting
-<code>allow non-modular includes in framework module</code> to <code>Yes</code>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="android-2"><a class="anchor" href="#android-2"></a>Android</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This install assumes use of the <em>Android Studio</em> IDE.
-In addition to the Couchbase Lite for C download you also require the following tool chain dependencies, all installable from within <em>Android Studion</em> if necessary:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>CMake 3.18.1</p>
-</li>
-<li>
-<p>NDK 21.4.7075529</p>
-</li>
-<li>
-<p>Build tools 30.0.2</p>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><strong>Download</strong> and <strong>Unpack</strong> the binary release from <a href="https://www.couchbase.com/downloads#extend-with-mobile" class="bare">https://www.couchbase.com/downloads#extend-with-mobile</a></p>
-</li>
-<li>
-<p>Within the libcblite-community-3.0.0, open <code>settings.gradle</code> with <em>Android Studio</em></p>
-</li>
-<li>
-<p>Within Android Studio, select the project</p>
-</li>
-<li>
-<p>With the project selected, <span class="menuseq"><b class="menu">Tools</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">SDK Manager</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">SDK Tools</b></span></p>
-</li>
-<li>
-<p>Check the above dependencies are installed, select any that are not<br>
-<b class="button">OK</b> to Continue</p>
-</li>
-</ol>
-</div>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p>Once the install is finished, you can build and run this skeleton app.</p>
-</div>
-<div class="paragraph">
-<p>At this point you are ready to start building the <a href="gs-build.html" class="page">Getting Started</a> app.</p>
 </div>
 </div>
 </div>
