@@ -3166,7 +3166,7 @@ Its directory structure differs CBL&#8217;s encryptable dictionary when serializ
 </div>
 <div class="paragraph">
 <p>After encryption the FLSliceResult is released and the returned value zeroed.
-See <a href="#ex-get-att">Simple Encryption-Decryption Callback</a> for an example encryptor callback function.</p>
+See <a href="#ex-get-att">Example 4</a> for an example encryptor callback function.</p>
 </div>
 <div class="paragraph">
 <p>If you return a null slice the replicator will fail and log a crypto error message.</p>
@@ -3177,7 +3177,7 @@ See <a href="#ex-get-att">Simple Encryption-Decryption Callback</a> for an examp
 <div class="paragraph">
 <p>Provide a decryption callback function <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/group__replication.html#ga24a60a3d6f9816e1d32464cc31a15c0c">CBLPropertyDecryptor</a> to decrypt any encryptable properties.
 After decryption the FLSliceResult is released and the returned value zeroed.
-See <a href="#ex-get-att">Simple Encryption-Decryption Callback</a> for an example decryptor callback function.</p>
+See <a href="#ex-get-att">Example 4</a> for an example decryptor callback function.</p>
 </div>
 <div class="paragraph">
 <p>If you return a null slice without an error the replicator skips and saves the property as received.</p>
@@ -3185,10 +3185,12 @@ See <a href="#ex-get-att">Simple Encryption-Decryption Callback</a> for an examp
 <div class="paragraph">
 <p>If you return a null slice with an error the replicator logs the error and does not replicate the document.</p>
 </div>
-<div id="ex-get-att" class="listingblock">
-<div class="title">Simple Encryption-Decryption Callback</div>
+<div id="ex-get-att" class="exampleblock">
+<div class="title">Example 4. Simple Encryption-Decryption Callback</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C hljs" data-lang="C" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c#L1857-L1877">// Purpose: Declare property-level encryptor callback functions
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C hljs" data-lang="C" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c#L1859-L1879">// Purpose: Declare property-level encryptor callback functions
 static FLSliceResult my_cipher_function(FLSlice input) {
     FLSliceResult result = FLSliceResult_New(input.size);
     for(int i = 0; i &lt; input.size; ++i) {
@@ -3213,11 +3215,13 @@ static FLSliceResult property_decryptor(void* context, FLString documentID, FLDi
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="callback-configuration"><a class="anchor" href="#callback-configuration"></a>Callback Configuration</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>You register the callback function for use by declaring them in the replicator configuration using <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/struct_c_b_l_replicator_configuration.html#ab731bf9f140158d6967c1af645d8744a">propertyEncryptor()</a> and-or <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/struct_c_b_l_replicator_configuration.html#ab6a0d9e0830755d284039018a09c27d6">propertyDecryptor()</a>&#8201;&#8212;&#8201;see: <a href="#ex-callback-config">Example 4</a></p>
+<p>You register the callback function for use by declaring them in the replicator configuration using <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/struct_c_b_l_replicator_configuration.html#ab731bf9f140158d6967c1af645d8744a">propertyEncryptor()</a> and-or <a href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-c/struct_c_b_l_replicator_configuration.html#ab6a0d9e0830755d284039018a09c27d6">propertyDecryptor()</a>&#8201;&#8212;&#8201;see: <a href="#ex-callback-config">Example 5</a></p>
 </div>
 <div class="paragraph">
 <p>If you do not provide an encryption callback:</p>
@@ -3233,43 +3237,11 @@ static FLSliceResult property_decryptor(void* context, FLString documentID, FLDi
 </ul>
 </div>
 <div id="ex-callback-config" class="exampleblock">
-<div class="title">Example 4. Simple Callback Replicator Configuration</div>
+<div class="title">Example 5. Simple Callback Replicator Configuration</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/c/examples/code_snippets/main.c">// Purpose: Declare property-level encryptor callback functions
-static FLSliceResult my_cipher_function(FLSlice input) {
-    FLSliceResult result = FLSliceResult_New(input.size);
-    for(int i = 0; i &lt; input.size; ++i) {
-        uint8_t*)(result.buf[i] = uint8_t*)input.buf)[i] ^ 'K';}     return result; }   static FLSliceResult property_encryptor(void* context, FLString docID, FLDict props, FLString path,                                         FLSlice input, FLStringResult* algorithm, FLStringResult* keyID, CBLError* error) {     <strong>algorithm = FLSlice_Copy(FLSTR("MyEnc";
-    return my_cipher_function(input);
-}
-
-
-static FLSliceResult property_decryptor(void</strong> context, FLString documentID, FLDict properties, FLString keyPath,
-                                        FLSlice input, FLString algorithm, FLString keyID, CBLError* error) {
-    return my_cipher_function(input);
-}
-
-    // Purpose: Show how to declare en(de)cryptors in replicator config
-    // NOTE: No error handling, for brevity (see getting started)
-
-    CBLError err;
-    FLString url = FLSTR("ws://localhost:4984/db");
-    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err);
-
-    CBLReplicatorConfiguration config;
-    memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
-
-    config.database = db;
-    config.endpoint = target;
-    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="1"></i><b>(1)</b>
-    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="2"></i><b>(2)</b>
-
-    CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
-    CBLEndpoint_Free(target);
-
-    CBLReplicator_Start(replicator, false);</code></pre>
+<pre class="highlightjs highlight"><code class="language-C hljs" data-lang="C">incude::{snippet}[tag=replicator_property_encryption]</code></pre>
 </div>
 </div>
 </div>
@@ -3280,7 +3252,7 @@ static FLSliceResult property_decryptor(void</strong> context, FLString document
 <h2 id="querying-encryptables"><a class="anchor" href="#querying-encryptables"></a>Querying Encryptables</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Encrypted values can be queried&#8201;&#8212;&#8201;see <a href="#ex-query">Example 5</a>.
+<p>Encrypted values can be queried&#8201;&#8212;&#8201;see <a href="#ex-query">Example 6</a>.
 The query result of an encryptable value is <code>CBLEncryptable</code></p>
 </div>
 <div class="paragraph">
@@ -3288,7 +3260,7 @@ The query result of an encryptable value is <code>CBLEncryptable</code></p>
 If this value is encrypted the query will return <em>MISSING</em>.</p>
 </div>
 <div id="ex-query" class="exampleblock">
-<div class="title">Example 5. A Simple Encryptabe Query</div>
+<div class="title">Example 6. A Simple Encryptabe Query</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
