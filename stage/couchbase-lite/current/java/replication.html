@@ -152,7 +152,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../android/api-changes.html">API Changes</a>
+    <a class="menu_title menu_link" href="../android/api-changes.html">API Changes (3.0 BETA)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -495,7 +495,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../csharp/api-changes.html">API Changes</a>
+    <a class="menu_title menu_link" href="../csharp/api-changes.html">API Changes (3.0 BETA)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -696,7 +696,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="api-changes.html">API Changes</a>
+    <a class="menu_title menu_link" href="api-changes.html">API Changes (3.0 BETA)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -897,7 +897,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../objc/api-changes.html">API Changes</a>
+    <a class="menu_title menu_link" href="../objc/api-changes.html">API Changes (3.0 BETA)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -1103,7 +1103,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../swift/api-changes.html">API Changes</a>
+    <a class="menu_title menu_link" href="../swift/api-changes.html">API Changes (3.0 BETA)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -3650,6 +3650,11 @@ In this case, the replication from Sync Gateway will only pull documents tagged 
 <p>By default, when a user loses access to a channel all documents in the channel (that do not also belong to any of user’s other channels) are auto-purged from the local database (in devices belonging to the user).<br>
 <em>In release 2.x these documents will remain in the local database.</em></p>
 </div>
+<div class="paragraph">
+<p>In 2.x, CBL does and auto-purge only in the case when the user loses access to a document by removing the doc from all of the channels belong to the user.
+In 3.0, in addition to 2.x auto purge, Couchbase Lite will also auto-purge the docs when the user loses access to the doc via channel access revocation.
+This feature is enabled by default, but an opt-out is available.</p>
+</div>
 </td>
 </tr>
 </table>
@@ -3668,7 +3673,7 @@ In this case, the replication from Sync Gateway will only pull documents tagged 
 <p>User is removed from a role</p>
 </li>
 <li>
-<p>A role that user belongs to is revoked access to channel</p>
+<p>A channel is removed from a role the user is assigned to</p>
 </li>
 </ul>
 </div>
@@ -3679,8 +3684,7 @@ In this case, the replication from Sync Gateway will only pull documents tagged 
 <p>Documents that exist in multiple channels belonging to the user (even if they are not actively replicating that channel) are not auto-purged unless the user loses access to all channels.</p>
 </div>
 <div class="paragraph">
-<p>Users will be receive an <code>AccessRemoved</code> notification from the DocumentListener if they lose document access due to channel access revocation; this is sent regardless of the current auto-purge setting.
-Clients wanting to control whether to sync previous auto purged versions of documents (rather than pull down purged documents) must also move the documents out of all of the users' channels so they are not synced down again.</p>
+<p>Users will be receive an <code>AccessRemoved</code> notification from the DocumentListener if they lose document access due to channel access revocation; this is sent regardless of the current auto-purge setting.</p>
 </div>
 <table id="tbl-revoke-behavior" class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 2. Behavior following access revocation</caption>
@@ -3741,7 +3745,7 @@ Sync Function includes <code>requireAccess(revokedChannel)</code></p>
 </tbody>
 </table>
 <div class="paragraph">
-<p>If a user subsequently regains access to a lost channel, then any previously auto-purged documents still assigned to any of their channels are automatically pulled down by the active Sync Gateway&#8201;&#8212;&#8201;see behavior summary in <a href="#tbl-regain-behavior">Table 3</a></p>
+<p>If a user subsequently regains access to a lost channel, then any previously auto-purged documents still assigned to any of their channels are automatically pulled down by the active Sync Gateway when they are next updated&#8201;&#8212;&#8201;see behavior summary in <a href="#tbl-regain-behavior">Table 3</a></p>
 </div>
 <table id="tbl-regain-behavior" class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 3. Behavior if access is regained</caption>
@@ -3768,7 +3772,7 @@ Sync Function includes <code>requireAccess(revokedChannel)</code></p>
 <p>User REASSIGNED access to channel</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Previously purged documents that are still in the channel are automatically pulled by couchbase lite</p>
+<p>Previously purged documents that are still in the channel are automatically pulled by Couchbase Lite when they are next updated</p>
 </div></div></td>
 </tr>
 <tr>
