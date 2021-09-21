@@ -156,16 +156,6 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../android/api-changes.html">API Changes (3.0 BETA)</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../android/kotlin.html">Kotlin</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
     <a class="menu_title menu_link" href="../android/database.html">Databases</a>
   </span>
 </li>
@@ -272,12 +262,12 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-android">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0/couchbase-lite-android">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-kt-android">Kotlin Specific API</a>
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0/couchbase-lite-kt-android">Kotlin Specific API</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -491,7 +481,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../csharp/api-changes.html">API Changes (3.0 BETA)</a>
+    <a class="menu_title menu_link" href="#csharp:api-changes.adoc">API Changes (3.0 BETA)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -684,7 +674,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../java/api-changes.html">API Changes (3.0 BETA)</a>
+    <a class="menu_title menu_link" href="#java:api-changes.adoc">API Changes (3.0 BETA)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -877,7 +867,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../objc/api-changes.html">API Changes (3.0 BETA)</a>
+    <a class="menu_title menu_link" href="#objc:api-changes.adoc">API Changes (3.0 BETA)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -1083,7 +1073,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../swift/api-changes.html">API Changes (3.0 BETA)</a>
+    <a class="menu_title menu_link" href="#swift:api-changes.adoc">API Changes (3.0 BETA)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -3518,6 +3508,7 @@ static void stop_replicator(CBLReplicator* replicator) {
 
 // tag::p2p-act-rep-func[]
 // tag::p2p-act-rep-add-change-listener[]
+// tag::replication-error-handling[]
 // Purpose -- illustrate a simple change listener
 static void simpleChangeListener(void* context,
                                  CBLReplicator* repl,
@@ -3528,11 +3519,11 @@ static void simpleChangeListener(void* context,
                 status-&gt;error.domain,
                 status-&gt;error.code);
      }
- }
-
+}
+// end::replication-error-handling[]
 // end::p2p-act-rep-add-change-listener[]
-// tag::local-win-conflict-resolver[]
-// Purpose -- illustrate a simple conflict resolver function
+// end::p2p-act-rep-func[]
+
 static const CBLDocument* simpleConflictResolver_localWins(
                                 void* context, FLString documentID,
                                 const CBLDocument* localDocument,
@@ -3540,9 +3531,6 @@ static const CBLDocument* simpleConflictResolver_localWins(
 {
     return localDocument;
 }
-
-// end::local-win-conflict-resolver[]
-// end::p2p-act-rep-func[]
 
 // tag::replication-push-filter[]
 // tag::replication-pull-filter[]
@@ -3722,12 +3710,54 @@ static void getting_started() {
 
 
 // tag::local-win-conflict-resolver[]
-static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
-    const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
+static const CBLDocument* local_win_conflict_resolver(void* context,
+                                                      FLString documentID,
+                                                      const CBLDocument* localDocument,
+                                                      const CBLDocument* remoteDocument)
+{
     return localDocument;
 }
-
 // end::local-win-conflict-resolver[]
+
+// tag::remote-win-conflict-resolver[]
+static const CBLDocument* remote_win_conflict_resolver(void* context,
+                                                       FLString documentID,
+                                                       const CBLDocument* localDocument,
+                                                       const CBLDocument* remoteDocument)
+{
+    return remoteDocument;
+}
+// end::remote-win-conflict-resolver[]
+
+// tag::merge-conflict-resolver[]
+static const CBLDocument* merge_conflict_resolver(void* context,
+                                                  FLString documentID,
+                                                  const CBLDocument* localDocument,
+                                                  const CBLDocument* remoteDocument)
+{
+    FLDict localProps = CBLDocument_Properties(localDocument);
+    FLDict remoteProps = CBLDocument_Properties(remoteDocument);
+    FLMutableDict mergeProps = FLDict_MutableCopy(localProps, kFLDefaultCopy);
+
+    FLDictIterator d;
+    FLDictIterator_Begin(localProps, &amp;d);
+    FLValue value;
+    while((value = FLDictIterator_GetValue(&amp;d))) {
+        FLString key = FLDictIterator_GetKeyString(&amp;d);
+        if(FLDict_Get(mergeProps, key)) {
+            continue;
+        }
+
+        FLMutableDict_SetValue(mergeProps, key, value);
+        FLDictIterator_Next(&amp;d);
+    }
+
+    CBLDocument* mergeDocument = CBLDocument_CreateWithID(documentID);
+    CBLDocument_SetProperties(mergeDocument, mergeProps);
+
+    return mergeDocument;
+}
+// end::merge-conflict-resolver[]
 
 static void test_replicator_conflict_resolve() {
     CBLDatabase* database = kDatabase;
@@ -5058,6 +5088,13 @@ static void docs_act_replication_config_section_snippets()
 
     config.headers = customHdrs;
 
+    // tag::certificate-pinning[]
+    char cert_buf[10000];
+    FILE* cert_file = fopen("cert.pem", "r");
+    size_t read = fread(cert_buf, 1, sizeof(cert_buf), cert_file);
+    config.pinnedServerCertificate = (FLSlice){cert_buf, read};
+    // end::certificate-pinning[]
+
     // end::replication-custom-header[]
     // FILTERS
     // tag::replication-push-filter[]
@@ -5217,6 +5254,24 @@ static void docs_act_replication_Stop(
     // end::p2p-act-rep-stop[]
 }
 // END replication.html &gt;&gt; Stop section
+
+static void replication_error_handling() {
+    CBLDatabase* db = kDatabase;
+    CBLError err;
+    FLString url = FLSTR("ws://localhost:4984/db");
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err);
+    CBLReplicatorConfiguration config;
+    memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
+    config.database = db;
+    config.endpoint = target;
+
+    CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
+    CBLEndpoint_Free(target);
+
+
+
+    stop_replicator(replicator);
+}
 
 static void create_encryptable() {
     #ifdef COUCHBASE_ENTERPRISE
@@ -5486,6 +5541,7 @@ static void stop_replicator(CBLReplicator* replicator) {
 
 // tag::p2p-act-rep-func[]
 // tag::p2p-act-rep-add-change-listener[]
+// tag::replication-error-handling[]
 // Purpose -- illustrate a simple change listener
 static void simpleChangeListener(void* context,
                                  CBLReplicator* repl,
@@ -5496,11 +5552,11 @@ static void simpleChangeListener(void* context,
                 status-&gt;error.domain,
                 status-&gt;error.code);
      }
- }
-
+}
+// end::replication-error-handling[]
 // end::p2p-act-rep-add-change-listener[]
-// tag::local-win-conflict-resolver[]
-// Purpose -- illustrate a simple conflict resolver function
+// end::p2p-act-rep-func[]
+
 static const CBLDocument* simpleConflictResolver_localWins(
                                 void* context, FLString documentID,
                                 const CBLDocument* localDocument,
@@ -5508,9 +5564,6 @@ static const CBLDocument* simpleConflictResolver_localWins(
 {
     return localDocument;
 }
-
-// end::local-win-conflict-resolver[]
-// end::p2p-act-rep-func[]
 
 // tag::replication-push-filter[]
 // tag::replication-pull-filter[]
@@ -5690,12 +5743,54 @@ static void getting_started() {
 
 
 // tag::local-win-conflict-resolver[]
-static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
-    const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
+static const CBLDocument* local_win_conflict_resolver(void* context,
+                                                      FLString documentID,
+                                                      const CBLDocument* localDocument,
+                                                      const CBLDocument* remoteDocument)
+{
     return localDocument;
 }
-
 // end::local-win-conflict-resolver[]
+
+// tag::remote-win-conflict-resolver[]
+static const CBLDocument* remote_win_conflict_resolver(void* context,
+                                                       FLString documentID,
+                                                       const CBLDocument* localDocument,
+                                                       const CBLDocument* remoteDocument)
+{
+    return remoteDocument;
+}
+// end::remote-win-conflict-resolver[]
+
+// tag::merge-conflict-resolver[]
+static const CBLDocument* merge_conflict_resolver(void* context,
+                                                  FLString documentID,
+                                                  const CBLDocument* localDocument,
+                                                  const CBLDocument* remoteDocument)
+{
+    FLDict localProps = CBLDocument_Properties(localDocument);
+    FLDict remoteProps = CBLDocument_Properties(remoteDocument);
+    FLMutableDict mergeProps = FLDict_MutableCopy(localProps, kFLDefaultCopy);
+
+    FLDictIterator d;
+    FLDictIterator_Begin(localProps, &amp;d);
+    FLValue value;
+    while((value = FLDictIterator_GetValue(&amp;d))) {
+        FLString key = FLDictIterator_GetKeyString(&amp;d);
+        if(FLDict_Get(mergeProps, key)) {
+            continue;
+        }
+
+        FLMutableDict_SetValue(mergeProps, key, value);
+        FLDictIterator_Next(&amp;d);
+    }
+
+    CBLDocument* mergeDocument = CBLDocument_CreateWithID(documentID);
+    CBLDocument_SetProperties(mergeDocument, mergeProps);
+
+    return mergeDocument;
+}
+// end::merge-conflict-resolver[]
 
 static void test_replicator_conflict_resolve() {
     CBLDatabase* database = kDatabase;
@@ -7026,6 +7121,13 @@ static void docs_act_replication_config_section_snippets()
 
     config.headers = customHdrs;
 
+    // tag::certificate-pinning[]
+    char cert_buf[10000];
+    FILE* cert_file = fopen("cert.pem", "r");
+    size_t read = fread(cert_buf, 1, sizeof(cert_buf), cert_file);
+    config.pinnedServerCertificate = (FLSlice){cert_buf, read};
+    // end::certificate-pinning[]
+
     // end::replication-custom-header[]
     // FILTERS
     // tag::replication-push-filter[]
@@ -7185,6 +7287,24 @@ static void docs_act_replication_Stop(
     // end::p2p-act-rep-stop[]
 }
 // END replication.html &gt;&gt; Stop section
+
+static void replication_error_handling() {
+    CBLDatabase* db = kDatabase;
+    CBLError err;
+    FLString url = FLSTR("ws://localhost:4984/db");
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err);
+    CBLReplicatorConfiguration config;
+    memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
+    config.database = db;
+    config.endpoint = target;
+
+    CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
+    CBLEndpoint_Free(target);
+
+
+
+    stop_replicator(replicator);
+}
 
 static void create_encryptable() {
     #ifdef COUCHBASE_ENTERPRISE
@@ -7454,6 +7574,7 @@ static void stop_replicator(CBLReplicator* replicator) {
 
 // tag::p2p-act-rep-func[]
 // tag::p2p-act-rep-add-change-listener[]
+// tag::replication-error-handling[]
 // Purpose -- illustrate a simple change listener
 static void simpleChangeListener(void* context,
                                  CBLReplicator* repl,
@@ -7464,11 +7585,11 @@ static void simpleChangeListener(void* context,
                 status-&gt;error.domain,
                 status-&gt;error.code);
      }
- }
-
+}
+// end::replication-error-handling[]
 // end::p2p-act-rep-add-change-listener[]
-// tag::local-win-conflict-resolver[]
-// Purpose -- illustrate a simple conflict resolver function
+// end::p2p-act-rep-func[]
+
 static const CBLDocument* simpleConflictResolver_localWins(
                                 void* context, FLString documentID,
                                 const CBLDocument* localDocument,
@@ -7476,9 +7597,6 @@ static const CBLDocument* simpleConflictResolver_localWins(
 {
     return localDocument;
 }
-
-// end::local-win-conflict-resolver[]
-// end::p2p-act-rep-func[]
 
 // tag::replication-push-filter[]
 // tag::replication-pull-filter[]
@@ -7658,12 +7776,54 @@ static void getting_started() {
 
 
 // tag::local-win-conflict-resolver[]
-static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
-    const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
+static const CBLDocument* local_win_conflict_resolver(void* context,
+                                                      FLString documentID,
+                                                      const CBLDocument* localDocument,
+                                                      const CBLDocument* remoteDocument)
+{
     return localDocument;
 }
-
 // end::local-win-conflict-resolver[]
+
+// tag::remote-win-conflict-resolver[]
+static const CBLDocument* remote_win_conflict_resolver(void* context,
+                                                       FLString documentID,
+                                                       const CBLDocument* localDocument,
+                                                       const CBLDocument* remoteDocument)
+{
+    return remoteDocument;
+}
+// end::remote-win-conflict-resolver[]
+
+// tag::merge-conflict-resolver[]
+static const CBLDocument* merge_conflict_resolver(void* context,
+                                                  FLString documentID,
+                                                  const CBLDocument* localDocument,
+                                                  const CBLDocument* remoteDocument)
+{
+    FLDict localProps = CBLDocument_Properties(localDocument);
+    FLDict remoteProps = CBLDocument_Properties(remoteDocument);
+    FLMutableDict mergeProps = FLDict_MutableCopy(localProps, kFLDefaultCopy);
+
+    FLDictIterator d;
+    FLDictIterator_Begin(localProps, &amp;d);
+    FLValue value;
+    while((value = FLDictIterator_GetValue(&amp;d))) {
+        FLString key = FLDictIterator_GetKeyString(&amp;d);
+        if(FLDict_Get(mergeProps, key)) {
+            continue;
+        }
+
+        FLMutableDict_SetValue(mergeProps, key, value);
+        FLDictIterator_Next(&amp;d);
+    }
+
+    CBLDocument* mergeDocument = CBLDocument_CreateWithID(documentID);
+    CBLDocument_SetProperties(mergeDocument, mergeProps);
+
+    return mergeDocument;
+}
+// end::merge-conflict-resolver[]
 
 static void test_replicator_conflict_resolve() {
     CBLDatabase* database = kDatabase;
@@ -8994,6 +9154,13 @@ static void docs_act_replication_config_section_snippets()
 
     config.headers = customHdrs;
 
+    // tag::certificate-pinning[]
+    char cert_buf[10000];
+    FILE* cert_file = fopen("cert.pem", "r");
+    size_t read = fread(cert_buf, 1, sizeof(cert_buf), cert_file);
+    config.pinnedServerCertificate = (FLSlice){cert_buf, read};
+    // end::certificate-pinning[]
+
     // end::replication-custom-header[]
     // FILTERS
     // tag::replication-push-filter[]
@@ -9153,6 +9320,24 @@ static void docs_act_replication_Stop(
     // end::p2p-act-rep-stop[]
 }
 // END replication.html &gt;&gt; Stop section
+
+static void replication_error_handling() {
+    CBLDatabase* db = kDatabase;
+    CBLError err;
+    FLString url = FLSTR("ws://localhost:4984/db");
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err);
+    CBLReplicatorConfiguration config;
+    memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
+    config.database = db;
+    config.endpoint = target;
+
+    CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
+    CBLEndpoint_Free(target);
+
+
+
+    stop_replicator(replicator);
+}
 
 static void create_encryptable() {
     #ifdef COUCHBASE_ENTERPRISE
@@ -9422,6 +9607,7 @@ static void stop_replicator(CBLReplicator* replicator) {
 
 // tag::p2p-act-rep-func[]
 // tag::p2p-act-rep-add-change-listener[]
+// tag::replication-error-handling[]
 // Purpose -- illustrate a simple change listener
 static void simpleChangeListener(void* context,
                                  CBLReplicator* repl,
@@ -9432,11 +9618,11 @@ static void simpleChangeListener(void* context,
                 status-&gt;error.domain,
                 status-&gt;error.code);
      }
- }
-
+}
+// end::replication-error-handling[]
 // end::p2p-act-rep-add-change-listener[]
-// tag::local-win-conflict-resolver[]
-// Purpose -- illustrate a simple conflict resolver function
+// end::p2p-act-rep-func[]
+
 static const CBLDocument* simpleConflictResolver_localWins(
                                 void* context, FLString documentID,
                                 const CBLDocument* localDocument,
@@ -9444,9 +9630,6 @@ static const CBLDocument* simpleConflictResolver_localWins(
 {
     return localDocument;
 }
-
-// end::local-win-conflict-resolver[]
-// end::p2p-act-rep-func[]
 
 // tag::replication-push-filter[]
 // tag::replication-pull-filter[]
@@ -9626,12 +9809,54 @@ static void getting_started() {
 
 
 // tag::local-win-conflict-resolver[]
-static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
-    const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
+static const CBLDocument* local_win_conflict_resolver(void* context,
+                                                      FLString documentID,
+                                                      const CBLDocument* localDocument,
+                                                      const CBLDocument* remoteDocument)
+{
     return localDocument;
 }
-
 // end::local-win-conflict-resolver[]
+
+// tag::remote-win-conflict-resolver[]
+static const CBLDocument* remote_win_conflict_resolver(void* context,
+                                                       FLString documentID,
+                                                       const CBLDocument* localDocument,
+                                                       const CBLDocument* remoteDocument)
+{
+    return remoteDocument;
+}
+// end::remote-win-conflict-resolver[]
+
+// tag::merge-conflict-resolver[]
+static const CBLDocument* merge_conflict_resolver(void* context,
+                                                  FLString documentID,
+                                                  const CBLDocument* localDocument,
+                                                  const CBLDocument* remoteDocument)
+{
+    FLDict localProps = CBLDocument_Properties(localDocument);
+    FLDict remoteProps = CBLDocument_Properties(remoteDocument);
+    FLMutableDict mergeProps = FLDict_MutableCopy(localProps, kFLDefaultCopy);
+
+    FLDictIterator d;
+    FLDictIterator_Begin(localProps, &amp;d);
+    FLValue value;
+    while((value = FLDictIterator_GetValue(&amp;d))) {
+        FLString key = FLDictIterator_GetKeyString(&amp;d);
+        if(FLDict_Get(mergeProps, key)) {
+            continue;
+        }
+
+        FLMutableDict_SetValue(mergeProps, key, value);
+        FLDictIterator_Next(&amp;d);
+    }
+
+    CBLDocument* mergeDocument = CBLDocument_CreateWithID(documentID);
+    CBLDocument_SetProperties(mergeDocument, mergeProps);
+
+    return mergeDocument;
+}
+// end::merge-conflict-resolver[]
 
 static void test_replicator_conflict_resolve() {
     CBLDatabase* database = kDatabase;
@@ -10962,6 +11187,13 @@ static void docs_act_replication_config_section_snippets()
 
     config.headers = customHdrs;
 
+    // tag::certificate-pinning[]
+    char cert_buf[10000];
+    FILE* cert_file = fopen("cert.pem", "r");
+    size_t read = fread(cert_buf, 1, sizeof(cert_buf), cert_file);
+    config.pinnedServerCertificate = (FLSlice){cert_buf, read};
+    // end::certificate-pinning[]
+
     // end::replication-custom-header[]
     // FILTERS
     // tag::replication-push-filter[]
@@ -11121,6 +11353,24 @@ static void docs_act_replication_Stop(
     // end::p2p-act-rep-stop[]
 }
 // END replication.html &gt;&gt; Stop section
+
+static void replication_error_handling() {
+    CBLDatabase* db = kDatabase;
+    CBLError err;
+    FLString url = FLSTR("ws://localhost:4984/db");
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err);
+    CBLReplicatorConfiguration config;
+    memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
+    config.database = db;
+    config.endpoint = target;
+
+    CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
+    CBLEndpoint_Free(target);
+
+
+
+    stop_replicator(replicator);
+}
 
 static void create_encryptable() {
     #ifdef COUCHBASE_ENTERPRISE
