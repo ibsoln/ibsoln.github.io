@@ -201,7 +201,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#android:query-n1ql-diffs.adoc">N1QL Server Differences</a>
+    <a class="menu_title menu_link" href="../android/query-n1ql-diffs.html">N1QL Server Differences</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -254,7 +254,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#android:p2p-websocket.using-active.adoc">Active Peer</a>
+    <a class="menu_title menu_link" href="#android:p2p-websocket-using-active.adoc">Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -271,12 +271,12 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-kt-android">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0/couchbase-lite-android">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0/couchbase-lite-android">Kotlin Specific API</a>
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0/couchbase-lite-kt-android">Kotlin Specific API</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -584,7 +584,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#csharp:p2p-websocket.using-active.adoc">Active Peer</a>
+    <a class="menu_title menu_link" href="#csharp:p2p-websocket-using-active.adoc">Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -777,7 +777,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#java:p2p-websocket.using-active.adoc">Active Peer</a>
+    <a class="menu_title menu_link" href="#java:p2p-websocket-using-active.adoc">Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -976,7 +976,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#objc:p2p-websocket.using-active.adoc">Active Peer</a>
+    <a class="menu_title menu_link" href="#objc:p2p-websocket-using-active.adoc">Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1182,7 +1182,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#swift:p2p-websocket.using-active.adoc">Active Peer</a>
+    <a class="menu_title menu_link" href="#swift:p2p-websocket-using-active.adoc">Active Peer</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -2154,17 +2154,11 @@ While this is true of any user defined functions, app developers must be strongl
 <div class="tab-pane" aria-labelledby="tabset1_local-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Purpose -- illustrate a simple conflict resolver function
-static const CBLDocument* simpleConflictResolver_localWins(
-                                void* context, FLString documentID,
-                                const CBLDocument* localDocument,
-                                const CBLDocument* remoteDocument)
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static const CBLDocument* local_win_conflict_resolver(void* context,
+                                                      FLString documentID,
+                                                      const CBLDocument* localDocument,
+                                                      const CBLDocument* remoteDocument)
 {
-    return localDocument;
-}
-
-static const CBLDocument* local_win_conflict_resolver(void* context, FLString documentID,
-    const CBLDocument* localDocument, const CBLDocument* remoteDocument) {
     return localDocument;
 }</code></pre>
 </div>
@@ -2173,14 +2167,46 @@ static const CBLDocument* local_win_conflict_resolver(void* context, FLString do
 <div class="tab-pane" aria-labelledby="tabset1_remote-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c"></code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static const CBLDocument* remote_win_conflict_resolver(void* context,
+                                                       FLString documentID,
+                                                       const CBLDocument* localDocument,
+                                                       const CBLDocument* remoteDocument)
+{
+    return remoteDocument;
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_merge">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c"></code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">static const CBLDocument* merge_conflict_resolver(void* context,
+                                                  FLString documentID,
+                                                  const CBLDocument* localDocument,
+                                                  const CBLDocument* remoteDocument)
+{
+    FLDict localProps = CBLDocument_Properties(localDocument);
+    FLDict remoteProps = CBLDocument_Properties(remoteDocument);
+    FLMutableDict mergeProps = FLDict_MutableCopy(localProps, kFLDefaultCopy);
+    
+    FLDictIterator d;
+    FLDictIterator_Begin(localProps, &amp;d);
+    FLValue value;
+    while((value = FLDictIterator_GetValue(&amp;d))) {
+        FLString key = FLDictIterator_GetKeyString(&amp;d);
+        if(FLDict_Get(mergeProps, key)) {
+            continue;
+        }
+
+        FLMutableDict_SetValue(mergeProps, key, value);
+        FLDictIterator_Next(&amp;d);
+    }
+    
+    CBLDocument* mergeDocument = CBLDocument_CreateWithID(documentID);
+    CBLDocument_SetProperties(mergeDocument, mergeProps);
+    
+    return mergeDocument;
+}</code></pre>
 </div>
 </div>
 </div>
