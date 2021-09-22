@@ -4371,7 +4371,7 @@ Eventing nodes can be added as more Functions are added, or if the mutation rate
 <p><strong>Yes</strong> only for versions 6.6.2+</p>
 </div>
 <div class="paragraph">
-<p>For versions 6.6.2 and later, the value or the document must can be either text or binary. Starting with version 6.6.2, Eventing processes binary documents. Eventing handler can read a binary value from a bucket alias or via an Advanced Accessor. The documents are based on a key-value format where the value can be arbitrary text or binary data. However, in practice the value is typically a well formatted JSON text payload.  Note, Eventing handlers via the curl() function can also handle binary data to and from an external REST endpoint. Furthermore, every mutation OnUpdate(doc,meta) will now have a property "datatype" set to either "binary" or "json", however this information is not avaliable via OnDelete(meta,options) or Basic Bucket Ops.</p>
+<p>For versions 6.6.2 and later, the value or the document must can be either text or binary. Starting with version 6.6.2, Eventing processes binary documents. Eventing handler can read a binary value from a bucket alias or via an Advanced Accessor. The documents are based on a key-value format where the value can be arbitrary text or binary data. However, in practice the value is typically a well formatted JSON text payload.  Note, Eventing handlers via the curl() function can also handle binary data to and from an external REST endpoint. Furthermore, every mutation OnUpdate(doc,meta) will now have a property "datatype" set to either "binary" or "json", however this information is not available via OnDelete(meta,options) or Basic Bucket Ops.</p>
 </div>
 <div class="paragraph">
 <p><strong>No</strong> for versions 6.6.1 and earlier.</p>
@@ -4400,7 +4400,7 @@ This means that the event handlers see only those deduplicated events that are p
 <p>Can a Function listen to all changes across Couchbase Server?</p>
 <div class="paragraph">
 <p>A defined Function listens only to changes that are exposed using the DCP for the source collection (Couchbase and Ephemeral) in the data-nodes.
-Memcached buckets (and thus undelying collections) are not supported.
+Memcached buckets (and thus underlying collections) are not supported.
 The Function cannot listen to changes happening in other Couchbase components, such as FTS, Views, or GSI; nor can it listen to system events.</p>
 </div>
 </li>
@@ -4414,7 +4414,7 @@ If versioning is important, include it as part of the data architecture.</p>
 <li>
 <p>Can I get old and new values of the document inside the Function?</p>
 <div class="paragraph">
-<p>No. We do not support versioning of documents; therefore, this feature is not available out of the box. However, you can have a parent bucket and its replica version. The replica bucket would retain the version of documents before the current set of changes.   Look at the Eventing examples and scriplets for various work arounds.</p>
+<p>No. We do not support versioning of documents; therefore, this feature is not available out of the box. However, you can have a parent bucket and its replica version. The replica bucket would retain the version of documents before the current set of changes.   Look at the Eventing examples and scriptlets for various work arounds.</p>
 </div>
 </li>
 <li>
@@ -4559,7 +4559,7 @@ Note that if you edit handlers (code or settings) in two browser windows or tabs
 This parameter is composed of the meta fields associated with the document. For more information, refer to the <a href="https://docs.couchbase.com/server/6.5/learn/data/data.html#metadata">metadata</a> section.</p>
 </div>
 <div class="paragraph">
-<p>It should be noted, “document metadata” is different from the "Evenitng Storage" keyspace (metadata collection), described in the next section, used by the Eventing Service to maintain state and checkpoints.</p>
+<p>It should be noted, “document metadata” is different from the "Eventing Storage" keyspace (metadata collection), described in the next section, used by the Eventing Service to maintain state and checkpoints.</p>
 </div>
 </li>
 <li>
@@ -4650,10 +4650,10 @@ Note the <em>cancelTimer()</em> function was introduced in version 6.6.0.</p>
 </div>
 </li>
 <li>
-<p>When I undeploy all handlers the metadata collection is not fully cleared (this ia a regression in 6.6.1 only).</p>
+<p>When I undeploy all handlers the metadata collection is not fully cleared (this is a regression in 6.6.1 only).</p>
 <div class="paragraph">
 <p>This issue, <a href="https://issues.couchbase.com/browse/MB-43272">MB-43272</a>, will happen when a Function is paused and then undeployed from the paused state (without resuming it again).
-There are two solutions oo avoid this issue</p>
+There are two solutions to avoid this issue</p>
 </div>
 <div class="ulist">
 <ul>
@@ -4661,7 +4661,7 @@ There are two solutions oo avoid this issue</p>
 <p>In version 6.6.1 never undeploy from the paused state.</p>
 </li>
 <li>
-<p>After this issue occures in version 6.6.1 (deploying from the pased state) you can clean things up via an Export, Delete and Import of the impacted Function after this issue occures.</p>
+<p>After this issue occurs in version 6.6.1 (deploying from the passed state) you can clean things up via an Export, Delete and Import of the impacted Function after this issue occurs.</p>
 <div class="paragraph">
 <p>Note the Export, Delete and Import actions won&#8217;t actually delete the orphaned documents in metadata collection but this sequence will create a new functionUUID for the Eventing function and this function will only concern with the document (timer doc and checkpoint docs) created by the new functionUUID.
 If this is an issue in your specific deployment please ask for a patch release.</p>
@@ -4711,7 +4711,7 @@ As of the release 6.6.0, recurring Timers can be created days, weeks, or years i
 </div>
 </li>
 <li>
-<p>Why do I see a burst of activity in bucket OPs (in the bucket tha holds the metadata collection) after a timer is paused for an extended period of time?</p>
+<p>Why do I see a burst of activity in bucket OPs (in the bucket that holds the metadata collection) after a timer is paused for an extended period of time?</p>
 <div class="paragraph">
 <p>Resuming a timer handler after a prolonged period of time where the Function was in the paused state (like days) will cause a period of high bucket OPs upon resuming the Function.  In addition mutation processing is blocked until the timer scan is completed which can take some time (this delay is proportional to the duration of pause).</p>
 </div>
