@@ -3496,7 +3496,11 @@ See the <a href="indexing.html" class="page">Indexing</a> topic to learn more ab
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">database.createIndex(
+    "TypeNameIndex",
+    IndexBuilder.valueIndex(
+        ValueIndexItem.property("type"),
+        ValueIndexItem.property("name")));</code></pre>
 </div>
 </div>
 </div>
@@ -3553,7 +3557,10 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")));</code></pre>
 </div>
 </div>
 </div>
@@ -3623,7 +3630,7 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java]</code></pre>
 </div>
 </div>
 </div>
@@ -3720,7 +3727,16 @@ In the example below, we use the <code>equalTo</code> operator to query document
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")))
+    .limit(Expression.intValue(10));
+for (Result result : query.execute()) {
+    Dictionary all = result.getDictionary(DATABASE_NAME);
+    Log.i("Sample", String.format("name -&gt; %s", all.getString("name")));
+    Log.i("Sample", String.format("type -&gt; %s", all.getString("type")));
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3747,7 +3763,20 @@ In the example below, we use the <code>equalTo</code> operator to query document
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_block.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("name"),
+        SelectResult.property("public_likes"))
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("hotel"))
+        .and(ArrayFunction
+            .contains(Expression.property("public_likes"), Expression.string("Armani Langworth"))));
+for (Result result : query.execute()) {
+    Log.i(
+        "Sample",
+        String.format("public_likes -&gt; %s", result.getArray("public_likes").toList()));
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3759,7 +3788,15 @@ The following example looks for documents whose <code>first</code>, <code>last</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_block.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Expression[] values = new Expression[] {
+    Expression.property("first"),
+    Expression.property("last"),
+    Expression.property("username")
+};
+
+Query query = QueryBuilder.select(SelectResult.all())
+    .from(DataSource.database(database))
+    .where(Expression.string("Armani").in(values));</code></pre>
 </div>
 </div>
 </div>
@@ -3802,7 +3839,17 @@ To perform case insensitive matching, use <code>Function.lower</code> or <code>F
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name"))
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("landmark"))
+        .and(Function.lower(Expression.property("name")).like(Function.Expression.string("royal engineers museum")))));
+for (Result result : query.execute()) {
+    Log.i("Sample", String.format("name -&gt; %s", result.getString("name")));
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3830,7 +3877,16 @@ Notice that the matches may span word boundaries.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name"))
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("landmark"))
+    .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%"))));
+for (Result result : query.execute()) {
+    Log.i("Sample", String.format("name -&gt; %s", result.getString("name"))); }</code></pre>
 </div>
 </div>
 </div>
@@ -3850,7 +3906,16 @@ The query returns "landmark" type documents with names such as "Engineer", "engi
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name"))
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("landmark"))
+    .and(Function.lower(Expression.property("name")).like(Expression.string("eng____r"))));
+for (Result result : query.execute()) {
+    Log.i("Sample", String.format("name -&gt; %s", result.getString("name"))); }</code></pre>
 </div>
 </div>
 </div>
@@ -3882,7 +3947,16 @@ The <code>regex</code> operator is case sensitive, use <code>upper</code> or <co
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name"))
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("landmark"))
+    .and(Function.lower(Expression.property("name")).regex(Expression.string("\\beng.*r\\b"))));            ResultSet rs = query.execute();
+for (Result result : query.execute()) {
+    Log.i("Sample", String.format("name -&gt; %s", result.getString("name"))); }</code></pre>
 </div>
 </div>
 </div>
@@ -3922,7 +3996,11 @@ For more on the regex spec used by Couchbase&#160;Lite see <a href="http://www.c
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">// Query documents that have been deleted
+Where query = QueryBuilder
+    .select(SelectResult.expression(Meta.id))
+    .from(DataSource.database(database))
+    .where(Meta.deleted);</code></pre>
 </div>
 </div>
 </div>
@@ -3945,7 +4023,21 @@ For example to combine airline details with route details, linked by the airline
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query query = QueryBuilder.select(
+    SelectResult.expression(Expression.property("name").from("airline")),
+    SelectResult.expression(Expression.property("callsign").from("airline")),
+    SelectResult.expression(Expression.property("destinationairport").from("route")),
+    SelectResult.expression(Expression.property("stops").from("route")),
+    SelectResult.expression(Expression.property("airline").from("route")))
+    .from(DataSource.database(database).as("airline"))
+    .join(Join.join(DataSource.database(database).as("route"))
+        .on(Meta.id.from("airline").equalTo(Expression.property("airlineid").from("route"))))
+    .where(Expression.property("type").from("route").equalTo(Expression.string("route"))
+        .and(Expression.property("type").from("airline").equalTo(Expression.string("airline")))
+        .and(Expression.property("sourceairport").from("route").equalTo(Expression.string("RIX"))));
+for (Result result : query.execute()) {
+         Log.w("Sample", String.format("%s", result.toMap().toString()));
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3981,7 +4073,26 @@ For example to combine airline details with route details, linked by the airline
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query query = QueryBuilder.select(
+    SelectResult.expression(Function.count(Expression.string("<strong>"))),
+    SelectResult.property("country"),
+    SelectResult.property("tz"))
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("airport"))
+        .and(Expression.property("geo.alt").greaterThanOrEqualTo(Expression.intValue(300))))
+    .groupBy(
+        Expression.property("country"),
+        Expression.property("tz"))
+    .orderBy(Ordering.expression(Function.count(Expression.string("</strong>"))).descending());
+for (Result result : query.execute()) {
+    Log.i(
+        "Sample",
+        String.format(
+            "There are %d airports on the %s timezone located in %s and above 300ft",
+            result.getInt("$1"),
+            result.getString("tz"),
+            result.getString("country")));
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4016,7 +4127,17 @@ There are 123 airports on the America/Denver timezone located in United States a
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query query = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("name"))
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")))
+    .orderBy(Ordering.property("name").ascending())
+    .limit(Expression.intValue(10));
+For (Result result : query.execute()) {
+    Log.i("Sample", String.format("%s", result.toMap()));
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4147,7 +4268,14 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">  try {
+    this_Db = new Database("hotels");
+  } catch (CouchbaseLiteException e) {
+    e.printStackTrace();
+  }
+
+Query listQuery = QueryBuilder.select(SelectResult.all())
+        .from(DataSource.database(this_Db));</code></pre>
 </div>
 </div>
 </div>
@@ -4217,7 +4345,29 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">try {
+    for (Result result : listQuery.execute().allResults()) {
+                     // get the k-v pairs from the 'hotel' key's value into a dictionary
+        thisDocsProps = result.getDictionary(0)); <i class="conum" data-value="1"></i><b>(1)</b>
+        thisDocsId = thisDocsProps.getString("id");
+        thisDocsName = thisDocsProps.getString("Name");
+        thisDocsType = thisDocsProps.getString("Type");
+        thisDocsCity = thisDocsProps.getString("City");
+
+        // Alternatively, access results value dictionary directly
+        final Hotel hotel = new Hotel();
+        hotel.Id = result.getDictionary(0).getString("id"); <i class="conum" data-value="2"></i><b>(2)</b>
+        hotel.Type = result.getDictionary(0).getString("Type");
+        hotel.Name = result.getDictionary(0).getString("Name");
+        hotel.City = result.getDictionary(0).getString("City");
+        hotel.Country= result.getDictionary(0).getString("Country");
+        hotel.Description = result.getDictionary(0).getString("Description");
+        hotels.put(hotel.Id, hotel);
+
+    }
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4249,7 +4399,19 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">try {
+  this_Db = new Database("hotels");
+} catch (CouchbaseLiteException e) {
+  e.printStackTrace();
+}
+
+Query listQuery =
+        QueryBuilder.select(SelectResult.expression(Meta.id),
+                SelectResult.property("name"),
+                SelectResult.property("Name"),
+                SelectResult.property("Type"),
+                SelectResult.property("City"))
+                .from(DataSource.database(this_Db));</code></pre>
 </div>
 </div>
 </div>
@@ -4307,7 +4469,35 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">
+try {
+    for (Result result : listQuery.execute().allResults()) {
+
+        // get data direct from result k-v pairs
+        final Hotel hotel = new Hotel();
+        hotel.Id = result.getString("id");
+        hotel.Type = result.getString("Type");
+        hotel.Name = result.getString("Name");
+        hotel.City = result.getString("City");
+
+        // Store created hotel object in a hashmap of hotels
+        hotels.put(hotel.Id, hotel);
+
+        // Get result k-v pairs into a 'dictionary' object
+        Map &lt;String, Object&gt; thisDocsProps = result.toMap();
+        thisDocsId =
+                thisDocsProps.getOrDefault("id",null).toString();
+        thisDocsName =
+                thisDocsProps.getOrDefault("Name",null).toString();
+        thisDocsType =
+                thisDocsProps.getOrDefault("Type",null).toString();
+        thisDocsCity =
+                thisDocsProps.getOrDefault("City",null).toString();
+
+    }
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4326,7 +4516,15 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">try {
+  this_Db = new Database("hotels");
+} catch (CouchbaseLiteException e) {
+  e.printStackTrace();
+}
+
+Query listQuery =
+        QueryBuilder.select(SelectResult.expression(Meta.id).as("metaID"))
+                .from(DataSource.database(this_Db));</code></pre>
 </div>
 </div>
 </div>
@@ -4366,7 +4564,23 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">
+try {
+    for (Result result : listQuery.execute().allResults()) {
+
+        // get the ID form the result's k-v pair array
+        thisDocsId = result.getString("metaID"); <i class="conum" data-value="1"></i><b>(1)</b>
+
+        // Get document from DB using retrieved ID
+        Document thisDoc = this_Db.getDocument(thisDocsId);
+
+        // Process document as required
+        thisDocsName = thisDoc.getString("Name");
+
+    }
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4390,7 +4604,9 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Query listQuery = QueryBuilder.select(
+        SelectResult.expression(Function.count(Expression.string("*"))).as("mycount")) <i class="conum" data-value="1"></i><b>(1)</b>
+        .from(DataSource.database(this_Db));</code></pre>
 </div>
 </div>
 </div>
@@ -4441,7 +4657,21 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">try {
+    for (Result result : listQuery.execute()) {
+
+        // Retrieve count using key 'mycount'
+        Integer altDocId = result.getInt("mycount");
+
+        // Alternatively, use the index
+        Integer orDocId = result.getInt(0);
+    }
+    // Or even miss out the for-loop altogether
+    Integer resultCount = listQuery.execute().next().getInt("mycount");
+
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4467,7 +4697,21 @@ Use the <code>limit</code> and <code>offset</code> feature, to return a defined 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">try {
+  this_Db = new Database("hotels");
+} catch (CouchbaseLiteException e) {
+  e.printStackTrace();
+}
+
+int thisOffset = 0;
+int thisLimit = 20;
+
+Query listQuery =
+QueryBuilder
+.select(SelectResult.all())
+.from(DataSource.database(this_Db))
+.limit(Expression.intValue(thisLimit),
+Expression.intValue(thisOffset)); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -4509,7 +4753,32 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">// Uses Jackson JSON processor
+
+ArrayList&lt;Hotel&gt; hotels = new ArrayList&lt;Hotel&gt;();
+HashMap&lt;String, Object&gt; dictFromJSONstring;
+for (Result result : listQuery.execute()) {
+
+  // Get result as JSON string
+  String thisJsonString = result.toJSON(); <i class="conum" data-value="1"></i><b>(1)</b>
+
+        // Get Java  Hashmap from JSON string
+  HashMap&lt;String, Object&gt; dictFromJSONstring =
+          mapper.readValue(thisJsonString, HashMap.class); <i class="conum" data-value="2"></i><b>(2)</b>
+
+
+  // Use created hashmap
+  String hotelId = dictFromJSONstring.get("id").toString();
+  String hotelType = dictFromJSONstring.get("type").toString();
+  String hotelname = dictFromJSONstring.get("name").toString();
+
+
+  // Get custom object from Native 'dictionary' object
+  Hotel thisHotel =
+          mapper.readValue(thisJsonString, Hotel.class); <i class="conum" data-value="3"></i><b>(3)</b>
+  hotels.add(thisHotel);
+
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4619,7 +4888,25 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">// <code>tensorFlowModel</code> is a fake implementation
+// this would be the implementation of the ml model you have chosen
+class ImageClassifierModel implements PredictiveModel {
+    @Override
+    public Dictionary predict(@NonNull Dictionary input) {
+        Blob blob = input.getBlob("photo");
+        if (blob == null) { return null; }
+
+        // <code>tensorFlowModel</code> is a fake implementation
+        // this would be the implementation of the ml model you have chosen
+        return new MutableDictionary(TensorFlowModel.predictImage(blob.getContent())); <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+}
+
+class TensorFlowModel {
+    public static Map&lt;String, Object&gt; predictImage(byte[] data) {
+        return null;
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -4648,7 +4935,7 @@ Therefore, the supported data type will be constrained by the data type that the
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());</code></pre>
 </div>
 </div>
 </div>
@@ -4687,7 +4974,8 @@ When documents are added or updated, the index will call the prediction function
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
+database.createIndex("value-index-image-classifier", index);</code></pre>
 </div>
 </div>
 </div>
@@ -4707,7 +4995,12 @@ It differs from the value index in that it caches the predictive results and cre
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Map&lt;String, Object&gt; inputMap = new HashMap&lt;&gt;();
+inputMap.put("numbers", Expression.property("photo"));
+Expression input = Expression.map(inputMap);
+
+PredictiveIndex index = IndexBuilder.predictiveIndex("ImageClassifier", input, null);
+database.createIndex("predictive-index-image-classifier", index);</code></pre>
 </div>
 </div>
 </div>
@@ -4724,7 +5017,20 @@ It differs from the value index in that it caches the predictive results and cre
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Map&lt;String, Object&gt; inputProperties = new HashMap&lt;&gt;();
+inputProperties.put("photo", Expression.property("photo"));
+Expression input = Expression.map(inputProperties);
+PredictionFunction prediction = PredictiveModel.predict("ImageClassifier", input); <i class="conum" data-value="1"></i><b>(1)</b>
+
+Query query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.database(database))
+    .where(Expression.property("label").equalTo(Expression.string("car"))
+        .and(Expression.property("probability").greaterThanOrEqualTo(Expression.doubleValue(0.8))));
+
+// Run the query.
+ResultSet result = query.execute();
+Log.d(TAG, "Number of rows: " + result.allResults().size());</code></pre>
 </div>
 </div>
 </div>
@@ -4760,7 +5066,7 @@ The null value returned by the prediction method will be interpreted as MISSING 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">Database.prediction.unregisterModel("ImageClassifier");</code></pre>
 </div>
 </div>
 </div>

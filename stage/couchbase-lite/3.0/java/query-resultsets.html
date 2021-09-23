@@ -3532,7 +3532,29 @@ The properties are presented in the value as an array of key-value pairs (proper
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">try {
+    for (Result result : listQuery.execute().allResults()) {
+                     // get the k-v pairs from the 'hotel' key's value into a dictionary
+        thisDocsProps = result.getDictionary(0)); <i class="conum" data-value="1"></i><b>(1)</b>
+        thisDocsId = thisDocsProps.getString("id");
+        thisDocsName = thisDocsProps.getString("Name");
+        thisDocsType = thisDocsProps.getString("Type");
+        thisDocsCity = thisDocsProps.getString("City");
+
+        // Alternatively, access results value dictionary directly
+        final Hotel hotel = new Hotel();
+        hotel.Id = result.getDictionary(0).getString("id"); <i class="conum" data-value="2"></i><b>(2)</b>
+        hotel.Type = result.getDictionary(0).getString("Type");
+        hotel.Name = result.getDictionary(0).getString("Name");
+        hotel.City = result.getDictionary(0).getString("City");
+        hotel.Country= result.getDictionary(0).getString("Country");
+        hotel.Description = result.getDictionary(0).getString("Description");
+        hotels.put(hotel.Id, hotel);
+
+    }
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3569,7 +3591,23 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">
+try {
+    for (Result result : listQuery.execute().allResults()) {
+
+        // get the ID form the result's k-v pair array
+        thisDocsId = result.getString("metaID"); <i class="conum" data-value="1"></i><b>(1)</b>
+
+        // Get document from DB using retrieved ID
+        Document thisDoc = this_Db.getDocument(thisDocsId);
+
+        // Process document as required
+        thisDocsName = thisDoc.getString("Name");
+
+    }
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3598,7 +3636,35 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">
+try {
+    for (Result result : listQuery.execute().allResults()) {
+
+        // get data direct from result k-v pairs
+        final Hotel hotel = new Hotel();
+        hotel.Id = result.getString("id");
+        hotel.Type = result.getString("Type");
+        hotel.Name = result.getString("Name");
+        hotel.City = result.getString("City");
+
+        // Store created hotel object in a hashmap of hotels
+        hotels.put(hotel.Id, hotel);
+
+        // Get result k-v pairs into a 'dictionary' object
+        Map &lt;String, Object&gt; thisDocsProps = result.toMap();
+        thisDocsId =
+                thisDocsProps.getOrDefault("id",null).toString();
+        thisDocsName =
+                thisDocsProps.getOrDefault("Name",null).toString();
+        thisDocsType =
+                thisDocsProps.getOrDefault("Type",null).toString();
+        thisDocsCity =
+                thisDocsProps.getOrDefault("City",null).toString();
+
+    }
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3617,7 +3683,32 @@ You can add this dictionary to an array of returned matches, for processing else
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$code_snippets/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/snippets/src/main/java/Examples.java">// Uses Jackson JSON processor
+
+ArrayList&lt;Hotel&gt; hotels = new ArrayList&lt;Hotel&gt;();
+HashMap&lt;String, Object&gt; dictFromJSONstring;
+for (Result result : listQuery.execute()) {
+
+  // Get result as JSON string
+  String thisJsonString = result.toJSON(); <i class="conum" data-value="1"></i><b>(1)</b>
+
+        // Get Java  Hashmap from JSON string
+  HashMap&lt;String, Object&gt; dictFromJSONstring =
+          mapper.readValue(thisJsonString, HashMap.class); <i class="conum" data-value="2"></i><b>(2)</b>
+
+
+  // Use created hashmap
+  String hotelId = dictFromJSONstring.get("id").toString();
+  String hotelType = dictFromJSONstring.get("type").toString();
+  String hotelname = dictFromJSONstring.get("name").toString();
+
+
+  // Get custom object from Native 'dictionary' object
+  Hotel thisHotel =
+          mapper.readValue(thisJsonString, Hotel.class); <i class="conum" data-value="3"></i><b>(3)</b>
+  hotels.add(thisHotel);
+
+}</code></pre>
 </div>
 </div>
 </div>
