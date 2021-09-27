@@ -1919,20 +1919,116 @@
 </div>
 </blockquote>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">3.0 BETA Downloads</div>
 <div class="paragraph">
-<p>To install <em>Couchbase Lite for .NET 3.0.0-beta01</em>, create or open an existing Visual Studio project and use one of the following methods.</p>
+<p>You can install Community and-or Enterprise editions of the 3.0.0 BETA as <em>nuget</em> packages or get direct download binaries here <a href="#tbl-beta-downloads">Table 1</a>.</p>
+</div>
+<div class="paragraph">
+<p>To access these beta packages, you will need to select the <code>prerelease</code> option in the <em>Manage Nuget Packages</em> dialog</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="quick-steps"><a class="anchor" href="#quick-steps"></a>Quick Steps</h2>
+<div class="sectionbody">
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>To install <em>Couchbase Lite for .NET 3.0.0-beta01</em>,</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
+<p>Create or open an existing Visual Studio project</p>
+</li>
+<li>
 <p>Install either of the following packages from Nuget.</p>
-<div class="paragraph">
-<div class="title">Couchbase Lite Community Edition</div>
-<p>Install the <code>Couchbase.Lite</code> package for 3.0.0-beta01</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Community Edition&#8201;&#8212;&#8201;<code>Couchbase.Lite</code> package for 3.0.0-beta01</p>
+</li>
+<li>
+<p>Enterprise Edition&#8201;&#8212;&#8201;<code>Couchbase.Lite.Enterprise</code> package for 3.0.0-beta01</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Within your app, include a call the relevant <code>Activate()</code> function inside of the class that is included in the support assembly.</p>
+</li>
+</ol>
+</div>
+</div>
 </div>
 <div class="paragraph">
-<div class="title">Couchbase Lite Enterprise Edition</div>
-<p>Install the <code>Couchbase.Lite.Enterprise</code> package for 3.0.0-beta01</p>
+<p>That&#8217;s it!<br>
+You should be ready to build you app using this version.
+The rest of this content contains more detail, for those who want tp know more about the install or who encountered issues</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="install-methods"><a class="anchor" href="#install-methods"></a>Install Methods</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Nuget packages can be installed via <em>PackageReference</em> or <em>packages.config</em>.</p>
+</div>
+<div class="sect2">
+<h3 id="package-reference"><a class="anchor" href="#package-reference"></a>Package Reference</h3>
+<div class="paragraph">
+<p>This is the recommended method of dependency management because it supports the strict version requirement between the core <em>Couchbase Lite for .Net</em> package and its dependent Support library, which comprises:</p>
+</div>
+<div class="ulist">
+<div class="title"><code>Couchbase.Lite.Enterprise</code></div>
+<ul>
+<li>
+<p><code>Couchbase.Lite.Enterprise.Support.UWP</code></p>
+</li>
+<li>
+<p><code>Couchbase.Lite.Enterprise.Support.ios</code></p>
+</li>
+<li>
+<p><code>Couchbase.Lite.Enterprise.Support.android</code></p>
+</li>
+<li>
+<p><code>Couchbase.Lite.Enterprise.Support.NetDesktop</code></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><code>Couchbase.Lite</code></div>
+<ul>
+<li>
+<p><code>Couchbase.Lite.Support.UWP</code></p>
+</li>
+<li>
+<p><code>Couchbase.Lite.Support.ios</code></p>
+</li>
+<li>
+<p><code>Couchbase.Lite.Support.android</code></p>
+</li>
+<li>
+<p><code>Couchbase.Lite.Support.NetDesktop</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="package-config"><a class="anchor" href="#package-config"></a>Package Config</h3>
+<div class="paragraph">
+<p>If you are using <code>packages.config</code>, you must take extra care when upgrading the package to make sure that the support libraries you require are also updated to the exact same version.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1941,29 +2037,144 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Nuget packages can be installed via <code>PackageReference</code> or <code>packages.config</code>.
-It is recommended to use the <code>PackageReference</code> style of dependency management because there is a strict version requirement between Couchbase Lite and its dependent Support library (<code>Couchbase.Lite.Support.&lt;Platform&gt;</code> and <code>Couchbase.Lite.Enterprise.Support.&lt;Platform&gt;</code> for Community and Enterprise respectively).
-If you are using <code>packages.config</code>, you must take extra care when upgrading the package to make sure that the support library is also updated to the exact same version.
-Versions that are not the same are incompatible with each other.
+Versions that are not the same are incompatible with each other&#8201;&#8212;&#8201;see:
+<a href="https://www.couchbase.com/products/editions">Comparative Table</a>
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p><a href="https://www.couchbase.com/products/editions">Comparative Table</a></p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="activating"><a class="anchor" href="#activating"></a>Activating</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Within your app, include a call the relevant <code>Activate()</code> function inside of the class that is included in the support assembly.</p>
+</div>
+<div class="paragraph">
+<p>There is only one public class in each support assembly, and the support assembly itself is a nuget dependency.</p>
+</div>
+<div class="paragraph">
+<p>For example, UWP looks like:<br>
+<code>Couchbase.Lite.Support.UWP.Activate()</code></p>
+</div>
+<div class="paragraph">
+<p>Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (So, C# will log to logcat with correct log levels and tags. No more "mono-stdout" always at info level.)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-downloaded-packages"><a class="anchor" href="#using-downloaded-packages"></a>Using Downloaded Packages</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You will need to add the location of your unpacked download package as a local nuget feed.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Within Visual Studio</dt>
+<dd>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><span class="menuseq"><b class="menu">Settings</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Options</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="submenu">Nuget Package Manager</b>&#160;<i class="fa fa-angle-right caret"></i> <b class="menuitem">Package Sources</b></span></p>
 </li>
 <li>
-<p>Your app must call the relevant <code>Activate()</code> function inside of the class that is included in the support assembly.
-There is only one public class in each support assembly, and the support assembly itself is a nuget dependency.</p>
-<div class="paragraph">
-<p>For example, UWP looks like <code>Couchbase.Lite.Support.UWP.Activate()</code>.
-Currently the support assemblies provide dependency injected mechanisms for default directory logic, and platform specific logging (i.e., csharp will log to logcat with correct log levels and tags.
-No more "mono-stdout" always at info level.)</p>
-</div>
+<p><b class="button">Add</b> and add the path/to/your/unpacked/download</p>
+</li>
+<li>
+<p><b class="button">OK</b> to continue</p>
+</li>
+<li>
+<p>Within Nuget Package Manger, select the <strong>New Source</strong> from <em>Package Sources</em> drop down list</p>
+</li>
+<li>
+<p>Select <strong>Use Prereleases</strong> to access Couchbase Lite Beta packages</p>
 </li>
 </ol>
 </div>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>You should now be able to add the nuget package as normal.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="downloads-for-c-net-3-0-0-beta01"><a class="anchor" href="#downloads-for-c-net-3-0-0-beta01"></a>Downloads for C#.Net 3.0.0-beta01</h2>
+<div class="sectionbody">
+<table id="tbl-beta-downloads" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Downloads List</caption>
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 10%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Edition</th>
+<th class="tableblock halign-left valign-top">Platform</th>
+<th class="tableblock halign-left valign-top">Download</th>
+<th class="tableblock halign-left valign-top">SHA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="5"><p class="tableblock">Enterprise</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">.Net</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Enterprise.3.0.0-beta01.nupkg">Couchbase.Lite.Enterprise.3.0.0-beta01.nupkg</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Enterprise.3.0.0-beta01.nupkg.sha256">Couchbase.Lite.Enterprise.3.0.0-beta01.nupkg.sha256</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Desktop</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Enterprise.Support.NetDesktop.3.0.0-beta01.nupkg">Couchbase.Lite.Enterprise.Support.NetDesktop.3.0.0-beta01.nupkg</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Enterprise.Support.NetDesktop.3.0.0-beta01.nupkg.sha256">Couchbase.Lite.Enterprise.Support.NetDesktop.3.0.0-beta01.nupkg.sha256</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Android</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Enterprise.Support.Android.3.0.0-beta01.nupkg">Couchbase.Lite.Enterprise.Support.Android.3.0.0-beta01.nupkg</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Enterprise.Support.Android.3.0.0-beta01.nupkg.sha256">Couchbase.Lite.Enterprise.Support.Android.3.0.0-beta01.nupkg.sha256</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">iOS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Enterprise.Support.iOS.3.0.0-beta01.nupkg">Couchbase.Lite.Enterprise.Support.iOS.3.0.0-beta01.nupkg</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Enterprise.Support.iOS.3.0.0-beta01.nupkg.sha256">Couchbase.Lite.Enterprise.Support.iOS.3.0.0-beta01.nupkg.sha256</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UWP</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Enterprise.Support.UWP.3.0.0-beta01.nupkg">Couchbase.Lite.Enterprise.Support.UWP.3.0.0-beta01.nupkg</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Enterprise.Support.UWP.3.0.0-beta01.nupkg.sha256">Couchbase.Lite.Enterprise.Support.UWP.3.0.0-beta01.nupkg.sha256</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="5"><p class="tableblock">Community</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">.Net</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.3.0.0-beta01.nupkg">Couchbase.Lite.3.0.0-beta01.nupkg</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.3.0.0-beta01.nupkg.sha256">Couchbase.Lite.3.0.0-beta01.nupkg.sha256</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Desktop</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Support.NetDesktop.3.0.0-beta01.nupkg">Couchbase.Lite.Support.NetDesktop.3.0.0-beta01.nupkg</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Support.NetDesktop.3.0.0-beta01.nupkg.sha256">Couchbase.Lite.Support.NetDesktop.3.0.0-beta01.nupkg.sha256</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Android</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Support.Android.3.0.0-beta01.nupkg">Couchbase.Lite.Support.Android.3.0.0-beta01.nupkg</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Support.Android.3.0.0-beta01.nupkg.sha256">Couchbase.Lite.Support.Android.3.0.0-beta01.nupkg.sha256</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">iOS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Support.iOS.3.0.0-beta01.nupkg">Couchbase.Lite.Support.iOS.3.0.0-beta01.nupkg</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Support.iOS.3.0.0-beta01.nupkg.sha256">Couchbase.Lite.Support.iOS.3.0.0-beta01.nupkg.sha256</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">UWP</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Support.UWP.3.0.0-beta01.nupkg">Couchbase.Lite.Support.UWP.3.0.0-beta01.nupkg</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://packages.couchbase.com/releases/couchbase-lite-c/3.0.0-beta01/Couchbase.Lite.Support.UWP.3.0.0-beta01.nupkg.sha256">Couchbase.Lite.Support.UWP.3.0.0-beta01.nupkg.sha256</a></p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
