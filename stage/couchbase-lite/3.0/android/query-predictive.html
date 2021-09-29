@@ -223,36 +223,44 @@
     <a class="menu_title menu_link" href="indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="dbreplica.html">Intra-device Sync</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="replication.html">Remote Sync Gateway</a>
-  </span>
-</li>
 <li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="#android:p2p-websocket.adoc">Peer-to-Peer</a>
+    <span class="menu_title menu_text">Data Sync</span>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#android:p2p-websocket-using-passive.adoc">Passive Peer</a>
+    <a class="menu_title menu_link" href="dbreplica.html">Intra-device Sync</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#android:p2p-websocket-using-active.adoc">Active Peer</a>
+    <a class="menu_title menu_link" href="replication.html">Remote Sync Gateway</a>
   </span>
 </li>
-<li class="menu_list" data-depth="2">
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="p2psync-custom.html">Integrate Custom Listener</a>
   </span>
+</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -263,7 +271,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc/index.html">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -3431,11 +3439,11 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -3454,22 +3462,8 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 package com.couchbase.code_snippets
 
 import android.util.Log
-import com.couchbase.lite.ArrayFunction
-import com.couchbase.lite.CouchbaseLiteException
-import com.couchbase.lite.DataSource
-import com.couchbase.lite.Database
-import com.couchbase.lite.Expression
-import com.couchbase.lite.FullTextExpression
-import com.couchbase.lite.FullTextIndexItem
+import com.couchbase.lite.*
 import com.couchbase.lite.Function
-import com.couchbase.lite.IndexBuilder
-import com.couchbase.lite.Join
-import com.couchbase.lite.Meta
-import com.couchbase.lite.Ordering
-import com.couchbase.lite.Query
-import com.couchbase.lite.QueryBuilder
-import com.couchbase.lite.SelectResult
-import com.couchbase.lite.ValueIndexItem
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.json.JSONException
 
@@ -3550,7 +3544,6 @@ class QueryExamples(private val database: Database) {
 
         // Adds a query change listener.
         // Changes will be posted on the main queue.
-        // Version using Kotlin Flows to follow shortly ...
         val token = query.addChangeListener { change -&gt;
             change.results?.let {
                 for (result in it) {
@@ -3916,7 +3909,7 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class, JSONException::class)
     fun testQuerySyntaxJson(currentUser: String, argDb: Database) {
-        Database db = argDb
+        val db = argDb
         // Example assumes Hotel class object defined elsewhere
 
         // Build the query
@@ -3950,8 +3943,8 @@ class QueryExamples(private val database: Database) {
 
   fun docsOnlyQuerySyntaxN1QL(argDb: Database): List&lt;Result&gt; {
       // For Documentation -- N1QL Query using parameters
-      Database db=argDb
-      val thisQuery = dbcreateQuery(
+      val db = argDb
+      val thisQuery = db.createQuery(
             "SELECT META().id AS id FROM _ WHERE type = \"hotel\"") <i class="conum" data-value="14"></i><b>(14)</b>
 
       return thisQuery.execute().allResults()
@@ -3960,7 +3953,8 @@ class QueryExamples(private val database: Database) {
 
   fun docsOnlyQuerySyntaxN1QLParams(argDb: Database): List&lt;Result&gt; {
       // For Documentation -- N1QL Query using parameters
-      val thisQuery = dbcreateQuery(
+      val db = argDb
+      val thisQuery = db.createQuery(
             "SELECT META().id AS id FROM _ WHERE type = \$type") <i class="conum" data-value="15"></i><b>(15)</b>
 
       thisQuery.parameters = Parameters().setString("type", "hotel") <i class="conum" data-value="16"></i><b>(16)</b>
@@ -3974,11 +3968,129 @@ class QueryExamples(private val database: Database) {
 
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
 
 
 
-// BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
+//
+// Copyright (c) 2021 Couchbase, Inc All rights reserved.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
+package com.couchbase.code_snippets
+
+import android.util.Log
+import com.couchbase.lite.*
+import org.json.JSONException
+import org.json.JSONObject
+
+
+const val JSON = """[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\",
+        \"country\":\"France\",\"description\":\"Undefined description for Hotel Ted\"},
+        {\"id\":\"1001\",\"type\":\"hotel\",\"name\":\"Hotel Fred\",\"city\":\"London\",
+        \"country\":\"England\",\"description\":\"Undefined description for Hotel Fred\"},
+        {\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",
+        \"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\",
+        \"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]"""
+
+
+class KtJSONExamples {
+    private val TAG = "SNIPPETS"
+
+    fun jsonArrayExample(db: Database) {
+        // github tag=tojson-array
+        val mArray = MutableArray(JSON) <i class="conum" data-value="17"></i><b>(17)</b>
+        for (i in 0 until mArray.count()) {
+            mArray.getDictionary(i)?.apply {
+                Log.i(TAG, getString("name") ?: "unknown")
+                db.save(MutableDocument(getString("id"), toMap()))
+            } <i class="conum" data-value="18"></i><b>(18)</b>
+        }
+
+        db.getDocument("1002")?.getArray("features")?.apply {
+            for (feature in toList()) {
+                Log.i(TAG, "$feature")
+            } <i class="conum" data-value="19"></i><b>(19)</b>
+            Log.i(TAG, toJSON())
+        } <i class="conum" data-value="20"></i><b>(20)</b>
+    }
+
+    fun jsonBlobExample(db: Database) {
+        // github tag=tojson-blob
+        val thisBlob = db.getDocument("thisdoc-id")!!.toMap()
+        if (!Blob.isBlob(thisBlob)) {
+          return
+        }
+        val blobType = thisBlob["content_type"].toString()
+        val blobLength = thisBlob["length"] as Number?
+    }
+
+    fun jsonDictionaryExample() {
+        // github tag=tojson-dictionary
+        val mDict = MutableDictionary(JSON) <i class="conum" data-value="21"></i><b>(21)</b>
+        Log.i(TAG, "$mDict")
+        Log.i(TAG, "Details for: ${mDict.getString("name")}")
+        for (key in mDict.keys) {
+          Log.i(TAG, key + " =&gt; " + mDict.getValue(key))
+        }
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
+        QueryBuilder
+            .select(SelectResult.expression(Meta.id).`as`("metaId"))
+            .from(DataSource.database(srcDb))
+            .execute()
+            .forEach {
+                it.getString("metaId")?.let { thisId -&gt;
+                    srcDb.getDocument(thisId)?.toJSON()?.let { json -&gt; <i class="conum" data-value="22"></i><b>(22)</b>
+                        Log.i(TAG, "JSON String = $json")
+                        val hotelFromJSON = MutableDocument(thisId, json) <i class="conum" data-value="23"></i><b>(23)</b>
+                        dstDb.save(hotelFromJSON)
+                        dstDb.getDocument(thisId)?.toMap()?.forEach { e -&gt;
+                            Log.i(TAG, "$e.key =&gt; $e.value")
+                        } <i class="conum" data-value="24"></i><b>(24)</b>
+                    }
+                }
+            }
+    }
+
+    @Throws(CouchbaseLiteException::class, JSONException::class)
+    fun jsonQueryExample(query: Query) {
+        query.execute().forEach {
+
+            // Use a Json Object to populate Native object
+            JSONObject(it.toJSON()).apply {
+                val (description, country, city, name, type, id) = Hotel(
+                    id = getString("id"),
+                    type = getString("type"),
+                    name = getString("name"),
+                    city = getString("city"),
+                    country = "Ghana, West Africa",
+                    description = "this hotel"
+                )
+            }
+        }
+    }
+}
+
+
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
+
+
+
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -4002,7 +4114,7 @@ import com.couchbase.lite.Blob
 import com.couchbase.lite.Database
 import com.couchbase.lite.MutableDictionary
 
-class BlobExamples {
+class KtBlobExamples {
 
     // Example 2: Using Blobs
     fun example2(context: Context, db: Database) {
@@ -4040,14 +4152,14 @@ class BlobExamples {
 }
 
 
-// END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt </code></pre>
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples//snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt </code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// `tensorFlowModel` is a fake implementation
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// `tensorFlowModel` is a fake implementation
 // this would be the implementation of the ml model you have chosen
 class ImageClassifierModel implements PredictiveModel {
     @Override
@@ -4111,7 +4223,7 @@ Therefore, the supported data type will be constrained by the data type that the
 <div class="tab-pane" aria-labelledby="tabset2_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">Database.prediction.registerModel("ImageClassifier", new ImageClassifierModel());</code></pre>
 </div>
 </div>
 </div>
@@ -4168,7 +4280,7 @@ database.createIndex("value-index-image-classifier", index)</code></pre>
 <div class="tab-pane" aria-labelledby="tabset3_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">ValueIndex index = IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("label")));
 database.createIndex("value-index-image-classifier", index);</code></pre>
 </div>
 </div>
@@ -4211,7 +4323,7 @@ database.createIndex("predictive-index-image-classifier", index)</code></pre>
 <div class="tab-pane" aria-labelledby="tabset4_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">Map&lt;String, Object&gt; inputMap = new HashMap&lt;&gt;();
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">Map&lt;String, Object&gt; inputMap = new HashMap&lt;&gt;();
 inputMap.put("numbers", Expression.property("photo"));
 Expression input = Expression.map(inputMap);
 
@@ -4271,7 +4383,7 @@ Log.d(TAG, "Number of rows: ${rs.allResults().size}")</code></pre>
 <div class="tab-pane" aria-labelledby="tabset5_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">Map&lt;String, Object&gt; inputProperties = new HashMap&lt;&gt;();
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">Map&lt;String, Object&gt; inputProperties = new HashMap&lt;&gt;();
 inputProperties.put("photo", Expression.property("photo"));
 Expression input = Expression.map(inputProperties);
 PredictionFunction prediction = PredictiveModel.predict("ImageClassifier", input); <i class="conum" data-value="1"></i><b>(1)</b>
@@ -4340,7 +4452,7 @@ The null value returned by the prediction method will be interpreted as MISSING 
 <div class="tab-pane" aria-labelledby="tabset6_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">Database.prediction.unregisterModel("ImageClassifier");</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">Database.prediction.unregisterModel("ImageClassifier");</code></pre>
 </div>
 </div>
 </div>

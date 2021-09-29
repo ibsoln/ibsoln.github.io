@@ -223,36 +223,44 @@
     <a class="menu_title menu_link" href="indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="dbreplica.html">Intra-device Sync</a>
-  </span>
-</li>
-<li class="menu_list is-current-page" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link is-current-page" href="replication.html">Remote Sync Gateway</a>
-  </span>
-</li>
 <li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="#android:p2p-websocket.adoc">Peer-to-Peer</a>
+    <span class="menu_title menu_text">Data Sync</span>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#android:p2p-websocket-using-passive.adoc">Passive Peer</a>
+    <a class="menu_title menu_link" href="dbreplica.html">Intra-device Sync</a>
   </span>
 </li>
-<li class="menu_list" data-depth="2">
+<li class="menu_list is-current-page" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#android:p2p-websocket-using-active.adoc">Active Peer</a>
+    <a class="menu_title menu_link is-current-page" href="replication.html">Remote Sync Gateway</a>
   </span>
 </li>
-<li class="menu_list" data-depth="2">
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="p2psync-custom.html">Integrate Custom Listener</a>
   </span>
+</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -263,7 +271,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc/index.html">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -3327,6 +3335,7 @@
 <ul>
 <li class="crumb"><a href="../index.html">Couchbase Lite</a></li>
 <li class="crumb"><a href="quickstart.html">Android</a></li>
+<li class="crumb">Data Sync</li>
 <li class="crumb"><a href="replication.html">Remote Sync Gateway</a></li>
 </ul>
 </nav>
@@ -3720,11 +3729,11 @@ thisReplicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset1_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// initialize the replicator configuration
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// initialize the replicator configuration
 final ReplicatorConfiguration thisConfig
    = new ReplicatorConfiguration(
       thisDB,
-      URLEndpoint(URI("wss://listener.com:8954"))); <i class="conum" data-value="1"></i><b>(1)</b>
+      URLEndpoint(URI("wss://listener.com:8954")));
 
 // Set replicator type
 thisConfig.setReplicatorType(
@@ -3734,30 +3743,30 @@ thisConfig.setReplicatorType(
 thisConfig.setContinuous(false); // default value
 
 // set auto-purge behavior (here we override default)
-thisConfig.setAutoPurgeEnabled(false); <i class="conum" data-value="2"></i><b>(2)</b>
+thisConfig.setAutoPurgeEnabled(false); <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Configure Server Authentication --
 // only accept self-signed certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="3"></i><b>(3)</b>
+thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="2"></i><b>(2)</b>
 
 // Configure the credentials the
 // client will provide if prompted
 final BasicAuthenticator thisAuth
   = new BasicAuthenticator(
       "Our Username",
-      "Our PasswordValue")); <i class="conum" data-value="4"></i><b>(4)</b>
+      "Our PasswordValue")); <i class="conum" data-value="3"></i><b>(3)</b>
 
 thisConfig.setAuthenticator(thisAuth)
 
 /* Optionally set custom conflict resolver call back <strong>/
-thisConfig.setConflictResolver( /</strong> define resolver function */); <i class="conum" data-value="5"></i><b>(5)</b>
+thisConfig.setConflictResolver( /</strong> define resolver function */); <i class="conum" data-value="4"></i><b>(4)</b>
 
 // Create replicator
 // Consider holding a reference somewhere
 // to prevent the Replicator from being GCed
-final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="6"></i><b>(6)</b>
+final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="5"></i><b>(5)</b>
 
-// Optionally add a change listener <i class="conum" data-value="7"></i><b>(7)</b>
+// Optionally add a change listener <i class="conum" data-value="6"></i><b>(6)</b>
 ListenerToken thisListener =
   new thisReplicator.addChangeListener(change -&gt; {
     final CouchbaseLiteException err =
@@ -3768,7 +3777,7 @@ ListenerToken thisListener =
   });
 
 // Start replicator
-thisReplicator.start(false); <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+thisReplicator.start(false); <i class="conum" data-value="7"></i><b>(7)</b></code></pre>
 </div>
 </div>
 </div>
@@ -3787,7 +3796,7 @@ thisReplicator.start(false); <i class="conum" data-value="8"></i><b>(8)</b></cod
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a> class&#8217;s constructor&#8201;&#8212;&#8201;<a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html#ReplicatorConfiguration-com.couchbase.lite.Database-com.couchbase.lite.Endpoint-">ReplicatorConfiguration( database, endpoint)</a>&#8201;&#8212;&#8201;to initialize the replicator configuration with the local database&#8201;&#8212;&#8201;see also: <a href="#lbl-cfg-tgt">Configure Target</a></td>
+<td>Use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a> class&#8217;s constructor&#8201;&#8212;&#8201;<a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html#ReplicatorConfiguration-com.couchbase.lite.Database-com.couchbase.lite.Endpoint-">ReplicatorConfiguration( database, endpoint)</a>&#8201;&#8212;&#8201;to initialize the replicator configuration with the local database&#8201;&#8212;&#8201;see also: <a href="#lbl-cfg-tgt">Configure Target</a></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
@@ -3860,7 +3869,7 @@ Other options are available&#8201;&#8212;&#8201;see: <a href="#lbl-client-auth">
 <h3 id="lbl-cfg-tgt"><a class="anchor" href="#lbl-cfg-tgt"></a>Configure Target</h3>
 <div class="paragraph">
 <p>Use the
-Initialize and define the replication configuration with local and remote database locations using the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a> object.</p>
+Initialize and define the replication configuration with local and remote database locations using the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a> object.</p>
 </div>
 <div class="paragraph">
 <p>The constructor provides:</p>
@@ -3915,7 +3924,7 @@ To use cleartext, un-encrypted, network traffic (<code>http://</code> and-or <co
 <div class="tab-pane" aria-labelledby="tabset2_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// initialize the replicator configuration
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// initialize the replicator configuration
 final ReplicatorConfiguration thisConfig
    = new ReplicatorConfiguration(
       thisDB,
@@ -3943,8 +3952,8 @@ to ensure TLS encryption&#8201;&#8212;&#8201;strongly recommended in production&
 <p>Here we define the direction and type of replication we want to initiate.</p>
 </div>
 <div class="paragraph">
-<p>We use <code><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a></code> class&#8217;s <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-">replicatorType</a> and
-<code><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html#setContinuous-boolean-">continuous</a></code> parameters, to tell the replicator:</p>
+<p>We use <code><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a></code> class&#8217;s <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html#setReplicatorType-com.couchbase.lite.AbstractReplicatorConfiguration.ReplicatorType-">replicatorType</a> and
+<code><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html#setContinuous-boolean-">continuous</a></code> parameters, to tell the replicator:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -3996,7 +4005,7 @@ continuous = false, // default value</code></pre>
 <div class="tab-pane" aria-labelledby="tabset3_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// Set replicator type
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// Set replicator type
 thisConfig.setReplicatorType(
   ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
@@ -4041,7 +4050,7 @@ thisConfig.setContinuous(false); // default value</code></pre>
 <th class="tableblock halign-left valign-top"><p class="tableblock">Description</p></th>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setHeartbeat-long-">setHeartbeat()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setHeartbeat-long-">setHeartbeat()</a></p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
 <ul>
 <li>
@@ -4060,7 +4069,7 @@ thisConfig.setContinuous(false); // default value</code></pre>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxattempts-int-">setMaxattempts()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxattempts-int-">setMaxattempts()</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Change this to limit or extend the number of retry attempts.</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>The maximum number of retry attempts</p>
@@ -4093,7 +4102,7 @@ thisConfig.setContinuous(false); // default value</code></pre>
 </div></div></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttemptWaitTime-long-">setMaxAttemptWaitTime()</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttemptWaitTime-long-">setMaxAttemptWaitTime()</a></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Change this to adjust the interval between retries.</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>The maximum interval between retry attempts</p>
@@ -4157,7 +4166,7 @@ replicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset4_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">URLEndpoint target =
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">URLEndpoint target =
 new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
 ReplicatorConfiguration config =
@@ -4180,15 +4189,15 @@ Replicator repl = new Replicator(config);</code></pre>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we use <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setHeartbeat-long-">setHeartbeat()</a> to set the required interval (in seconds) between the heartbeat pulses</td>
+<td>Here we use <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setHeartbeat-long-">setHeartbeat()</a> to set the required interval (in seconds) between the heartbeat pulses</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we use <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxattempts-int-">setMaxattempts()</a> to set the required number of retry attempts</td>
+<td>Here we use <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxattempts-int-">setMaxattempts()</a> to set the required number of retry attempts</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Here we use <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttemptWaitTime-long-">setMaxAttemptWaitTime()</a> to set the required interval between retry attempts.</td>
+<td>Here we use <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setMaxAttemptWaitTime-long-">setMaxAttemptWaitTime()</a> to set the required interval between retry attempts.</td>
 </tr>
 </table>
 </div>
@@ -4229,7 +4238,7 @@ When TLS is enabled (Sync Gateway&#8217;s default) the client <em>must</em> auth
 If the server cannot provide acceptable credentials then the connection will fail.</p>
 </div>
 <div class="paragraph">
-<p>Use <code><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a></code> properties <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-">setAcceptOnlySelfSignedServerCertificate</a> and <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html#setPinnedServerCertificate-byte:A-">setPinnedServerCertificate</a>, to tell the replicator how to verify server-supplied TLS server certificates.</p>
+<p>Use <code><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html">ReplicatorConfiguration</a></code> properties <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-">setAcceptOnlySelfSignedServerCertificate</a> and <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html#setPinnedServerCertificate-byte:A-">setPinnedServerCertificate</a>, to tell the replicator how to verify server-supplied TLS server certificates.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -4237,10 +4246,10 @@ If the server cannot provide acceptable credentials then the connection will fai
 <p>If there is a pinned certificate, nothing else matters, the server cert must <strong>exactly</strong> match the pinned certificate.</p>
 </li>
 <li>
-<p>If there are no pinned certs and <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-">setAcceptOnlySelfSignedServerCertificate</a> is <code>true</code> then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.</p>
+<p>If there are no pinned certs and <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-">setAcceptOnlySelfSignedServerCertificate</a> is <code>true</code> then any self-signed certificate is accepted.  Certificates that are not self signed are rejected, no matter who signed them.</p>
 </li>
 <li>
-<p>If there are no pinned certificates and <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-">setAcceptOnlySelfSignedServerCertificate</a> is <code>false</code> (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.</p>
+<p>If there are no pinned certificates and <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/ReplicatorConfiguration.html#setAcceptOnlySelfSignedServerCertificate-boolean-">setAcceptOnlySelfSignedServerCertificate</a> is <code>false</code> (default), the client validates the server’s certificates against the system CA certificates.  The server must supply a chain of certificates whose root is signed by one of the certificates in the system CA bundle.</p>
 </li>
 </ul>
 </div>
@@ -4324,7 +4333,7 @@ Any certificates that are not self-signed are rejected.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1332-L1334">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1405-L1407">
 // Use the pinned certificate from the byte array (cert)
 pinnedServerCertificate = caCert.encoded, <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
@@ -4363,7 +4372,7 @@ pinnedServerCertificate = caCert.encoded, <i class="conum" data-value="1"></i><b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// Configure Server Security
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// Configure Server Security
 // -- only accept CA attested certs
 thisConfig.setAcceptOnlySelfSignedServerCertificate(false); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
@@ -4385,7 +4394,7 @@ Self signed certificates are not allowed.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// Configure Server Authentication --
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// Configure Server Authentication --
 // only accept self-signed certs
 thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
@@ -4478,7 +4487,7 @@ replicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset8_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
 ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
 config.setAuthenticator(new BasicAuthenticator("username", "password"));
@@ -4537,7 +4546,7 @@ replicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset9_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
 ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
 config.setAuthenticator(new SessionAuthenticator("904ac010862f37c8dd99015a33ab5a3565fd8447"));
@@ -4593,7 +4602,7 @@ replicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset10_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">ReplicatorConfiguration config = new ReplicatorConfiguration(database, endpoint);
 Map&lt;String, String&gt; headers = new HashMap&lt;&gt;();
 headers.put("CustomHeaderName", "Value");
 config.setHeaders(headers);</code></pre>
@@ -4648,7 +4657,7 @@ replicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset11_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
 ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
 config.setPushFilter((document, flags) -&gt; flags.contains(DocumentFlag.DocumentFlagsDeleted)); <i class="conum" data-value="1"></i><b>(1)</b>
@@ -4723,7 +4732,7 @@ replicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset12_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">URLEndpoint target = new URLEndpoint(new URI("ws://localhost:4984/mydatabase"));
 
 ReplicatorConfiguration config = new ReplicatorConfiguration(database, target);
 config.setPullFilter((document, flags) -&gt; "draft".equals(document.getString("type"))); <i class="conum" data-value="1"></i><b>(1)</b>
@@ -4949,7 +4958,7 @@ Document changes subsequent to the channel reassignment will be pushed up as usu
 <div class="sect3">
 <h4 id="config"><a class="anchor" href="#config"></a>Config</h4>
 <div class="paragraph">
-<p>Auto-purge behavior is controlled primarily by the ReplicationConfiguration option <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setAutoPurgeEnabled-boolean-">setAutoPurgeEnabled()</a>.
+<p>Auto-purge behavior is controlled primarily by the ReplicationConfiguration option <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setAutoPurgeEnabled-boolean-">setAutoPurgeEnabled()</a>.
 Changing the state of this will impact <strong>only</strong> future replications; the replicator will not attempt to sync revisions that were auto purged on channel access removal.
 Clients wishing to sync previously removed documents must use the resetCheckpoint API to resync from the start.</p>
 </div>
@@ -4980,7 +4989,7 @@ enableAutoPurge = false, <i class="conum" data-value="1"></i><b>(1)</b></code></
 <div class="tab-pane" aria-labelledby="tabset13_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// set auto-purge behavior (here we override default)
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// set auto-purge behavior (here we override default)
 thisConfig.setAutoPurgeEnabled(false); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
@@ -5002,7 +5011,7 @@ thisConfig.setAutoPurgeEnabled(false); <i class="conum" data-value="1"></i><b>(1
 <h4 id="overrides"><a class="anchor" href="#overrides"></a>Overrides</h4>
 <div class="paragraph">
 <p>Where necessary, clients can override the default auto-purge behavior.
-This can be done either by setting <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setAutoPurgeEnabled-boolean-">setAutoPurgeEnabled()</a> to false, or for finer control by applying pull-filters&#8201;&#8212;&#8201;see: <a href="#tbl-pull-filters">Table 4</a> and <a href="#lbl-repl-fltrs">Replication Filters</a>
+This can be done either by setting <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicatorConfiguration.html#setAutoPurgeEnabled-boolean-">setAutoPurgeEnabled()</a> to false, or for finer control by applying pull-filters&#8201;&#8212;&#8201;see: <a href="#tbl-pull-filters">Table 4</a> and <a href="#lbl-repl-fltrs">Replication Filters</a>
 This ensures backwards compatible with 2.8 clients that use pull filters to prevent auto purge of removed docs.</p>
 </div>
 <table id="tbl-pull-filters" class="tableblock frame-all grid-all stretch">
@@ -5090,8 +5099,8 @@ This can result in significant savings in bandwidth consumption as well as throu
 <div class="sect2">
 <h3 id="lbl-repl-start"><a class="anchor" href="#lbl-repl-start"></a>Start Replicator</h3>
 <div class="paragraph">
-<p>Use the <code><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/Replicator.html">Replicator</a></code> class&#8217;s <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/Replicator.html#Replicator-com.couchbase.lite.ReplicatorConfiguration-">ReplicatorConfiguration(config)</a> constructor, to initialize the replicator with the configuration you have defined.
-You can, optionally, add a change listener (see <a href="#lbl-repl-mon">Monitor</a>) before starting the replicator running using <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#start-boolean-">start()</a>.</p>
+<p>Use the <code><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Replicator.html">Replicator</a></code> class&#8217;s <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Replicator.html#Replicator-com.couchbase.lite.ReplicatorConfiguration-">ReplicatorConfiguration(config)</a> constructor, to initialize the replicator with the configuration you have defined.
+You can, optionally, add a change listener (see <a href="#lbl-repl-mon">Monitor</a>) before starting the replicator running using <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#start-boolean-">start()</a>.</p>
 </div>
 <div class="exampleblock">
 <div class="title">Example 10. Initialize and run replicator</div>
@@ -5158,7 +5167,7 @@ thisReplicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset14_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// Create replicator
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// Create replicator
 // Consider holding a reference somewhere
 // to prevent the Replicator from being GCed
 final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="1"></i><b>(1)</b>
@@ -5213,18 +5222,14 @@ However, if you do want to force the replication to start again from zero, use t
 <div class="tab-pane" aria-labelledby="tabset15_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">if (resetCheckpointRequired_Example) {
-  repl.start(resetCheckpoint = true) <i class="conum" data-value="1"></i><b>(1)</b>
-else
-  repl.start(resetCheckpoint = false)
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">repl.start(resetCheckpointRequired_Example) <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset15_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">if (resetCheckpointRequired_Example) {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">if (resetCheckpointRequired_Example) {
   replicator.start(true); <i class="conum" data-value="1"></i><b>(1)</b>
 else
   replicator.start(false);
@@ -5263,7 +5268,7 @@ The default <code>false</code> is shown here for completeness only; it is unlike
 </dl>
 </div>
 <div class="paragraph">
-<p>You can monitor a replication’s status by using a combination of <a href="#lbl-repl-chng">Change Listeners</a> and the <code>replication.status.activity</code> property&#8201;&#8212;&#8201;see; <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.Status.html#getActivityLevel--">getActivityLevel()</a>.
+<p>You can monitor a replication’s status by using a combination of <a href="#lbl-repl-chng">Change Listeners</a> and the <code>replication.status.activity</code> property&#8201;&#8212;&#8201;see; <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.Status.html#getActivityLevel--">getActivityLevel()</a>.
 This enables you to know, for example, when the replication is actively transferring data and when it has stopped.</p>
 </div>
 <div class="paragraph">
@@ -5272,7 +5277,8 @@ This enables you to know, for example, when the replication is actively transfer
 <div class="sect2">
 <h3 id="lbl-repl-chng"><a class="anchor" href="#lbl-repl-chng"></a>Change Listeners</h3>
 <div class="paragraph">
-<p>Use this to monitor changes and to inform on sync progress; this is an optional step.</p>
+<p>Use this to monitor changes and to inform on sync progress; this is an optional step.
+You can add and a replicator change listener at any point; it will report changes from the point it is registered.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -5282,23 +5288,36 @@ This enables you to know, for example, when the replication is actively transfer
 </td>
 <td class="content">
 <div class="title">Best Practice</div>
-You should register the listener before starting your replication, to avoid having to do a restart to activate it &#8230;&#8203; and don&#8217;t forget to save the token so you can remove the listener later
+Don&#8217;t forget to save the token so you can remove the listener later
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>Use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/Replicator.html">Replicator</a> class to add a change listener as a callback to the Replicator (<a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#addChangeListener-java.util.concurrent.Executor-com.couchbase.lite.ReplicatorChangeListener-">addChangeListener()</a>)&#8201;&#8212;&#8201;see: <a href="#ex-repl-mon">Example 12</a>.
+<p>Use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Replicator.html">Replicator</a> class to add a change listener as a callback to the Replicator (<a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#addChangeListener-java.util.concurrent.Executor-com.couchbase.lite.ReplicatorChangeListener-">addChangeListener()</a>)&#8201;&#8212;&#8201;see: <a href="#ex-repl-mon">Example 12</a>.
 You will then be asynchronously notified of state changes.</p>
 </div>
 <div class="paragraph">
-<p>Remove your change listener before stopping the replicator&#8201;&#8212;&#8201;use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#removeChangeListener-com.couchbase.lite.ListenerToken-">removeChangeListener(ListenerToken token)</a> method to do this.</p>
+<p>You can remove a change listener with <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#removeChangeListener-com.couchbase.lite.ListenerToken-">removeChangeListener(ListenerToken token)</a>.</p>
+</div>
+<div class="sect3">
+<h4 id="using-kotlin-flows-and-livedata"><a class="anchor" href="#using-kotlin-flows-and-livedata"></a>Using Kotlin Flows and LiveData</h4>
+<div class="paragraph">
+<p>Android Kotlin developers can take advantage of Flows and LiveData to monitor replicators.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt#L31-L34">    val replState: LiveData&lt;ReplicatorActivityLevel&gt; = argRepl.replicatorChangesFlow()
+        .map { it.status.activityLevel }
+        .asLiveData()</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="lbl-repl-status"><a class="anchor" href="#lbl-repl-status"></a>Replicator Status</h3>
 <div class="paragraph">
-<p>You can use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/Replicator.html">Replicator</a> class&#8217;s <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#getStatus--">replicator.getStatus</a> property to check the replicator status.
+<p>You can use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Replicator.html">Replicator</a> class&#8217;s <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#getStatus--">replicator.getStatus</a> property to check the replicator status.
 That is, whether it is actively transferring data or if it has stopped&#8201;&#8212;&#8201;see: <a href="#ex-repl-mon">Example 12</a>.</p>
 </div>
 <div class="paragraph">
@@ -5307,10 +5326,10 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.Status.html#getActivityLevel--">getActivityLevel()</a>&#8201;&#8212;&#8201;stopped, offline, connecting, idle or busy&#8201;&#8212;&#8201;see states described in: <a href="#tbl-states">Table 5</a></p>
+<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.Status.html#getActivityLevel--">getActivityLevel()</a>&#8201;&#8212;&#8201;stopped, offline, connecting, idle or busy&#8201;&#8212;&#8201;see states described in: <a href="#tbl-states">Table 5</a></p>
 </li>
 <li>
-<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.Status.html#getProgress--">getProgress()</a></p>
+<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.Status.html#getProgress--">getProgress()</a></p>
 <div class="ulist">
 <ul>
 <li>
@@ -5323,7 +5342,7 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 </div>
 </li>
 <li>
-<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.Status.html#getError--">getError()</a>&#8201;&#8212;&#8201;the current error, if any</p>
+<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.Status.html#getError--">getError()</a>&#8201;&#8212;&#8201;the current error, if any</p>
 </li>
 </ul>
 </div>
@@ -5404,7 +5423,7 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <div class="tab-pane" aria-labelledby="tabset18_adding-a-change-listener">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">ListenerToken thisListener =
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">ListenerToken thisListener =
   new thisReplicator.addChangeListener(change -&gt; {
     final CouchbaseLiteException err =
      change.getStatus().getError();
@@ -5418,7 +5437,7 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <div class="tab-pane" aria-labelledby="tabset18_using-replicator-status">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">
 Log.i(TAG, "The Replicator is currently " +
   thisReplicator.getStatus().getActivityLevel());
 
@@ -5519,18 +5538,6 @@ You should explicitly stop replication processes when they are no longer useful 
 <div class="paragraph">
 <p>You can choose to register for document updates during a replication.</p>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-You should register the listener before starting your replication, to avoid having to do a restart to activate it.
-</td>
-</tr>
-</table>
-</div>
 <div class="paragraph">
 <p>For example, the code snippet in <a href="#ex-reg-doc-listener">Example 13</a> registers a listener to monitor document replication performed by the replicator referenced by the variable <code>replicator</code>.
 It prints the document ID of each document received and sent.
@@ -5580,7 +5587,7 @@ replicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset19_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">ListenerToken token = replicator.addDocumentReplicationListener(replication -&gt; {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">ListenerToken token = replicator.addDocumentReplicationListener(replication -&gt; {
 
     Log.i(TAG, "Replication type: " + replication.isPush( ? "Push" : "Pull"));
     for (ReplicatedDocument document : replication.getDocuments()) {
@@ -5635,7 +5642,7 @@ replicator.start();</code></pre>
 <div class="tab-pane" aria-labelledby="tabset20_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">replicator.removeChangeListener(token);</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">replicator.removeChangeListener(token);</code></pre>
 </div>
 </div>
 </div>
@@ -5659,7 +5666,7 @@ replicator.start();</code></pre>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-<a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-">Replicator.isDocumentPending()</a> is quicker and more efficient.
+<a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-">Replicator.isDocumentPending()</a> is quicker and more efficient.
 Use it in preference to returning a list of pending document IDs, where possible.
 </td>
 </tr>
@@ -5671,13 +5678,13 @@ Use it in preference to returning a list of pending document IDs, where possible
 <div class="ulist">
 <ul>
 <li>
-<p>Use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#getPendingDocumentIds--">Replicator.getPendingDocumentIds()</a> method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.</p>
+<p>Use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#getPendingDocumentIds--">Replicator.getPendingDocumentIds()</a> method, which returns a list of document IDs that have local changes, but which have not yet been pushed to the server.</p>
 <div class="paragraph">
 <p>This can be very useful in tracking the progress of a push sync, enabling the app to provide a visual indicator to the end user on its status, or decide when it is safe to exit.</p>
 </div>
 </li>
 <li>
-<p>Use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-">Replicator.isDocumentPending()</a> method to quickly check whether an individual document is pending a push.</p>
+<p>Use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-">Replicator.isDocumentPending()</a> method to quickly check whether an individual document is pending a push.</p>
 </li>
 </ul>
 </div>
@@ -5723,7 +5730,7 @@ private fun onStatusChanged(pendingDocs: Set&lt;String&gt;, status: ReplicatorSt
 <div class="tab-pane" aria-labelledby="tabset21_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">//
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">//
 private void onStatusChanged(
   @NonNull final Set&lt;String&gt; pendingDocs,
   @NonNull final Replicator.Status status) {
@@ -5757,12 +5764,12 @@ private void onStatusChanged(
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#getPendingDocumentIds--">Replicator.getPendingDocumentIds()</a> returns a list of the document IDs for all documents waiting to be pushed.
+<td><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#getPendingDocumentIds--">Replicator.getPendingDocumentIds()</a> returns a list of the document IDs for all documents waiting to be pushed.
 This is a snapshot and may have changed by the time the response is received and processed.</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-">Replicator.isDocumentPending()</a> returns <code>true</code> if the document is waiting to be pushed, and <code>false</code> otherwise.</td>
+<td><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#isDocumentPending-java.lang.String-">Replicator.isDocumentPending()</a> returns <code>true</code> if the document is waiting to be pushed, and <code>false</code> otherwise.</td>
 </tr>
 </table>
 </div>
@@ -5774,7 +5781,7 @@ This is a snapshot and may have changed by the time the response is received and
 <div class="sectionbody">
 <div class="paragraph">
 <p>Stopping a replication is straightforward.
-It is done using <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#stop--">stop()</a>.
+It is done using <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#stop--">stop()</a>.
 This initiates an asynchronous operation and so is not necessarily immediate.
 Your app should account for this potential delay before attempting any subsequent operations.</p>
 </div>
@@ -5807,7 +5814,7 @@ thisReplicator?.stop() <i class="conum" data-value="1"></i><b>(1)</b></code></pr
 <div class="tab-pane" aria-labelledby="tabset22_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">// Stop replication.
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// Stop replication.
 thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
@@ -5820,7 +5827,7 @@ thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pr
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we initiate the stopping of the replication using the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/index.html?com/couchbase/lite/AbstractReplicator.html#stop--">stop()</a> method.
+<td>Here we initiate the stopping of the replication using the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/AbstractReplicator.html#stop--">stop()</a> method.
 It will stop any active <a href="#lbl-repl-chng">change listener</a> once the replication is stopped.</td>
 </tr>
 </table>
@@ -5854,8 +5861,7 @@ It will stop any active <a href="#lbl-repl-chng">change listener</a> once the re
 <div class="tab-pane" aria-labelledby="tabset23_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Version using Kotlin Flows to follow shortly ...
-repl.addChangeListener { change -&gt;
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">repl.addChangeListener { change -&gt;
     change.status.error?.let {
         Log.w(TAG, "Error code: ${it.code}")
     }
@@ -5868,7 +5874,7 @@ replicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset23_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">replicator.addChangeListener(change -&gt; {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">replicator.addChangeListener(change -&gt; {
     CouchbaseLiteException error = change.getStatus().getError();
     if (error != null) { Log.w(TAG, "Error code:: %d", error); }
 });
@@ -5924,6 +5930,19 @@ replicator.start();</code></pre>
 <p><code>1001</code>: DNS resolution error</p>
 </li>
 </ul>
+</div>
+<div class="sect2">
+<h3 id="using-kotlin-flows-and-livedata-2"><a class="anchor" href="#using-kotlin-flows-and-livedata-2"></a>Using Kotlin Flows and LiveData</h3>
+<div class="paragraph">
+<p>Android Kotlin developers can also take advantage of Flows and LiveData to monitor replicators.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt#L31-L34">    val replState: LiveData&lt;ReplicatorActivityLevel&gt; = argRepl.replicatorChangesFlow()
+        .map { it.status.activityLevel }
+        .asLiveData()</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -6006,7 +6025,7 @@ replicator = repl</code></pre>
 <div class="tab-pane" aria-labelledby="tabset24_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">InputStream is = getAsset("cert.cer");
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">InputStream is = getAsset("cert.cer");
 byte[] cert = IOUtils.toByteArray(is);
 if (is != null) {
     try { is.close(); }
@@ -6071,7 +6090,7 @@ You can increase the log output for activity related to replication with Sync Ga
 <div class="tab-pane" aria-labelledby="tabset25_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">Database.setLogLevel(LogDomain.REPLICATOR, LogLevel.VERBOSE);</code></pre>
 </div>
 </div>
 </div>

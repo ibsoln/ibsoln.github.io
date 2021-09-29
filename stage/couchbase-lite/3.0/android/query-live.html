@@ -223,36 +223,44 @@
     <a class="menu_title menu_link" href="indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="dbreplica.html">Intra-device Sync</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="replication.html">Remote Sync Gateway</a>
-  </span>
-</li>
 <li class="menu_list is-parent closed" data-depth="1">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="#android:p2p-websocket.adoc">Peer-to-Peer</a>
+    <span class="menu_title menu_text">Data Sync</span>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#android:p2p-websocket-using-passive.adoc">Passive Peer</a>
+    <a class="menu_title menu_link" href="dbreplica.html">Intra-device Sync</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#android:p2p-websocket-using-active.adoc">Active Peer</a>
+    <a class="menu_title menu_link" href="replication.html">Remote Sync Gateway</a>
   </span>
 </li>
-<li class="menu_list" data-depth="2">
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="p2psync-custom.html">Integrate Custom Listener</a>
   </span>
+</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -263,7 +271,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc/index.html">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -3398,7 +3406,6 @@ When a change is detected the query automatically runs, and posts the new query 
 
 // Adds a query change listener.
 // Changes will be posted on the main queue.
-// Version using Kotlin Flows to follow shortly ...
 val token = query.addChangeListener { change -&gt;
     change.results?.let {
         for (result in it) {
@@ -3413,7 +3420,7 @@ val token = query.addChangeListener { change -&gt;
 <div class="tab-pane" aria-labelledby="tabset1_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">Query query = QueryBuilder
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">Query query = QueryBuilder
     .select(SelectResult.all())
     .from(DataSource.database(database)); <i class="conum" data-value="1"></i><b>(1)</b>
 
@@ -3470,7 +3477,7 @@ Save the token in order to detach the listener and stop the query later&#8201;&#
 <div class="tab-pane" aria-labelledby="tabset2_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/java/com/couchbase/code_snippets/Examples.java">query.removeChangeListener(token); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">query.removeChangeListener(token); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -3486,6 +3493,37 @@ Save the token in order to detach the listener and stop the query later&#8201;&#
 Doing so stops the live query.</td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-kotlin-flows-and-livedata"><a class="anchor" href="#using-kotlin-flows-and-livedata"></a>Using Kotlin Flows and LiveData</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kotlin developers also have the option of using Flows and Live Data to feed query changes to the UI.</p>
+</div>
+<div class="paragraph">
+<p>Define a live query as a Flow returning a LiveData object and activate an Observer in the View onCreate() function.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt#L53-L68">    var liveQuery: LiveData&lt;List&lt;Any&gt;?&gt;? = null
+
+    @ExperimentalCoroutinesApi
+    fun watchQuery(query: Query): LiveData&lt;List&lt;Any&gt;?&gt; {
+        val queryFlow = query.queryChangeFlow()
+            .map {
+                val err = it.error
+                if (err != null) {
+                    throw err
+                }
+                it.results?.allResults()?.flatMap { it.toList() }
+            }
+            .asLiveData()
+        liveQuery = queryFlow
+        return queryFlow
+    }</code></pre>
+</div>
 </div>
 </div>
 </div>
