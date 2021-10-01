@@ -2710,12 +2710,12 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#operator::{cao-pg-manage-sgw&amp;.adoc#8212;&amp;#8203;page">Manage a Sync Gateway Cluster</a>
+    <a class="menu_title menu_link" href="#couchbase-operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#operator::{cao-pg-clients-sgw&amp;.adoc#8212;&amp;#8203;page">Expose Sync Gateway to Couchbase Lite clients</a>
+    <a class="menu_title menu_link" href="#couchbase-operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
   </span>
 </li>
 </ul>
@@ -3355,24 +3355,231 @@
 <span  id="otherContributor"> + </span>
 </div><div id="preamble">
 <div class="sectionbody">
-<div class="paragraph">
-<p>Unresolved include directive in modules/objc/pages/dep-upgrade.adoc - include::partial$_std-cbl-hdr-android.adoc[]</p>
-</div>
 <div class="quoteblock abstract">
 <blockquote>
 Couchbase mobile database certificate pinning
 </blockquote>
 </div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
 <div class="paragraph">
-<p>Unresolved directive in dep-upgrade.adoc - include::{root-partials}_block-caveats.adoc[tag="cbl-3-0-0-beta01-reindexing"]</p>
+<p>On upgrading from a 2.x release, all Couchbase Lite databases will be automatically re-indexed on initial database open.<br>
+This can result in a delay before the database is usable.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="api-changes-at-beta-3-0-0"><a class="anchor" href="#api-changes-at-beta-3-0-0"></a>API Changes at BETA 3.0.0</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="removed-apis"><a class="anchor" href="#removed-apis"></a>Removed APIs</h3>
+<div class="sect3">
+<h4 id="resetcheckpoint"><a class="anchor" href="#resetcheckpoint"></a>ResetCheckpoint</h4>
+<div class="literalblock">
+<div class="title">Alternative</div>
+<div class="content">
+<pre>`replicator.start(reset:)`</pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Before</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">replicator.resetCheckpoint()
+replicator.start()</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">After</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">replicator.start(true)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="database-setloglevel"><a class="anchor" href="#database-setloglevel"></a>Database.setLogLevel</h4>
 <div class="paragraph">
-<p>Unresolved directive in dep-upgrade.adoc - include::{module-partials}api-changes.adoc[tag=content, leveloffset=+1]</p>
+<div class="title">Alternative</div>
+<p><code>Database.log.console</code></p>
+</div>
+<div class="listingblock">
+<div class="title">Before</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">Database.setLogLevel(.verbose, domain: .all)</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">After</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">Database.log.console.domain = .all
+Database.log.console.level = .verbose</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="database-compact"><a class="anchor" href="#database-compact"></a>Database.compact</h4>
+<div class="paragraph">
+<div class="title">Alternative</div>
+<p><code>performMaintenance(type:﹚</code></p>
+</div>
+<div class="listingblock">
+<div class="title">Before</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">try testdb.compact()</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">After</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">try testdb.performMaintenance(type: .compact)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="deprected-api"><a class="anchor" href="#deprected-api"></a>Deprected API</h3>
+<div class="sect3">
+<h4 id="match"><a class="anchor" href="#match"></a>Match</h4>
+<div class="paragraph">
+<div class="title">Alternative</div>
+<p><code>FullTextFunction.match(indexName:)</code></p>
+</div>
+<div class="listingblock">
+<div class="title">Before</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">let index = FullTextExpression.index ("indexName")
+let q = QueryBuilder.select([SelectResult.
+expression(Meta.id)])
+            .from(DataSource.database(testdb)) +
+            .where(index.match("'queryString'"))</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">After</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">let q = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(FullTextFunction.match(indexName: "indexName", query: "'queryString'"))</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="isnullormissing-and-notnullormissing"><a class="anchor" href="#isnullormissing-and-notnullormissing"></a>isNullOrMissing and notNullOrMissing</h4>
+<div class="paragraph">
+<div class="title">Alternatives</div>
+<p><code>isNotValued()</code><br>
+<code>isValued()</code></p>
+</div>
+<div class="listingblock">
+<div class="title">Before</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">|let q1 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("missingProp").isNullOrMissing())
+
+let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("notMissingProp").notNullOrMissing())</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">After</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">let q1 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("missingProp").isNotValued())
+
+let q2 = QueryBuilder.select([SelectResult.expression(Meta.id)])
+            .from(DataSource.database(testdb))
+            .where(Expression.property("notMissingProp").isValued())</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="updated-api"><a class="anchor" href="#updated-api"></a>Updated API</h3>
+<div class="sect3">
+<h4 id="configuration"><a class="anchor" href="#configuration"></a>Configuration</h4>
+<div class="paragraph">
+<p>The following classes are changed to Swift struct.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>DatabaseConfiguration</p>
+</li>
+<li>
+<p>ReplicatorConfiguration</p>
+</li>
+<li>
+<p>URLEndpointListenerConfiguration</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">Before</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// use of let won't stop from editing instance later)
+
+let config = DatabaseConfiguration()
+config.encryptionKey = EncryptionKey.password(password!)
+
+let config = ReplicatorConfiguration(database: db, target: target)
+config.continuous = true</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">After</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">var config = DatabaseConfiguration()
+config.encryptionKey = EncryptionKey.password(password!)
+
+var config = ReplicatorConfiguration(database: db, target: target)
+config.continuous = true</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="atan2"><a class="anchor" href="#atan2"></a>ATAN2</h4>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+Breaking change
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><code>ATAN2(x, y)</code> now becomes <code>ATAN2(y, x)</code></p>
+</div>
+<div class="listingblock">
+<div class="title">Before</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">let p = Expression.property("number")
+let q = QueryBuilder.select([SelectResult.expression(Function.atan2(x: Expression.int(90), y: p))])
+            .from(DataSource.database(testdb))</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">After</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">let q = QueryBuilder.select([SelectResult.expression(Function.atan2(y: Expression.int(90), x: p))])
+            .from(DataSource.database(testdb))</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3392,7 +3599,7 @@ To update an Xcode project built with Couchbase Lite 1.x:</p>
 <p>Remove all the Couchbase Lite 1.x dependencies (see the <a href="https://docs-archive.couchbase.com/couchbase-lite/1.4/objc.html#getting-started">1.x installation guide</a>).</p>
 </li>
 <li>
-<p>Install the Couchbase Lite 2.0 framework in your project &#8201;&#8212;&#8201;see {gs-install&#8212;&#8203;xref}.
+<p>Install the Couchbase Lite 2.0 framework in your project &#8201;&#8212;&#8201;see: <a href="gs-install.html" class="page">Installation - Couchbase Lite on Objective-C</a>.
 At this point, there will be many compiler warnings.
 Refer to the examples on this page to learn about the new API.</p>
 </li>
@@ -3419,7 +3626,7 @@ Additionally, the automatic migration feature does not support encrypted databas
 <div class="sectionbody">
 <div class="paragraph">
 <p>For conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new 2.0 database and does NOT copy any conflicting revisions.
-This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 &#8201;&#8212;&#8201;see {conflict&#8212;&#8203;xref}.
+This functionality is related to the way conflicts are being handled in Couchbase Lite 2.0 &#8201;&#8212;&#8201;see <a href="conflict.html" class="page">Handling Conflicts</a>.
 Optionally, existing conflicts in the 1.x database can be resolved with the <a href="https://docs-archive.couchbase.com/couchbase-lite/1.4/objc.html#resolving-conflicts">1.x API</a> prior to the database being upgraded to 2.0.</p>
 </div>
 </div>
@@ -3437,7 +3644,9 @@ The following example shows how to retrieve an attachment that was created in a 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-{lang-name-objc} hljs" data-lang="{lang-name-objc}">Unresolved directive in dep-upgrade.adoc - include::{snippet}[tag=1x-attachment,indent=0]</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/objc/examples/code_snippets/SampleCodeTest.m#L339-L341">CBLDictionary *attachments = [document dictionaryForKey:@"_attachments"];
+CBLBlob *avatar = [attachments blobForKey:@"avatar"];
+NSData *content = [avatar content];</code></pre>
 </div>
 </div>
 </div>
