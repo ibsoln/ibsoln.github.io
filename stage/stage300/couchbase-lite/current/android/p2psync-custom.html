@@ -554,36 +554,44 @@
     <a class="menu_title menu_link" href="../csharp/indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Data Sync</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../csharp/dbreplica.html">Intra-device Sync</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list" data-depth="2">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../csharp/replication.html">Remote Sync Gateway</a>
   </span>
 </li>
-<li class="menu_list is-parent closed" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="2">
   <span class="menu_line">
     <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="../csharp/p2psync-websocket.html">Peer-to-Peer</a>
   </span>
 <ul class="menu_row">
-<li class="menu_list" data-depth="2">
+<li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../csharp/p2psync-websocket-using-passive.html">Passive Peer</a>
   </span>
 </li>
-<li class="menu_list" data-depth="2">
+<li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../csharp/p2psync-websocket-using-active.html">Active Peer</a>
   </span>
 </li>
-<li class="menu_list" data-depth="2">
+<li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../csharp/p2psync-custom.html">Integrate Custom Listener</a>
   </span>
+</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -742,36 +750,44 @@
     <a class="menu_title menu_link" href="../java/indexing.html">Indexing</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Data Sync</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../java/dbreplica.html">Intra-device Sync</a>
   </span>
 </li>
-<li class="menu_list" data-depth="1">
+<li class="menu_list" data-depth="2">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../java/replication.html">Remote Sync Gateway</a>
   </span>
 </li>
-<li class="menu_list is-parent closed" data-depth="1">
+<li class="menu_list is-parent closed" data-depth="2">
   <span class="menu_line">
     <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="../java/p2psync-websocket.html">Peer-to-Peer</a>
   </span>
 <ul class="menu_row">
-<li class="menu_list" data-depth="2">
+<li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../java/p2psync-websocket-using-passive.html">Passive Peer</a>
   </span>
 </li>
-<li class="menu_list" data-depth="2">
+<li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../java/p2psync-websocket-using-active.html">Active Peer</a>
   </span>
 </li>
-<li class="menu_list" data-depth="2">
+<li class="menu_list" data-depth="3">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../java/p2psync-custom.html">Integrate Custom Listener</a>
   </span>
+</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -1959,7 +1975,34 @@ Where applicable, we discuss how to integrate Couchbase Lite into the workflow.<
 <h2 id="peer-discovery"><a class="anchor" href="#peer-discovery"></a>Peer Discovery</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/commons/common-p2psync-custom.adoc - include::ROOT:partial$p2p-peer-discovery.adoc[]</p>
+<p>Peer discovery is the first step.
+The communication framework will generally include a peer discovery API for devices to advertise themselves on the network and to browse for other peers.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/discovery.png" alt="discovery">
+</div>
+</div>
+<div class="sect3">
+<h4 id="active-peer"><a class="anchor" href="#active-peer"></a>Active Peer</h4>
+<div class="paragraph">
+<p>The first step is to initialize the Couchbase Lite database.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="passive-peer"><a class="anchor" href="#passive-peer"></a>Passive Peer</h4>
+<div class="paragraph">
+<p>In addition to initializing the database, the passive peer must initialize the <code>MessageEndpointListener</code>.
+The <code>MessageEndpointListener</code> acts as as a listener for incoming connections.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2036-L2039">val database = Database("mydb")
+messageEndpointListener = MessageEndpointListener(
+    MessageEndpointListenerConfigurationFactory.create(database, ProtocolType.MESSAGE_STREAM)
+)</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1967,15 +2010,155 @@ Where applicable, we discuss how to integrate Couchbase Lite into the workflow.<
 <h2 id="peer-selection-and-connection-setup"><a class="anchor" href="#peer-selection-and-connection-setup"></a>Peer Selection and Connection Setup</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/commons/common-p2psync-custom.adoc - include::ROOT:partial$p2p-peer-selection.adoc[]</p>
+<p>Once a peer device is found, it is the application code&#8217;s responsibility to decide whether it should establish a connection with that peer.
+This step includes inviting a peer to a session and peer authentication.</p>
+</div>
+<div class="paragraph">
+<p>This is handled by the Communication Framework.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/selection.png" alt="selection">
+</div>
+</div>
+<div class="paragraph">
+<p>Once the remote peer has been authenticated, the next step is to connect with that peer and initialize the Message Endpoint API.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="replication-setup"><a class="anchor" href="#replication-setup"></a>Replication Setup</h2>
 <div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="../_images/connection.png" alt="connection">
+</div>
+</div>
+<div class="sect3">
+<h4 id="active-peer-2"><a class="anchor" href="#active-peer-2"></a>Active Peer</h4>
 <div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/commons/common-p2psync-custom.adoc - include::ROOT:partial$p2p-replication-setup.adoc[]</p>
+<p>When the connection is established, the active peer must instantiate a <code>MessageEndpoint</code> object corresponding to the remote peer.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1954-L1957">val database = Database("mydb")
+
+// The delegate must implement the `MessageEndpointDelegate` protocol.
+val messageEndpoint = MessageEndpoint("UID:123", "active", ProtocolType.MESSAGE_STREAM, this)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>MessageEndpoint</code> initializer takes the following arguments.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>uid</code>: a unique ID that represents the remote active peer.</p>
+</li>
+<li>
+<p><code>target</code>: This represents the remote passive peer and could be any suitable representation of the remote peer.
+It could be an Id, URL etc.
+If using the MultiPeerConnectivity Framework, this could be the MCPeerID.</p>
+</li>
+<li>
+<p><code>protocolType</code>: specifies the kind of transport you intend to implement.
+There are two options.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The default (<code>MessageStream</code>) means that you want to "send a series of messages", or in other words the Communication Framework will control the formatting of messages so that there are clear boundaries between messages.</p>
+</li>
+<li>
+<p>The alternative (<code>ByteStream</code>) means that you just want to send raw bytes over the stream and Couchbase should format for you to ensure that messages get delivered in full.</p>
+<div class="paragraph">
+<p>Typically, the Communication Framework will handle message assembly and disassembly so you would use the <code>MessageType</code> option in most cases.</p>
+</div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>delegate</code>: the delegate that will implement the <code>MessageEndpointDelegate</code> protocol, which is a factory for <code>MessageEndpointConnection</code>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Then, a <code>Replicator</code> is instantiated with the initialized <code>MessageEndpoint</code> as the target.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1961-L1965">// Create the replicator object.
+val repl = Replicator(ReplicatorConfigurationFactory.create(database = database, target = messageEndpoint))
+// Start the replication.
+repl.start()
+replicator = repl</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, Couchbase Lite will call back the application code through the <code>MessageEndpointDelegate.createConnection</code> interface method.
+When the application receives the callback, it must create an instance of <code>MessageEndpointConnection</code> and return it.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1970-L1971">/* implementation of MessageEndpointDelegate */
+override fun createConnection(endpoint: MessageEndpoint) = ActivePeerConnection()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Next, Couchbase Lite will call back the application code through the <code>MessageEndpointConnection.open</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1991-L1996">/* implementation of MessageEndpointConnection */
+override fun open(connection: ReplicatorConnection, completion: MessagingCompletion) {
+    replicatorConnection = connection
+    completion.complete(true, null)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The connection argument is then set on an instance variable.
+The application code must keep track of every <code>ReplicatorConnection</code> associated with every <code>MessageEndpointConnection</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>MessageError</code> argument in the completion block is used to specify if the error is recoverable or not.
+If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new <code>MessageEndpointConnection</code> instance.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="passive-peer-2"><a class="anchor" href="#passive-peer-2"></a>Passive Peer</h4>
+<div class="paragraph">
+<p>The first step after connection establishment on the passive peer is to initialize a new <code>MessageEndpointConnection</code> and pass it to the listener.
+This tells the listener to accept incoming data from that peer.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2051-L2052">val connection = PassivePeerConnection() /* implements MessageEndpointConnection */
+messageEndpointListener?.accept(connection)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><code>messageEndpointListener</code> is the instance of the <code>MessageEndpointListener</code> that was created in the first step (<a href="#peer-discovery">Peer Discovery</a>)</p>
+</div>
+<div class="paragraph">
+<p>Couchbase Lite will then call back the application code through the <code>MessageEndpointConnection.open</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2063-L2067">/* implementation of MessageEndpointConnection */
+override fun open(connection: ReplicatorConnection, completion: MessagingCompletion) {
+    replicatorConnection = connection
+    completion.complete(true, null)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>connection</code> argument is then set on an instance variable.
+The application code must keep track of every <code>ReplicatorConnection</code> associated with every <code>MessageEndpointConnection</code>.</p>
+</div>
+<div class="paragraph">
+<p>At this point, the connection is established and both peers are ready to exchange data.</p>
+</div>
 </div>
 </div>
 </div>
@@ -1983,7 +2166,96 @@ Where applicable, we discuss how to integrate Couchbase Lite into the workflow.<
 <h2 id="pushpull-replication"><a class="anchor" href="#pushpull-replication"></a>Push/Pull Replication</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/commons/common-p2psync-custom.adoc - include::ROOT:partial$p2p-push-pull-repl.adoc[]</p>
+<p>Typically, an application needs to send data and receive data.
+Directionality of the replication could be any of the following.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Push only:</strong> The data is pushed from the local database to the remote database.</p>
+</li>
+<li>
+<p><strong>Pull only:</strong> The data is pulled from the remote database to the local database.</p>
+</li>
+<li>
+<p><strong>Push and Pull:</strong> The data is exchanged both ways.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Usually, the remote is a Sync Gateway database which is identified through a URL.
+In the context of peer-to-peer syncing, the remote is another Couchbase Lite database.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/replication.png" alt="replication">
+</div>
+</div>
+<div class="paragraph">
+<p>The replication lifecycle is handled through the <code>MessageEndpointConnection</code>.</p>
+</div>
+<div class="sect3">
+<h4 id="active-peer-3"><a class="anchor" href="#active-peer-3"></a>Active Peer</h4>
+<div class="paragraph">
+<p>When Couchbase Lite calls back the application code through the <code>MessageEndpointConnection.send</code> method, you should send that data to the other peer using the communication framework.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2008-L2015">/* implementation of MessageEndpointConnection */
+override fun send(message: Message, completion: MessagingCompletion) {
+    /* send the data to the other peer */
+    /* ... */
+    /* call the completion handler once the message is sent */
+    completion.complete(true, null)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once the data is sent, call the completion block to acknowledge the completion.
+You can use the <code>MessageError</code> in the completion block to specify if the error is recoverable or not.
+If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new <code>MessageEndpointConnection</code>.</p>
+</div>
+<div class="paragraph">
+<p>When data is received from the passive peer via the Communication Framework, you call the <code>ReplicatorConnection.receive</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2019">replicatorConnection?.receive(message)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The replication connection&#8217;s <code>receive</code> method is called which then processes the data in order to persist it to the local database.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="passive-peer-3"><a class="anchor" href="#passive-peer-3"></a>Passive Peer</h4>
+<div class="paragraph">
+<p>As in the case of the active peer, the passive peer must implement the <code>MessageEndpointConnection.send</code> method to send data to the other peer.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2081-L2088">/* implementation of MessageEndpointConnection */
+override fun send(message: Message, completion: MessagingCompletion) {
+    /* send the data to the other peer */
+    /* ... */
+    /* call the completion handler once the message is sent */
+    completion.complete(true, null)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once the data is sent, call the completion block to acknowledge the completion.
+You can use the <code>MessageError</code> in the completion block to specify if the error is recoverable or not.
+If it is a recoverable error, the replicator will kick off a retry process which will result to creating a new <code>MessageEndpointConnection</code>.</p>
+</div>
+<div class="paragraph">
+<p>When data is received from the active peer via the Communication Framework, you call the <code>ReplicatorConnection.receive</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2092">replicatorConnection?.receive(message)</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1991,7 +2263,130 @@ Where applicable, we discuss how to integrate Couchbase Lite into the workflow.<
 <h2 id="connection-teardown"><a class="anchor" href="#connection-teardown"></a>Connection Teardown</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Unresolved include directive in modules/ROOT/pages/_partials/commons/common-p2psync-custom.adoc - include::ROOT:partial$p2p-connection-teardown.adoc[]</p>
+<p>When a peer disconnects from a peer-to-peer network, all connected peers are notified.
+The disconnect notification is a good opportunity to close and remove a replication connection.
+The steps to teardown the connection are slightly different depending on whether it is the active or passive peer that disconnects first.
+We will cover each case below.</p>
+</div>
+<div class="sect3">
+<h4 id="initiated-by-active-peer"><a class="anchor" href="#initiated-by-active-peer"></a>Initiated by Active Peer</h4>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/dis-active.png" alt="dis active">
+</div>
+</div>
+<div class="sect4">
+<h5 id="active-peer-4"><a class="anchor" href="#active-peer-4"></a>Active Peer</h5>
+<div class="paragraph">
+<p>When an active peer disconnects, it must call the <code>ReplicatorConnection.close</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1984-L1987">fun disconnect() {
+    replicatorConnection?.close(null)
+    replicatorConnection = null
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, Couchbase Lite will call back your code through the <code>MessageEndpointConnection.close</code> to give the application a chance to disconnect with the Communication Framework.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1999-L2005">override fun close(error: Exception?, completion: MessagingCloseCompletion) {
+    /* disconnect with communications framework */
+    /* ... */
+    /* call completion handler */
+    completion.complete()
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="passive-peer-4"><a class="anchor" href="#passive-peer-4"></a>Passive Peer</h5>
+<div class="paragraph">
+<p>When the passive peer receives the corresponding disconnect notification from the Communication Framework, it must call the <code>ReplicatorConnection.close</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2058">replicatorConnection?.close(null)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, Couchbase Lite will call back your code through the <code>MessageEndpointConnection.close</code> to give the application a chance to disconnect with the Communication Framework.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2071-L2078">/* implementation of MessageEndpointConnection */
+override fun close(error: Exception?, completion: MessagingCloseCompletion) {
+    /* disconnect with communications framework */
+    /* ... */
+    /* call completion handler */
+    completion.complete()
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="initiated-by-passive-peer"><a class="anchor" href="#initiated-by-passive-peer"></a>Initiated by Passive Peer</h4>
+<div class="imageblock">
+<div class="content">
+<img src="../_images/dis-passive.png" alt="dis passive">
+</div>
+</div>
+<div class="sect4">
+<h5 id="passive-peer-5"><a class="anchor" href="#passive-peer-5"></a>Passive Peer</h5>
+<div class="paragraph">
+<p>When the passive disconnects, it must class the <code>MessageEndpointListener.closeAll</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2045">messageEndpointListener?.closeAll()</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, Couchbase Lite will call back your code through the <code>MessageEndpointConnection.close</code> to give the application a chance to disconnect with the Communication Framework.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L2071-L2078">/* implementation of MessageEndpointConnection */
+override fun close(error: Exception?, completion: MessagingCloseCompletion) {
+    /* disconnect with communications framework */
+    /* ... */
+    /* call completion handler */
+    completion.complete()
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect4">
+<h5 id="active-peer-5"><a class="anchor" href="#active-peer-5"></a>Active Peer</h5>
+<div class="paragraph">
+<p>When the active peer receives the corresponding disconnect notification from the Communication Framework, it must call the <code>ReplicatorConnection.close</code> method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1984-L1987">fun disconnect() {
+    replicatorConnection?.close(null)
+    replicatorConnection = null
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then, Couchbase Lite will call back your code through the <code>MessageEndpointConnection.close</code> to give the application a chance to disconnect with the Communication Framework.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt#L1999-L2005">override fun close(error: Exception?, completion: MessagingCloseCompletion) {
+    /* disconnect with communications framework */
+    /* ... */
+    /* call completion handler */
+    completion.complete()
+}</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
