@@ -2130,7 +2130,18 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">// github tag=tojson-array
+final MutableArray mArray = new MutableArray(JSON); <i class="conum" data-value="1"></i><b>(1)</b>
+
+for (int i = 0; i &lt; mArray.count(); i++) { <i class="conum" data-value="2"></i><b>(2)</b>
+    final Dictionary dict = mArray.getDictionary(i);
+    System.out.println(dict.getString("name"));
+    db.save(new MutableDocument(dict.getString("id"), dict.toMap()));
+}
+
+final Array features = db.getDocument("1002").getArray("features");
+for (Object feature: features.toList()) { System.out.println(feature.toString()); }
+System.out.println(features.toJSON()); <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2172,7 +2183,12 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">// github tag=tojson-blob
+final Map&lt;String, ?&gt; thisBlob = db.getDocument("thisdoc-id").toMap();
+  if (!Blob.isBlob(thisBlob)) { return; }
+
+  final String blobType = thisBlob.get("content_type").toString();
+  final Number blobLength = (Number) thisBlob.get("length");</code></pre>
 </div>
 </div>
 </div>
@@ -2205,7 +2221,14 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">// github tag=tojson-dictionary
+final MutableDictionary mDict = new MutableDictionary(JSON); <i class="conum" data-value="1"></i><b>(1)</b>
+System.out.println(mDict.toString());
+
+System.out.println("Details for: " + mDict.getString("name"));
+for (String key: mDict.getKeys()) {
+    System.out.println(key + " =&gt; " + mDict.getValue(key));
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2243,7 +2266,25 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">// github tag=tojson-document
+final Query listQuery = QueryBuilder
+    .select(SelectResult.expression(Meta.id).as("metaId"))
+    .from(DataSource.database(srcDb));
+
+for (Result row: listQuery.execute()) {
+    final String thisId = row.getString("metaId");
+
+    final String json = srcDb.getDocument(thisId).toJSON(); <i class="conum" data-value="1"></i><b>(1)</b>
+    System.out.println("JSON String = " + json);
+
+    final MutableDocument hotelFromJSON = new MutableDocument(thisId, json); <i class="conum" data-value="2"></i><b>(2)</b>
+
+    dstDb.save(hotelFromJSON);
+
+    for (Map.Entry entry: dstDb.getDocument(thisId).toMap().entrySet()) {
+        System.out.println(entry.getKey() + " =&gt; " + entry.getValue()); <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+}</code></pre>
 </div>
 </div>
 </div>
