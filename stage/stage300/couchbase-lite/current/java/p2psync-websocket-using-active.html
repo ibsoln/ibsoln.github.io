@@ -2006,7 +2006,7 @@ The implementation of this storage differs from platform to platform&#8201;&#821
 final ReplicatorConfiguration thisConfig
    = new ReplicatorConfiguration(
       thisDB,
-      URLEndpoint(URI("wss://listener.com:8954"))); <i class="conum" data-value="1"></i><b>(1)</b>
+      URLEndpoint(URI("wss://listener.com:8954"))); <i class="conum" data-value="1"></i><b>(1)</b> <i class="conum" data-value="2"></i><b>(2)</b>
 
 // Set replicator type
 thisConfig.setReplicatorType(
@@ -2017,78 +2017,33 @@ thisConfig.setContinuous(false); // default value
 
 // Configure Server Security --
 // only accept self-signed certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="2"></i><b>(2)</b>
+thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="3"></i><b>(3)</b>
 
-// Configure Client Security <i class="conum" data-value="3"></i><b>(3)</b>
+// Configure Client Security //
 // Configure basic auth using user credentials
 final BasicAuthenticator thisAuth
   = new BasicAuthenticator(
       "Our Username",
-      "Our PasswordValue"));
+      "Our PasswordValue")); <i class="conum" data-value="4"></i><b>(4)</b>
 
 thisConfig.setAuthenticator(thisAuth)
 
 /* Optionally set custom conflict resolver call back <strong>/
-thisConfig.setConflictResolver( /</strong> user supplied code <strong>/ ); <i class="conum" data-value="4"></i><b>(4)</b>
+thisConfig.setConflictResolver( /</strong> user supplied code */ ); <i class="conum" data-value="5"></i><b>(5)</b>
 
 // Create replicator
-final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="5"></i><b>(5)</b>
+final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="6"></i><b>(6)</b>
 
-// Optionally add a change listener <i class="conum" data-value="6"></i><b>(6)</b>
+// Optionally add a change listener
 ListenerToken thisListener
   = new thisReplicator.addChangeListener(change -&gt; {
     if (change.getStatus().getError() != null) {
       Log.i(TAG, "Error code ::  " +
         change.getStatus().getError().getCode());
     }
-  });
-
+  }); <i class="conum" data-value="7"></i><b>(7)</b>
 // Start replicator
-thisReplicator.start(false); <i class="conum" data-value="7"></i><b>(7)</b>
-
-// initialize the replicator configuration
-final ReplicatorConfiguration thisConfig
-   = new ReplicatorConfiguration(
-      thisDB,
-      URLEndpoint(URI("wss://listener.com:8954"))); <i class="conum" data-value="8"></i><b>(8)</b>
-
-// Set replicator type
-thisConfig.setReplicatorType(
-  ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-
-// Configure Sync Mode
-thisConfig.setContinuous(false); // default value
-
-// Configure Server Security --
-// only accept self-signed certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="9"></i><b>(9)</b>
-
-// Configure Client Security <i class="conum" data-value="10"></i><b>(10)</b>
-// Configure basic auth using user credentials
-final BasicAuthenticator thisAuth
-  = new BasicAuthenticator(
-      "Our Username",
-      "Our PasswordValue"));
-
-thisConfig.setAuthenticator(thisAuth)
-
-/</strong> Optionally set custom conflict resolver call back <strong>/
-thisConfig.setConflictResolver( /</strong> user supplied code */ ); <i class="conum" data-value="11"></i><b>(11)</b>
-
-// Create replicator
-final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="12"></i><b>(12)</b>
-
-// Optionally add a change listener <i class="conum" data-value="13"></i><b>(13)</b>
-ListenerToken thisListener
-  = new thisReplicator.addChangeListener(change -&gt; {
-    if (change.getStatus().getError() != null) {
-      Log.i(TAG, "Error code ::  " +
-        change.getStatus().getError().getCode());
-    }
-  });
-
-// Start replicator
-thisReplicator.start(false); <i class="conum" data-value="14"></i><b>(14)</b></code></pre>
+thisReplicator.start(false); <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2198,13 +2153,7 @@ Initialize and define the replication configuration with local and remote databa
 final ReplicatorConfiguration thisConfig
     = new ReplicatorConfiguration(
       thisDB,
-      URLEndpoint(URI("wss://listener.com:8954/travel-sample"))); <i class="conum" data-value="1"></i><b>(1)</b>
-
-// initialize the replicator configuration
-final ReplicatorConfiguration thisConfig
-    = new ReplicatorConfiguration(
-      thisDB,
-      URLEndpoint(URI("wss://listener.com:8954/travel-sample"))); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+      URLEndpoint(URI("wss://listener.com:8954/travel-sample"))); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2255,13 +2204,6 @@ to ensure TLS encryption&#8201;&#8212;&#8201;strongly recommended in production&
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">// Set replicator type
-thisConfig.setReplicatorType(
-  ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
-
-// Configure Sync Mode
-thisConfig.setContinuous(false); // default value
-
-// Set replicator type
 thisConfig.setReplicatorType(
   ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
 
@@ -2474,11 +2416,7 @@ If the server cannot provide acceptable credentials then the connection will fai
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">// Configure Server Security
 // -- only accept CA Certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(false); <i class="conum" data-value="1"></i><b>(1)</b>
-
-// Configure Server Security
-// -- only accept CA Certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(false); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+thisConfig.setAcceptOnlySelfSignedServerCertificate(false); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2500,11 +2438,7 @@ Self signed certificates are not allowed.</td>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">// Configure Server Security --
 // only accept self-signed certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="1"></i><b>(1)</b>
-
-// Configure Server Security --
-// only accept self-signed certs
-thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+thisConfig.setAcceptOnlySelfSignedServerCertificate(true); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2524,10 +2458,7 @@ Any certificates that are not self-signed are rejected.</td>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java#L687-L689">// Use the pinned certificate from the byte array (cert)
-thisConfig.setPinnedServerCertificate(cert.getEncoded()); <i class="conum" data-value="1"></i><b>(1)</b>
-
-// Use the pinned certificate from the byte array (cert)
-thisConfig.setPinnedServerCertificate(cert.getEncoded()); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+thisConfig.setPinnedServerCertificate(cert.getEncoded()); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2538,14 +2469,6 @@ thisConfig.setPinnedServerCertificate(cert.getEncoded()); <i class="conum" data-
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Configure the pinned certificate using data from the byte array <code>cert</code></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Configure to accept only CA certs</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Configure the pinned certificate using data from the byte array <code>cert</code></td>
 </tr>
 </table>
@@ -2581,15 +2504,7 @@ thisConfig.setPinnedServerCertificate(cert.getEncoded()); <i class="conum" data-
 final BasicAuthenticator thisAuth
   = new BasicAuthenticator(
       "Our Username",
-      "Our PasswordValue"));
-
-thisConfig.setAuthenticator(thisAuth)
-
-// Configure basic auth using user credentials
-final BasicAuthenticator thisAuth
-  = new BasicAuthenticator(
-      "Our Username",
-      "Our PasswordValue"));
+      "Our PasswordValue")); <i class="conum" data-value="1"></i><b>(1)</b>
 
 thisConfig.setAuthenticator(thisAuth)</code></pre>
 </div>
@@ -2640,22 +2555,6 @@ thisConfig.setAuthenticator(
   new ClientCertificateAuthenticator(thisClientId)); <i class="conum" data-value="2"></i><b>(2)</b>
 
 // ... other replicator configuration
-// final thisReplicator(thisConfig);
-
-// ... other replicator configuration
-// Provide a client certificate to the server for authentication
-final TLSIdentity thisClientId =
-  TLSIdentity.getIdentity(
-    store,     // keystore holding private key and cert chain
-    "clientId", // key label/alias
-    null        // key password as required
-  ); <i class="conum" data-value="3"></i><b>(3)</b>
-if (thisClientId == null) { throw new IllegalStateException("Client id not found"); } // Error path
-
-thisConfig.setAuthenticator(
-  new ClientCertificateAuthenticator(thisClientId)); <i class="conum" data-value="4"></i><b>(4)</b>
-
-// ... other replicator configuration
 // final thisReplicator(thisConfig);</code></pre>
 </div>
 </div>
@@ -2693,13 +2592,7 @@ You can, optionally, add a change listener (see <a href="#lbl-repl-mon">Monitor 
 final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Start replicator
-thisReplicator.start(false); <i class="conum" data-value="2"></i><b>(2)</b>
-
-// Create replicator
-final Replicator thisReplicator = new Replicator(thisConfig); <i class="conum" data-value="3"></i><b>(3)</b>
-
-// Start replicator
-thisReplicator.start(false); <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+thisReplicator.start(false); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2818,15 +2711,7 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
       Log.i(TAG, "Error code ::  " +
         change.getStatus().getError().getCode());
     }
-  });
-
-ListenerToken thisListener
-  = new thisReplicator.addChangeListener(change -&gt; {
-    if (change.getStatus().getError() != null) {
-      Log.i(TAG, "Error code ::  " +
-        change.getStatus().getError().getCode());
-    }
-  });</code></pre>
+  }); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2834,19 +2719,6 @@ ListenerToken thisListener
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Log.i(TAG, "The Replicator is currently " +
-  thisReplicator.getStatus().getActivityLevel());
-
-Log.i(TAG, "The Replicator has processed " + t);
-
-if (thisReplicator.getStatus().getActivityLevel() ==
-  Replicator.ActivityLevel.BUSY) {
-    Log.i(TAG, "Replication Processing");
-    Log.i(TAG, "It has completed " +
-      thisReplicator.getStatus().getProgess().getTotal() +
-      " changes");
-  }
-
-Log.i(TAG, "The Replicator is currently " +
   thisReplicator.getStatus().getActivityLevel());
 
 Log.i(TAG, "The Replicator has processed " + t);
@@ -3016,9 +2888,7 @@ Your app should account for this potential delay before attempting any subsequen
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">// Stop replication.
-thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b>
-// Stop replication.
-thisReplicator.stop(); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+thisReplicator.stop(); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
