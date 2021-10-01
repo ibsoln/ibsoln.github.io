@@ -3385,7 +3385,9 @@ Unlike regular queries, the index is not optional.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$snippets/src/main/java/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">database.createIndex(
+    "nameFTSIndex",
+    IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false));</code></pre>
 </div>
 </div>
 </div>
@@ -3420,7 +3422,16 @@ The left-hand side is the <em>full-text index</em> to use and the right-hand sid
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$snippets/src/main/java/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">Expression whereClause = FullTextExpression.index("nameFTSIndex").match("buy");
+Query ftsQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
+    .from(DataSource.database(database))
+    .where(whereClause);
+ResultSet ftsQueryResult = ftsQuery.execute();
+for (Result result : ftsQueryResult) {
+    Log.i(
+        TAG,
+        String.format("document properties %s", result.getString(0)));
+}</code></pre>
 </div>
 </div>
 </div>

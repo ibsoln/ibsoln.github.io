@@ -3565,7 +3565,53 @@ Ensure you added the Couchbase&#160;Lite dependency to your <code>build.gradle</
 <p>Create a new project folder and add a <code>build.gradle</code> file containing the following:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">Unresolved include directive in modules/java/pages/gs-build.adoc - include::java:example$snippets/src/main/java/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">
+ext{
+  TOMCAT_VERSION="9.0.24"
+}
+
+apply plugin: 'java'
+apply plugin: 'war'
+apply plugin: 'com.bmuschko.tomcat'
+
+sourceCompatibility = 1.8
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    //  Use for Enterprise version
+    compileOnly "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
+    //  Use for community versions
+    //    compileOnly "com.couchbase.lite:couchbase-lite-java:2.7.0"
+    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
+    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
+        "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
+        "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}"
+}
+
+tomcat {
+    httpPort = 8080
+    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
+    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
+    contextPath = '/'
+}
+
+[tomcatRun, tomcatRunWar].each { task -&gt;
+    fileTree("libs").visit { FileVisitDetails details -&gt;
+        task.additionalRuntimeResources &lt;&lt; file(details.file.path)
+    }
+}</code></pre>
 </div>
 </div>
 </li>
@@ -3579,7 +3625,163 @@ Ensure you added the Couchbase&#160;Lite dependency to your <code>build.gradle</
 <p>Create a Java class <em>GettingStarted</em> using this code:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/java/pages/gs-build.adoc - include::java:example$snippets/src/main/java/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">import com.couchbase.lite.*;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
+@WebServlet( value = "/GettingStarted")
+public class GettingStarted extends javax.servlet.http.HttpServlet {
+    private static final String DB_DIR = "/usr/local/var/tomcat/data"; <i class="conum" data-value="1"></i><b>(1)</b>
+    private static final String DB_NAME = "getting-started";
+    /*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
+    private static final String DB_USER = "sync_gateway";
+    private static final String DB_PASS = "password";
+    //    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/db" + DB_NAME;
+    private static final String SYNC_GATEWAY_URL = "ws://127.0.0.1:4984/getting-started"; <i class="conum" data-value="2"></i><b>(2)</b>
+    private static final String NEWLINETAG = "&lt;br /&gt;";
+    private String MYRESULTS;
+    private int NUMROWS;
+    private Random RANDOM = new Random();
+
+    protected void doGet(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
+            response) throws javax.servlet.ServletException, IOException {
+        outputMessage("Servlet started :: doGet Invoked");
+        doPost(request, response);
+    }
+
+    protected void doPost(javax.servlet.http.HttpServletRequest request, javax.servlet.http.HttpServletResponse
+            response) throws javax.servlet.ServletException, IOException {
+        NUMROWS = 0;
+        MYRESULTS = "";
+        outputMessage("Servlet started :: doPost Invoked");
+        String url = "/showDbItems.jsp";
+        try {
+            MYRESULTS = testCouchbaseLite();
+        } catch (CouchbaseLiteException | URISyntaxException | InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            outputMessage(String.format("CouchbaseLite Test Ended :: There are %d rows in DB", NUMROWS));
+        }
+        request.setAttribute("myRowCount", NUMROWS);
+        request.setAttribute("myResults", MYRESULTS);
+        getServletContext()
+                .getRequestDispatcher(url)
+                .forward(request, response);
+        outputMessage("Servlet Ended :: doPost Exits");
+    }
+
+    public String testCouchbaseLite() throws CouchbaseLiteException, URISyntaxException, InterruptedException, ServletException {
+
+        int randPtr = RANDOM.nextInt(5) + 1;
+        long syncTotal = 0;
+        Double randVn = RANDOM.nextDouble() + 1;
+        List&lt;String&gt; listLangs = new ArrayList&lt;String&gt;(Arrays.asList("Java", "Swift", "C#.Net", "Objective-C", "C++", "Cobol"));
+        List&lt;String&gt; listTypes = new ArrayList&lt;String&gt;(Arrays.asList("SDK", "API", "Framework", "Methodology", "Language", "IDE"));
+
+        String Prop_Id = "id";
+        String Prop_Language = "language";
+        String Prop_Type = "type";
+        String Prop_Version = "version";
+        String searchStringType = "SDK";
+
+        // Get and configure database
+        // Note initialisation of CouchbaseLite is done in ServletContextListener
+        outputMessage("== Opening DB and doing initial sync");
+        Database database = DatabaseManager.manager().getDatabase(DB_NAME,DB_DIR,DB_PASS);
+
+        // Initial DB sync prior to local updates
+        syncTotal = DatabaseManager.manager().runOneShotReplication(database, SYNC_GATEWAY_URL, DB_USER, DB_PASS);
+        outputMessage(String.format("Inital number of rows synchronised = %d", syncTotal));
+
+        // Create a new document (i.e. a record) in the database.
+        outputMessage("== Adding a record");
+        MutableDocument mutableDoc = new MutableDocument()
+                .setDouble(Prop_Version, randVn)
+                .setString(Prop_Type, listTypes.get(RANDOM.nextInt(listTypes.size() - 1)));
+
+        // Save it to the database.
+        try {
+            database.save(mutableDoc);
+        } catch (CouchbaseLiteException e) {
+            throw new ServletException("Error saving a document", e);
+        }
+
+        // Update a document.
+        outputMessage("== Updating added record");
+        mutableDoc = database.getDocument(mutableDoc.getId()).toMutable();
+        mutableDoc.setString(Prop_Language, listLangs.get(RANDOM.nextInt(listLangs.size() - 1)));
+        // Save it to the database.
+        try {
+            database.save(mutableDoc);
+        } catch (CouchbaseLiteException e) {
+            throw new ServletException("Error saving a document", e);
+        }
+
+        outputMessage("== Retrieving record by id");
+        Document newDoc = database.getDocument(mutableDoc.getId());
+        // Show the document ID (generated by the database) and properties
+        outputMessage("Document ID :: " + newDoc.getId());
+        outputMessage("Learning " + newDoc.getString(Prop_Language));
+
+        // Create a query to fetch documents of type SDK.
+        outputMessage("== Executing Query 1");
+        Query query = QueryBuilder.select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Expression.property(Prop_Type).equalTo(Expression.string(searchStringType)));
+        try{
+            ResultSet result = query.execute();
+            outputMessage(String.format("Query returned %d rows of type %s", result.allResults().size(), searchStringType));
+        } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+
+        // Create a query to fetch all documents.
+        outputMessage("== Executing Query 2");
+        Query queryAll = QueryBuilder.select(SelectResult.expression(Meta.id),
+                SelectResult.property(Prop_Language),
+                SelectResult.property(Prop_Version),
+                SelectResult.property(Prop_Type))
+                .from(DataSource.database(database));
+        try {
+            for (Result thisDoc : queryAll.execute()) {
+              NUMROWS++;
+                outputMessage(String.format("%d ... Id: %s is learning: %s version: %.2f type is %s",
+                  NUMROWS,
+                  thisDoc.getString(Prop_Id),
+                  thisDoc.getString(Prop_Language),
+                  thisDoc.getDouble(Prop_Version),
+                  thisDoc.getString(Prop_Type)));
+              }
+            } catch (CouchbaseLiteException e) {
+            e.printStackTrace();
+        }
+        outputMessage(String.format("Total rows returned by query = %d", NUMROWS));
+
+//      Do final single-shot replication to incorporate changed NumRows
+        outputMessage("== Doing final single-shot sync");
+        syncTotal = DatabaseManager.manager().runOneShotReplication(database, SYNC_GATEWAY_URL, DB_USER, DB_PASS);
+        outputMessage(String.format("Total rows synchronised = %d", syncTotal));
+        database.close();
+        return MYRESULTS;
+    }
+
+    public void outputMessage(String msg) {
+        String thisMsg = "Null message";
+        if (msg.length() &gt; 0) {
+            thisMsg = msg;
+        }
+        System.out.println(msg);
+        MYRESULTS = MYRESULTS + msg + NEWLINETAG;
+    }
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -3599,7 +3801,17 @@ Ensure you added the Couchbase&#160;Lite dependency to your <code>build.gradle</
 <p>Create a Java class <em>Listener</em> using this code:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/java/pages/gs-build.adoc - include::java:example$snippets/src/main/java/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
+
+@WebListener
+public class Application implements ServletContextListener {
+  @Override
+  public void contextInitialized(ServletContextEvent event) {
+      DatabaseManager.manager().init();
+  }
+}</code></pre>
 </div>
 </div>
 </li>
@@ -3607,7 +3819,87 @@ Ensure you added the Couchbase&#160;Lite dependency to your <code>build.gradle</
 <p>Create a Java class <em>Database Manager</em> using this code:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">Unresolved include directive in modules/java/pages/gs-build.adoc - include::java:example$snippets/src/main/java/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">import com.couchbase.lite.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+public class DatabaseManager {
+
+    private static DatabaseManager instance;
+    private Database database;
+    public static synchronized DatabaseManager manager() {
+        if (instance == null) {
+            instance = new DatabaseManager();
+        }
+        return instance;
+    }
+    public synchronized void init() {
+        CouchbaseLite.init(); <i class="conum" data-value="1"></i><b>(1)</b>
+    }
+    public synchronized Database getDatabase(String parDbname, String parDbDir,  String parDbPass) {
+        if (database == null) {
+            try {
+                DatabaseConfiguration config = new DatabaseConfiguration();
+                config.setDirectory(parDbDir); <i class="conum" data-value="2"></i><b>(2)</b>
+                config.setEncryptionKey(new EncryptionKey(parDb_PASS)); <i class="conum" data-value="3"></i><b>(3)</b>
+                database = new Database(parDbname, config);
+            }
+            catch (CouchbaseLiteException e) {
+                throw new IllegalStateException("Cannot create database", e);
+            }
+        }
+        return database;
+    }
+
+    public synchronized long runOneShotReplication( Database parDb, String parURL, String parName, String parPassword) throws InterruptedException {
+        long syncTotal = 0;
+        // Set replicator endpoint
+        URI sgURI = null;
+        try {
+            sgURI = new URI(parURL);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        URLEndpoint targetEndpoint = new URLEndpoint(sgURI);
+
+        // Configure replication
+        System.out.println("== Synchronising DB :: Configuring replicator");
+        ReplicatorConfiguration replConfig = new ReplicatorConfiguration(parDb, targetEndpoint);
+
+        replConfig.setReplicatorType(ReplicatorConfiguration.ReplicatorType.PUSH_AND_PULL);
+        replConfig.setContinuous(false);    // make this a single-shot replication cf. a continuous replication
+
+        // Add authentication.
+//        outputMessage("== Synchronising DB :: Setting authenticator");
+        replConfig.setAuthenticator(new BasicAuthenticator(parName, parPassword));
+
+        // Create replicator (be sure to hold a reference somewhere that will prevent the Replicator from being GCed)
+//        outputMessage("== Synchronising DB :: Creating replicator");
+        Replicator replicator = new Replicator(replConfig);
+
+        // Listen to replicator change events.
+//        System.out.println("== Synchronising DB :: Adding listener");
+        replicator.addChangeListener(change -&gt; {
+            if (change.getStatus().getError() != null) {
+                System.err.println("Error code ::  " + change.getStatus().getError().getCode());
+            }
+        });
+
+        // Start replication.
+//        outputMessage("== Synchronising DB :: Starting");
+        replicator.start();
+        // Check status of replication and wait till it is completed
+        while ((replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.STOPPED) &amp;&amp; (replicator.getStatus().getActivityLevel() != Replicator.ActivityLevel.IDLE)) {
+            Thread.sleep(1000);
+        }
+
+        syncTotal = replicator.getStatus().getProgress().getTotal();
+        replicator.stop();
+//        outputMessage("== Synchronising DB :: Completed ");
+        return replicator.getStatus().getProgress().getTotal();
+
+        }
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -3631,7 +3923,18 @@ Ensure you added the Couchbase&#160;Lite dependency to your <code>build.gradle</
 <p>Create an <code>index.html</code> file in <code>src/main/web app</code> with the following content:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-html hljs" data-lang="html">Unresolved include directive in modules/java/pages/gs-build.adoc - include::java:example$snippets/src/main/java/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-html hljs" data-lang="html" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">&lt;%@ page contentType="text/html;charset=UTF-8" language="java" %&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Couchbase Lite (Java Jvm) :: Getting Started App&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Couchbase Lite (Java Jvm) :: Getting Started App&lt;/h1&gt;
+
+&lt;p&gt;To invoke the GettingStarted servlet click &lt;a href="GettingStarted"&gt;here&lt;/a&gt;&lt;/p&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
 </li>
@@ -3639,7 +3942,20 @@ Ensure you added the Couchbase&#160;Lite dependency to your <code>build.gradle</
 <p>Create a <code>showDbItems.jsp</code> file in <code>src/main/web app</code> with the following content:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-html hljs" data-lang="html">Unresolved include directive in modules/java/pages/gs-build.adoc - include::java:example$snippets/src/main/java/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-html hljs" data-lang="html" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;Couchbase Lite (Java Jvm) :: Getting Started App&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;h1&gt;Couchbase Lite (Java Jvm) :: Getting Started App&lt;/h1&gt;
+&lt;h2&gt;List all current DB rows&lt;/h2&gt;
+&lt;hr&gt;
+&lt;p&gt;NumRows = ${myRowCount}&lt;/p&gt;
+&lt;hr&gt;
+${myResults}
+&lt;hr&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
 </div>
 </div>
 </li>

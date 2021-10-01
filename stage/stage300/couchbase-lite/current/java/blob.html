@@ -1987,7 +1987,21 @@ If a document&#8217;s blob is over 20 MB, the document will be replicated but no
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Unresolved include directive in modules/ROOT/pages/_partials/_block_tabbed_code_example.adoc - include::java:example$snippets/src/main/java/Examples.java[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/java/examples/codesnippet_collection.java">InputStream is = getAsset("avatar.jpg"); <i class="conum" data-value="1"></i><b>(1)</b>
+if (is == null) { return; }
+try {
+    Blob blob = new Blob("image/jpeg", is);  <i class="conum" data-value="2"></i><b>(2)</b>
+    newTask.setBlob("avatar", blob); <i class="conum" data-value="3"></i><b>(3)</b>
+    database.save(newTask);
+
+    Blob taskBlob = newTask.getBlob("avatar");
+    byte[] bytes = taskBlob.getContent();
+} catch (CouchbaseLiteException e) {
+    Log.e(TAG, e.toString());
+} finally {
+    try { is.close(); }
+    catch (IOException ignore) { }
+}</code></pre>
 </div>
 </div>
 </div>
