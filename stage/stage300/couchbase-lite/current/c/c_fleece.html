@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>C API and Fleece Usage | Couchbase Docs</title>
+<title>Fleece C API | Couchbase Docs</title>
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
-<meta name="description" content="Client-side Field Level Encryption on Couchbase Lite C Clients">
+<meta name="description" content="Introducing the key concepts of the Fleece C API">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
 <meta name="dcterms.subject" content="couchbase-lite">
 <meta name="dcterms.identifier" content="3.0">
@@ -353,6 +353,16 @@
   </span>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="c_notes.html">Notes on C</a>
+  </span>
+</li>
+<li class="menu_list is-current-page" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link is-current-page" href="c_fleece.html">Fleece API</a>
+  </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
@@ -1912,13 +1922,14 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="../index.html">Couchbase Lite</a></li>
-<li class="crumb"><a href="c_fleece.html">C API and Fleece Usage</a></li>
+<li class="crumb"><a href="quickstart.html">C</a></li>
+<li class="crumb"><a href="c_fleece.html">Fleece API</a></li>
 </ul>
 </nav>
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">C API and Fleece Usage</h1>
+<h1 class="page">Fleece C API</h1>
 <div class="labels">
 <ul>
 <li class="edition"><a href="https://www.couchbase.com/products/editions">3.0</a></li>
@@ -1947,11 +1958,11 @@ This is an <a href="https://www.couchbase.com/products/editions">Enterprise Edit
 </div>
 </div>
 <div class="sect1">
-<h2 id="fleece-c-api"><a class="anchor" href="#fleece-c-api"></a>Fleece C API</h2>
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p><em>Couchbase&#160;Lite</em> for C makes extensive use of the Fleece C API for accessing document data.
-This content shows how to use Fleece API (C API) to access (read and modify) data.</p>
+This content introduces some basic Fleece API concepts and examples.</p>
 </div>
 <div class="paragraph">
 <p>Fleece is a binary encoding for semi-structured data.
@@ -1987,160 +1998,322 @@ Fleece is what&#8217;s known as a persistent data structure.
 A Fleece document can be mutated by appending data to it.
 The mutation is in effect a delta, so it&#8217;s usually much smaller than the original document.
 And the original document is unchanged, which is great for concurrency as well as (simple) version control.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">For more information, see</dt>
+<dd>
+<p><a href="https://github.com/couchbaselabs/fleece">Fleece on GitHub</a> |
+<a href="https://github.com/couchbaselabs/fleece/wiki/Using-Fleece">Using Fleece</a> |
+<a href="https://github.com/couchbaselabs/fleece/blob/master/API/fleece/Fleece.h">Fleece Header File</a></p>
+</dd>
+</dl>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="values"><a class="anchor" href="#values"></a>Values</h3>
+<div class="paragraph">
+<p>FLValue is Fleece&#8217;s ubiquitous data type.
+It is a reference to a value of any type.</p>
+</div>
+<div class="listingblock">
+<div class="title">FLValue</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account"))); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here we retrieve a property value as a string.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="slices"><a class="anchor" href="#slices"></a>Slices</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Another basic Fleece data type, <code>FLSlice</code> is a simple struct consisting of a pointer and a length.
+It points to a range of memory, without  implying ownership
+A lot of utility methods rely on it, including ones to convert to and from C++ and C strings.</p>
+</div>
+<div class="paragraph">
+<p>An <code>FLSlice</code> literal can be written as FLSTR("something").</p>
+</div>
+<div class="paragraph">
+<p>It has utility functions such as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>FLSlice_Equal</code>&#8201;&#8212;&#8201;compares two slices for equality.</p>
+</li>
+<li>
+<p><code>FLSlice_Compare</code>&#8201;&#8212;&#8201;a 3-way comparison, like strcmp().</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>For more information, see:<br>
-<a href="https://github.com/couchbaselabs/fleece">Fleece on GitHub</a> | [Using Fleece]</p>
+<p>The <code>FLSliceResult</code> type is a subclass of FLSLice, which <strong>does</strong> own memory.<br>
+It always points to a heap block that it manages.
+You are responsible for calling FLSliceResult_Release when you&#8217;re done with it.
+See: <a href="#ex-create-array">Create arrays</a> fro an example of this in use.</p>
+</div>
+<div class="paragraph">
+<p>It has functions which can be used to create new  FLSliceResults and to Release when necessary.+</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>FLSliceResult_New</p>
+</li>
+<li>
+<p>FLSlice_Copy</p>
+</li>
+<li>
+<p>FLSliceResults_Release</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The null slice {NULL, 0} is represented by the constant <code>kFLSliceNull</code>.<br>
+You test a slice for null by comparing its pointer (buf) with NULL.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Reference-counting is a manual exercise, see: <a href="#lbl-ref-counted-objects">[lbl-ref-counted-objects]</a>.
+Whenever an FLSliceResult is returned from an API call, you are responsible for calling FLSliceResult_Release when you&#8217;re done with it.</p>
+</div>
+<div class="paragraph">
+<p>See: <code>fleece/slice.h</code> for more details.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="c-string"><a class="anchor" href="#c-string"></a>C-String</h2>
+<h2 id="strings"><a class="anchor" href="#strings"></a>Strings</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For functions using C-String as an argument, this implementation accepts the C-String as an FLString.
-Use the <code>FLStr</code> function to convert between C-String and FLString.</p>
+<p>Use the Fleece <code>FLSTR</code> function to provide string arguments to Couchbase&#160;Lite</p>
 </div>
-<div class="paragraph">
-<p>For functions returning C-Strings, the API implementation returns the C-String as FLStringResults or FLString if the string is available.</p>
+<div class="listingblock">
+<div class="title">Strings</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">CBLDatabase* db = CBLDatabase_Open(FLSTR("my-database"), NULL, &amp;err);</code></pre>
+</div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="errors"><a class="anchor" href="#errors"></a>Errors</h2>
+<h2 id="dictionaries"><a class="anchor" href="#dictionaries"></a>Dictionaries</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>By convention functions return error information via an option out parameter; a pointer <code>CBLError*</code>.
-The function will return <code>false</code> or <code>null</code>, having populated <code>CBLError*</code> with the required error information.</p>
+<p>Use <code>FLMutableDict</code> to add K/V pairs to dictionaries and document as shown here.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">CBLDatabase* CBLDatabase_Open(FLString name,
-                          const CBLDatabaseConfiguration* config,
-                          CBLError* error);
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">CBLDocument* newTask = CBLDocument_CreateWithID(FLSTR("xyz"));
+FLMutableDict properties = CBLDocument_MutableProperties(newTask);
+FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("task"));
+FLMutableDict_SetString(properties, FLSTR("owner"), FLSTR("todo"));</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>don&#8217;t forget to release resources once you have finished with them<br>
+<code>FLMutableDict_Release(properties);</code></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-fleece-arrays"><a class="anchor" href="#lbl-fleece-arrays"></a>Arrays</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use the FLValue function FLValue_AsArray to create an array from existing data.</p>
+</div>
+<div id="ex-create-array" class="listingblock">
+<div class="title">Create arrays</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Create an array from the JSON string
+FLError err;
+FLSliceResult jsonData1 = FLData_ConvertJSON(json, &amp;err); <i class="conum" data-value="1"></i><b>(1)</b>
+FLArray hotels = FLValue_AsArray(FLValue_FromData(FLSliceResult_AsSlice(jsonData1), kFLTrusted));
 
-bool CBLDatabase_Close(CBLDatabase* db _cbl_nonnull,
-                          CBLError* error);</code></pre>
+FLSliceResult_Release(jsonData1);</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Here the FLSliceResult points to a Json string representing an array of hotels.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Use <code>FLArrayIterator</code> to iterate through arrays as shown in</p>
+</div>
+<div id="ex-array-iteration" class="listingblock">
+<div class="title">Array iteration</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLArrayIterator iter;
+FLArrayIterator_Begin(hotels, &amp;iter);
+FLValue value;
+while (NULL != (value = FLArrayIterator_GetValue(&amp;iter))) {
+    FLString hotel = FLValue_AsString(value);
+    printf("Hotel :: %.*s\n", (int)hotel.size, (const char *)hotel.buf);
+    FLArrayIterator_Next(&amp;iter);
+}</code></pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="nullable-pointers"><a class="anchor" href="#nullable-pointers"></a>Nullable Pointers</h2>
+<h2 id="encoding-a-fleece-object"><a class="anchor" href="#encoding-a-fleece-object"></a>Encoding a Fleece Object</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>By default pointer types are <code>nullable</code>.
-To over-ride this behavior use either of:</p>
-</div>
-<div class="ulist">
-<ul>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p>For parameters&#8201;&#8212;&#8201;<code>cbl_nonnull</code></p>
+<p>Construct an Encoder</p>
 </li>
 <li>
-<p>For return values&#8201;&#8212;&#8201;<code>cbl_returns_nonnull</code></p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="ref-counted-objects"><a class="anchor" href="#ref-counted-objects"></a>Ref-Counted Objects</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Ref-counted objects can be <em>retained</em> or <em>released</em> using the corresponding <code>CBL</code>&lt;object_name&gt;_Retain` or <code>CBL&lt;object_name&gt;_Release</code> function (for example, <code>CBLDatabase_Retain</code> or CBLBlob_Release.</p>
-</div>
-<div class="paragraph">
-<p>Available ref-counted objects include:
-<code>CBLDatabase</code>, <code>CBLDocument</code>, <code>CBLBlob</code>, <code>CBLQuery</code>, and <code>CBLReplicator</code>.
-The API automatically retains these created objects (with a retain count of 1) and developers are responsible for releasing them when they are nolonger needed.</p>
-</div>
-<div class="paragraph">
-<p>CBL-C is responsible for all other functions releasing objects .
-To keep the object available longer you must manually retain it.</p>
-</div>
-<div class="paragraph">
-<p>Calls to retain and release objects need to be balanced.</p>
-</div>
-<div class="paragraph">
-<p>For more information on using the C API see:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-c/">API&#160;References</a></p>
+<p>Tell the encoder to begin a collection: beginArray or beginDict</p>
 </li>
 <li>
-<p><a href="document.html" class="page">Documents</a></p>
+<p>Write values to the encoder, which adds them to the collection:</p>
 </li>
-</ul>
+<li>
+<p>If the collection is a dictionary, call writeKey to define the key for the value.</p>
+</li>
+<li>
+<p>To write a collection, recursively perform steps 2–4: Begin the collection, write . values, end it.<br>
+To write a scalar, call: writeNull, writeBool, writeInt, etc.</p>
+</li>
+<li>
+<p>End the collection: endArray or endDict</p>
+</li>
+<li>
+<p>Call finish, which returns the encoded data</p>
+</li>
+</ol>
 </div>
-<div class="paragraph">
-<p>The rest of this document covers the use of Fleece.</p>
-</div>
+<div id="ex-encoding" class="exampleblock">
+<div class="title">Example 1. Encoding  a Fleece object</div>
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c"></code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">Encoder enc;
+enc.beginDict(); <i class="conum" data-value="1"></i><b>(1)</b>
+enc.writeKey("dimensions"); <i class="conum" data-value="2"></i><b>(2)</b>
+  enc.beginArray();
+    enc.writeInt(10);
+    enc.writeInt(16);
+  enc.endArray();
+enc.writeKey("color"); <i class="conum" data-value="3"></i><b>(3)</b>
+enc.writeString("blue");
+enc.endDict();
+FLSliceResult encodedData = enc.finish(); <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Start the dictionary collection</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Here we create a property with the key <em>dimensions</em> and a value comprising an array of two integer values representing, say, length and width</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Here we create a property with the key <em>color</em> and a value "blue"</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Finish and return the slice as <code>encodedData</code></td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="encryptable-type"><a class="anchor" href="#encryptable-type"></a>Encryptable Type</h2>
+<h2 id="encryptables"><a class="anchor" href="#encryptables"></a>Encryptables</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Fleece Setter and Getter
-Fleece Extension API for setting and getting CBLEncryptable objects are shown below.</p>
+<p>You can use the Fleece Extension API for setting and getting CBLEncryptable objects.</p>
 </div>
-<div class="paragraph">
-<p>void FLSlot_SetEncryptableValue(FLSlot slot, CBLEncryptable *encryptable);</p>
-</div>
-<div class="paragraph">
-<p>CBLEncryptable* FLValue_GetEncryptableValue(FLValue v);</p>
-</div>
-<div class="paragraph">
-<p>static bool FLValue_IsEncryptableValue(FLValue v);</p>
+<div class="listingblock">
+<div class="title">Setter</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void FLSlot_SetEncryptableValue(FLSlot slot, CBLEncryptable *encryptable);</code></pre>
 </div>
 </div>
+<div class="listingblock">
+<div class="title">Getter</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Getter
+CBLEncryptable* FLValue_GetEncryptableValue(FLValue v);</code></pre>
 </div>
-<div class="sect1">
-<h2 id="document"><a class="anchor" href="#document"></a>Document</h2>
-<div class="sectionbody">
-<div class="paragraph">
+</div>
+<div class="listingblock">
+<div class="title">IsEncryptable?</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Check whether the value is an encrypted property or not
+static bool FLValue_IsEncryptableValue(FLValue v);</code></pre>
+</div>
+</div>
+<table id="tbl-encryption-constraints" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Encryption Constraints</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Document</p></th>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>In the case of nested <code>encryptable</code> types, the replicator only encrypts the outer <code>encryptable</code>.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="arrays"><a class="anchor" href="#arrays"></a>Arrays</h2>
-<div class="sectionbody">
-<div class="paragraph">
+</div></div></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Arrays</p></th>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>For compatibility with Server SDKS, encryptables are not supported within arrays.</p>
 </div>
 <div class="paragraph">
 <p>The push replicator should detect and report an error if an encrypted property is found in an array.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="blobs"><a class="anchor" href="#blobs"></a>Blobs</h2>
-<div class="sectionbody">
-<div class="paragraph">
+</div></div></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Blobs</p></th>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>Encrypting blob’s content is not supported.</p>
 </div>
 <div class="paragraph">
 <p>Where a Blob as a Fleece dictionary is specified in the encrypted property value, only the dictionary is encrypted; <strong>not</strong> the blob’s content.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="delta-sync"><a class="anchor" href="#delta-sync"></a>Delta Sync</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Delta Sync will be disabled and a warning message logged when <code>propertyEncryption</code> is configured.</p>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect1">
