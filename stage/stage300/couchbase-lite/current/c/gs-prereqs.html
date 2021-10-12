@@ -1992,148 +1992,22 @@
 </dl>
 </div>
 <div class="paragraph">
-<p>Although the size of the Couchbase Lite framework that is downloaded is around 50MB, note that the framework would add only around 3.5MB to the size of the app when it is installed from the App Store.
-This is because when the user installs your app from the App Store, only the bits that are relevant to the device architecture are delivered.</p>
+<p>Couchbase Lite for C is provided as an <code>xcframework</code>.</p>
 </div>
-<div class="sect2">
-<h3 id="why-is-the-original-size-so-large"><a class="anchor" href="#why-is-the-original-size-so-large"></a>Why is the original size so large?</h3>
 <div class="paragraph">
-<p>The Couchbase Lite framework  includes a "fat" binary that contains slices for both device (<code>armv7</code>, <code>arm64</code>) and simulator (<code>i386</code> and <code>x86_64</code>) CPU architectures.
-The fat binary allows you to link your app to the same framework and run your app on the simulator or a real device.
-In addition, the bitcode that is included with the framework contributes to the majority of the download size.
+<p>The xcframework download size is between 100 and 140 MB.
+This include includes a "fat" binary that contains slices for both device (<code>armv7</code>, <code>arm64</code>) and simulator (<code>i386</code> and <code>x86_64</code>) CPU architectures.
+The fat binary allows you to link your app to the same xcframework and run your app on the simulator or a real device.</p>
+</div>
+<div class="paragraph">
+<p>In addition, the bitcode that is included contributes to the majority of the download size.
 <a href="https://help.apple.com/xcode/mac/current/#/devbbdc5ce4f">Bitcode</a> is an intermediate code representation that allows Apple to recompile the app after App submission and to deliver a thin version of the app specific to the device architecture.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="architecture-stripping"><a class="anchor" href="#architecture-stripping"></a>Architecture Stripping</h3>
 <div class="paragraph">
-<p>When submitting a build of your application to the App Store you must ensure that it doesn&#8217;t contain any simulator architecture otherwise the upload will fail with the error message "Unsupported Architecture.
-Your executable contains unsupported architecture '[x86_64, i386]'."</p>
+<p>Although you can disable bitcode within your app and strip away bitcode from the Couchbase Lite framework, it is not necessary to do so. In fact, it is probably best to leave it enabled to be future proof. This is because the bitcode is never downloaded by the user even though it is uploaded during App submission.</p>
 </div>
 <div class="paragraph">
-<p>The steps to remove the simulator architecture (x86_64) from <strong>CouchbaseLite.framework</strong> are outlined below in <a href="#ex-rmvsimarc">[ex-rmvsimarc]</a>.
-They depend on the method you chose to install Couchbase Lite:</p>
-</div>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset1_frameworks"></a>Frameworks</p>
-</li>
-<li>
-<p><a id="tabset1_carthage"></a>Carthage</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset1_frameworks">
-<div class="paragraph">
-<p>The Couchbase Lite framework available on the <a href="https://www.couchbase.com/downloads#extend-with-mobile">Couchbase Downloads page</a> contains a build for both the simulator (x86_64) and iOS devices (ARM).
-The following steps describe how to set up a build phase in Xcode to do this automatically.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>In Xcode, open the <strong>Build Phases</strong> tab, then select the <strong>+</strong> &gt; <strong>Add Run Script Build Phase</strong> option.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/run-script-phase.png" alt="run script phase">
-</div>
-</div>
-</li>
-<li>
-<p>Copy the contents of <a href="https://raw.githubusercontent.com/couchbase/couchbase-lite-ios/master/Scripts/strip_frameworks.sh">strip_framework.sh</a> in the <strong>Run Script</strong> editor window.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/run-script-copy.png" alt="run script copy">
-</div>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>That&#8217;s it, now every time you build and run your application, Xcode will remove binary architectures that do not match the target&#8217;s architecture type (emulator or device).</p>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset1_carthage">
-<div class="paragraph">
-<p>The <a href="https://github.com/Carthage/Carthage/blob/5fd867c4895b4f59d70181dec169a1644f4430e3/README.md#adding-frameworks-to-an-application">following link</a> describes how to set up a build phase in Xcode and run a Carthage script in order to remove the simulator architecture (x86_64).</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="lbl-tgtinterr"><a class="anchor" href="#lbl-tgtinterr"></a>Target Integrity Error</h3>
-<div class="paragraph">
-<p>You may encounter a <code>Target Integrity Error</code> when building for iOS Simulator(or iOS).
-This is because the embedded framework <code>CouchbaseLiteSwift.framework</code> was built for iOS + iOS Simulator.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-Using XCFrameworks will ensure that the binaries used have the right architectures for the different platforms you target.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>As a workaround, you are recommended to strip the unnecessary architecture from the fat binary as described in <a href="#ex-wkaround">Example 1</a></p>
-</div>
-<div id="ex-wkaround" class="exampleblock">
-<div class="title">Example 1. Thinning the Framework</div>
-<div class="content">
-<div class="paragraph">
-<p>Within the folder containing the framework, use the <code>lipo</code> command to convert the universal binary to a single architecture file.</p>
-</div>
-<div class="tabset is-loading">
-<div class="ulist tabs">
-<ul>
-<li>
-<p><a id="tabset2_simulator"></a>Simulator</p>
-</li>
-<li>
-<p><a id="tabset2_device"></a>Device</p>
-</li>
-</ul>
-</div>
-<div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_simulator">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">lipo CouchbaseLiteSwift.framework/CouchbaseLiteSwift -thin x86_64 -output  CouchbaseLiteSwift.framework/CouchbaseLiteSwift</code></pre>
-</div>
-</div>
-</div>
-<div class="tab-pane" aria-labelledby="tabset2_device">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">lipo CouchbaseLiteSwift.framework/CouchbaseLiteSwift -thin arm64 -output  CouchbaseLiteSwift.framework/CouchbaseLiteSwift</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="should-you-disable-bitcode"><a class="anchor" href="#should-you-disable-bitcode"></a>Should you disable bitcode?</h3>
-<div class="paragraph">
-<p>Although you can disable bitcode within your app and strip away bitcode from the Couchbase Lite framework, it is not necessary to do so.
-In fact, it is probably best to leave it enabled to be future proof.
-This is because the bitcode is never downloaded by the user even though it is uploaded during App submission.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="other-resource-to-reduce-the-size-of-your-app"><a class="anchor" href="#other-resource-to-reduce-the-size-of-your-app"></a>Other resource to reduce the size of your app</h3>
-<div class="paragraph">
-<p>More information is available on this <a href="https://developer.apple.com/library/archive/qa/qa1795/_index.html">Apple Q&amp;A</a> page.</p>
-</div>
+<p>More information on App size is available on this <a href="https://developer.apple.com/library/archive/qa/qa1795/_index.html">Apple Q&amp;A</a> page.</p>
 </div>
 </div>
 </div>
