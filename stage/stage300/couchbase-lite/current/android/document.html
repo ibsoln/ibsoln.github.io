@@ -357,6 +357,11 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
+    <a class="menu_title menu_link" href="../c/c_notes.html">Notes on C</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
     <a class="menu_title menu_link" href="../c/database.html">Databases</a>
   </span>
 </li>
@@ -433,9 +438,17 @@
     <a class="menu_title menu_link" href="../c/conflict.html">Handling Data Conflicts</a>
   </span>
 </li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text"></span>
+  </span>
+<ul class="menu_row">
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-c/">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-{releasetags}/couchbase-lite-c/">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -1264,7 +1277,7 @@
       <div class="component_list-version">
         <span class="component_list_title">Sync Gateway</span>
         <select class="version_list" data-component="sync-gateway">
-          <option value="3.0" data-url="../../../sync-gateway/current/index.html" selected>3.0 BETA01</option>
+          <option value="3.0" data-url="../../../sync-gateway/current/index.html" selected>3.0.0 (beta)</option>
         </select>
       </div>
       <div class="version_items hide" data-version="3.0">
@@ -1276,7 +1289,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html"><strong><em>New in 3.0 BETA</em></strong></a>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html"><strong><em>New in 3.0 beta</em></strong></a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1956,39 +1969,145 @@ It then appears as collection of key-value (k-v) pairs where the values can be d
 <p>Every document is identified by a document ID, which can be automatically generated (as a UUID) or specified programmatically;
 the only constraints are that it must be unique within the database, and it can&#8217;t be changed.</p>
 </div>
-<div class="paragraph">
-<p>Couchbase Lite also provides for the direct handling of JSON data, whether as an object or a string. This applied to native types such as documents, blobs and arrays).
-This approach is implemented in most cases by the provision of a <code>toJSON()</code> method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array)&#8201;&#8212;&#8201;see <a href="#lbl-json-data">Working with JSON Data</a>.
-Used in conjunction with an appropriate serialization/de-serialization strategy this provides for a flexible data manipulation.</p>
-</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="initializers"><a class="anchor" href="#initializers"></a>Initializers</h2>
+<h2 id="supporting-data-types"><a class="anchor" href="#supporting-data-types"></a>Supporting Data Types</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The following methods/initializers can be used:</p>
+<p>A document comprise any combination of its supporting data types.</p>
+</div>
+<div class="paragraph">
+<p>In addition to foundation data types (such as, string, integer, boolean, float, double, long, the Couchbase&#160;Lite API exposes <a href="#android:bobs.adoc" class="page unresolved">binary data</a> and <a href="#lbl-collections">collection</a> (array, dictionary) data types that support the building of flexible and complex documents.</p>
+</div>
+<div class="paragraph">
+<p>Couchbase Lite also provides for the direct handling of JSON data, whether as an object or a string.
+This approach is implemented in most cases by the provision of a <code>toJSON()</code> method on appropriate API classes (for example, on MutableDocument, Dictionary, Blob and Array)&#8201;&#8212;&#8201;see <a href="#lbl-json-data">Working with JSON Data</a>.
+Used in conjunction with an appropriate serialization/de-serialization strategy this provides for a flexible data manipulation.</p>
+</div>
+<div class="sect2">
+<h3 id="lbl-collections"><a class="anchor" href="#lbl-collections"></a>Collections</h3>
+<div class="paragraph">
+<p>Collection data types, including document, are either immutable or mutable.</p>
+</div>
+<div class="paragraph">
+<p>Both the {url-api-class-array} and <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Dictionary.html">property accessors</a> classes are enumerable using their {url-api-method-array-getenumerator} method and provide {url-api-property-array-count} and {url-api-property-array-item} properties.</p>
+</div>
+<div class="paragraph">
+<p>The collections also expose a set of property accessors&#8201;&#8212;&#8201;see <a href="#lbl-collection-accessors">type accesors</a>.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 30%;">
+<col style="width: 60%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Object</th>
+<th class="tableblock halign-left valign-top">API Ref</th>
+<th class="tableblock halign-left valign-top">Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p>Arrays</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-class-array}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>{url-api-method-array-getenumerator}</p>
+</li>
+<li>
+<p>{url-api-property-array-count}</p>
+</li>
+<li>
+<p>{url-api-property-array-item} properties.</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-class-mutablearray}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>{url-api-method-mutablearray-getenumerator}</p>
+</li>
+<li>
+<p>{url-api-property-mutablearray-count}</p>
+</li>
+<li>
+<p>{url-api-property-mutablearray-item} properties.</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top" rowspan="2"><div class="content"><div class="paragraph">
+<p>Dictionaries</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Dictionary.html">property accessors</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>In addition to the convenience enumerable functionality of the collections classes, dictionary adds:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>The <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocumentMutableDocument--">MutableDocument()</a> initializer can be used to create a new document where the document ID is randomly generated by the database.</p>
+<p>{url-api-property-dictionary-keys}, which returns a list of all the keys in the dictionary.</p>
 </li>
 <li>
-<p>The <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocument}MutableDocument-java.lang.String-">MutableDocument(String id)</a> initializer can be used to create a new document with a specific ID.</p>
-</li>
-<li>
-<p>The <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Database.html#getDocument-java.lang.String-">Database.getDocument()</a> method can be used to get a document.
-If it doesn&#8217;t exist in the database, it will return <code>null</code>.
-This method can be used to check if a document with a given ID already exists in the database.</p>
+<p>{url-api-method-dictionary-contains}, which checks if a given key is present in the dictionary.</p>
 </li>
 </ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-class-mutabledictionary}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>In addition to the convenience enumerable functionality of the collections classes, dictionary adds:</p>
 </div>
-<div id="ex-persists-doc" class="exampleblock">
-<div class="title">Example 1. Persist a document</div>
+<div class="ulist">
+<ul>
+<li>
+<p>{url-api-property-dictionary-keys}, which returns a list of all the keys in the dictionary.</p>
+</li>
+<li>
+<p>{url-api-method-dictionary-contains}, which checks if a given key is present in the dictionary.</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="lbl-collection-accessors"><a class="anchor" href="#lbl-collection-accessors"></a>Typed Accessors</h3>
+<div class="paragraph">
+<p>The collections classes offer a set of property accessors for various data types, including boolean, integers, floating-point and strings.</p>
+</div>
+<div class="paragraph">
+<p>The mutable collections classes also offer a set of property setters for the available data types a show in: <a href="#tbl-api-array">Table 1</a>, <a href="#tbl-api-dictionary">Table 2</a> and <a href="#tbl-api-document">Table 3</a>,</p>
+</div>
+<div class="paragraph">
+<p>So, for example, you can use the Date accessor to work with dates.
+Dates are a common data type, but JSON doesn&#8217;t natively support them, so the convention is to store them as strings in ISO-8601 format.</p>
+</div>
+<div id="ex-date-getter" class="exampleblock">
+<div class="title">Example 1. Date Getter</div>
 <div class="content">
 <div class="paragraph">
-<p>The following code example creates a document and persists it to the database.</p>
+<p>This example sets the date on the <code>createdAt</code> property and reads it back using the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Document.html#getDate-java.lang.String-">Document.getDate()</a> accessor method.</p>
 </div>
 <div class="tabset is-loading">
 <div class="ulist tabs">
@@ -2005,6 +2124,489 @@ This method can be used to check if a document with a given ID already exists in
 <div class="tab-pane" aria-labelledby="tabset1_kotlin">
 <div class="listingblock">
 <div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">doc.setValue("createdAt", Date())
+val date = doc.getDate("createdAt")</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_java">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">newTask.setValue("createdAt", new Date());
+Date date = newTask.getDate("createdAt");</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<table id="tbl-api-array" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. {url-api-class-array}</caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">Accessors</th>
+<th class="tableblock halign-center valign-top" colspan="3">Setters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-method-array-getarray}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getblob}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getboolean}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getdate}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getdictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getdouble}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getenumerator}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getfloat}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getint}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getlong}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getstring}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-getvalue}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-todictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-tojson}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-array-tomutable}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-method-mutablearray-addarray}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-addblob}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-addboolean}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-adddate}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-adddictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-adddouble}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-addfloat}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-addint}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-addlong}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-addstring}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-addvalue}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-getarray}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-getdictionary}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-method-mutablearray-insertarray}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-insertblob}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-insertboolean}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-insertdate}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-insertdictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-insertdouble}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-insertfloat}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-insertint}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-insertlong}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-insertstring}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-insertvalue}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-removeat}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-method-mutablearray-setarray}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-setblob}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-setboolean}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-setdate}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-setdictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-setdouble}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-setfloat}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-setint}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-setlong}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-setstring}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutablearray-setvalue}</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<table id="tbl-api-dictionary" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Dictionary.html">property accessors</a></caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top" colspan="2">Accessors</th>
+<th class="tableblock halign-center valign-top" colspan="2">Setters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-method-dictionary-contains}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getarray}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getblob}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getboolean}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getdate}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getdictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getdouble}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getenumerator}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getfloat}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getint}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-method-dictionary-getlong}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getstring}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-getvalue}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-keyschanged}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-todictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-tojson}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-tomutable}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-tostring}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-dispose}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-dictionary-equals}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>In addition to inheriting the accessors from <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Document.html">Document</a> the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/MutableDocument.html">MutableDocument()</a> also provides type setters:</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledictionary-getdictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledictionary-remove}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledictionary-setarray}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledictionary-setblob}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledictionary-setboolean}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledictionary-setdata}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-method-mutabledictionary-setdate}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledictionary-setdictionary}
+{url-api-method-mutabledictionary-setdouble}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledictionary-setfloat}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledictionary-setint}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledictionary-setjson}</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<table id="tbl-api-document" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 3. <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Document.html">Document</a></caption>
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top" colspan="2">Accessors</th>
+<th class="tableblock halign-center valign-top" colspan="2">Setters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Document.html#contains-java.lang.String-">`Document.Contains(String key)</a></p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-getarray}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-getblob}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-getboolean}</p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Document.html#getDate-java.lang.String-">Document.getDate()</a></p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-getdictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-getdouble}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-getenumerator}</p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Document.html#getFloat-java.lang.String-">Document.getFloat()</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Document.html#getInt-java.lang.String-">Document.getInt()</a></p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-method-document-getlong}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-getstring}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-getvalue}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-keyschanged}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-todictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-tojson}</p>
+</div>
+<div class="paragraph">
+<p><a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Document.html#toMutable--">`Document.toMutable()</a></p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-tostring}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-dispose}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-document-equals}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-method-mutabledocument-getarray}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-getdictionary}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-remove}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setarray}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setblob}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setboolean}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setdata}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setdate}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setdictionary}</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>{url-api-method-mutabledocument-setdouble}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setfloat}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setint}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setjson}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setlong}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setstring}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-setvalue}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-tomutable}</p>
+</div>
+<div class="paragraph">
+<p>{url-api-method-mutabledocument-tostring}</p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="initializers"><a class="anchor" href="#initializers"></a>Initializers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use one of the following methods to initialize and create documents:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocumentMutableDocument--">MutableDocument()</a> initializer to create a new document and randomly generate the document Id.</p>
+</li>
+<li>
+<p>Use the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/MutableDocument.html#s:18CouchbaseLiteSwift15MutableDocument}MutableDocument-java.lang.String-">MutableDocument(String id)</a> initializer to create a new document with a specific ID&#8201;&#8212;&#8201;see: <a href="#ex-persists-doc">Example 2</a>.</p>
+</li>
+<li>
+<p>Use <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Database.html#getDocument-java.lang.String-">Database.getDocument()</a> method to retrieve a document.<br>
+If it doesn&#8217;t exist in the database, it will return <code>null</code>.
+This method can be used to check if a document with a given ID already exists in the database.</p>
+</li>
+</ul>
+</div>
+<div id="ex-persists-doc" class="exampleblock">
+<div class="title">Example 2. Persist a document</div>
+<div class="content">
+<div class="paragraph">
+<p>The following code example creates a document and persists it to the database.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_kotlin"></a>Kotlin</p>
+</li>
+<li>
+<p><a id="tabset2_java"></a>Java</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_kotlin">
+<div class="listingblock">
+<div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">val doc = MutableDocument()
 doc.let {
     it.setString("type", "task")
@@ -2015,7 +2617,7 @@ database.save(doc)</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset1_java">
+<div class="tab-pane" aria-labelledby="tabset2_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">MutableDocument newTask = new MutableDocument();
@@ -2044,7 +2646,7 @@ try {
 The <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Document.html#toMutable--">`Document.toMutable()</a> method should be used to create an instance of the document which can be updated.</p>
 </div>
 <div id="ex-update-doc" class="exampleblock">
-<div class="title">Example 2. Make a mutable document</div>
+<div class="title">Example 3. Make a mutable document</div>
 <div class="content">
 <div class="paragraph">
 <p>Changes to the document are persisted to the database when the <code>save</code> method is called.</p>
@@ -2053,15 +2655,15 @@ The <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-andro
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset2_kotlin"></a>Kotlin</p>
+<p><a id="tabset3_kotlin"></a>Kotlin</p>
 </li>
 <li>
-<p><a id="tabset2_java"></a>Java</p>
+<p><a id="tabset3_java"></a>Java</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset2_kotlin">
+<div class="tab-pane" aria-labelledby="tabset3_kotlin">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">database.getDocument("xyz")?.toMutable()?.let {
@@ -2071,7 +2673,7 @@ The <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-andro
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset2_java">
+<div class="tab-pane" aria-labelledby="tabset3_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">Document document = database.getDocument("xyz");
@@ -2110,7 +2712,7 @@ Any user change to the value of reserved keys (<code>_id</code>, <code>_rev</cod
 <h3 id="scalar-type"><a class="anchor" href="#scalar-type"></a>Scalar type</h3>
 <div class="paragraph">
 <p>The <code>Document</code> class now offers a set of property accessors for various scalar types, including boolean, integers, floating-point and strings.
-These accessors take care of converting to/from JSON encoding, and make sure you get the type you&#8217;re expecting.+
+These accessors take care of converting to/from JSON encoding, and make sure you get the type you&#8217;re expecting.<br>
 See: <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Dictionary.html">property accessors</a>.</p>
 </div>
 </div>
@@ -2121,7 +2723,7 @@ See: <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-andr
 Dates are a common data type, but JSON doesn&#8217;t natively support them, so the convention is to store them as strings in ISO-8601 format.</p>
 </div>
 <div id="ex-date-getter" class="exampleblock">
-<div class="title">Example 3. Date Getter</div>
+<div class="title">Example 4. Date Getter</div>
 <div class="content">
 <div class="paragraph">
 <p>This example sets the date on the <code>createdAt</code> property and reads it back using the <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Document.html#getDate-java.lang.String-">Document.getDate()</a> accessor method.</p>
@@ -2130,15 +2732,15 @@ Dates are a common data type, but JSON doesn&#8217;t natively support them, so t
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset3_kotlin"></a>Kotlin</p>
+<p><a id="tabset4_kotlin"></a>Kotlin</p>
 </li>
 <li>
-<p><a id="tabset3_java"></a>Java</p>
+<p><a id="tabset4_java"></a>Java</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset3_kotlin">
+<div class="tab-pane" aria-labelledby="tabset4_kotlin">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">doc.setValue("createdAt", Date())
@@ -2146,7 +2748,7 @@ val date = doc.getDate("createdAt")</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset3_java">
+<div class="tab-pane" aria-labelledby="tabset4_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">newTask.setValue("createdAt", new Date());
@@ -2191,7 +2793,7 @@ Date date = newTask.getDate("createdAt");</code></pre>
 <div class="sect2">
 <h3 id="lbl-array"><a class="anchor" href="#lbl-array"></a>Arrays</h3>
 <div class="paragraph">
-<p>Convert an <code>ArrayObject</code> to and from JSON using the <code>toJSON()</code> and <code>toArray</code> methods&#8201;&#8212;&#8201;see: <a href="#ex-array">Example 4</a>.</p>
+<p>Convert an <code>ArrayObject</code> to and from JSON using the <code>toJSON()</code> and <code>toArray</code> methods&#8201;&#8212;&#8201;see: <a href="#ex-array">Example 5</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -2200,7 +2802,7 @@ Date date = newTask.getDate("createdAt");</code></pre>
 <ul>
 <li>
 <p>Initialize a 'MutableArrayObject' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-array">Example 4</a></p>
+This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-array">Example 5</a></p>
 </li>
 <li>
 <p>Convert an <code>ArrayFragment</code> object to a JSON String</p>
@@ -2211,21 +2813,21 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 </ul>
 </div>
 <div id="ex-array" class="exampleblock">
-<div class="title">Example 4. Arrays as JSON strings</div>
+<div class="title">Example 5. Arrays as JSON strings</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset4_kotlin"></a>Kotlin</p>
+<p><a id="tabset5_kotlin"></a>Kotlin</p>
 </li>
 <li>
-<p><a id="tabset4_java"></a>Java</p>
+<p><a id="tabset5_java"></a>Java</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset4_kotlin">
+<div class="tab-pane" aria-labelledby="tabset5_kotlin">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// github tag=tojson-array
@@ -2246,7 +2848,7 @@ db.getDocument("1002")?.getArray("features")?.apply {
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset4_java">
+<div class="tab-pane" aria-labelledby="tabset5_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// github tag=tojson-array
@@ -2292,30 +2894,30 @@ Log.i(TAG, features.toJSON()); <i class="conum" data-value="4"></i><b>(4)</b></c
 <div class="sect2">
 <h3 id="lbl-blob"><a class="anchor" href="#lbl-blob"></a>Blobs</h3>
 <div class="paragraph">
-<p>Convert a <code>Blob</code> to JSON using the <code>toJSON</code> method&#8201;&#8212;&#8201;see <a href="#ex-blob">Example 5</a>.</p>
+<p>Convert a <code>Blob</code> to JSON using the <code>toJSON</code> method&#8201;&#8212;&#8201;see <a href="#ex-blob">Example 6</a>.</p>
 </div>
 <div class="paragraph">
-<p>You can also check whether a given dictionary object is a blob, or not, using <code>isBlob()</code>&#8201;&#8212;&#8201;again, see <a href="#ex-blob">Example 5</a>.</p>
+<p>You can also check whether a given dictionary object is a blob, or not, using <code>isBlob()</code>&#8201;&#8212;&#8201;again, see <a href="#ex-blob">Example 6</a>.</p>
 </div>
 <div class="paragraph">
 <p>Note that the blob object must first be saved to the database (generating required metadata) before you can use the <code>toJSON</code> method.</p>
 </div>
 <div id="ex-blob" class="exampleblock">
-<div class="title">Example 5. Blobs as JSON strings</div>
+<div class="title">Example 6. Blobs as JSON strings</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset5_kotlin"></a>Kotlin</p>
+<p><a id="tabset6_kotlin"></a>Kotlin</p>
 </li>
 <li>
-<p><a id="tabset5_java"></a>Java</p>
+<p><a id="tabset6_java"></a>Java</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset5_kotlin">
+<div class="tab-pane" aria-labelledby="tabset6_kotlin">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// github tag=tojson-blob
@@ -2328,7 +2930,7 @@ val blobLength = thisBlob["length"] as Number?</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset5_java">
+<div class="tab-pane" aria-labelledby="tabset6_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// github tag=tojson-blob
@@ -2351,7 +2953,7 @@ final Number blobLength = (Number) thisBlob.get("length");</code></pre>
 <div class="sect2">
 <h3 id="lbl-dictionary"><a class="anchor" href="#lbl-dictionary"></a>Dictionaries</h3>
 <div class="paragraph">
-<p>Convert a <code>DictionaryObject</code> to and from JSON using the <code>toJSON</code> and <code>toDictionary</code> methods&#8201;&#8212;&#8201;see <a href="#ex-dictionary">Example 6</a>.</p>
+<p>Convert a <code>DictionaryObject</code> to and from JSON using the <code>toJSON</code> and <code>toDictionary</code> methods&#8201;&#8212;&#8201;see <a href="#ex-dictionary">Example 7</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -2360,7 +2962,7 @@ final Number blobLength = (Number) thisBlob.get("length");</code></pre>
 <ul>
 <li>
 <p>Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-dictionary">Example 6</a></p>
+This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-dictionary">Example 7</a></p>
 </li>
 <li>
 <p>Set data with a JSON string using <code>setJSON()</code></p>
@@ -2368,21 +2970,21 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 </ul>
 </div>
 <div id="ex-dictionary" class="exampleblock">
-<div class="title">Example 6. Dictionaries as JSON strings</div>
+<div class="title">Example 7. Dictionaries as JSON strings</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset6_kotlin"></a>Kotlin</p>
+<p><a id="tabset7_kotlin"></a>Kotlin</p>
 </li>
 <li>
-<p><a id="tabset6_java"></a>Java</p>
+<p><a id="tabset7_java"></a>Java</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset6_kotlin">
+<div class="tab-pane" aria-labelledby="tabset7_kotlin">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// github tag=tojson-dictionary
@@ -2395,7 +2997,7 @@ for (key in mDict.keys) {
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset6_java">
+<div class="tab-pane" aria-labelledby="tabset7_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// github tag=tojson-dictionary
@@ -2425,7 +3027,7 @@ for (String key: mDict.getKeys()) {
 <div class="sect2">
 <h3 id="lbl-document"><a class="anchor" href="#lbl-document"></a>Documents</h3>
 <div class="paragraph">
-<p>Convert a <code>Document</code> to and from JSON strings using the <code>toJSON()</code> and <code>setJSON()</code> methods&#8201;&#8212;&#8201;see <a href="#ex-document">Example 7</a>.</p>
+<p>Convert a <code>Document</code> to and from JSON strings using the <code>toJSON()</code> and <code>setJSON()</code> methods&#8201;&#8212;&#8201;see <a href="#ex-document">Example 8</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -2434,7 +3036,7 @@ for (String key: mDict.getKeys()) {
 <ul>
 <li>
 <p>Initialize a 'MutableDocument' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> and-or <code>init(id: json:)</code> constructor-- see: <a href="#ex-document">Example 7</a></p>
+This is done using the <code>init(json)</code> and-or <code>init(id: json:)</code> constructor-- see: <a href="#ex-document">Example 8</a></p>
 </li>
 <li>
 <p>Set data with a JSON string using <code>setJSON()</code></p>
@@ -2442,28 +3044,28 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 </ul>
 </div>
 <div id="ex-document" class="exampleblock">
-<div class="title">Example 7. Documents as JSON strings</div>
+<div class="title">Example 8. Documents as JSON strings</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset7_kotlin"></a>Kotlin</p>
+<p><a id="tabset8_kotlin"></a>Kotlin</p>
 </li>
 <li>
-<p><a id="tabset7_java"></a>Java</p>
+<p><a id="tabset8_java"></a>Java</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset7_kotlin">
+<div class="tab-pane" aria-labelledby="tabset8_kotlin">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">[data-source-url=https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt]</code></pre>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset7_java">
+<div class="tab-pane" aria-labelledby="tabset8_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// github tag=tojson-document
@@ -2515,7 +3117,7 @@ for (Result row: listQuery.execute()) {
 <p>Convert a <code>Query Result</code> to JSON using its <code>toJSON()</code> accessor method.</p>
 </div>
 <div id="ex-json" class="exampleblock">
-<div class="title">Example 8. Using JSON Results</div>
+<div class="title">Example 9. Using JSON Results</div>
 <div class="content">
 <div class="paragraph">
 <p>Use <a href="https://docs.couchbase.com/mobile/3.0.0-beta01/couchbase-lite-android/javadoc//index.html?com/couchbase/lite/Result.html#toJSON--">Result.toJSON()</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.</p>
@@ -2524,15 +3126,15 @@ for (Result row: listQuery.execute()) {
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset8_kotlin"></a>Kotlin</p>
+<p><a id="tabset9_kotlin"></a>Kotlin</p>
 </li>
 <li>
-<p><a id="tabset8_java"></a>Java</p>
+<p><a id="tabset9_java"></a>Java</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset8_kotlin">
+<div class="tab-pane" aria-labelledby="tabset9_kotlin">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Uses Jackson JSON processor
@@ -2560,7 +3162,7 @@ for (result in listQuery.execute()) {
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset8_java">
+<div class="tab-pane" aria-labelledby="tabset9_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// Uses Jackson JSON processor
@@ -2648,21 +3250,21 @@ for (Result result : listQuery.execute()) {
 The following example persists a few documents in batch.</p>
 </div>
 <div id="ex-batch-ops" class="exampleblock">
-<div class="title">Example 9. Batch operations</div>
+<div class="title">Example 10. Batch operations</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset9_kotlin"></a>Kotlin</p>
+<p><a id="tabset10_kotlin"></a>Kotlin</p>
 </li>
 <li>
-<p><a id="tabset9_java"></a>Java</p>
+<p><a id="tabset10_java"></a>Java</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset9_kotlin">
+<div class="tab-pane" aria-labelledby="tabset10_kotlin">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">database.inBatch(UnitOfWork {
@@ -2679,7 +3281,7 @@ The following example persists a few documents in batch.</p>
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset9_java">
+<div class="tab-pane" aria-labelledby="tabset10_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">try {
@@ -2712,21 +3314,21 @@ But Couchbase Mobile is a distributed system, and due to the way replication wor
 The following example registers for changes to the document with ID <code>user.john</code> and prints the <code>verified_account</code> property.</p>
 </div>
 <div id="ex-doc-events" class="exampleblock">
-<div class="title">Example 10. Document change events</div>
+<div class="title">Example 11. Document change events</div>
 <div class="content">
 <div class="tabset is-loading">
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset10_kotlin"></a>Kotlin</p>
+<p><a id="tabset11_kotlin"></a>Kotlin</p>
 </li>
 <li>
-<p><a id="tabset10_java"></a>Java</p>
+<p><a id="tabset11_java"></a>Java</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset10_kotlin">
+<div class="tab-pane" aria-labelledby="tabset11_kotlin">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">database.addDocumentChangeListener("user.john") { change -&gt;
@@ -2741,7 +3343,7 @@ The following example registers for changes to the document with ID <code>user.j
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset10_java">
+<div class="tab-pane" aria-labelledby="tabset11_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">database.addDocumentChangeListener(
@@ -2771,15 +3373,15 @@ The following example registers for changes to the document with ID <code>user.j
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset11_database-changes"></a>Database Changes</p>
+<p><a id="tabset12_database-changes"></a>Database Changes</p>
 </li>
 <li>
-<p><a id="tabset11_document-changes"></a>Document Changes</p>
+<p><a id="tabset12_document-changes"></a>Document Changes</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset11_database-changes">
+<div class="tab-pane" aria-labelledby="tabset12_database-changes">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin">    val dbChanges: LiveData&lt;MutableList&lt;String&gt;&gt; = argDb.databaseChangeFlow()
@@ -2788,7 +3390,7 @@ The following example registers for changes to the document with ID <code>user.j
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset11_document-changes">
+<div class="tab-pane" aria-labelledby="tabset12_document-changes">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt#L43-L50">    val docChanges: LiveData&lt;DocumentChange?&gt; = argDb.documentChangeFlow("1001")
@@ -2815,7 +3417,7 @@ When the document is expired, the document will be purged from the database.
 The purge will not be replicated to Sync Gateway.</p>
 </div>
 <div id="ex-set-doc-exp" class="exampleblock">
-<div class="title">Example 11. Set document expiration</div>
+<div class="title">Example 12. Set document expiration</div>
 <div class="content">
 <div class="paragraph">
 <p>This example sets the TTL for a document to 5 minutes from the current time.</p>
@@ -2824,15 +3426,15 @@ The purge will not be replicated to Sync Gateway.</p>
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset12_kotlin"></a>Kotlin</p>
+<p><a id="tabset13_kotlin"></a>Kotlin</p>
 </li>
 <li>
-<p><a id="tabset12_java"></a>Java</p>
+<p><a id="tabset13_java"></a>Java</p>
 </li>
 </ul>
 </div>
 <div class="content">
-<div class="tab-pane" aria-labelledby="tabset12_kotlin">
+<div class="tab-pane" aria-labelledby="tabset13_kotlin">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.kt">// Purge the document one day from now
@@ -2856,7 +3458,7 @@ val query = QueryBuilder
 </div>
 </div>
 </div>
-<div class="tab-pane" aria-labelledby="tabset12_java">
+<div class="tab-pane" aria-labelledby="tabset13_java">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/undefined/modules/android/examples/codesnippet_collection.java">// Purge the document one day from now
@@ -2895,7 +3497,7 @@ This is to facilitate the creation of documents for use either in <em>local only
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-"_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes&#8201;&#8212;&#8201;see <a href="#res-keys">Example 12</a>.
+"_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes&#8201;&#8212;&#8201;see <a href="#res-keys">Example 13</a>.
 </td>
 </tr>
 </table>
@@ -2909,7 +3511,7 @@ Use of these attributes for user-level data may result in undefined system behav
 <p>For more guidance&#8201;&#8212;&#8201;see: <a href="../../../sync-gateway/current/data-modeling.html" class="page">Sync Gateway - data modeling guidelines</a></p>
 </div>
 <div id="res-keys" class="exampleblock">
-<div class="title">Example 12. Reserved Keys List</div>
+<div class="title">Example 13. Reserved Keys List</div>
 <div class="content">
 <div class="ulist">
 <ul>
