@@ -2024,39 +2024,98 @@ And the original document is unchanged, which is great for concurrency as well a
 <div class="sect2">
 <h3 id="values"><a class="anchor" href="#values"></a>Values</h3>
 <div class="paragraph">
-<p>FLValue is Fleece&#8217;s ubiquitous data type.
-It is a reference to a value of any type.</p>
+<p>Fleece’s data types are almost the same as JSON’s data types, with the addition of binary data types.
+Basically Fleece has seven data types :null, boolean, numbers, strings, arrays, dictionaries, and data.
+Arrays can contain any types and dictionaries have strings as keys and values of any data types.</p>
+</div>
+<div class="paragraph">
+<p>The basic Fleece API is <strong>FLValue</strong>, an opaque pointer reference to a value of any type.
+The FLValue_GetType API is used for checking the actual value type.
+The FLValue_As&lt;Type Name&gt; such as FLValue_AsInt and FLValue_AsString is used for getting the actual value.</p>
 </div>
 <div class="listingblock">
 <div class="title">FLValue</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLString verified_account = FLValue_AsString(FLDict_Get(properties, FLSTR("verified_account"))); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLDict props = CBLDocument_Properties(doc);
+FLValue value = FLDict_Get(props, FLSTR("name”));
+FLValueType type = FLValue_GetType(value);
+if (type == kFLString) {
+    FLString name = FLValue_AsString(value);
+    doSomethingWith(name);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>See: fleece.h for more details.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="slices-and-strings"><a class="anchor" href="#slices-and-strings"></a>Slices and Strings</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="flslice"><a class="anchor" href="#flslice"></a>FlSlice</h3>
+<div class="paragraph">
+<p>Another basic Fleece data type, <strong>FLSlice</strong> a simple struct consisting of a pointer and a length.
+It points to a block of memory, without implying ownership of that memory.
+FLSlice is used to represent both binary data and strings.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flstring"><a class="anchor" href="#flstring"></a>FLString</h3>
+<div class="paragraph">
+<p><strong>FLString</strong> is a typedef of FLSlice to, which explicitly represents a string value.
+Use the FLSTR(“Some String”) macro to create an FLString from a string literal.</p>
+</div>
+<div class="listingblock">
+<div class="title">FLSTR macro</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">CBLDatabase* db = CBLDatabase_Open( (FLSTR("my-database"), NULL, &amp;err); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we retrieve a property value as a string.</td>
+<td>FLSTR("My-database") creates the FLString from the given string literal.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="flsliceresultflstringresult"><a class="anchor" href="#flsliceresultflstringresult"></a>FLSliceResult/FLStringResult</h3>
+<div class="paragraph">
+<p>FLSlice doesn’t imply an ownership of memory.
+However, FLSliceResult/FLStringResult is an FLSlice type which <em>does</em> own memory and is reference-counted.
+In general, whenever an FLSliceResult/FLStringResult is returned from an API call, you are responsible for calling FLSliceResult_Release when you are done using it.</p>
+</div>
+<div class="paragraph">
+<p>For an example of <code>FLSliceResult</code> in use, see: <a href="#ex-flsliceresult">Example 1</a>.
+It has functions which can be used to create new  <code>FLSliceResults</code> and to Release them when necessary.</p>
+</div>
+<div id="ex-flsliceresult" class="exampleblock">
+<div class="title">Example 1. FLStringResult</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLStringResult path = CBLDatabase_Path(db);
+doSomethingWith(path);
+FLSliceResult_Release(path); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>You are responsible for calling FLSliceResult_Release when you are done using it.</td>
 </tr>
 </table>
 </div>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="slices"><a class="anchor" href="#slices"></a>Slices</h2>
-<div class="sectionbody">
 <div class="paragraph">
-<p>Another basic Fleece data type, <code>FLSlice</code> is a simple struct consisting of a pointer and a length.
-It points to a range of memory, without  implying ownership
-A lot of utility methods rely on it, including ones to convert to and from C++ and C strings.</p>
-</div>
-<div class="paragraph">
-<p>An <code>FLSlice</code> literal can be written as FLSTR("something").</p>
-</div>
-<div class="paragraph">
-<p>It has utility functions such as:</p>
+<p>FLSlice and FLSliceResult have utility functions such as:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -2066,29 +2125,153 @@ A lot of utility methods rely on it, including ones to convert to and from C++ a
 <li>
 <p><code>FLSlice_Compare</code>&#8201;&#8212;&#8201;a 3-way comparison, like strcmp().</p>
 </li>
-</ul>
-</div>
-<div class="paragraph">
-<p>The <code>FLSliceResult</code> type is a subclass of FLSLice, which <strong>does</strong> own memory.<br>
-It always points to a heap block that it manages.
-You are responsible for calling FLSliceResult_Release when you&#8217;re done with it.</p>
-</div>
-<div class="paragraph">
-<p>For an example of <code>FLSliceResult</code> in use, see: <a href="#ex-create-array">Create arrays</a>.
-It has functions which can be used to create new  <code>FLSliceResults</code> and to Release them when necessary.</p>
-</div>
-<div class="ulist">
-<ul>
 <li>
-<p>FLSliceResult_New</p>
+<p><code>FLSlice_Copy</code></p>
 </li>
 <li>
-<p>FLSlice_Copy</p>
+<p><code>FLSliceResult_New</code></p>
 </li>
 <li>
-<p>FLSliceResults_Release</p>
+<p><code>FLSliceResults_Release</code></p>
 </li>
 </ul>
+</div>
+<div class="sect3">
+<h4 id="null-slices"><a class="anchor" href="#null-slices"></a>Null Slices</h4>
+<div class="paragraph">
+<p>The null slice {NULL, 0} is represented by the constant <code>kFLSliceNull</code>.<br>
+You test a slice for null by comparing its pointer (buf) with NULL.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLValue value = FLDict_Get(props, FLSTR("name”));
+FLString name = FLValue_AsString(value);
+if (name.buf != NULL) {
+    doSomethingWith(name);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Reference-counting is a manual exercise, see: <a href="#c:c_notes.adoc#lbl-ref-counted-objects" class="page unresolved">C Reference counted objects</a>.</p>
+</div>
+<div class="paragraph">
+<p>See: <a href="https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h">FLSlice.h</a> for more details.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="dictionaries"><a class="anchor" href="#dictionaries"></a>Dictionaries</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="immutable"><a class="anchor" href="#immutable"></a>Immutable</h3>
+<div class="paragraph">
+<p><strong>FLDict</strong> represents an immutable dictionary type in Fleece.
+To access a value with a string key from a dictionary, use FLDict_Get.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLDict props = CBLDocument_Properties(doc);
+FLValue value = FLDict_Get(props, FLSTR("name”));
+doSomethingWith(value);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To iterate through each key/value in the dictionary, use FLDictIterator.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLDictIterator iter;
+FLDictIterator_Begin(myDict, &amp;iter);
+FLValue value;
+while (NULL != (value = FLDictIterator_GetValue(&amp;iter))) {
+    FLString key = FLDictIterator_GetKeyString(&amp;iter);
+    doSomethingWith(key, value);
+    FLDictIterator_Next(&amp;iter);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mutable"><a class="anchor" href="#mutable"></a>Mutable</h3>
+<div class="paragraph">
+<p><strong>FLMutableDictionary</strong> is a mutable dictionary type that allows editing.</p>
+</div>
+<div class="paragraph">
+<p>To create a new mutable dictionary, use FLMutableDict_New().</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLMutableDict myDict = FLMutableDict_New()
+FLMutableDict_SetString(myDict, FLSTR(“name”), FLSTR(“John Doe”));
+doSomethingWith(myDict);
+FLMutableDict_Release(myDict); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>don&#8217;t forget to release resources once you have finished with them</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-fleece-arrays"><a class="anchor" href="#lbl-fleece-arrays"></a>Arrays</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="immutable-2"><a class="anchor" href="#immutable-2"></a>Immutable</h3>
+<div class="paragraph">
+<p><strong>FLArray</strong> represents an immutable array type in Fleece.</p>
+</div>
+<div class="paragraph">
+<p>To get the numbers of values in the array, use FLArray_Count, and to access a value with an index, use FLArray_Get.</p>
+</div>
+<div id="ex-create-array" class="listingblock">
+<div class="title">Use arrays</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">int count = FLArray_Count(myArray);
+if (count &gt; 0) {
+    FLValue value = FLArray_Get(0);
+    doSomethingWith(value);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Use <code>FLArrayIterator</code> to iterate through arrays.</p>
+</div>
+<div id="ex-array-iteration" class="listingblock">
+<div class="title">Array iteration</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLArrayIterator iter;
+FLArrayIterator_Begin(myArray, &amp;iter);
+FLValue value;
+while (NULL != (value = FLArrayIterator_GetValue(&amp;iter))) {
+    doSomethingWith(value);
+    FLArrayIterator_Next(&amp;iter);
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="mutable-2"><a class="anchor" href="#mutable-2"></a>Mutable</h3>
+<div class="paragraph">
+<p><strong>FLMutableArray</strong> is a mutable array type that allows editing.
+To create a new mutable array, use FLMutableArray_New.
+To append a value into the array, use FLMutableArray_Append&lt;Type Name&gt;.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLMutableArray myArray = FLMutableArray_New();
+FLMutableArray_AppendString(myArray, FLSTR(“String 1”));
+FLMutableArray_AppendString(myArray, FLSTR(“String 2”));
+doSomethingWith(myArray);
+FLMutableArray_Release(myArray)</code></pre>
+</div>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2097,233 +2280,52 @@ It has functions which can be used to create new  <code>FLSliceResults</code> an
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The null slice {NULL, 0} is represented by the constant <code>kFLSliceNull</code>.<br>
-You test a slice for null by comparing its pointer (buf) with NULL.
+To set a value at a specific array index, use FLMutableArraySet&lt;Type Name&gt;.
 </td>
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>Reference-counting is a manual exercise, see: <a href="#c:c_notes.adoc#lbl-ref-counted-objects" class="page unresolved">C Reference counted objects</a>.
-Whenever an <code>FLSliceResult</code> is returned from an API call, you are responsible for calling <code>FLSliceResult_Release</code> when you&#8217;re done with it.</p>
-</div>
-<div class="paragraph">
-<p>See: <a href="https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h">FLSlice.h</a> for more details.</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="strings"><a class="anchor" href="#strings"></a>Strings</h2>
+<h2 id="json-support"><a class="anchor" href="#json-support"></a>JSON Support</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Use the Fleece <code>FLSTR</code> function to provide string arguments to Couchbase&#160;Lite</p>
+<p>Fleece provides a JSON utility that allows you to parse JSON string into Fleece or generate JSON from Fleece.</p>
 </div>
-<div class="listingblock">
-<div class="title">Strings</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">CBLDatabase* db = CBLDatabase_Open(FLSTR("my-database"), NULL, &amp;err);</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="dictionaries"><a class="anchor" href="#dictionaries"></a>Dictionaries</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="parsing-json"><a class="anchor" href="#parsing-json"></a>Parsing JSON</h3>
 <div class="paragraph">
-<p>Use <code>FLMutableDict</code> to add K/V pairs to dictionaries and document as shown here.</p>
+<p>Use <strong>FLDoc_FromJSON</strong> to convert JSON Dictionary or Array into Fleece Dictionary or Array.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">CBLDocument* newTask = CBLDocument_CreateWithID(FLSTR("xyz"));
-FLMutableDict properties = CBLDocument_MutableProperties(newTask);
-FLMutableDict_SetString(properties, FLSTR("type"), FLSTR("task"));
-FLMutableDict_SetString(properties, FLSTR("owner"), FLSTR("todo"));</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>don&#8217;t forget to release resources once you have finished with them<br>
-<code>FLMutableDict_Release(properties);</code></td>
-</tr>
-</table>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLError error;
+FLDoc doc = FLDoc_FromJSON(jsonString, &amp;error);
+if (doc) {
+    FLValue value = FLDoc_GetRoot(doc);
+    FLDict dict = FLValue_AsDict(value);
+    doSomethingWith(dict);
+}
+FLDoc_Release(doc);</code></pre>
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="lbl-fleece-arrays"><a class="anchor" href="#lbl-fleece-arrays"></a>Arrays</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="generating-json"><a class="anchor" href="#generating-json"></a>Generating JSON</h3>
 <div class="paragraph">
-<p>Use the FLValue function FLValue_AsArray to create an array from existing data.</p>
+<p>Use FLValue_ToJSON to convert FLValue into JSON string</p>
 </div>
-<div id="ex-create-array" class="listingblock">
-<div class="title">Create arrays</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Create an array from the JSON string
-FLError err;
-FLSliceResult jsonData1 = FLData_ConvertJSON(json, &amp;err); <i class="conum" data-value="1"></i><b>(1)</b>
-FLArray hotels = FLValue_AsArray(FLValue_FromData(FLSliceResult_AsSlice(jsonData1), kFLTrusted));
-
-FLSliceResult_Release(jsonData1);</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here the FLSliceResult points to a Json string representing an array of hotels.</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Use <code>FLArrayIterator</code> to iterate through arrays as shown in</p>
-</div>
-<div id="ex-array-iteration" class="listingblock">
-<div class="title">Array iteration</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLArrayIterator iter;
-FLArrayIterator_Begin(hotels, &amp;iter);
-FLValue value;
-while (NULL != (value = FLArrayIterator_GetValue(&amp;iter))) {
-    FLString hotel = FLValue_AsString(value);
-    printf("Hotel :: %.*s\n", (int)hotel.size, (const char *)hotel.buf);
-    FLArrayIterator_Next(&amp;iter);
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="encoding-a-fleece-object"><a class="anchor" href="#encoding-a-fleece-object"></a>Encoding a Fleece Object</h2>
-<div class="sectionbody">
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Construct an Encoder</p>
-</li>
-<li>
-<p>Tell the encoder to begin a collection: beginArray or beginDict</p>
-</li>
-<li>
-<p>Write values to the encoder, which adds them to the collection:</p>
-</li>
-<li>
-<p>If the collection is a dictionary, call writeKey to define the key for the value.</p>
-</li>
-<li>
-<p>To write a collection, recursively perform steps 2–4: Begin the collection, write . values, end it.<br>
-To write a scalar, call: writeNull, writeBool, writeInt, etc.</p>
-</li>
-<li>
-<p>End the collection: endArray or endDict</p>
-</li>
-<li>
-<p>Call finish, which returns the encoded data</p>
-</li>
-</ol>
-</div>
-<div id="ex-encoding" class="exampleblock">
-<div class="title">Example 1. Encoding  a Fleece object</div>
-<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">Encoder enc;
-enc.beginDict(); <i class="conum" data-value="1"></i><b>(1)</b>
-enc.writeKey("dimensions"); <i class="conum" data-value="2"></i><b>(2)</b>
-  enc.beginArray();
-    enc.writeInt(10);
-    enc.writeInt(16);
-  enc.endArray();
-enc.writeKey("color"); <i class="conum" data-value="3"></i><b>(3)</b>
-enc.writeString("blue");
-enc.endDict();
-FLSliceResult encodedData = enc.finish(); <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Start the dictionary collection</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we create a property with the key <em>dimensions</em> and a value comprising an array of two integer values representing, say, length and width</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Here we create a property with the key <em>color</em> and a value "blue"</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Finish and return the slice as <code>encodedData</code></td>
-</tr>
-</table>
+<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLDict props = CBLDocument_Properties(doc);
+FLStringResult jsonString = FLValue_ToJSON((FLValue) props);
+doSomethingWith(jsonString);
+FLSliceResult_Release(jsonString);</code></pre>
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="encryptables"><a class="anchor" href="#encryptables"></a>Encryptables</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You can use the Fleece Extension API for setting and getting CBLEncryptable objects.</p>
-</div>
-<div class="listingblock">
-<div class="title">Setter</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">void FLSlot_SetEncryptableValue(FLSlot slot, CBLEncryptable *encryptable);</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">Getter</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Getter
-CBLEncryptable* FLValue_GetEncryptableValue(FLValue v);</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">IsEncryptable?</div>
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">// Check whether the value is an encrypted property or not
-static bool FLValue_IsEncryptableValue(FLValue v);</code></pre>
-</div>
-</div>
-<table id="tbl-encryption-constraints" class="tableblock frame-all grid-all stretch">
-<caption class="title">Table 1. Encryption Constraints</caption>
-<colgroup>
-<col style="width: 20%;">
-<col style="width: 80%;">
-</colgroup>
-<tbody>
-<tr>
-<th class="tableblock halign-left valign-top"><p class="tableblock">Document</p></th>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>In the case of nested <code>encryptable</code> types, the replicator only encrypts the outer <code>encryptable</code>.</p>
-</div></div></td>
-</tr>
-<tr>
-<th class="tableblock halign-left valign-top"><p class="tableblock">Arrays</p></th>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>For compatibility with Server SDKS, encryptables are not supported within arrays.</p>
-</div>
-<div class="paragraph">
-<p>The push replicator should detect and report an error if an encrypted property is found in an array.</p>
-</div></div></td>
-</tr>
-<tr>
-<th class="tableblock halign-left valign-top"><p class="tableblock">Blobs</p></th>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Encrypting blob’s content is not supported.</p>
-</div>
-<div class="paragraph">
-<p>Where a Blob as a Fleece dictionary is specified in the encrypted property value, only the dictionary is encrypted; <strong>not</strong> the blob’s content.</p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
 </div>
 </div>
 <div class="sect1">
