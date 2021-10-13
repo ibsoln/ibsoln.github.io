@@ -1967,7 +1967,18 @@
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div class="sect1">
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Description&#8201;&#8212;&#8201;<em>Introducing the key concepts of the Fleece C API</em><br></p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -2021,33 +2032,50 @@ And the original document is unchanged, which is great for concurrency as well a
 </li>
 </ul>
 </div>
-<div class="sect2">
-<h3 id="values"><a class="anchor" href="#values"></a>Values</h3>
+</div>
+</div>
+<div class="sect1">
+<h2 id="values"><a class="anchor" href="#values"></a>Values</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>Fleece’s data types are almost the same as JSON’s data types, with the addition of binary data types.
-Basically Fleece has seven data types :null, boolean, numbers, strings, arrays, dictionaries, and data.
-Arrays can contain any types and dictionaries have strings as keys and values of any data types.</p>
+<p>Fleece’s data types are almost identical to those of JSON, with the notable addition of binary data types.</p>
 </div>
 <div class="paragraph">
-<p>The basic Fleece API is <strong>FLValue</strong>, an opaque pointer reference to a value of any type.
-The FLValue_GetType API is used for checking the actual value type.
-The FLValue_As&lt;Type Name&gt; such as FLValue_AsInt and FLValue_AsString is used for getting the actual value.</p>
+<p>Basically Fleece provides seven data types: <em>null</em>, <em>boolean</em>, <em>numbers</em>, <em>strings</em>, <em>arrays</em>, <em>dictionaries</em>, and <em>data</em>.
+Arrays can contain any data type and dictionaries have strings as keys, with values of any data type.</p>
 </div>
-<div class="listingblock">
-<div class="title">FLValue</div>
+<div class="paragraph">
+<p>The basic Fleece data type is <strong>FLValue</strong>, an opaque pointer reference to a value of any type.</p>
+</div>
+<div class="paragraph">
+<p>Use the <em>FLValue_GetType</em> API to check the value&#8217;s actual type and <em>FLValue_As&lt;Type Name&gt;</em> to get the actual value as shown in <a href="#ex-flvalue">Use FLValue</a></p>
+</div>
+<div id="ex-flvalue" class="listingblock">
+<div class="title">Use FLValue</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLDict props = CBLDocument_Properties(doc);
 FLValue value = FLDict_Get(props, FLSTR("name”));
-FLValueType type = FLValue_GetType(value);
+FLValueType type = FLValue_GetType(value); <i class="conum" data-value="1"></i><b>(1)</b>
 if (type == kFLString) {
     FLString name = FLValue_AsString(value);
-    doSomethingWith(name);
+    doSomethingWith(name); <i class="conum" data-value="2"></i><b>(2)</b>
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>See: fleece.h for more details.</p>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Find the values data type</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Cast to appropriate type</td>
+</tr>
+</table>
 </div>
+<div class="paragraph">
+<p>See: <a href="https://github.com/couchbaselabs/fleece/blob/master/API/fleece/Fleece.h">Fleece Header File</a> for more details.</p>
 </div>
 </div>
 </div>
@@ -2055,9 +2083,9 @@ if (type == kFLString) {
 <h2 id="slices-and-strings"><a class="anchor" href="#slices-and-strings"></a>Slices and Strings</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="flslice"><a class="anchor" href="#flslice"></a>FlSlice</h3>
+<h3 id="flslice"><a class="anchor" href="#flslice"></a>FLSlice</h3>
 <div class="paragraph">
-<p>Another basic Fleece data type, <strong>FLSlice</strong> a simple struct consisting of a pointer and a length.
+<p>Another basic Fleece data type, <em>FLSlice</em> a simple struct consisting of a pointer and a length.
 It points to a block of memory, without implying ownership of that memory.
 FLSlice is used to represent both binary data and strings.</p>
 </div>
@@ -2065,11 +2093,11 @@ FLSlice is used to represent both binary data and strings.</p>
 <div class="sect2">
 <h3 id="flstring"><a class="anchor" href="#flstring"></a>FLString</h3>
 <div class="paragraph">
-<p><strong>FLString</strong> is a typedef of FLSlice to, which explicitly represents a string value.
-Use the FLSTR(“Some String”) macro to create an FLString from a string literal.</p>
+<p><em>FLString</em> is a typedef of FLSlice, which explicitly represents a string value.
+Use the <em>FLSTR(“Some String”)</em> macro to create an FLString from a string literal&#8201;&#8212;&#8201;see: <a href="#ex-flstr">Create an FLString</a></p>
 </div>
-<div class="listingblock">
-<div class="title">FLSTR macro</div>
+<div id="ex-flstr" class="listingblock">
+<div class="title">Create an FLString</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">CBLDatabase* db = CBLDatabase_Open( (FLSTR("my-database"), NULL, &amp;err); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
@@ -2087,17 +2115,16 @@ Use the FLSTR(“Some String”) macro to create an FLString from a string liter
 <h3 id="flsliceresultflstringresult"><a class="anchor" href="#flsliceresultflstringresult"></a>FLSliceResult/FLStringResult</h3>
 <div class="paragraph">
 <p>FLSlice doesn’t imply an ownership of memory.
-However, FLSliceResult/FLStringResult is an FLSlice type which <em>does</em> own memory and is reference-counted.
-In general, whenever an FLSliceResult/FLStringResult is returned from an API call, you are responsible for calling FLSliceResult_Release when you are done using it.</p>
+However, <em>FLSliceResult</em>/<em>FLStringResult</em> is an FLSlice type which <em>does</em> own memory and is reference-counted.<br></p>
 </div>
 <div class="paragraph">
-<p>For an example of <code>FLSliceResult</code> in use, see: <a href="#ex-flsliceresult">Example 1</a>.
-It has functions which can be used to create new  <code>FLSliceResults</code> and to Release them when necessary.</p>
+<p>In general, whenever an FLSliceResult/FLStringResult is returned from an API call, you are responsible for calling FLSliceResult_Release when you are done using it.</p>
 </div>
-<div id="ex-flsliceresult" class="exampleblock">
-<div class="title">Example 1. FLStringResult</div>
-<div class="content">
-<div class="listingblock">
+<div class="paragraph">
+<p>For an example of <code>FLSliceResult</code> in use, see: <a href="#ex-flsliceresult">Using FLStringResult</a>.</p>
+</div>
+<div id="ex-flsliceresult" class="listingblock">
+<div class="title">Using FLStringResult</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLStringResult path = CBLDatabase_Path(db);
 doSomethingWith(path);
@@ -2111,8 +2138,6 @@ FLSliceResult_Release(path); <i class="conum" data-value="1"></i><b>(1)</b></cod
 <td>You are responsible for calling FLSliceResult_Release when you are done using it.</td>
 </tr>
 </table>
-</div>
-</div>
 </div>
 <div class="paragraph">
 <p>FLSlice and FLSliceResult have utility functions such as:</p>
@@ -2136,13 +2161,15 @@ FLSliceResult_Release(path); <i class="conum" data-value="1"></i><b>(1)</b></cod
 </li>
 </ul>
 </div>
-<div class="sect3">
-<h4 id="null-slices"><a class="anchor" href="#null-slices"></a>Null Slices</h4>
+</div>
+<div class="sect2">
+<h3 id="null-slices"><a class="anchor" href="#null-slices"></a>Null Slices</h3>
 <div class="paragraph">
 <p>The null slice {NULL, 0} is represented by the constant <code>kFLSliceNull</code>.<br>
-You test a slice for null by comparing its pointer (buf) with NULL.</p>
+You test a slice for null by comparing its pointer (buf) with NULL&#8201;&#8212;&#8201;see: <a href="#ex-flnullslice">Test for null slice</a></p>
 </div>
-<div class="listingblock">
+<div id="ex-flnullslice" class="listingblock">
+<div class="title">Test for null slice</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLValue value = FLDict_Get(props, FLSTR("name”));
 FLString name = FLValue_AsString(value);
@@ -2152,11 +2179,7 @@ if (name.buf != NULL) {
 </div>
 </div>
 <div class="paragraph">
-<p>Reference-counting is a manual exercise, see: <a href="#c:c_notes.adoc#lbl-ref-counted-objects" class="page unresolved">C Reference counted objects</a>.</p>
-</div>
-<div class="paragraph">
-<p>See: <a href="https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h">FLSlice.h</a> for more details.</p>
-</div>
+<p>See: <a href="https://github.com/couchbaselabs/fleece/blob/master/API/fleece/FLSlice.h">FLSlice.h</a> for more details on data slices.</p>
 </div>
 </div>
 </div>
@@ -2167,10 +2190,11 @@ if (name.buf != NULL) {
 <div class="sect2">
 <h3 id="immutable"><a class="anchor" href="#immutable"></a>Immutable</h3>
 <div class="paragraph">
-<p><strong>FLDict</strong> represents an immutable dictionary type in Fleece.
-To access a value with a string key from a dictionary, use FLDict_Get.</p>
+<p><em>FLDict</em> represents an immutable dictionary type in Fleece.<br>
+To access a value with a string key from a dictionary, use FLDict_Get&#8201;&#8212;&#8201;as shown in: <a href="#ex-flget">Get dictionary value</a>.</p>
 </div>
-<div class="listingblock">
+<div id="ex-flget" class="listingblock">
+<div class="title">Get dictionary value</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLDict props = CBLDocument_Properties(doc);
 FLValue value = FLDict_Get(props, FLSTR("name”));
@@ -2178,9 +2202,10 @@ doSomethingWith(value);</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To iterate through each key/value in the dictionary, use FLDictIterator.</p>
+<p>To iterate through each key-value pair in the dictionary, use <em>FLDictIterator</em>, as shown in: <a href="#ex-fliterator">Iterate key-value pairs in dictionary</a></p>
 </div>
-<div class="listingblock">
+<div id="ex-fliterator" class="listingblock">
+<div class="title">Iterate key-value pairs in dictionary</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLDictIterator iter;
 FLDictIterator_Begin(myDict, &amp;iter);
@@ -2199,9 +2224,10 @@ while (NULL != (value = FLDictIterator_GetValue(&amp;iter))) {
 <p><strong>FLMutableDictionary</strong> is a mutable dictionary type that allows editing.</p>
 </div>
 <div class="paragraph">
-<p>To create a new mutable dictionary, use FLMutableDict_New().</p>
+<p>To create a new mutable dictionary, use FLMutableDict_New()&#8201;&#8212;&#8201;see: <a href="#ex-flmutabledict-new">Set dictionary value</a>.</p>
 </div>
-<div class="listingblock">
+<div id="ex-flmutabledict-new" class="listingblock">
+<div class="title">Set dictionary value</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLMutableDict myDict = FLMutableDict_New()
 FLMutableDict_SetString(myDict, FLSTR(“name”), FLSTR(“John Doe”));
@@ -2226,12 +2252,10 @@ FLMutableDict_Release(myDict); <i class="conum" data-value="1"></i><b>(1)</b></c
 <div class="sect2">
 <h3 id="immutable-2"><a class="anchor" href="#immutable-2"></a>Immutable</h3>
 <div class="paragraph">
-<p><strong>FLArray</strong> represents an immutable array type in Fleece.</p>
+<p><em>FLArray</em> represents an immutable array type in Fleece.<br>
+use <em>FLArray_Count</em> and <em>FLArray_Get</em> respectively, to get the numbers of values in an array and to get a value using with an index&#8201;&#8212;&#8201;as shown in <a href="#ex-flarray-get">Use arrays</a>.</p>
 </div>
-<div class="paragraph">
-<p>To get the numbers of values in the array, use FLArray_Count, and to access a value with an index, use FLArray_Get.</p>
-</div>
-<div id="ex-create-array" class="listingblock">
+<div id="ex-flarray-get" class="listingblock">
 <div class="title">Use arrays</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">int count = FLArray_Count(myArray);
@@ -2242,7 +2266,7 @@ if (count &gt; 0) {
 </div>
 </div>
 <div class="paragraph">
-<p>Use <code>FLArrayIterator</code> to iterate through arrays.</p>
+<p>Use <em>FLArrayIterator</em> to iterate through arrays, as shown in : <a href="#ex-array-iteration">Array iteration</a>.</p>
 </div>
 <div id="ex-array-iteration" class="listingblock">
 <div class="title">Array iteration</div>
@@ -2260,28 +2284,29 @@ while (NULL != (value = FLArrayIterator_GetValue(&amp;iter))) {
 <div class="sect2">
 <h3 id="mutable-2"><a class="anchor" href="#mutable-2"></a>Mutable</h3>
 <div class="paragraph">
-<p><strong>FLMutableArray</strong> is a mutable array type that allows editing.
-To create a new mutable array, use FLMutableArray_New.
-To append a value into the array, use FLMutableArray_Append&lt;Type Name&gt;.</p>
+<p><em>FLMutableArray</em> is a mutable array type that allows editing.<br></p>
 </div>
-<div class="listingblock">
+<div class="paragraph">
+<p>To create a new mutable array, use <em>FLMutableArray_New</em>.</p>
+</div>
+<div class="paragraph">
+<p>To append a value into the array, use <em>FLMutableArray_Append&lt;Type Name&gt;</em>.</p>
+</div>
+<div id="ex-flmutable-array-append" class="listingblock">
+<div class="title">Append values to array</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLMutableArray myArray = FLMutableArray_New();
 FLMutableArray_AppendString(myArray, FLSTR(“String 1”));
-FLMutableArray_AppendString(myArray, FLSTR(“String 2”));
+FLMutableArray_AppendString(myArray, FLSTR(“String 2”)); <i class="conum" data-value="1"></i><b>(1)</b>
 doSomethingWith(myArray);
 FLMutableArray_Release(myArray)</code></pre>
 </div>
 </div>
-<div class="admonitionblock note">
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-To set a value at a specific array index, use FLMutableArraySet&lt;Type Name&gt;.
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To set a value at a specific array index, use FLMutableArraySet&lt;Type Name&gt;.</td>
 </tr>
 </table>
 </div>
@@ -2299,7 +2324,8 @@ To set a value at a specific array index, use FLMutableArraySet&lt;Type Name&gt;
 <div class="paragraph">
 <p>Use <strong>FLDoc_FromJSON</strong> to convert JSON Dictionary or Array into Fleece Dictionary or Array.</p>
 </div>
-<div class="listingblock">
+<div id="ex-json-parse" class="listingblock">
+<div class="title">Parse JSON data to Fleece</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLError error;
 FLDoc doc = FLDoc_FromJSON(jsonString, &amp;error);
@@ -2317,7 +2343,8 @@ FLDoc_Release(doc);</code></pre>
 <div class="paragraph">
 <p>Use FLValue_ToJSON to convert FLValue into JSON string</p>
 </div>
-<div class="listingblock">
+<div id="ex-json-from-fleese" class="listingblock">
+<div class="title">Convert to JSON</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-c hljs" data-lang="c">FLDict props = CBLDocument_Properties(doc);
 FLStringResult jsonString = FLValue_ToJSON((FLValue) props);
@@ -2325,6 +2352,21 @@ doSomethingWith(jsonString);
 FLSliceResult_Release(jsonString);</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="memory-management"><a class="anchor" href="#memory-management"></a>Memory Management</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In general, Mutable objects are <em>reference counted</em>: with MutableArray and Mutable Dictionary each having  <em>retain</em> and <em>release</em> functions.<br>
+The lifespan of Immutable objects is the same as that of the memory block from which they are parsed.
+They cannot be individually released or retained.</p>
+</div>
+<div class="paragraph">
+<p>For more see:<br>
+<a href="https://github.com/couchbaselabs/fleece/wiki/Using-Fleece#5-memory-management">Fleece Mememory Management</a> |
+<a href="https://github.com/couchbaselabs/fleece/wiki/Advanced-Fleece#for-memory-management">Advanced Fleece Mememory Management</a></p>
 </div>
 </div>
 </div>
