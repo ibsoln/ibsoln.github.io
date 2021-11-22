@@ -1,0 +1,4528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv=content-security-policy content="default-src 'none'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https:; img-src 'self' data: https:; connect-src 'self' https:; worker-src blob:;">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Passive Peer | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/stage300/couchbase-lite/current/csharp/p2psync-websocket-using-passive.html">
+<link rel="stylesheet" href="../../../_/css/site.css">
+<script src="../../../_/js/vendor/jquery.js"></script>
+<meta name="description" content="Couchbase Lite&#x27;s Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources">
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+<meta name="dcterms.subject" content="couchbase-lite">
+<meta name="dcterms.identifier" content="2.8">
+<meta name="page-url" content="/couchbase-lite/current/csharp/p2psync-websocket-using-passive.html">
+<meta name="generator" content="Antora 3.0.0-alpha.5">
+<link rel="icon" href="../../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+              <ul class="navbar-brand-list">
+                <li class="brand-logo">
+                  <a class="navbar-brand" href="https://www.couchbase.com">
+                    <img src="../../../_/img/couchbase-logo.svg" alt="Couchbase" />
+                  </a>
+                </li>
+                <li>
+                  <a class="navbar-brand cb-documentation" href="https://ibsoln.github.io/stage/stage300/home/index.html">
+                    <img src="../../../_/img/cb-documentation.svg" alt="Couchbase Documentation" class="cb-docs" />
+                    <img src="../../../_/img/cb-docs-hover.svg" alt="Couchbase Documentation" class="hide cb-hover-docs" />
+                  </a>
+                </li>
+              </ul>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a href="https://ibsoln.github.io/stage/stage300/home/index.html" class="nav-link">
+                      <i class="fas fa-home"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/mobile.html">
+                      Mobile
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../home/sdk.html">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../../tutorials/index.html">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <a href="https://cloud.couchbase.com/sign-up" class="free-trial-link" onclick="(window.dataLayer=window.dataLayer||[]).push({'event':'customEvent', 'category':'CTA', 'action':'Button Click',  'label':'Free Trial'});" >
+                  <i class="fas fa-cloud"></i>
+                  Free Trial
+                </a>
+                <a class="btn btn-primary try-btn"  onclick="(window.dataLayer=window.dataLayer||[]).push({'event':'customEvent', 'category':'CTA', 'action':'Button Click',  'label':'Download'});" href="https://www.couchbase.com/downloads">
+                  Downloads
+                </a>
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container">
+<aside class="nav left-sidebar">
+  <div class="nav-container">
+    <a href="#" class="menu-expand-toggle"><span>Navigation</span><i class="fas fa-times-circle"></i><i class="fas fa-chevron-circle-left"></i></a>
+<div class="components">
+  <div class="components_group-title">
+    <a href="../../../home/mobile.html">Mobile</a>
+  </div>
+  <ul class="components_list">
+    <li class="components_list-items">
+      <div class="component_list-version">
+        <span class="component_list_title">Couchbase Lite</span>
+        <select class="version_list" data-component="couchbase-lite">
+          <option value="3.0" data-url="../../3.0/index.html">3.0.0 (beta)</option>
+          <option value="2.8" data-url="../index.html" selected>2.8</option>
+        </select>
+      </div>
+      <div class="version_items hide" data-version="3.0">
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/index.html">Introduction</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/cbl-whatsnew.html">New in 3.0 BETA</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/android/quickstart.html">Android</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Start Here!</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/gs-prereqs.html">Prerequisites</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/kotlin.html">Kotlin</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/querybuilder.html">Querybuilder</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/query-n1ql-mobile.html">N1QL for Mobile</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/query-n1ql-mobile-server-diffs.html">N1QL Server Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/query-n1ql-mobile-querybuilder-diffs.html">N1QL Querybuilder Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/query-resultsets.html">Query Resultsets</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/query-live.html">Live Queries</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Data Sync</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/dbreplica.html">Intra-device Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/android/p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/p2psync-custom.html">Integrate Custom Listener</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-android/">API References</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-android-ktx">Kotlin Extensions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/dep-upgrade.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/troubleshooting-logs.html">Using Logs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/troubleshooting-queries.html">Troubleshooting Queries</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/releasenotes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/android/supported-os.html">Supported Platforms</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/c/quickstart.html">C</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Start Here!</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/gs-downloads.html">BETA Downloads</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/c_fleece.html">Fleece API</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/field-level-encryption.html">Field Level Encryption</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/query-n1ql-mobile.html">N1QL for Mobile</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/query-n1ql-mobile-server-diffs.html">N1QL Server Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/query-resultsets.html">Query Resultsets</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/query-live.html">Live Queries</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/replication.html">Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-c/">API&#160;References</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/releasenotes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/c/supported-os.html">Supported Platforms</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/csharp/quickstart.html">.Net</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Start Here!</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/querybuilder.html">Querybuilder</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/query-n1ql-mobile.html">N1QL for Mobile</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/query-n1ql-mobile-server-diffs.html">N1QL Mobile - Server Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/query-n1ql-mobile-querybuilder-diffs.html">N1QL Querybuilder Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/query-resultsets.html">Query Resultsets</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/query-live.html">Live Queries</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Data Sync</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/dbreplica.html">Intra-device Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/csharp/p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/p2psync-custom.html">Integrate Custom Listener</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-net/index.html">API&#160;References</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/dep-upgrade.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/troubleshooting-logs.html">Using Logs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/troubleshooting-queries.html">Troubleshooting Queries</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/releasenotes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/csharp/supported-os.html">Supported Platforms</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/java/quickstart.html">Java</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Start Here!</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/gs-prereqs.html">Prerequisites</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/querybuilder.html">Querybuilder</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/query-n1ql-mobile.html">N1QL for Mobile</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/query-n1ql-mobile-server-diffs.html">N1QL Server Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/query-n1ql-mobile-querybuilder-diffs.html">N1QL Querybuilder Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/query-resultsets.html">Query Resultsets</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/query-live.html">Live Queries</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Data Sync</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/dbreplica.html">Intra-device Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/java/p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/p2psync-custom.html">Integrate Custom Listener</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-java/">API&#160;References</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/dep-upgrade.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/troubleshooting-logs.html">Using Logs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/troubleshooting-queries.html">Troubleshooting Queries</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/releasenotes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/java/supported-os.html">Supported Platforms</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/objc/quickstart.html">Objective-C</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Start Here!</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/gs-prereqs.html">Prerequisites</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/querybuilder.html">Querybuilder</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/query-n1ql-mobile.html">N1QL for Mobile</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/query-n1ql-mobile-server-diffs.html">N1QL Server Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/query-n1ql-mobile-querybuilder-diffs.html">N1QL Querybuilder Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/query-resultsets.html">Query Resultsets</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/query-live.html">Live Queries</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/objc/landing-replications.html">Data Sync</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/dbreplica.html">Intra-device Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/objc/p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/p2psync-custom.html">Integrate Custom Listener</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-objc/index.html">API&#160;References</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/dep-upgrade.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/troubleshooting-logs.html">Using Logs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/troubleshooting-queries.html">Troubleshooting Queries</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/troubleshooting-crashes.html">Troubleshooting Crashes</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/releasenotes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/objc/supported-os.html">Supported Platforms</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/swift/quickstart.html">Swift</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Start Here!</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/gs-prereqs.html">Prerequisites</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/querybuilder.html">Querybuilder</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/query-n1ql-mobile.html">N1QL for Mobile</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/query-n1ql-mobile-server-diffs.html">N1QL Server Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/query-n1ql-mobile-querybuilder-diffs.html">N1QL Querybuilder Differences</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/query-resultsets.html">Query Resultsets</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/query-live.html">Live Queries</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="#swift:landing-replications.adoc">Data Sync</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/dbreplica.html">Intra-device Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../3.0/swift/p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/p2psync-custom.html">Integrate Custom Listener</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="https://docs.couchbase.com/mobile/3.0.0-beta02/couchbase-lite-swift/index.html">API&#160;References</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/dep-upgrade.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/troubleshooting-logs.html">Using Logs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/troubleshooting-queries.html">Troubleshooting Queries</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/troubleshooting-crashes.html">Troubleshooting Crashes</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/releasenotes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/swift/supported-os.html">Supported Platforms</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../3.0/javascript.html">JavaScript</a>
+  </span>
+</li>
+</ul>
+      </div>
+      <div class="version_items hide" data-version="2.8">
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../index.html">Introduction</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../cbl-whatsnew.html">What&#8217;s New</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../android/quickstart.html">Android</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../android/gs-prereqs.html">Start Here!</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/querybuilder.html">QueryBuilder</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/query-live.html">Live Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/query-predictive.html">Predictive Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../android/landing-replications.html">Data Sync</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/dbreplica.html">Intra-Device</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../android/p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/p2psync-custom.html">Integrate a Custom Listener</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-android/">API&#160;References</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/dep-upgrade.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/troubleshooting-logs.html">Using Logs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/troubleshooting-queries.html">Troubleshooting Queries</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/release-notes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/supported-os.html">Supported OS</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../android/refer-glossary.html">Glossary</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="quickstart.html">C#.Net</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Start Here!</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="querybuilder.html">QueryBuilder</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="query-live.html">Live Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="query-predictive.html">Predictive Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="landing-replications.html">Data Sync</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="dbreplica.html">Intra-Device</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-current-page" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link is-current-page" href="p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="p2psync-custom.html">Integrate a Custom Listener</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net">API&#160;References</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="dep-upgrade.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="troubleshooting-logs.html">Using Logs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="troubleshooting-queries.html">Troubleshooting Queries</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="release-notes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="supported-os.html">Supported OS</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="refer-glossary.html">Glossary</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../java/quickstart.html">Java</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../java/gs-prereqs.html">Start Here!</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/querybuilder.html">QueryBuilder</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/query-live.html">Live Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/query-predictive.html">Predictive Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../java/landing-replications.html">Data Sync</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/dbreplica.html">Intra-Device</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../java/p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/p2psync-custom.html">Integrate a Custom Listener</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-java/index.html?">API&#160;References</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/dep-upgrade.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/troubleshooting-logs.html">Using Logs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/troubleshooting-queries.html">Troubleshooting Queries</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/release-notes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/supported-os.html">Supported OS</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../java/refer-glossary.html">Glossary</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../objc/quickstart.html">Objective-C</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../objc/gs-prereqs.html">Start Here!</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/querybuilder.html">QueryBuilder</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/query-live.html">Live Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/query-predictive.html">Predictive Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../objc/landing-replications.html">Data Sync</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/dbreplica.html">Intra-Device</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../objc/p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/p2psync-custom.html">Integrate a Custom Listener</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-objc">API&#160;References</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/dep-upgrade.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/troubleshooting-logs.html">Using Logs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/troubleshooting-queries.html">Troubleshooting Queries</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/troubleshooting-crashes.html">Decoding Crash Logs</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/release-notes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/supported-os.html">Supported OS</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../objc/refer-glossary.html">Glossary</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../swift/quickstart.html">Swift</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../swift/gs-prereqs.html">Start Here!</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/gs-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/gs-build.html">Build and Run</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/database.html">Databases</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/prebuilt-database.html">Pre-built Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/document.html">Documents</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/blob.html">Blobs</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Queries</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/querybuilder.html">QueryBuilder</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/query-live.html">Live Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/query-predictive.html">Predictive Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/query-troubleshooting.html">Query Troubleshooting</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/fts.html">Full Text Search</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../swift/landing-replications.html">Data Sync</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/dbreplica.html">Intra-Device</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/replication.html">Remote Sync Gateway</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../swift/p2psync-websocket.html">Peer-to-Peer</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/p2psync-websocket-using-passive.html">Passive Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/p2psync-websocket-using-active.html">Active Peer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/p2psync-custom.html">Integrate a Custom Listener</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/conflict.html">Handling Data Conflicts</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-swift">API&#160;References</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/dep-upgrade.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/troubleshooting-logs.html">Using Logs</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/troubleshooting-queries.html">Troubleshooting Queries</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/troubleshooting-crashes.html">Decoding Crash Logs</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/release-notes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/compatibility.html">Compatibility</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/supported-os.html">Supported OS</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../swift/refer-glossary.html">Glossary</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../javascript.html">JavaScript</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../javascript.html">JavaScript</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+      </div>
+    </li>
+    <li class="components_list-items">
+      <div class="component_list-version">
+        <span class="component_list_title">Sync Gateway</span>
+        <select class="version_list" data-component="sync-gateway">
+          <option value="3.0" data-url="../../../sync-gateway/3.0/index.html">3.0.0 (beta)</option>
+          <option value="2.8" data-url="../../../sync-gateway/current/index.html" selected>2.8</option>
+        </select>
+      </div>
+      <div class="version_items hide" data-version="3.0">
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/introduction.html">Introduction</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/whatsnew.html"><strong><em>New in 3.0 beta</em></strong></a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Start Here!</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/get-started-prepare.html">Prepare</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/get-started-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/get-started-verify-install.html">Verify</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/data-modeling.html">Data Modeling</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Configuration</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/configuration-overview.html">Overview</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/configuration-schema-bootstrap.html">Bootstrap</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/configuration-schema-database.html">Database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/configuration-schema-db-security.html">Database Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/configuration-schema-access-control.html">Access Control</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/configuration-schema-import-filter.html">Import Filter</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/configuration-schema-isgr.html">Inter-Sync&#160;Gateway Replication</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/configuration-properties-legacy.html">Legacy Pre-3.0&#160;BETA Configuration</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/configuration-javascript-functions.html">Javascript Functions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/configuration-environment-variables.html">Environment Variables</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Security</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/secure-sgw-access.html">Secure Access</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/authentication-users.html">User Authentication</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/authentication-certs.html">TLS Cert Authentication</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Access Control</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/access-control-concepts.html">Concepts</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/access-control-model.html">Access Control Model</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/channels.html">Channels</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/roles.html">Roles</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/users.html">Users</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function.html">Sync Function</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-overview.html">Overview</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-api.html">API Reference</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-api-access-cmd.html">access()</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-api-channel-cmd.html">channel()</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-api-expiry-cmd.html">expiry()</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-api-require-access-cmd.html">requireAccess()</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-api-require-admin-cmd.html">requireAdmin()</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-api-require-role-cmd.html">requireRole()</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-api-require-user-cmd.html">requireUser()</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-api-role-cmd.html">role()</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-function-api-throw-cmd.html">throw()</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/access-control-how.html">How-to</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/access-control-how-create-users.html">Create Users</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/access-control-how-create-roles.html">Create Roles</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/access-control-how-assign-users-to-roles.html">Assign User to Role</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/access-control-how-control-document-access.html">Control Document Access</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/access-control-how-verify-access.html">Verify Access</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/access-control-how-use-xattrs-for-access-grants.html">Use XATTRS for Access Grants</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/auto-purge-channel-access-revocation.html">Auto-Purge Channel Access Revocation</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">REST API</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/rest-api-access.html">Secure Access</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/rest-api-admin.html">Admin REST API</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/rest-api-metrics.html">Metrics REST API</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/rest-api.html">Public REST API</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Sync</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-with-couchbase-server.html">Sync with Server</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-using-app.html">Sync with Application</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Inter-Sync Gateway Replication</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-inter-syncgateway-overview.html">Overview</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-inter-syncgateway-run.html">Initialize</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-inter-syncgateway-manage.html">Manage</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-inter-syncgateway-monitor.html">Monitor</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sync-inter-syncgateway-conflict-resolution.html">Inter Syncgateway Conflict Resolution</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/revisions.html">Revisions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/what-are-tombstones.html">Tombstones</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/managing-tombstones.html">Managing Tomstones</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/delta-sync.html">Delta Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/resync.html">Resync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/import-filter.html">Import Filter</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Manage</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/stats-monitoring.html">Stats Monitoring</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Logging and Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/logging.html">Logging</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/sgcollect-info.html">SG Collect Info</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/database-offline.html">Database Offline</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Deploy</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/deployment.html">Overview</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/command-line-options.html">Command Line Options</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/load-balancer.html">Load Balancer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/os-level-tuning.html">OS Level Tuning</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/webhooks.html">Webhooks</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/changes-feed.html">Changes Feed</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/integrating-external-stores.html">External Stores</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/stats-prometheus.html">Prometheus Feed</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/indexing.html">Indexing</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/setting-up-dr-cluster.html">Disaster Recovery</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/upgrading.html">Upgrade</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Use Kubernetes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/deploy-cluster-to-kubernetes.html">Deploy</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#couchbase-operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#couchbase-operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Server Compatibility</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/server-compatibility-collections.html">Collections</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/server-compatibility-eventing.html">Eventing</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/server-compatibility-transactions.html">Transactions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/server-compatibility-xdcr.html">XDCR</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/release-notes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/supported-environments.html">Supported Environments</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/compatibility.html">Compatibility Matrix</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Legacy Features</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/legacy-sg-replicate.html">SG Replicate</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/legacy-sgreplicate-resolving-conflicts.html">SG Replicate - Resolving Conflicts (depr)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/legacy-logging-pre2-1.html">Legacy Pre-2.1 Logging</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/3.0/glossary.html">Glossary</a>
+  </span>
+</li>
+</ul>
+      </div>
+      <div class="version_items hide" data-version="2.8">
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/introduction.html">Introduction</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/index.html">Quick Start</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html">What&#8217;s New</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Start Here!</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/get-started-prepare.html">Prepare</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/get-started-install.html">Install</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/get-started-verify-install.html">Verify</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/data-modeling.html">Data Modeling</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/data-modeling.html">Data Modeling</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Concepts</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/users.html">Users</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/roles.html">Roles</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/channels.html">Channels</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/what-are-tombstones.html">Tombstones</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/revisions.html">Revisions</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/configuration-properties.html">Configuration</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">REST API</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/rest-api-access.html">REST API Access</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/rest-api.html">Public REST API</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/rest-api-admin.html">Admin REST API</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/rest-api-metrics.html">Metrics REST API</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/rest-api-client-app.html">REST API Client</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Security</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/authentication-users.html">User Authentication</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/authentication-certs.html">TLS Certificate Authentication</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Access Control</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/sync-function.html">Sync Function</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/read-access.html">Read Access</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/write-access.html">Write Access</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Sync</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/sync-with-couchbase-server.html">Sync with Couchbase Server</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/sync-using-app.html">Sync with Couchbase Lite</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Inter-Sync Gateway Replication</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/sync-inter-syncgateway-overview.html">Overview</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/sync-inter-syncgateway-run.html">Initialize</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/sync-inter-syncgateway-manage.html">Manage</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/sync-inter-syncgateway-monitor.html">Monitor</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/sync-inter-syncgateway-conflict-resolution.html">Conflict Resolution</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/managing-tombstones.html">Managing Tombstones</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/delta-sync.html">Delta Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/resync.html">Resync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/import-filter.html">Import filter</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Manage</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/stats-monitoring.html">Monitor</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Logging and Troubleshooting</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/logging.html">Logging</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/sgcollect-info.html">SG Collect</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/database-offline.html">Take Database Offline/Online</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/deployment.html">Deploy</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/command-line-options.html">Command Line Options</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/load-balancer.html">Load Balancer</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/os-level-tuning.html">OS-level Tuning</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/webhooks.html">Webhooks</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/server-integration.html">Changes Feed</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/integrating-external-stores.html">External Stores</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/stats-prometheus.html">Prometheus Feed</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/indexing.html">Indexing versus Views</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/setting-up-dr-cluster.html">Disaster Recovery</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/upgrading.html">Upgrade</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/upgrading.html">Upgrade</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Server Compatibility</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/server-compatibility-collections.html">Collections</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/server-compatibility-eventing.html">Eventing</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/server-compatibility-transactions.html">Transactions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/server-compatibility-xdcr.html">XDCR</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Use Kubernetes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/deploy-cluster-to-kubernetes.html">Deploy</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Product Notes</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/release-notes.html">Release Notes</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/supported-environments.html">Supported OS</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/compatibility.html">Compatibility Matrix</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Legacy Features</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/sync-sgreplicate-resolving-conflicts-legacy.html">Conflict Resolution 1.x Clients</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/legacy-sg-replicate.html">SG-Replicate</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/legacy-logging-pre2-1.html">Log Rotation pre-2.1</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/glossary.html">Sync Gateway Glossary</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/glossary.html">Sync Gateway Glossary</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+      </div>
+    </li>
+  </ul>
+</div>
+  </div>
+</aside>
+<aside class="toc sidebar">
+  <div class="sidebar-box">
+    <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="https://github.com/ibsoln/docs-couchbase-lite/edit/release/2.8/modules/csharp/pages/p2psync-websocket-using-passive.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+</ul>
+</div>
+    <div class="toc-menu"></div>
+    <div class="is-this-helpful-box">
+      <h4> Is this page helpful?</h4>
+      <div class="btn-row">
+        <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                <i class="far fa-thumbs-up"></i>
+            Yes
+
+            </a>
+        <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+      </div>
+      <div class="any-feedback">
+        <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+      </div>
+      <div class="dialog-box" id="dialogBox">
+        <form>
+            <div class="form-group " id="additionalFeedbackBox">
+              <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+              <div class="action-btn-row ">
+                <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                  <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                  <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+              </div>
+
+
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="../index.html">Couchbase Lite</a></li>
+<li class="crumb"><a href="quickstart.html">C#.Net</a></li>
+<li class="crumb"><a href="landing-replications.html">Data Sync</a></li>
+<li class="crumb"><a href="p2psync-websocket.html">Peer-to-Peer</a></li>
+<li class="crumb"><a href="p2psync-websocket-using-passive.html">Passive Peer</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">Passive Peer</h1>
+<div class="labels">
+<ul>
+<li class="edition"><a href="https://www.couchbase.com/products/editions">Enterprise</a></li>
+</ul>
+</div>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+<div class="paragraph">
+<p>Description&#8201;&#8212;&#8201;<em>Couchbase Lite&#8217;s Peer-to-Peer Synchronization enables edge devices to synchronize securely without consuming centralized cloud-server resources</em><br>
+<em>Abstract&#8201;&#8212;&#8201;How to set up a Listener to accept a Replicator connection and sync using peer-to-peer</em><br>
+Related Content&#8201;&#8212;&#8201;<a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net">API Reference</a>  |  <a href="p2psync-websocket-using-passive.html" class="page">Passive Peer</a>  |  <a href="p2psync-websocket-using-active.html" class="page">Active Peer</a></p>
+</div>
+</blockquote>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="title">Enterprise Edition only</div>
+This an <a href="https://www.couchbase.com/products/editions">Enterprise Edition</a> feature.
+Purchase the <em>Enterprise License</em>, which includes official <a href="https://www.couchbase.com/support-policy">Couchbase Support</a>, to use it in production (see the license and support <a href="https://www.couchbase.com/licensing-and-support-faq" class="bare">https://www.couchbase.com/licensing-and-support-faq</a>).
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Code Snippets</div>
+The code examples are indicative only.
+They demonstrate basic concepts and approaches to using a feature.
+Use them as inspiration and adapt these examples to best practice when developing applications for your platform.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This content provides code and configuration examples covering the implementation of <a href="refer-glossary.html#peer-to-peer-sync" class="page">Peer-to-Peer Sync</a> over websockets.
+Specifically it covers the implementation of a <a href="refer-glossary.html#passive-peer" class="page">Passive Peer</a>.</p>
+</div>
+<div class="paragraph">
+<p>This <em>passive peer</em> (also referred to as the server, or listener) will accept a connection from an <a href="refer-glossary.html#active-peer" class="page">Active Peer</a> (also referred to as the client or replicator) and participate in the replication of database changes to synchronize both databases.</p>
+</div>
+<div class="paragraph">
+<p>Subsequent sections provide additional details, and examples for the main configuration options.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Secure Storage</div>
+The use of TLS, its associated keys and certificates requires using secure storage to minimize the chances of a security breach.
+The implementation of this storage differs from platform to platform&#8201;&#8212;&#8201;see <a href="p2psync-websocket.html#using-secure-storage" class="page">Using secure storage</a>.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="configuration-summary"><a class="anchor" href="#configuration-summary"></a>Configuration Summary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You should configure and initialize a listener for each Couchbase Lite database instance you want to sync.
+There is no limit on the number of listeners you may configure&#8201;&#8212;&#8201;<a href="#simple-listener-initialization">Example 1</a> shows a simple initialization and configuration process.</p>
+</div>
+<div id="simple-listener-initialization" class="exampleblock">
+<div class="title">Example 1. Listener configuration and initialization</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Initialize the listener config
+var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="1"></i><b>(1)</b>
+
+thisConfig.Port = 55990; <i class="conum" data-value="2"></i><b>(2)</b>
+
+thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="3"></i><b>(3)</b>
+
+thisConfig.EnableDeltaSync = true; <i class="conum" data-value="4"></i><b>(4)</b>
+
+thisConfig.DisableTLS = false; <i class="conum" data-value="5"></i><b>(5)</b>
+
+// Use an Anonymous Self-Signed Cert
+thisConfig.TlsIdentity = null; <i class="conum" data-value="6"></i><b>(6)</b>
+
+// Configure the client authenticator
+// Here we are using Basic Authentication) <i class="conum" data-value="7"></i><b>(7)</b>
+SecureString validPassword =  new SecureString(); /* example only */
+// Get SecureString input for validPassword
+var validUser = "valid.username";
+thisConfig.Authenticator = new ListenerPasswordAuthenticator(
+  (sender, validUser, validPassword) =&gt;
+    {
+      return username.equals(validUser)  &amp;&amp; password == validPassword);
+    }
+  );
+
+// Initialize the listener
+_thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="8"></i><b>(8)</b>
+
+// Start the listener
+thisListener.Start(); <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Identify the local database to be used&#8201;&#8212;&#8201;see: <a href="#initialize-the-listener-configuration">Initialize the Listener Configuration</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Optionally, choose a port to use.
+By default the system will automatically assign a port&#8201;&#8212;&#8201;to over-ride this, see: <a href="#set-network-and-port">[set-network-and-port]</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Optionally, choose a network-interface to use.
+By default the system will listen on all network interfaces&#8201;&#8212;&#8201;to over-ride this see: <a href="#set-network-and-port">[set-network-and-port]</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Optionally, choose to sync only changes, the default is not to enable delta-sync&#8201;&#8212;&#8201;see: <a href="#delta-sync">Delta Sync</a>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Set server security.
+TLS is always enabled out-of-the-box, so you can usually omit this line.
+But you <em>can</em>, optionally, disable TLS (<strong>not</strong> advisable in production)&#8201;&#8212;&#8201;see: <a href="#tls-security">TLS Security</a></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Set the credentials this server will present to the client for authentication.
+Here we show the default TLS authentication, which is by anonymous self-signed certificate.
+The server must always authenticate itself to the client.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>Set client security&#8201;&#8212;&#8201;define the credentials the server expects the client to present for authentication.
+Here we show how basic authentication is configured to authenticate the client-supplied credentials from the http authentication header against valid credentials&#8201;&#8212;&#8201;see <a href="#authenticating-the-client">Authenticating the Client</a> for more options.
+<div class="paragraph">
+<p>Note that client authentication is optional.</p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>Initialize the listener using the configuration settings.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="9"></i><b>9</b></td>
+<td><a href="#start-listener">Start Listener</a>
+Unresolved directive in common-p2psync-websocket-using-passive.adoc - include::{example-callouts}[tags=listener-initialize]</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api-references"><a class="anchor" href="#api-references"></a>API References</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can find <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net">C#.Net API References</a> here.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="device-discovery"><a class="anchor" href="#device-discovery"></a>Device Discovery</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>This phase is optional:</strong> If the listener is initialized on a well known URL endpoint (for example, a static IP Address or well known DNS address) then you can configure active peers to connect to those.</p>
+</div>
+<div class="paragraph">
+<p>Prior to initiating the listener you may execute a peer discovery phase.</p>
+</div>
+<div class="paragraph">
+<p>For the passive peer, this involves advertising the service using, for example
+ and waiting for an invite from the active peer.</p>
+</div>
+<div class="paragraph">
+<p>The connection is established once the passive peer has authenticated and accepted an active peer&#8217;s invitation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="initialize-the-listener-configuration"><a class="anchor" href="#initialize-the-listener-configuration"></a>Initialize the Listener Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Initialize the listener configuration with the local database.
+All other configuration values take their default setting.</p>
+</div>
+<div class="paragraph">
+<p>Each Listener instance serves one Couchbase Lite database.
+Couchbase sets no hard limit on the number of listeners you can initialize.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 2. Specify Local Database</div>
+<div class="content">
+<div class="paragraph">
+<p>In this example <code>thisDB</code> has previously been declared as an object of type Database.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Initialize the listener config
+var thisConfig = new URLEndpointListenerConfiguration(thisDB); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Set the local database using the <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html">URLEndpointListenerConfiguration</a>'s constructor <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration__ctor_Couchbase_Lite_Database_">(Database database)</a>.
+<div class="paragraph">
+<p>The database must be opened before the listener is started.</p>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="set-port-and-network-interface"><a class="anchor" href="#set-port-and-network-interface"></a>Set Port and Network Interface</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="port-number"><a class="anchor" href="#port-number"></a>Port number</h3>
+<div class="paragraph">
+<p>The Listener will automatically select an available port if you do not specify one.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 3. Specify a Port to Use</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/256ef4582517b05a5bf990e71a9e8620871034f7/modules/csharp/examples/code_snippets/p2psync-websocket.cs">thisConfig.Port = 55990; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To use a canonical port&#8201;&#8212;&#8201;one known to other applications&#8201;&#8212;&#8201;specify it explicitly using the <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_Port">Port</a> method shown here.
+Ensure that any port you do specify is not blocked by firewall rules.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="network-interface"><a class="anchor" href="#network-interface"></a>Network Interface</h3>
+<div class="paragraph">
+<p>The Listener will listen on all network interfaces by default.</p>
+</div>
+<div id="specify-a-network-interface-to-use" class="exampleblock">
+<div class="title">Example 4. Specify a Network Interface to Use</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/256ef4582517b05a5bf990e71a9e8620871034f7/modules/csharp/examples/code_snippets/p2psync-websocket.cs">thisConfig.NetworkInterface = "10.1.1.10"; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="colist arabic">
+<div class="title">Notes on <a href="#specify-a-network-interface-to-use">Example 4</a></div>
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>To specify an interface&#8201;&#8212;&#8201;one known to other applications&#8201;&#8212;&#8201;identify it explicitly, using the <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_NetworkInterface">NetworkInterface</a> method shown here.
+This must be either an IP Address or network interface name such as <code>en0</code>.</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+Where necessary, you can identify the available interfaces at runtime, using appropriate platform tools&#8201;&#8212;&#8201;see <a href="#get-network-interfaces">Example 5</a>.
+</td>
+</tr>
+</table>
+</div>
+<div id="get-network-interfaces" class="exampleblock">
+<div class="title">Example 5. Identify available network interfaces</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">foreach(NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+{
+  if(ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
+      ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet)
+  {
+    // do something with the interface(s)
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="delta-sync"><a class="anchor" href="#delta-sync"></a>Delta Sync</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Delta Sync allows clients to sync only those parts of a document that have changed.
+This can result in significant savings in bandwidth consumption as well as throughput improvements.
+Both valuable benefits, especially when network bandwidth is constrained.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 6. Enable delta sync</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">thisConfig.EnableDeltaSync = true; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Delta sync replication is not enabled by default.
+Use <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html">URLEndpointListenerConfiguration</a>'s <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_EnableDeltaSync">EnableDeltaSync</a> method to activate or deactivate it.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="tls-security"><a class="anchor" href="#tls-security"></a>TLS Security</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="enable-or-disable-tls"><a class="anchor" href="#enable-or-disable-tls"></a>Enable or Disable TLS</h3>
+<div class="paragraph">
+<p>Define whether the connection is to use TLS or clear text.</p>
+</div>
+<div class="paragraph">
+<p>TLS based encryption is enabled by default and this setting ought to be used in any production environment.
+However, it <em>can</em> be disabled, for example for development and-or test environments.</p>
+</div>
+<div class="paragraph">
+<p>When TLS is enabled, Couchbase Lite provides several options on how the Listener may be configured with an appropriate TLS Identity&#8201;&#8212;&#8201;see <a href="#configure-tls-identity-for-listener">Configure TLS Identity for Listener</a>.</p>
+</div>
+<div class="paragraph">
+<p>You can use <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html">URLEndpointListenerConfiguration</a>'s <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_DisableTLS">DisableTLS</a> method to disable TLS communication if necessary</p>
+</div>
+<div class="paragraph">
+<p>The <code>disableTLS</code> setting must be 'false' when <em>Client Cert Authentication</em> is required.</p>
+</div>
+<div class="paragraph">
+<p>Basic Authentication can be used with, or without, TLS.</p>
+</div>
+<div class="paragraph">
+<p><a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_DisableTLS">DisableTLS</a> works in conjunction with <code>TLSIdentity</code>, to enable developers to define the key and certificate to be used.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If <code>disableTLS</code> is true&#8201;&#8212;&#8201;TLS communication is disabled and TLS identity is ignored.
+Active peers will use the <code>ws://</code> URL scheme used to connect to the listener.</p>
+</li>
+<li>
+<p>If <code>disableTLS</code> is false or not specified&#8201;&#8212;&#8201;TLS communication is enabled.</p>
+<div class="paragraph">
+<p>Active peers will use the <code>wss://</code> URL scheme to connect to the listener.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="configure-tls-identity-for-listener"><a class="anchor" href="#configure-tls-identity-for-listener"></a>Configure TLS Identity for Listener</h3>
+<div class="paragraph">
+<p>Define the credentials the server will present to the client for authentication.
+Note that the server must always authenticate itself with the client&#8201;&#8212;&#8201;see <a href="p2psync-websocket-using-active.html#authenticating-the-listener" class="page">Active Peer - authenticating the listener</a> for how the client deals with this.</p>
+</div>
+<div class="paragraph">
+<p>Use <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html">URLEndpointListenerConfiguration</a>'s
+<a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_TlsIdentity">TlsIdentity</a> method to configure the TLS Identity used in TLS communication.</p>
+</div>
+<div class="paragraph">
+<p>If <code>TLSIdentity</code> is not set, then the listener uses an auto-generated anonymous self-signed identity (unless <code>disableTLS = true</code>).
+Whilst the client cannot use this to authenticate the server, it will use it to encrypt communication, giving a more secure option than non-TLS communication.</p>
+</div>
+<div class="paragraph">
+<p>The auto-generated anonymous self-signed identity is saved in secure storage for future use to obviate the need to re-generate it.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Typically, you will configure the listener&#8217;s TLS Identity once during initial launch and re-use it (from secure storage on any subsequent starts.
+</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock">
+<div class="title">Example 7. Set Listener&#8217;s TLS identity</div>
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_import"></a>Import</p>
+</li>
+<li>
+<p><a id="tabset1_create-self-signed-cert"></a>Create Self-Signed Cert</p>
+</li>
+<li>
+<p><a id="tabset1_use-anonymous-self-signed-certificate"></a>Use Anonymous Self-Signed Certificate</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_import">
+<div class="paragraph">
+<p>Import an identity from a secure key and certificate data source.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">thisConfig.DisableTLS = false; <i class="conum" data-value="1"></i><b>(1)</b>
+
+// Use CA Cert
+// Create a TLSIdentity from an imported key-pair
+// . . . previously declared variables include ...
+TLSIdentity thisIdentity;
+X509Store _store =
+  new X509Store(StoreName.My); // create and label x509 store
+
+// Get keys and certificates from PKCS12 data
+byte[] thisIdData =
+  File.ReadAllBytes("c:client.p12"); <i class="conum" data-value="2"></i><b>(2)</b>
+// . . . other user code . . .
+
+thisIdentity = TLSIdentity.ImportIdentity(
+  _store,
+  thisIdData, <i class="conum" data-value="3"></i><b>(3)</b>
+  "123", // Password to access certificate data
+  "couchbase-demo-cert",
+  null); // Label to get cert in certificate map
+    // NOTE: If a null label is supplied then the same
+    // default directory for a Couchbase Lite database
+    // is used for map.
+
+
+// Set the TLS Identity
+thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Ensure TLS is used</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Get key and certificate data</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Use the retrieved data to create and store the TLS identity</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Set this identity as the one presented in response to the client&#8217;s prompt</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_create-self-signed-cert">
+<div class="paragraph">
+<p>Create a TLSIdentity for the server using convenience API.
+The system generates a self-signed certificate.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">thisConfig.DisableTLS = false; <i class="conum" data-value="1"></i><b>(1)</b>
+
+
+// Set the TLS Identity
+thisConfig.TlsIdentity = thisIdentity; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Ensure TLS is used.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Map the required certificate attributes, in this case the common name.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Create the required TLS identity using the attributes.
+Add to secure storage as 'couchbase-docs-cert'.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Configure the server to present the defined identity credentials when prompted.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_use-anonymous-self-signed-certificate">
+<div class="paragraph">
+<p>This examples uses an “anonymous” self signed certificate.
+Generated certificates are held in secure storage.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">thisConfig.DisableTLS = false; <i class="conum" data-value="1"></i><b>(1)</b>
+
+// Use an Anonymous Self-Signed Cert
+thisConfig.TlsIdentity = null; <i class="conum" data-value="2"></i><b>(2)</b>
+
+// Use an Anonymous Self-Signed Cert
+thisConfig.TlsIdentity = null; <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>These are are the default settings. Authentication using an anonymous self-signed certificate is assumed.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="authenticating-the-client"><a class="anchor" href="#authenticating-the-client"></a>Authenticating the Client</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this section: <a href="#use-basic-authentication">Use Basic Authentication</a>  |  <a href="#using-client-certificate-authentication">Using Client Certificate Authentication</a>  |  <a href="#delete-tls-identity">Delete Entry</a>  |  <a href="#the-impact-of-tls-settings">The Impact of TLS Settings</a></p>
+</div>
+<div class="paragraph">
+<p>Define how the server (listener) will authenticate the client as one it is prepared to interact with.</p>
+</div>
+<div class="paragraph">
+<p>Whilst client authentication is optional, Couchbase lite provides the necessary tools to implement it.
+Use the
+<a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html">URLEndpointListenerConfiguration</a> class&#8217;s <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListenerConfiguration.html#Couchbase_Lite_P2P_URLEndpointListenerConfiguration_Authenticator">Authenticator</a> method to specify how the client-supplied credentials are to be authenticated.</p>
+</div>
+<div class="paragraph">
+<p>Valid options are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>No authentication&#8201;&#8212;&#8201;If you do not define an Authenticator then all clients are accepted.</p>
+</li>
+<li>
+<p>Basic Authentication&#8201;&#8212;&#8201;uses the <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.ListenerPasswordAuthenticator.html">ListenerPasswordAuthenticator</a> to authenticate the client using the client-supplied username and password (from the http authentication header).</p>
+</li>
+<li>
+<p><a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.ListenerCertificateAuthenticator.html">ListenerCertificateAuthenticator</a>&#8201;&#8212;&#8201;which authenticates the client using a client supplied chain of one or more certificates.
+You should initialize the authenticator using one of the following constructors:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>A list of one or more root certificates&#8201;&#8212;&#8201;the client supplied certificate must end at a certificate in this list if it is to be authenticated</p>
+</li>
+<li>
+<p>A block of code that assumes total responsibility for authentication&#8201;&#8212;&#8201;it must return a boolean response (true for an authenticated client, or false for a failed authentication).</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="use-basic-authentication"><a class="anchor" href="#use-basic-authentication"></a>Use Basic Authentication</h3>
+<div class="paragraph">
+<p>Define how to authenticate client-supplied username and password credentials.
+To use client-supplied certificates instead&#8201;&#8212;&#8201;see: <a href="#using-client-certificate-authentication">Using Client Certificate Authentication</a></p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 8. Password authentication</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Configure the client authenticator
+// Here we are using Basic Authentication) <i class="conum" data-value="1"></i><b>(1)</b>
+SecureString validPassword =  new SecureString(); /* example only */
+// Get SecureString input for validPassword
+var validUser = "valid.username";
+thisConfig.Authenticator = new ListenerPasswordAuthenticator(
+  (sender, validUser, validPassword) =&gt;
+    {
+      return username.equals(validUser)  &amp;&amp; password == validPassword);
+    }
+  );</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Where 'username'/'password' are the client-supplied values (from the http-authentication header) and <code>validUser</code>/<code>validPassword</code> are the values acceptable to the server.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-client-certificate-authentication"><a class="anchor" href="#using-client-certificate-authentication"></a>Using Client Certificate Authentication</h3>
+<div class="paragraph">
+<p>Define how the server will authenticate client-supplied certificates.</p>
+</div>
+<div class="paragraph">
+<p>There are two ways to authenticate a client:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>A chain of one or more certificates that ends at a certificate in the list of certificates supplied to the constructor for  <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.ListenerCertificateAuthenticator.html">ListenerCertificateAuthenticator</a>.</p>
+</li>
+<li>
+<p>Application logic: This method assumes complete responsibility for verifying and authenticating the client.</p>
+<div class="paragraph">
+<p>If the parameter supplied to the constructor for <code>ListenerCertificateAuthenticator</code> is of type  <code>ListenerCertificateAuthenticatorDelegate</code>, all other forms of authentication are bypassed.</p>
+</div>
+<div class="paragraph">
+<p>The client response to the certificate request is passed to the method supplied as the constructor parameter.
+The logic should take the form of function or block (such as, a closure expression) where the platform allows.</p>
+</div>
+</li>
+</ul>
+</div>
+<div class="exampleblock">
+<div class="title">Example 9. Set Certificate Authorization</div>
+<div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_root-ca"></a>Root CA</p>
+</li>
+<li>
+<p><a id="tabset2_application-logic"></a>Application Logic</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_root-ca">
+<div class="paragraph">
+<p>Configure the server (listener) to authenticate the client against a list of one or more certificates provided by the server to the the <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.ListenerCertificateAuthenticator.html">ListenerCertificateAuthenticator</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Configure the client authenticator
+// to validate using ROOT CA
+
+// Get the valid cert chain, in this instance from
+// PKCS12 data containing private key, public key
+// and certificates <i class="conum" data-value="1"></i><b>(1)</b>
+var clientData = File.ReadAllBytes("c:client.p12");
+var ourCaData = File.ReadAllBytes("c:client-ca.der");
+
+// Get the root certs from the data
+var thisRootCert = new X509Certificate2(ourCaData); <i class="conum" data-value="2"></i><b>(2)</b>
+
+// Configure the authenticator to use the root certs
+var thisAuth = new ListenerCertificateAuthenticator(new X509Certificate2Collection(thisRootCert));
+
+thisConfig.Authenticator = thisAuth; <i class="conum" data-value="3"></i><b>(3)</b>
+
+// Initialize the listener using the config
+_listener = new URLEndpointListener(thisConfig);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Get the identity data to authenticate against.
+This can be, for example, from a resource file provided with the app, or an identity previously saved in secure storage.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the authenticator to authenticate the client supplied certificate(s) using these root certs.
+A valid client will provide one or more certificates that match a certificate in this list.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Add the authenticator to the listener configuration.</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_application-logic">
+<div class="paragraph">
+<p>Configure the server (listener) to authenticate the client using user-supplied logic.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Configure the client authenticator
+// to validate using application logic
+
+// Get the valid cert chain, in this instance from
+// PKCS12 data containing private key, public key
+// and certificates <i class="conum" data-value="1"></i><b>(1)</b>
+clientData = File.ReadAllBytes("c:client.p12");
+ourCaData = File.ReadAllBytes("c:client-ca.der");
+
+// Get the root certs from the data
+var thisRootCert = new X509Certificate2(ourCaData);
+
+// Configure the authenticator to pass the root certs
+// To a user supplied code block for authentication
+var thisAuth =
+  new ListenerCertificateAuthenticator(
+    new X509Certificate2Collection(thisRootCert) =&gt; {
+      // . . . user supplied code block
+      // . . . returns boolean value (true=authenticated)
+    }); <i class="conum" data-value="2"></i><b>(2)</b>
+
+thisConfig.Authenticator = thisAuth; <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Get the identity data to authenticate against.
+This can be, for example, from a resource file provided with the app, or an identity previously saved in secure storage.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Configure the Authenticator to pass the root certificates to a user supplied code block.
+This code assumes complete responsibility for authenticating the client supplied certificate(s).
+It must return a boolean value; with <code>true</code> denoting the client supplied certificate authentic.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Add the authenticator to the listener configuration.</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="delete-tls-identity"><a class="anchor" href="#delete-tls-identity"></a>Delete Entry</h3>
+<div class="paragraph">
+<p>You can remove unwanted TLS identities from secure storage using the convenience API.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 10. Deleting TLS Identities</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">TLSIdentity.DeleteIdentity(_store, "alias-to-delete", null);</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="the-impact-of-tls-settings"><a class="anchor" href="#the-impact-of-tls-settings"></a>The Impact of TLS Settings</h3>
+<div class="paragraph">
+<p>The table in this section shows the expected system behavior (in regards to security) depending on the TLS configuration settings deployed.</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Expected system behavior</caption>
+<colgroup>
+<col style="width: 12%;">
+<col style="width: 44%;">
+<col style="width: 44%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">disableTLS</th>
+<th class="tableblock halign-left valign-top">tlsIdentity (corresponding to server)</th>
+<th class="tableblock halign-left valign-top">Expected system behavior</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ignored</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>TLS is disabled; all communication is plain text.</p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>set to null</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>The system will auto generate an <em>anonymous</em> self signed cert.</p>
+</li>
+<li>
+<p>Active peers (clients) should be configured to accept self-signed certificates.</p>
+</li>
+<li>
+<p>Communication is encrypted</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Set to server identity generated from a self- or CA-signed certificate</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>On first use&#8201;&#8212;&#8201;Bring your own certificate and private key; for example, using the <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html#Couchbase_Lite_P2P_TLSIdentity_CreateIdentity_System_Boolean_System_Collections_Generic_Dictionary_System_String_System_String__System_Nullable_System_DateTimeOffset__System_Security_Cryptography_X509Certificates_X509Store_System_String_System_String_">CreateIdentity()</a> method to add it to the secure storage.</p>
+</li>
+<li>
+<p>Each time&#8201;&#8212;&#8201;Use the server identity from the certificate stored in the secure storage; for example, using the <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html">TLSIdentity</a> class&#8217;s <a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.TLSIdentity.html#Couchbase_Lite_P2P_TLSIdentity_GetIdentity_System_Security_Cryptography_X509Certificates_X509Store_System_String_System_String_">GetIdentity(X509Store, String, String)</a> method with the alias you want to retrieve..</p>
+</li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>System will use the configured identity.</p>
+</li>
+<li>
+<p>Active peers will validate the server certificate corresponding to the TLSIdentity (as long as they are configured to not skip validation&#8201;&#8212;&#8201;see <a href="#tls-security">TLS Security</a>).</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="start-listener"><a class="anchor" href="#start-listener"></a>Start Listener</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Once you have completed the Listener&#8217;s configuration settings you can initialize the Listener instance and start it running&#8201;&#8212;&#8201;see: <a href="#initialize-and-start-listener">Example 11</a></p>
+</div>
+<div id="initialize-and-start-listener" class="exampleblock">
+<div class="title">Example 11. Initialize and start listener</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">// Initialize the listener
+_thisListener = new URLEndpointListener(thisConfig); <i class="conum" data-value="1"></i><b>(1)</b>
+
+// Start the listener
+thisListener.Start(); <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Unresolved directive in common-p2psync-websocket-using-passive.adoc - include::{module-callouts}[tags=listener-start, indent=0]</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="monitor-listener"><a class="anchor" href="#monitor-listener"></a>Monitor Listener</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use the Listener&#8217;s <code><a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.URLEndpointListener.html#Couchbase_Lite_P2P_URLEndpointListener_Status">Status</a></code> property/method to get counts of total and active connections&#8201;&#8212;&#8201;see: <a href="#get-connection-counts">Example 12</a>.</p>
+</div>
+<div class="paragraph">
+<p>You should note that these counts can be extremely volatile. So, the actual number of active connections may have changed, by the time the <code><a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net/api/Couchbase.Lite.P2P.ConnectionStatus.html">ConnectionStatus</a></code> class returns a result.</p>
+</div>
+<div id="get-connection-counts" class="exampleblock">
+<div class="title">Example 12. Get connection counts</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/256ef4582517b05a5bf990e71a9e8620871034f7/modules/csharp/examples/code_snippets/p2psync-websocket.cs">int connectionCount = thisListener.Status.ConnectionCount; <i class="conum" data-value="1"></i><b>(1)</b>
+int activeConnectionCount = thisListener.Status.ActiveConnectionCount;  <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Notes on example:</strong></p>
+</div>
+<div class="paragraph">
+<p>Unresolved directive in common-p2psync-websocket-using-passive.adoc - include::{example_callouts}[tags=listener-status-check, indent=0]</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="stop-listener"><a class="anchor" href="#stop-listener"></a>Stop Listener</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It is best practice to check tha status of the listener&#8217;s connections and stop only when you have confirmed that there are no active connections&#8201;&#8212;&#8201;see <a href="#get-connection-counts">Example 12</a>.</p>
+</div>
+<div class="exampleblock">
+<div class="title">Example 13. Stop listener using <code>stop</code> method</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/256ef4582517b05a5bf990e71a9e8620871034f7/modules/csharp/examples/code_snippets/p2psync-websocket.cs">thisListener.Stop();</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Closing the database will also close the listener.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="related-content"><a class="anchor" href="#related-content"></a>Related Content</h2>
+<div class="sectionbody">
+<div class="card-row three-column-row">
+<div class="sect5 column">
+<h6 id=""><a class="anchor" href="#"></a></h6>
+<div class="ulist">
+<div class="title">How to</div>
+<ul>
+<li>
+<p><a href="p2psync-websocket-using-passive.html" class="page">Passive Peer</a></p>
+</li>
+<li>
+<p><a href="p2psync-websocket-using-active.html" class="page">Active Peer</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-2"><a class="anchor" href="#-2"></a></h6>
+<div class="ulist">
+<div class="title">Concepts</div>
+<ul>
+<li>
+<p><a href="landing-p2psync.html" class="page">Landing P2Psync</a></p>
+</li>
+<li>
+<p><a href="http://docs.couchbase.com/mobile/3.0.4/couchbase-lite-net">API References</a>
+.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect5 column">
+<h6 id="-3"><a class="anchor" href="#-3"></a></h6>
+<div class="ulist">
+<div class="title">Community Resources &#8230;&#8203;</div>
+<ul>
+<li>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a> <strong>|</strong> <a href="https://blog.couchbase.com/">Blog</a> <strong>|</strong> <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"></div>
+<ul>
+<li>
+<p><a href="#tutorials:cbl-p2p-sync-websockets:swift/cbl-p2p-sync-websockets.adoc" class="page unresolved">Getting Started with Peer-to-Peer Synchronization</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../../_/img/couchbase-logo.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2021 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<template id="run-code-panel">
+<div class="action-panel">
+  <form class="action-panel-control" method="POST" action="https://couchbase.live/run" target="run-code-output">
+    <input type="hidden" name="lang">
+    <input type="hidden" name="code">
+    <input type="hidden" name="from" value="docs">
+    <div class="controls">
+      <button class="control-button rerun" type="submit"><i class="fas fa-redo"></i></button>
+      <span class="shell-name control-label">Output</span>
+      <button class="control-button close"><i class="fas fa-times"></i> Close</button>
+    </div>
+  </form>
+  <iframe class="run-code-output" name="run-code-output"></iframe>
+</div>
+</template>
+<script id="site-script" src="../../../_/js/site.js"></script>
+<script defer src="../../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script defer src="../../../_/js/vendor/fontawesome.js"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
