@@ -1782,12 +1782,25 @@
 </li>
 </ul>
 </li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-type-mappings-Docid-with-regexp.html">DocID with regexp in Type Mappings</a>
+  </span>
+</li>
 </ul>
 </li>
-<li class="menu_list" data-depth="3">
+<li class="menu_list is-parent closed" data-depth="3">
   <span class="menu_line">
+    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="fts-analyzers.html">Understanding Analyzers</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-analyzers-search-functions.html">Analyzers for N1QL Search Functions</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
@@ -2093,6 +2106,11 @@
   </span>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-troubleshooting.html">Troubleshooting and FAQs</a>
+  </span>
 </li>
 </ul>
 </li>
@@ -3744,7 +3762,12 @@
 </li>
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Getting Search Statistics</a>
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Search Statistics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-query.html">Active Queries</a>
   </span>
 </li>
 </ul>
@@ -3936,6 +3959,16 @@
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Configure On-the-Wire Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-hsts.html">Configure HSTS</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Manage Encryption Settings</a>
   </span>
 </li>
 <li class="menu_list" data-depth="4">
@@ -7871,10 +7904,12 @@
 </div><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The number of results obtained for a Full Text Search request can be large at times. Pagination of these results becomes essential for sorting and displaying a subset of these results.</p>
+<p>The number of results obtained for a Full Text Search request can be large at times.
+Pagination of these results becomes essential for sorting and displaying a subset of these results.</p>
 </div>
 <div class="paragraph">
-<p>There are multiple ways to achieve pagination with settings within a search request. Pagination will fetch a deterministic set of results when the results are sorted in a certain fashion.</p>
+<p>There are multiple ways to achieve pagination with settings within a search request.
+Pagination will fetch a deterministic set of results when the results are sorted in a certain fashion.</p>
 </div>
 <div class="paragraph">
 <p>Pagination provides the following options:</p>
@@ -7882,16 +7917,16 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="sizefrom-or-offsetlimit"><a class="anchor" href="#sizefrom-or-offsetlimit"></a>size/from or offset/limit</h2>
+<h2 id="size-from-or-offset-limit"><a class="anchor" href="#size-from-or-offset-limit"></a><code>size</code> / <code>from</code> or <code>offset</code> / <code>limit</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>This pagination settings can be used to obtain a subset of results and works deterministically when combined with a certain sort order.</p>
 </div>
 <div class="paragraph">
-<p>Using <code>size/limit</code> and <code>offset/from</code> would fetch at least <code>size + from</code> ordered results from a partition and then return the <code>size</code> number of results starting at offset <code>from</code>.</p>
+<p>Using <code>size</code>/<code>limit</code> and <code>offset</code>/<code>from</code> would fetch at least <code>size</code> + <code>from</code> ordered results from a partition and then return the <code>size</code> number of results starting at offset <code>from</code>.</p>
 </div>
 <div class="paragraph">
-<p>Deep pagination can therefore get pretty expensive when using <code>size + from</code> on a sharded index due to each shard having to possibly return large resultsets (at least <code>size + from</code>) over the network for merging at the coordinating node before returning the <code>size</code> number of results starting at offset <code>from</code>.</p>
+<p>Deep pagination can therefore get pretty expensive when using <code>size</code> + <code>from</code> on a sharded index due to each shard having to possibly return large resultsets (at least <code>size</code> + <code>from</code>) over the network for merging at the coordinating node before returning the <code>size</code> number of results starting at offset <code>from</code>.</p>
 </div>
 <div class="paragraph">
 <p>The default sort order is based on <em>score</em> (relevance) where the results are ordered from the highest to the lowest score.</p>
@@ -7899,37 +7934,41 @@
 <div class="sect2">
 <h3 id="example"><a class="anchor" href="#example"></a>Example</h3>
 <div class="paragraph">
-<p>Here&#8217;s an example query that fetches results from the 11th onwards to the 15th that have been ordered by <em>score</em> ..</p>
+<p>Here&#8217;s an example query that fetches results from the 11th onwards to the 15th that have been ordered by <em>score</em>.</p>
 </div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre>{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "query": {
       "match": "California",
       "field": "state"
   },
   "size": 5,
   "from": 10
-}</pre>
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="search_after-search_before"><a class="anchor" href="#search_after-search_before"></a>search_after, search_before</h2>
+<h2 id="search-after-search-before"><a class="anchor" href="#search-after-search-before"></a><code>search_after</code>, <code>search_before</code></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For an efficient pagination, you can use the <code>search_after/search_before</code> settings.</p>
+<p>For an efficient pagination, you can use the <code>search_after</code> and <code>search_before</code> settings.</p>
 </div>
 <div class="paragraph">
 <p><code>search_after</code> is designed to fetch the <code>size</code> number of results after the key specified and <code>search_before</code> is designed to fetch the <code>size</code> number of results before the key specified.</p>
 </div>
 <div class="paragraph">
-<p>These settings allow for the client to maintain state while paginating - the sort key of the last result (for search_after) or the first result (for search_before) in the current page.</p>
+<p>These settings allow for the client to maintain state while paginating&#8201;&#8212;&#8201;the sort key of the last result (for <code>search_after</code>) or the first result (for <code>search_before</code>) in the current page.</p>
 </div>
 <div class="paragraph">
-<p>Both the attributes accept an array of strings (sort keys) - the length of this array will need to be the same length of the "sort" array within the search request.</p>
+<p>Both the attributes accept an array of strings (sort keys)&#8201;&#8212;&#8201;the length of this array will need to be the same length of the "sort" array within the search request.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -7944,13 +7983,15 @@ You cannot use both <code>search_after</code> and <code>search_before</code> in 
 </table>
 </div>
 <div class="sect2">
-<h3 id="example-2"><a class="anchor" href="#example-2"></a>Example</h3>
+<h3 id="examples"><a class="anchor" href="#examples"></a>Examples</h3>
 <div class="paragraph">
-<p>Here are some examples using <code>search_after/search_before</code> over sort key "_id" (an internal field that carries the document ID).</p>
+<p>Here are some examples using <code>search_after</code>/<code>search_before</code> over sort key <code>_id</code> (an internal field that carries the document ID).</p>
 </div>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <div class="content">
-<pre>{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "query": {
       "match": "California",
       "field": "state"
@@ -7958,12 +7999,12 @@ You cannot use both <code>search_after</code> and <code>search_before</code> in 
   "sort": ["_id"],
   "search_after": ["hotel_10180"],
   "size": 3
-}</pre>
+}</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>{
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "query": {
       "match": "California",
       "field": "state"
@@ -7971,7 +8012,9 @@ You cannot use both <code>search_after</code> and <code>search_before</code> in 
   "sort": ["_id"],
   "search_before": ["hotel_17595"],
   "size": 4
-}</pre>
+}</code></pre>
+</div>
+</div>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -7990,13 +8033,13 @@ A Full Text Search request that doesn&#8217;t carry any pagination settings will
 </div>
 </div>
 <div class="sect1">
-<h2 id="pagination-tips-and-recommendations"><a class="anchor" href="#pagination-tips-and-recommendations"></a>Pagination tips and recommendations</h2>
+<h2 id="pagination-tips-and-recommendations"><a class="anchor" href="#pagination-tips-and-recommendations"></a>Pagination Tips and Recommendations</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The pagination of search results can be done using the 'from' and 'size' parameters in the search request. But as the search gets into deeper pages, it starts consuming more resources.</p>
+<p>The pagination of search results can be done using the <code>from</code> and <code>size</code> parameters in the search request. But as the search gets into deeper pages, it starts consuming more resources.</p>
 </div>
 <div class="paragraph">
-<p>To safeguard against any arbitrary higher memory requirements, FTS provides a configurable limit bleveMaxResultWindow (10000 default) on the maximum allowable page offsets. However, bumping this limit to higher levels is not a scalable solution.</p>
+<p>To safeguard against any arbitrary higher memory requirements, FTS provides a configurable limit <code>bleveMaxResultWindow</code> (10000 default) on the maximum allowable page offsets. However, bumping this limit to higher levels is not a scalable solution.</p>
 </div>
 <div class="paragraph">
 <p>To circumvent this problem, the concept of key set pagination in FTS, is introduced.</p>
@@ -8013,7 +8056,8 @@ A Full Text Search request that doesn&#8217;t carry any pagination settings will
 <p>The search request must specify a sort order.</p>
 </li>
 <li>
-<p>The sort order must impose a total order on the results.  Without this, any results which share the same sort value might be left out when handling the page navigation boundaries.</p>
+<p>The sort order must impose a total order on the results.
+Without this, any results which share the same sort value might be left out when handling the page navigation boundaries.</p>
 </li>
 </ul>
 </div>
@@ -8021,39 +8065,10 @@ A Full Text Search request that doesn&#8217;t carry any pagination settings will
 <p>A common solution to this is to always include the document ID as the final sort criteria.</p>
 </div>
 <div class="paragraph">
-<p>For example, if you want to sort by [“name”, “-age”], instead of sort by [“name”, “-age”, “_id”].</p>
+<p>For example, if you want to sort by <code>[“name”, “-age”]</code>, instead sort by <code>[“name”, “-age”, “_id”]</code>.</p>
 </div>
 <div class="paragraph">
-<p>With search_after/search_before paginations, the heap memory requirement of deeper page searches is made proportional to the requested page size alone. So it reduces the heap memory requirement of deeper page searches significantly down from the offset+from values.</p>
-</div>
-<div class="sect2">
-<h3 id="example-3"><a class="anchor" href="#example-3"></a>Example</h3>
-<div class="paragraph">
-<p>User searches for description: light and sorts by [“name”, “_id”]</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
-
-  "query": {
-    "query": "description:flight"
-  },
-  "sort": [
-    "name",
-    "_id"
-  ],
-  "search_before": [
-    "Anchor USA Flights",
-    "anchor_timings_for_usa_flights"
-  ],
-  "search_after": [
-    "Anchor Hotel Landmarks",
-    "anchor_location_of_hotels"
-  ]
-
-}</code></pre>
-</div>
-</div>
+<p>With <code>search_after</code>/<code>search_before</code> paginations, the heap memory requirement of deeper page searches is made proportional to the requested page size alone. So it reduces the heap memory requirement of deeper page searches significantly down from the offset+from values.</p>
 </div>
 </div>
 </div>

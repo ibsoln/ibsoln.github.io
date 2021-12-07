@@ -1782,12 +1782,25 @@
 </li>
 </ul>
 </li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-type-mappings-Docid-with-regexp.html">DocID with regexp in Type Mappings</a>
+  </span>
+</li>
 </ul>
 </li>
-<li class="menu_list" data-depth="3">
+<li class="menu_list is-parent closed" data-depth="3">
   <span class="menu_line">
+    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="fts-analyzers.html">Understanding Analyzers</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-analyzers-search-functions.html">Analyzers for N1QL Search Functions</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
@@ -2093,6 +2106,11 @@
   </span>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-troubleshooting.html">Troubleshooting and FAQs</a>
+  </span>
 </li>
 </ul>
 </li>
@@ -3744,7 +3762,12 @@
 </li>
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Getting Search Statistics</a>
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Search Statistics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-query.html">Active Queries</a>
   </span>
 </li>
 </ul>
@@ -3936,6 +3959,16 @@
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Configure On-the-Wire Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-hsts.html">Configure HSTS</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Manage Encryption Settings</a>
   </span>
 </li>
 <li class="menu_list" data-depth="4">
@@ -7906,7 +7939,7 @@ Scoring helps order the results. The size of the result set is controlled indepe
 See <a href="../learn/services-and-indexes/services/search-service.html#search_via_query" class="page">Accessing the Search Service with N1QL</a>, below.</p>
 </div>
 <div class="paragraph">
-<p>The Search Service depends on the Data Service, as follows:</p>
+<p>Under the hood, the search service has several key elements as shown in the architecture diagram below:</p>
 </div>
 <div id="search_service_architecture" class="imageblock text-left">
 <div class="content">
@@ -7927,12 +7960,14 @@ See <a href="../learn/services-and-indexes/services/search-service.html#search_v
 </ul>
 </div>
 <div class="paragraph">
-<p>For example, when the number of vBuckets is 1024, and the number of search-index partitions chosen is 6, each search-index partition holds data for ~171 vBuckets</p>
+<p>For example, when the number of vBuckets is 1024, and the number of search-index partitions chosen is 6, each search-index partition holds data for ~171 vBuckets.</p>
 </div>
 <div class="paragraph">
 <p>All available Search Service nodes in the cluster are individually searchable.
-When one particular Search Service node is chosen for a search request, it assumes the role of <em>coordinator</em>; and is thereby responsible for applying the search request to the other Search Service nodes and for gathering and returning results.
-The following illustration depicts this <em>scatter-gather</em> execution of a search request:</p>
+When one particular Search Service node is chosen for a search request, it assumes the role of <em>coordinator</em>; and is thereby responsible for applying the search request to the other Search Service nodes and for gathering and returning results.</p>
+</div>
+<div class="paragraph">
+<p>How the search service operates is illustrated in the following diagram:</p>
 </div>
 <div id="search_operation" class="imageblock text-left">
 <div class="content">
@@ -7940,21 +7975,24 @@ The following illustration depicts this <em>scatter-gather</em> execution of a s
 </div>
 </div>
 <div class="paragraph">
-<p>This illustration shows how:</p>
+<p>The diagram shows the following:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>The application makes a search request to a specific Search Service node (here, <em>Node 1</em>).
+<p>How the application makes a search request to a specific Search Service node (here, <em>Node 1</em>).
 This node assumes the role of coordinator.</p>
 </li>
 <li>
-<p>The coordinator scatters the search request to all other search-index partitions (here, <em>Node 2</em> and <em>Node 3</em>) in the cluster.</p>
+<p>How the coordinator scatters the search request to all other search-index partitions (here, <em>Node 2</em> and <em>Node 3</em>) in the cluster.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>For extensive information on how to use the service, see <a href="fts-introduction.html" class="page">Full Text Search: Fundamentals</a>.</p>
+<p>Once all the returned data is gathered, the coordinator applies filters appropriately and returns the final results to the user.</p>
+</div>
+<div class="paragraph">
+<p>For more detailed information on how to use the search service, see <a href="fts-introduction.html" class="page">Full Text Search: Fundamentals</a>.</p>
 </div>
 </div>
 </div>

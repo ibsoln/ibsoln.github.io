@@ -1782,12 +1782,25 @@
 </li>
 </ul>
 </li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-type-mappings-Docid-with-regexp.html">DocID with regexp in Type Mappings</a>
+  </span>
+</li>
 </ul>
 </li>
-<li class="menu_list" data-depth="3">
+<li class="menu_list is-parent closed" data-depth="3">
   <span class="menu_line">
+    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="fts-analyzers.html">Understanding Analyzers</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-analyzers-search-functions.html">Analyzers for N1QL Search Functions</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
@@ -2093,6 +2106,11 @@
   </span>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-troubleshooting.html">Troubleshooting and FAQs</a>
+  </span>
 </li>
 </ul>
 </li>
@@ -3744,7 +3762,12 @@
 </li>
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Getting Search Statistics</a>
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Search Statistics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-query.html">Active Queries</a>
   </span>
 </li>
 </ul>
@@ -3936,6 +3959,16 @@
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Configure On-the-Wire Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-hsts.html">Configure HSTS</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Manage Encryption Settings</a>
   </span>
 </li>
 <li class="menu_list" data-depth="4">
@@ -7871,16 +7904,12 @@
 </div><div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Facets are aggregate information collected on a particular result set.</p>
+<p>Facets are aggregate information collected on a particular result set.
+For any search, the user can collect additional facet information along with it.</p>
 </div>
 <div class="paragraph">
-<p>So, if you have a search in mind, you can collect additional facet information along with it.</p>
-</div>
-<div class="paragraph">
-<p>All of the facet examples below are for the query "<code class="code">water</code>" on the beer-sample dataset.</p>
-</div>
-<div class="paragraph">
-<p>FTS supports the following types of facet:</p>
+<p>All the facet examples below, are for the query "<code class="code">water</code>" on the beer-sample dataset.
+FTS supports the following types of facets:</p>
 </div>
 </div>
 </div>
@@ -7888,10 +7917,7 @@
 <h2 id="term-facet"><a class="anchor" href="#term-facet"></a>Term Facet</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A term facet counts up how many of the matching documents have a particular term in a particular field.</p>
-</div>
-<div class="paragraph">
-<p>Most of the time, this only makes sense for relatively low cardinality fields, like a type or tags. It would not make sense to use it on a unique field like an ID.</p>
+<p>A term facet counts how many matching documents have a particular term for a specific field.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -7900,20 +7926,22 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-When building a term facet, use the keyword analyzer. Otherwise, multi-term values get tokenized, and you get unexpected results.
+When building a term facet, use the keyword analyzer. Otherwise, multi-term values get tokenized, and the user gets unexpected results.
 </td>
 </tr>
 </table>
 </div>
 <div class="sect2">
 <h3 id="example"><a class="anchor" href="#example"></a>Example</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Term Facet - computes facet on the type field which has two values: <code>beer</code> and <code>brewery</code>.</p>
+<div class="exampleblock">
+<div class="title">Example 1. Term Facet</div>
+<div class="content">
+<div class="paragraph">
+<p>This example computes a facet on the type field which has two values: <code>beer</code> and <code>brewery</code>.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre>curl -X POST -H "Content-Type: application/json" \
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -X POST -H "Content-Type: application/json" \
 http://localhost:8094/api/index/bix/query -d \
 '{
     "size": 10,
@@ -7927,7 +7955,7 @@ http://localhost:8094/api/index/bix/query -d \
              "field": "type"
          }
     }
-}'</pre>
+}'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -7935,6 +7963,7 @@ http://localhost:8094/api/index/bix/query -d \
 Run the curl command to see the HTTP response containing the full results.</p>
 </div>
 <div class="listingblock">
+<div class="title">Results</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"facets": {
     "type": {
@@ -7956,8 +7985,7 @@ Run the curl command to see the HTTP response containing the full results.</p>
 }</code></pre>
 </div>
 </div>
-</li>
-</ul>
+</div>
 </div>
 </div>
 </div>
@@ -7973,13 +8001,15 @@ Run the curl command to see the HTTP response containing the full results.</p>
 </div>
 <div class="sect2">
 <h3 id="example-2"><a class="anchor" href="#example-2"></a>Example</h3>
-<div class="ulist">
-<ul>
-<li>
-<p>Numeric Range Facet - computes facet on the <code>abv</code> field with 2 buckets describing <code>high</code> (greater than 7) and <code>low</code> (less than 7).</p>
+<div class="exampleblock">
+<div class="title">Example 2. Numeric Range Facet</div>
+<div class="content">
+<div class="paragraph">
+<p>This example computes a facet on the <code>abv</code> field with 2 buckets describing <code>high</code> (greater than 7) and <code>low</code> (less than 7).</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre>curl -X POST -H "Content-Type: application/json" \
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -X POST -H "Content-Type: application/json" \
 http://localhost:8094/api/index/bix/query -d \
 '{
     "size": 10,
@@ -8003,15 +8033,13 @@ http://localhost:8094/api/index/bix/query -d \
              ]
         }
     }
-}'</pre>
+}'</code></pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Results:</p>
 </div>
 <div class="listingblock">
+<div class="title">Results</div>
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">facets": {
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"facets": {
     "abv": {
         "field": "abv",
         "total": 70,
@@ -8033,8 +8061,7 @@ http://localhost:8094/api/index/bix/query -d \
 }</code></pre>
 </div>
 </div>
-</li>
-</ul>
+</div>
 </div>
 </div>
 </div>
@@ -8047,6 +8074,73 @@ http://localhost:8094/api/index/bix/query -d \
 </div>
 <div class="paragraph">
 <p>Full text search and Bleve expect dates to be in the format specified by <a href="https://www.ietf.org/rfc/rfc3339.txt" target="_blank" rel="noopener">RFC-3339</a>, which is a specific profile of ISO-8601 that is more restrictive.</p>
+</div>
+<div class="sect2">
+<h3 id="example-3"><a class="anchor" href="#example-3"></a>Example</h3>
+<div class="exampleblock">
+<div class="title">Example 3. Date Range Facet</div>
+<div class="content">
+<div class="paragraph">
+<p>This example computes a facet on the ‘updated’ field that has 2 values, <code>old</code> and <code>new</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -XPOST -H "Content-Type: application/json" -uAdministrator:asdasd http://&lt;node&gt;:8094/api/index/bix/query -d '{
+  "ctl": {
+    "timeout": 0
+  },
+  "from": 0,
+  "size": 0,
+  "query": {
+    "field": "country",
+    "term": "united"
+  },
+  "facets": {
+    "types": {
+      "size": 10,
+      "field": "updated",
+      "date_ranges": [
+        {
+          "name": "old",
+          "end": "2010-08-01"
+        },
+        {
+          "name": "new",
+          "start": "2010-08-01"
+        }
+      ]
+    }
+  }
+}'</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Results</div>
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json"> "facets": {
+             "types": {
+                "field": "updated",
+                "total": 954,
+                "missing": 0,
+                "other": 0,
+             "date_ranges": [
+              {
+                "name": "old",
+                "end": "2010-08-01T00:00:00Z",
+                "count": 934
+              },
+              {
+                "name": "new",
+                "start": "2010-08-01T00:00:00Z",
+                "count": 20
+              }
+               ]
+             }
+           }</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>

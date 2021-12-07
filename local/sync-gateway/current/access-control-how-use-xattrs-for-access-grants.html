@@ -61,7 +61,7 @@
                   </li>
                   <li class="nav-item">
                     <a class="nav-link" href="../../home/mobile.html">
-                      Mobile Sandbox
+                      Mobile Local
                     </a>
                   </li>
                   <li class="nav-item">
@@ -104,7 +104,7 @@
     <a href="#" class="menu-expand-toggle"><span>Navigation</span><i class="fas fa-times-circle"></i><i class="fas fa-chevron-circle-left"></i></a>
 <div class="components">
   <div class="components_group-title">
-    <a href="../../home/mobile.html">Mobile Sandbox</a>
+    <a href="../../home/mobile.html">Mobile Local</a>
   </div>
   <ul class="components_list">
     <li class="components_list-items">
@@ -1323,6 +1323,11 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
+    <a class="menu_title menu_link" href="index.html">Quick Links</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
     <a class="menu_title menu_link" href="get-started-prepare.html">Prepare</a>
   </span>
 </li>
@@ -1648,27 +1653,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="revisions.html">Revisions</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="what-are-tombstones.html">Tombstones</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="managing-tombstones.html">Managing Tomstones</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
     <a class="menu_title menu_link" href="delta-sync.html">Delta Sync</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="resync.html">Resync</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
@@ -1686,7 +1671,27 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
+    <a class="menu_title menu_link" href="revisions.html">Revisions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="managing-tombstones.html">Tombstones</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="resync.html">Resync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
     <a class="menu_title menu_link" href="stats-monitoring.html">Stats Monitoring</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="database-offline.html">Database Offline</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -1706,11 +1711,6 @@
   </span>
 </li>
 </ul>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="database-offline.html">Database Offline</a>
-  </span>
 </li>
 </ul>
 </li>
@@ -2115,7 +2115,94 @@ See <a href="#ex-cbs-metadata">Example 3</a> for an example of the metadata mode
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#">Unresolved include directive in modules/ROOT/pages/_partials/howto/how-to-use-xattrs-for-access-grants.adoc - include::example$code/csharp/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/examples/code/csharp/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs">using System;
+using System.Threading.Tasks;
+using Couchbase;
+using Couchbase.KeyValue; <i class="conum" data-value="1"></i><b>(1)</b>
+
+
+namespace examples
+{
+
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            // Set scope - cluster, bucket and collection
+            var cluster =
+                    await Cluster.ConnectAsync(
+                                    "couchbase://localhost",
+                                    "Administrator",
+                                    "password");
+
+            var bucket = await cluster.BucketAsync("hotels");
+            var collection = bucket.DefaultCollection();
+
+            // Set required  user_xattr_key name and value
+            var our_user_xattr_key_name = "channelXattr"; <i class="conum" data-value="2"></i><b>(2)</b>
+            String[] channelXattrValue =
+                {"channel1","channel3", "useradmin" }; <i class="conum" data-value="3"></i><b>(3)</b>
+
+            var ourDocumentType = "hotel";
+            var documentKey = "";
+
+            // Find our documents and get their ids
+            var queryResult =
+               await cluster.QueryAsync&lt;dynamic&gt;(
+                   "select meta().id from `hotels`.`_default`.`_default` h where h.type = $1",
+                        new Couchbase.Query.QueryOptions().Parameter(ourDocumentType)); <i class="conum" data-value="4"></i><b>(4)</b>
+            await foreach (var row in queryResult)
+            {
+                documentKey = row.id;
+                Console.WriteLine("Working with document id: {0} ",
+                                    documentKey);
+
+                // Check if the document has an existing
+                // user_xattr_key and update or insert new value
+                var result =
+                    await collection.LookupInAsync(
+                            documentKey,
+                            specs =&gt; specs.Exists(
+                                path: our_user_xattr_key_name,
+                                isXattr: true)
+                            ); <i class="conum" data-value="5"></i><b>(5)</b>
+
+                if (result.Exists(0))
+                {
+                    // Update xattr for retrieved Id
+                    await collection.MutateInAsync(
+                            documentKey,
+                            specs =&gt; specs.Upsert(
+                                path: our_user_xattr_key_name, <i class="conum" data-value="6"></i><b>(6)</b>
+                                value: channelXattrValue, <i class="conum" data-value="7"></i><b>(7)</b>
+                                isXattr: true)); <i class="conum" data-value="8"></i><b>(8)</b>
+
+                    Console.Write("Updated Existing user_xattr_key: {0} to this value: {1}\n",
+                        our_user_xattr_key_name,
+                        string.Join(", ", channelXattrValue));
+
+                }
+                else
+                {
+                    // Insert xattr for retrieved id
+                    await collection.MutateInAsync(
+                            documentKey,
+                            specs =&gt; specs.Insert(
+                                path: our_user_xattr_key_name, <i class="conum" data-value="9"></i><b>(9)</b>
+                                value: channelXattrValue, <i class="conum" data-value="10"></i><b>(10)</b>
+                                isXattr: true)); <i class="conum" data-value="11"></i><b>(11)</b>
+
+                    Console.Write("Inserted New user_xattr_key: {0} with value {1}\n",
+                        our_user_xattr_key_name,
+                        string.Join(", ", channelXattrValue));
+
+                }
+
+            }
+            Console.WriteLine("Completed Changes\n");
+        }
+    }
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2168,9 +2255,6 @@ See <a href="#ex-cbs-metadata">Example 3</a> for an example of the metadata mode
 </div>
 <div class="paragraph">
 <p>Running the code produces the following output:</p>
-</div>
-<div class="paragraph">
-<p>+</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2337,25 +2421,23 @@ You will set the value of the xattr using the SDK API when the document is creat
 </div>
 <div class="sect5 column">
 <h6 id="-4"><a class="anchor" href="#-4"></a></h6>
-<div class="ulist">
+<div class="paragraph">
 <div class="title">Community</div>
-<ul>
-<li>
-<p><a href="https://forums.couchbase.com/c/mobile/14">Forum</a>  <strong>|</strong>  <a href="https://blog.couchbase.com/">Blog</a>   <strong>|</strong>  <a href="https://docs.couchbase.com/tutorials/index.html">Tutorials</a></p>
-</li>
-</ul>
+<p><a href="https://forums.couchbase.com/c/mobile/14">Mobile Forum</a> |
+<a href="https://blog.couchbase.com/category/couchbase-mobile/?ref=blog-menu">Blog</a> |
+<a href="https://docs.couchbase.com/tutorials/">Tutorials</a></p>
 </div>
 <div class="ulist">
 <div class="title">Sync Function Blogs</div>
 <ul>
 <li>
-<p><a href="https://blog.couchbase.com/augment-your-sync-function-with-roles-in-couchbase-sync-gateway/">Using roles in sync functions</a></p>
+<p><a href="https://blog.couchbase.com/category/couchbase-mobile/?ref=blog-menuaugment-your-sync-function-with-roles-in-couchbase-sync-gateway/">Using roles in sync functions</a></p>
 </li>
 <li>
-<p><a href="https://blog.couchbase.com/data-synchronization-offline-first-apps-couchbase/">Tutorial: Getting Started with Data Synchronization using Couchbase Mobile for Offline-First Apps</a></p>
+<p><a href="https://blog.couchbase.com/category/couchbase-mobile/?ref=blog-menudata-synchronization-offline-first-apps-couchbase/">Tutorial: Getting Started with Data Synchronization using Couchbase Mobile for Offline-First Apps</a></p>
 </li>
 <li>
-<p><a href="https://blog.couchbase.com/tag/sync-function/">Sync Function (category)</a></p>
+<p><a href="https://blog.couchbase.com/category/couchbase-mobile/?ref=blog-menutag/sync-function/">Sync Function (category)</a></p>
 </li>
 </ul>
 </div>

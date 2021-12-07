@@ -1783,12 +1783,25 @@
 </li>
 </ul>
 </li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../fts/fts-type-mappings-Docid-with-regexp.html">DocID with regexp in Type Mappings</a>
+  </span>
+</li>
 </ul>
 </li>
-<li class="menu_list" data-depth="3">
+<li class="menu_list is-parent closed" data-depth="3">
   <span class="menu_line">
+    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="../../fts/fts-analyzers.html">Understanding Analyzers</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../fts/fts-analyzers-search-functions.html">Analyzers for N1QL Search Functions</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
@@ -2094,6 +2107,11 @@
   </span>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../fts/fts-troubleshooting.html">Troubleshooting and FAQs</a>
+  </span>
 </li>
 </ul>
 </li>
@@ -3745,7 +3763,12 @@
 </li>
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../rest-api/rest-fts-statistics.html">Getting Search Statistics</a>
+    <a class="menu_title menu_link" href="../../rest-api/rest-fts-statistics.html">Search Statistics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../rest-api/rest-fts-query.html">Active Queries</a>
   </span>
 </li>
 </ul>
@@ -3937,6 +3960,16 @@
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../../rest-api/rest-setting-security.html">Configure On-the-Wire Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../rest-api/rest-setting-hsts.html">Configure HSTS</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../rest-api/rest-setting-security.html">Manage Encryption Settings</a>
   </span>
 </li>
 <li class="menu_list" data-depth="4">
@@ -7896,6 +7929,9 @@ To support secure communications between nodes, clusters, and clients, Couchbase
 <p>Configuring TLS and Cipher-Suites.</p>
 </li>
 <li>
+<p>Setting an <em>HTTP Secure Transport Header</em> (HSTS).</p>
+</li>
+<li>
 <p>Enforcing TLS across the cluster.</p>
 </li>
 </ul>
@@ -7939,7 +7975,7 @@ The argument must be a list of cipher suites, each of which appears as a member 
 </ul>
 </div>
 <div class="paragraph">
-<p>A further four, on-the-wire security settings are provided for global configuration only &#8212; thus, these <em>cannot</em> be set per service:</p>
+<p>Additional on-the-wire security settings are provided for global configuration only &#8212; thus, these <em>cannot</em> be set per service:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -7978,6 +8014,24 @@ Note, however, that after <code>strict</code> has been specified, communication 
 <p>Applying <code>strict</code> as the <code>clusterEncryptionLevel</code> has a number of significant consequences, which should be fully understood before proceeding.
 See <a href="../../rest-api/rest-setting-security.html#enforcing-tls" class="page">Enforcing TLS</a>.</p>
 </div>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>Strict-Transport-Security</code>.
+Establishes an <em>HTTP Secure Transport Header (HSTS)</em>; so as to inform the Web-Console browser never to load a site using HTTP; and instead, to automatically convert all access-requests from HTTP to HTTPS.
+Three <em>sub-settings</em> must be established, which are:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The duration of HTTPS-enforcement for this browser.</p>
+</li>
+<li>
+<p>Whether the site&#8217;s subdomains are to be covered by the setting.</p>
+</li>
+<li>
+<p>Whether the <em>preload</em> directive should be set; so that the policy is enforced before any communication takes place.</p>
 </li>
 </ul>
 </div>
@@ -8190,6 +8244,7 @@ For information, see <a href="../../learn/security/on-the-wire-security.html#est
 <div class="paragraph">
 <p>As described above, the CLI can also be used to establish global settings for
 <code>disableUIOverHttp</code>, <code>disableUIOverHttps</code>, <code>disableWWWAuthenticate</code>, and <code>clusterEncryptionLevel</code>.
+It can also be used to establish HSTS; by means of the <code>hsts-max-age</code>, <code>hsts-preload-enabled</code>, and <code>hsts-include-sub-domains-enabled</code> parameters.
 For information, see the reference page for the <a href="#cli:cbcli/couchbase-cli-setting-security.adoc" class="page unresolved">setting-security</a> command.</p>
 </div>
 </div>
@@ -8264,9 +8319,12 @@ If the value for <code>cipherSuites</code> is an empty list (<code>[]</code>), n
 <div class="sect2">
 <h3 id="establish-other-global-settings-with-the-rest-api"><a class="anchor" href="#establish-other-global-settings-with-the-rest-api"></a>Establish Other Global Settings, with the REST API</h3>
 <div class="paragraph">
-<p>As described above, the REST API can also be used to establish global settings for
+<p>As described above, the REST API, using the <code>/settings/security</code> URI, can also be used to establish global settings for
 <code>disableUIOverHttp</code>, <code>disableUIOverHttps</code>, <code>disableWWWAuthenticate</code>, and <code>clusterEncryptionLevel</code>.
 For information, see <a href="../../rest-api/rest-setting-security.html" class="page">Configure On-the-Wire Security</a>.</p>
+</div>
+<div class="paragraph">
+<p>For information on setting an HTTP Secure Transport Header with the REST API, see <a href="../../rest-api/rest-setting-hsts.html" class="page">Configure HSTS</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -8330,7 +8388,7 @@ For example:</p>
 <h2 id="see-also"><a class="anchor" href="#see-also"></a>See Also</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>For more information on the REST API, see <a href="../../rest-api/rest-setting-security.html" class="page">Configure On-the-Wire Security</a>.
+<p>For more information on the REST API, see <a href="../../rest-api/rest-setting-security.html" class="page">Configure On-the-Wire Security</a> and <a href="../../rest-api/rest-setting-hsts.html" class="page">Configure HSTS</a>.
 For more information on the CLI, see the reference page for the <a href="#cli:cbcli/couchbase-cli-setting-security.adoc" class="page unresolved">setting-security</a> command.
 A conceptual overview of on-the-wire security is provided in <a href="../../learn/security/on-the-wire-security.html" class="page">On-the-Wire Security</a>.</p>
 </div>
