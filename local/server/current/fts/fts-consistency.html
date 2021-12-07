@@ -1781,12 +1781,25 @@
 </li>
 </ul>
 </li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-type-mappings-Docid-with-regexp.html">DocID with regexp in Type Mappings</a>
+  </span>
+</li>
 </ul>
 </li>
-<li class="menu_list" data-depth="3">
+<li class="menu_list is-parent closed" data-depth="3">
   <span class="menu_line">
+    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="fts-analyzers.html">Understanding Analyzers</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-analyzers-search-functions.html">Analyzers for N1QL Search Functions</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
@@ -2092,6 +2105,11 @@
   </span>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-troubleshooting.html">Troubleshooting and FAQs</a>
+  </span>
 </li>
 </ul>
 </li>
@@ -3743,7 +3761,12 @@
 </li>
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Getting Search Statistics</a>
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Search Statistics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-query.html">Active Queries</a>
   </span>
 </li>
 </ul>
@@ -3935,6 +3958,16 @@
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Configure On-the-Wire Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-hsts.html">Configure HSTS</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Manage Encryption Settings</a>
   </span>
 </li>
 <li class="menu_list" data-depth="4">
@@ -4343,11 +4376,11 @@
 <div class="sectionbody">
 <div class="quoteblock abstract">
 <blockquote>
-A mechanism to ensure that the Full Text Search (FTS) index can obtain the most upto date version of the document written to a collection or a bucket.
+A mechanism to ensure that the Full Text Search (FTS) index can obtain the most up-to-date version of the document written to a collection or a bucket.
 </blockquote>
 </div>
 <div class="paragraph">
-<p>The consistency mechanism provides <a href="#fts-consistency-vectors.adoc" class="page unresolved">Consistency Vectors</a> as objects in the search query that ensures FTS index searches all your last data written to the vBucket.</p>
+<p>The consistency mechanism provides <a href="#consistency-vectors">Consistency Vectors</a> as objects in the search query that ensures FTS index searches all your last data written to the vBucket.</p>
 </div>
 <div class="paragraph">
 <p>The search service does not respond to the query until the designated vBucket receives the correct sequence number.</p>
@@ -4361,18 +4394,18 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
 </div>
 </div>
 <div class="sect1">
-<h2 id="workflow-to-understand-consistency"><a class="anchor" href="#workflow-to-understand-consistency"></a>Workflow to understand Consistency</h2>
+<h2 id="workflow-to-understand-consistency"><a class="anchor" href="#workflow-to-understand-consistency"></a>Workflow to Understand Consistency</h2>
 <div class="sectionbody">
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Create an FTS index in Couchbase.</p>
+<p>Create an FTS index in Couchbase Server.</p>
 </li>
 <li>
 <p>Write a document to the Couchbase cluster.</p>
 </li>
 <li>
-<p>Couchbase returns the associate vector to the app, which needs to issue a query request with the vector.</p>
+<p>Couchbase Server returns the associate vector to the app, which needs to issue a query request with the vector.</p>
 </li>
 <li>
 <p>The FTS index starts searching the data written to the vBucket.</p>
@@ -4380,10 +4413,10 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
 </ol>
 </div>
 <div class="paragraph">
-<p>In this Workflow, it is possible that the document written to vBucket is not yet indexed. So, when FTS starts searching that document, the most up-to-date document versions are not retrieved, and only the indexed versions are queried.</p>
+<p>In this workflow, it is possible that the document written to vBucket is not yet indexed. So, when FTS starts searching that document, the most up-to-date document versions are not retrieved, and only the indexed versions are queried.</p>
 </div>
 <div class="paragraph">
-<p>Therefore, the Couchbase server provides a Consistency mechanism to overcome this issue and ensures that the FTS index can search the most upto date document written to vBucket.</p>
+<p>Therefore, the Couchbase server provides a consistency mechanism to overcome this issue and ensures that the FTS index can search the most up to date document written to vBucket.</p>
 </div>
 </div>
 </div>
@@ -4391,31 +4424,31 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
 <h2 id="consistency-level"><a class="anchor" href="#consistency-level"></a>Consistency Level</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The consistency level is a parameter that either takes an empty string indicating the unbounded (not_bounded) consistency or at_plus indicating the bounded consistency.</p>
+<p>The consistency level is a parameter that either takes an empty string indicating the unbounded (<code>not_bounded</code>) consistency or <code>at_plus</code> indicating the bounded consistency.</p>
 </div>
-<div class="sect2">
-<h3 id="at_plus"><a class="anchor" href="#at_plus"></a>at_plus</h3>
-<div class="paragraph">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">at_plus</dt>
+<dd>
 <p>Executes the query, requiring indexes first to be updated to the timestamp of the last update.</p>
-</div>
 <div class="paragraph">
 <p>This implements bounded consistency. The request includes a scan_vector parameter and value, which is used as a lower bound. This can be used to implement read-your-own-writes (RYOW).</p>
 </div>
 <div class="paragraph">
 <p>If index-maintenance is running behind, the query waits for it to catch up.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="not_bounded"><a class="anchor" href="#not_bounded"></a>not_bounded</h3>
-<div class="paragraph">
+</dd>
+<dt class="hdlist1">not_bounded</dt>
+<dd>
 <p>Executes the query immediately, without requiring any consistency for the query. No timestamp vector is used in the index scan.</p>
-</div>
 <div class="paragraph">
 <p>This is the fastest mode, because it avoids the costs of obtaining the vector and waiting for the index to catch up to the vector.</p>
 </div>
 <div class="paragraph">
 <p>If index-maintenance is running behind, out-of-date results may be returned.</p>
 </div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -4423,13 +4456,12 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
 <h2 id="consistency-vectors"><a class="anchor" href="#consistency-vectors"></a>Consistency Vectors</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The consistency vectors supporting the Consistency mechanism in Couchbase contain the mapping of the vbucket and sequence number of the data stored in the vBucket.</p>
-</div>
-<div class="paragraph">
-<p>For more information about consistency mechanism, see <a href="#">Consistency</a></p>
+<p>The consistency vectors supporting the consistency mechanism in Couchbase contain the mapping of the vBucket and sequence number of the data stored in the vBucket.</p>
 </div>
 <div class="sect2">
 <h3 id="example"><a class="anchor" href="#example"></a>Example</h3>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
@@ -4453,18 +4485,18 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
 </div>
 </div>
 <div class="paragraph">
-<p>In the above example, this is the consistency vectors.</p>
+<p>In the above example, these are the consistency vectors.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>"index1": {
+<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">"index1": {
   "607/205096593892159": 2,
   "640/298739127912798": 4
-}</pre>
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The query is looking within the FTS index "index1" - for ..</p>
+<p>The query is looking within the FTS index "index1" for:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -4479,6 +4511,8 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
 </div>
 </div>
 </div>
+</div>
+</div>
 <div class="sect1">
 <h2 id="consistency-timeout"><a class="anchor" href="#consistency-timeout"></a>Consistency Timeout</h2>
 <div class="sectionbody">
@@ -4487,6 +4521,35 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
 </div>
 <div class="paragraph">
 <p>If the query execution surpasses this <code>timeout</code> value, the query is canceled. However, at this point if some of the index partitions have responded, you might see partial results, otherwise no results at all.</p>
+</div>
+<div class="sect2">
+<h3 id="example-2"><a class="anchor" href="#example-2"></a>Example</h3>
+<div class="exampleblock">
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
+  "ctl": {
+    "timeout": 10000,
+    "consistency": {
+      "vectors": {
+        "index1": {
+          "607/205096593892159": 2,
+          "640/298739127912798": 4
+        }
+      },
+      "level": "at_plus"
+    }
+  },
+  "query": {
+    "match": "jack",
+    "field": "name"
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4497,7 +4560,9 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
 <p>Consistency result is the attribute that you can use to set the query result option, such as complete.</p>
 </div>
 <div class="sect2">
-<h3 id="example-2"><a class="anchor" href="#example-2"></a>Example:</h3>
+<h3 id="example-3"><a class="anchor" href="#example-3"></a>Example</h3>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
@@ -4508,19 +4573,23 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
     }
   }
 }</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="the-complete-option"><a class="anchor" href="#the-complete-option"></a>The "Complete" option</h2>
+<h2 id="the-complete-option"><a class="anchor" href="#the-complete-option"></a>The "Complete" Option</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The complete option allows you to set the query result as "complete" which indicates that if any of the index partitions are unavailable due to the node not being reachable, the query will display an error in response instead of partial results.</p>
 </div>
 <div class="sect2">
-<h3 id="example-3"><a class="anchor" href="#example-3"></a>Example</h3>
+<h3 id="example-4"><a class="anchor" href="#example-4"></a>Example</h3>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
@@ -4531,6 +4600,8 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
     }
   }
 }</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4549,7 +4620,9 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
 <p>However, if this consistency is not required, the users can optimize their search operations by using the default timeout of 10 seconds.</p>
 </div>
 <div class="sect2">
-<h3 id="example-4"><a class="anchor" href="#example-4"></a>Example</h3>
+<h3 id="example-5"><a class="anchor" href="#example-5"></a>Example</h3>
+<div class="exampleblock">
+<div class="content">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
@@ -4571,6 +4644,8 @@ A mechanism to ensure that the Full Text Search (FTS) index can obtain the most 
     "field": "type"
   }
 }</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>

@@ -1781,12 +1781,25 @@
 </li>
 </ul>
 </li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-type-mappings-Docid-with-regexp.html">DocID with regexp in Type Mappings</a>
+  </span>
+</li>
 </ul>
 </li>
-<li class="menu_list" data-depth="3">
+<li class="menu_list is-parent closed" data-depth="3">
   <span class="menu_line">
+    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="fts-analyzers.html">Understanding Analyzers</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-analyzers-search-functions.html">Analyzers for N1QL Search Functions</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
@@ -2092,6 +2105,11 @@
   </span>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-troubleshooting.html">Troubleshooting and FAQs</a>
+  </span>
 </li>
 </ul>
 </li>
@@ -3743,7 +3761,12 @@
 </li>
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Getting Search Statistics</a>
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Search Statistics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-query.html">Active Queries</a>
   </span>
 </li>
 </ul>
@@ -3935,6 +3958,16 @@
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Configure On-the-Wire Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-hsts.html">Configure HSTS</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Manage Encryption Settings</a>
   </span>
 </li>
 <li class="menu_list" data-depth="4">
@@ -4341,6 +4374,15 @@
 <span  id="otherContributor"> + </span>
 </div><div id="preamble">
 <div class="sectionbody">
+<div class="quoteblock abstract">
+<blockquote>
+Full Text Searches are supported by specially purposed indexes, which can be created either from the Couchbase Web Console, or by means of the REST API.
+</blockquote>
+</div>
+<div class="paragraph">
+<p>The PUT request is the only way to create/update indexes. If the user does it from the UI/SDK - under the hood, it translates to HTTP PUT requests that curl does.
+Specifying the "uuid" parameter in the index definition is required for the index introduction to be treated as a valid update.</p>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -4348,7 +4390,8 @@
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Full Text Searches are supported by specially purposed indexes, which can be created either from the Couchbase Web Console, or by means of the REST API.
+This uuid has to match the one in the system already.
+Upon a successful index creation/update, the uuid of the index will be re-initialized.
 </td>
 </tr>
 </table>
@@ -4388,16 +4431,14 @@ Full Text Searches are supported by specially purposed indexes, which can be cre
 </div>
 </div>
 </div>
-<h1 id="scopes-and-collections" class="sect0"><a class="anchor" href="#scopes-and-collections"></a>Scopes and Collections</h1>
-<div class="quoteblock abstract">
-<blockquote>
-The Couchbase Enterprise Server 7.0 provides <em>collections</em> and <em>scopes</em>.
-Only a subset of the planned functionality is included in order to support early access and experimentation.
-</blockquote>
-</div>
 <div class="sect1">
-<h2 id="scopes-introduction"><a class="anchor" href="#scopes-introduction"></a>Scopes</h2>
+<h2 id="scopes-and-collections"><a class="anchor" href="#scopes-and-collections"></a>Scopes and Collections</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Server Enterprise Edition provides <em>collections</em> and <em>scopes</em>.</p>
+</div>
+<div class="sect2">
+<h3 id="scopes-introduction"><a class="anchor" href="#scopes-introduction"></a>Scopes</h3>
 <div class="paragraph">
 <p>A <em>scope</em> is a mechanism for the grouping of multiple collections.
 Up to 100 scopes can be created per bucket. Collection-names must be unique within their scope.</p>
@@ -4406,10 +4447,8 @@ Up to 100 scopes can be created per bucket. Collection-names must be unique with
 <p>Collections might be assigned to different scopes according to content-type, or to deployment-phase (i.e., test versus production). Applications can be assigned per-scope access rights, allowing each application to access only those collections it requires.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="collections-and-scopes"><a class="anchor" href="#collections-and-scopes"></a>Collections</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="collections-and-scopes"><a class="anchor" href="#collections-and-scopes"></a>Collections</h3>
 <div class="paragraph">
 <p>A <em>collection</em> is a data container, defined on Couchbase Server, within a bucket whose type is either <em>Couchbase</em> or <em>Ephemeral</em>.
 Up to 1000 collections can be created per bucket.</p>
@@ -4419,10 +4458,8 @@ Up to 1000 collections can be created per bucket.</p>
 For example, within a bucket that contains travel information, documents that relate specifically to <em>airports</em> might be assigned to an <em>airports</em> collection, while documents that relate to <em>hotels</em> might be assigned to a <em>hotels</em> collection, and so on.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="naming-for-scopes-and-collection"><a class="anchor" href="#naming-for-scopes-and-collection"></a>Naming for Scopes and Collections</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="naming-for-scopes-and-collection"><a class="anchor" href="#naming-for-scopes-and-collection"></a>Naming for Scopes and Collections</h3>
 <div class="paragraph">
 <p>User-defined scopes and collections must be assigned user-defined names.
 Such names:</p>
@@ -4441,21 +4478,16 @@ Such names:</p>
 </ul>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="default-scope-and-collection"><a class="anchor" href="#default-scope-and-collection"></a>Default Scope and Collection</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="default-scope-and-collection"><a class="anchor" href="#default-scope-and-collection"></a>Default Scope and Collection</h3>
 <div class="paragraph">
 <p>In the Developer Preview, every created bucket is automatically given a <em>default scope</em>, and within it, a <em>default collection</em>.
 Each is named <code>_default</code>.
-All documents created within the bucket without reference to specific scopes or collections are saved in the default collection within the default scope.
-The default scope and collection cannot be dropped.</p>
+All documents created within the bucket without reference to specific scopes or collections are saved in the default collection within the default scope.</p>
 </div>
 </div>
-</div>
-<div class="sect1">
-<h2 id="bucket-set-up"><a class="anchor" href="#bucket-set-up"></a>Bucket Set-Up</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="bucket-set-up"><a class="anchor" href="#bucket-set-up"></a>Bucket Set-Up</h3>
 <div class="paragraph">
 <p>Scopes and collections exist within <em>buckets</em>.
 Therefore, to test scopes and collections, at least one bucket must be created.</p>
@@ -4473,7 +4505,7 @@ In case of a multi-bucket index, absence of a collection does not return an erro
 </table>
 </div>
 <div class="paragraph">
-<p>The following options are available for creating bucket:</p>
+<p>The following options are available for creating a bucket:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -4495,34 +4527,28 @@ To provide documents to be counted, the <code>cbc create</code> CLI facility is 
 </div>
 </div>
 </div>
+</div>
 <div class="sect1">
-<h2 id="limitations"><a class="anchor" href="#limitations"></a>Limitations</h2>
+<h2 id="multiple-collection-behavior"><a class="anchor" href="#multiple-collection-behavior"></a>Multiple Collection Behavior</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The following limitations apply to scopes and collections, as made available in Developer Preview mode, in Couchbase Server Enterprise Edition 6.5:</p>
+<p>Couchbase&#8217;s Full Text Search service is the only Couchbase service that can create indexes that span collections.</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>Scopes and collections are supported by the Data Service only.
-This means that <em>key-value</em> data-access <em>can</em> be experimented with.</p>
-</li>
-<li>
-<p>Scopes and collections are <em>not</em> supported by the Index, Query, Search, Eventing, and Analytics Services.
-This means that data-access by means of these services should <em>not</em> be attempted, using any bucket within which a scope or collection has been explicitly created.
-Note that these services <em>will</em> provide support for scopes and collections in future.</p>
-</li>
-<li>
-<p>Scopes and collections are <em>not</em> supported by <em>Role-Based Access Control</em>: therefore, access to individual scopes and collections cannot be permitted or denied on the basis of assigned <em>roles</em>.
-Note that Role-Based Access Control <em>will</em> provide support for scopes and collections in future.</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<h1 id="view-indexes-for-n1ql" class="sect0"><a class="anchor" href="#view-indexes-for-n1ql"></a>View Indexes for N1QL</h1>
 <div class="paragraph">
-<p>In Couchbase Server 6.5 and later, view indexes are not supported in N1QL. New view indexes cannot be created, and existing view indexes are not accessible.</p>
+<p>The result set of a query that references a multi-collection index returns the collection names alongside the document ID, making it easy for users to identify which collection a document belongs to.</p>
+</div>
+<div class="paragraph">
+<p>Users can issue collection(s) scoped queries against a multi-collection index. During search time, no validation is made to check whether the given collection names actually exist. As a result users won’t receive any validation errors for the invalid/incorrect collection(s) names within the search request.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="memory-vs-disk-only-indexing-options"><a class="anchor" href="#memory-vs-disk-only-indexing-options"></a>Memory vs Disk Only Indexing Options</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>FTS does not support in-memory search indexes. The search indexes are persisted to disk and can be accessed as memory-mapped files.</p>
+</div>
+</div>
 </div>
 </article>
 </main>

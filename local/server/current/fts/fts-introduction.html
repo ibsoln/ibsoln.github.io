@@ -1781,12 +1781,25 @@
 </li>
 </ul>
 </li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-type-mappings-Docid-with-regexp.html">DocID with regexp in Type Mappings</a>
+  </span>
+</li>
 </ul>
 </li>
-<li class="menu_list" data-depth="3">
+<li class="menu_list is-parent closed" data-depth="3">
   <span class="menu_line">
+    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="fts-analyzers.html">Understanding Analyzers</a>
   </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-analyzers-search-functions.html">Analyzers for N1QL Search Functions</a>
+  </span>
+</li>
+</ul>
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
@@ -2092,6 +2105,11 @@
   </span>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-troubleshooting.html">Troubleshooting and FAQs</a>
+  </span>
 </li>
 </ul>
 </li>
@@ -3743,7 +3761,12 @@
 </li>
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Getting Search Statistics</a>
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-statistics.html">Search Statistics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-fts-query.html">Active Queries</a>
   </span>
 </li>
 </ul>
@@ -3935,6 +3958,16 @@
 <li class="menu_list" data-depth="4">
   <span class="menu_line">
     <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Configure On-the-Wire Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-hsts.html">Configure HSTS</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../rest-api/rest-setting-security.html">Manage Encryption Settings</a>
   </span>
 </li>
 <li class="menu_list" data-depth="4">
@@ -4351,7 +4384,7 @@
 <h2 id="full-text-search"><a class="anchor" href="#full-text-search"></a>Full Text Search</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Provided by the <a href="#services-and-indexes/services/search-service.adoc" class="page unresolved">Search Service</a>, full-text search (FTS) enables you to create, manage, and query multi-purposed indexes defined on JSON documents within a Couchbase bucket.</p>
+<p>Provided by the <a href="../learn/services-and-indexes/services/search-service.html" class="page">Search Service</a>, full text search (FTS) enables the users to create, manage, and query multi-purposed indexes defined on JSON documents within a Couchbase bucket.</p>
 </div>
 <div class="paragraph">
 <p>In addition to exact matches, the full-text index can perform various search functions based on matching given terms/search parameters.</p>
@@ -4377,9 +4410,8 @@
 Couchbase&#8217;s Global Secondary Indexes (GSI) can be used for range scans and regular pattern search, whereas FTS provides extensive capabilities for natural-language querying.
 The query below looks for documents with all of the strings ("paris", "notre", "dame").</p>
 </div>
-<div class="sect2">
-<h3 id="example"><a class="anchor" href="#example"></a>Example</h3>
 <div class="listingblock">
+<div class="title">Example</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
   "explain": false,
@@ -4398,6 +4430,7 @@ The query below looks for documents with all of the strings ("paris", "notre", "
 For each matched document, the hits field shows the document id, the score, the fields in which a matched string occurs, and the position of the matched string.</p>
 </div>
 <div class="listingblock">
+<div class="title">Results</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"hits": [
     {
@@ -4423,7 +4456,11 @@ For each matched document, the hits field shows the document id, the score, the 
               "end": 173,
               "array_positions": null
             },
-...
+// ...
+          ]
+        }
+      }
+    }
 ]</code></pre>
 </div>
 </div>
@@ -4436,7 +4473,7 @@ For each matched document, the hits field shows the document id, the score, the 
 <p><em>Language-aware</em> searching; allowing users to search for, say, the word <code>traveling</code>, and additionally obtain results for <code>travel</code> and <code>traveler</code>.</p>
 </li>
 <li>
-<p><em>Scoring</em> of results, according to relevancy; allowing users to obtain result-sets that only contain documents awarded the highest scores.
+<p><a href="fts-scoring.html" class="page"><em>Scoring</em></a> of results, according to relevancy; allowing users to obtain result-sets that only contain documents awarded the highest scores.
 This keeps result-sets manageably small, even when the total number of documents returned is extremely large.</p>
 </li>
 <li>
@@ -4446,9 +4483,8 @@ This keeps result-sets manageably small, even when the total number of documents
 </div>
 </div>
 </div>
-</div>
 <div class="sect1">
-<h2 id="stages-of-full-text-search-query"><a class="anchor" href="#stages-of-full-text-search-query"></a>Stages of Full text search query</h2>
+<h2 id="stages-of-a-full-text-search-query"><a class="anchor" href="#stages-of-a-full-text-search-query"></a>Stages of a Full Text Search Query</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>A Full Text Search query , once built at the client, can be targeted to any server in the Couchbase cluster hosting the search service.</p>
@@ -4485,15 +4521,15 @@ This keeps result-sets manageably small, even when the total number of documents
 </ol>
 </div>
 <div class="paragraph">
-<p>The coordinating node waits for responses from,</p>
+<p>The coordinating node waits for responses from:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>each of the index partitions resident within the node</p>
+<p>each of the index partitions resident within the node;</p>
 </li>
 <li>
-<p>each of the servers in the cluster that it dispatched the internal request to</p>
+<p>each of the servers in the cluster that it dispatched the internal request to.</p>
 </li>
 </ul>
 </div>
@@ -4508,19 +4544,19 @@ These include:</p>
 <div class="ulist">
 <ul>
 <li>
-<p><em>Match</em>, <em>Match Phrase</em>, <em>Doc ID</em>, and <em>Prefix</em> queries</p>
+<p><a href="fts-supported-queries-match.html" class="page">Match</a>, <a href="fts-supported-queries-match-phrase.html" class="page">Match Phrase</a>, <em>Doc ID</em>, and <em>Prefix</em> queries</p>
 </li>
 <li>
 <p><em>Conjunction</em>, <em>Disjunction</em>, and <em>Boolean field</em> queries</p>
 </li>
 <li>
-<p><em>Numeric Range</em> and <em>Date Range</em> queries</p>
+<p><a href="fts-supported-queries-numeric-range.html" class="page">Numeric Range</a> and <em>Date Range</em> queries</p>
 </li>
 <li>
-<p><em>Geospatial</em> queries</p>
+<p><a href="fts-supported-queries-geo-spatial.html" class="page">Geospatial</a> queries</p>
 </li>
 <li>
-<p><em>Query String</em> queries, which employ a special syntax to express the details of each query (see <a href="#fts-query-types.adoc#query-string-query-syntax" class="page unresolved">Query String Query</a> for information)</p>
+<p><em>Query String</em> queries, which employ a special syntax to express the details of each query (see <a href="fts-query-string-syntax.html" class="page">Query String Syntax</a> for information)</p>
 </li>
 </ul>
 </div>
