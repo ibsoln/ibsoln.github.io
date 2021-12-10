@@ -9,6 +9,15 @@
 <script src="../../_/js/vendor/jquery.js"></script>
 <meta name="description" content="Describes the various database management functions available to maintain an efficient sync gateway database">
 <link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+        <link rel="prev" href="tombstones.html">
+        <link rel="next" href="stats-monitoring.html">
+
+
+
+
+                    <link rel="next" href="stats-monitoring.html">
+
+        
 <meta name="dcterms.subject" content="sync-gateway">
 <meta name="dcterms.identifier" content="3.0">
 <meta name="page-url" content="/sync-gateway/current/database-management.html">
@@ -1660,6 +1669,16 @@
     <a class="menu_title menu_link" href="import-filter.html">Import Filter</a>
   </span>
 </li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="revisions.html">Revisions</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="tombstones.html">Tombstones</a>
+  </span>
+</li>
 </ul>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1668,29 +1687,14 @@
     <span class="menu_title menu_text">Manage</span>
   </span>
 <ul class="menu_row">
-<li class="menu_list" data-depth="1">
+<li class="menu_list is-current-page" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="revisions.html">Revisions</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="managing-tombstones.html">Tombstones</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="resync.html">Resync</a>
+    <a class="menu_title menu_link is-current-page" href="database-management.html">Database Management</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
     <a class="menu_title menu_link" href="stats-monitoring.html">Stats Monitoring</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="database-offline.html">Database Offline</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -1950,6 +1954,7 @@
 <nav class="crumbs" aria-label="breadcrumbs">
 <ul>
 <li class="crumb"><a href="index.html">Sync Gateway</a></li>
+<li class="crumb">Manage</li>
 <li class="crumb"><a href="database-management.html">Database Management</a></li>
 </ul>
 </nav>
@@ -1981,83 +1986,118 @@ Revisions are at the heart of Couchbase Mobile&#8217;s ability to respond flexib
 </div>
 </div>
 <div class="sect1">
-<h2 id="revisions"><a class="anchor" href="#revisions"></a>Revisions</h2>
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="generation"><a class="anchor" href="#generation"></a>Generation</h3>
 <div class="paragraph">
-<p><em>Documents</em> and <em>buckets</em> (collections of, usually related, documents) are the basic units of data within Couchbase.</p>
+<p>This content describes the periodic maintenance activities that may be required to optimize sync performance by removing redundant artifacts.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="database-states"><a class="anchor" href="#database-states"></a>Database States</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The state diagram represents the states for Sync Gateway database and the connection between it and a Couchbase Server database&#8201;&#8212;&#8201;see: <a href="#fig-state-diag">Figure 1</a>.</p>
+</div>
+<div id="fig-state-diag" class="imageblock">
+<div class="content">
+<img src="_images/state-diagram-offline-12.png" alt="state diagram offline 12">
+</div>
+<div class="title">Figure 1. State Change Diagram</div>
 </div>
 <div class="paragraph">
-<p>Remember that within <em>Couchbase Mobile</em>, each document comprises:</p>
+<p>In the state diagram (fig-state-diag):</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>A Document ID</p>
+<p>To the left of the gray dashed line, starting or stopping a Sync Gateway instance affects the connections to all of the databases that the instance serves.</p>
 </li>
 <li>
-<p>A current revision ID</p>
-</li>
-<li>
-<p>A JSON body</p>
-</li>
-<li>
-<p>Metadata</p>
+<p>To the right of the gray dashed line, you perform operations on specific databases.
+For example, two databases could be online, while a third database could be taken offline, resynchronized, and then brought back online.</p>
 </li>
 </ul>
 </div>
+<div class="sect2">
+<h3 id="automatic-offlining"><a class="anchor" href="#automatic-offlining"></a>Automatic Offlining</h3>
 <div class="paragraph">
-<p>Binary data such as images, audio and other multimedia objects are stored separately from the document in an entity known as a <em>blob</em> (or <em>attachment</em>).</p>
+<p>Sync Gateway will take a database offline automatically if it loses the database&#8217;s DCP and-or TAP feed.
+This enables the cause to be investigated and rectified.</p>
 </div>
 <div class="paragraph">
-<p>Each change to a document (even its creation and deletion) is recorded as a <a href="#lbl-revs">revisions</a>.
-Changes to <em>blobs</em> do not generate revisions.</p>
+<p>Use the Admin REST API to bring the database back online when the cause is addressed and the feed(s) restored&#8201;&#8212;&#8201;see <a href="#lbl-offline">Take Database Offline/Online</a>.</p>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-offline"><a class="anchor" href="#lbl-offline"></a>Take Database Offline/Online</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sync Gateway enables a database to be taken offline and brought back online.
+This is done without stopping the Sync Gateway instance and without affecting other databases served by it.</p>
+</div>
+<div class="paragraph">
+<p>The change of status (online or offline) of a database occurs only in the specific Sync Gateway instance addressed.
+It is not reflected by other Sync Gateway instances using that database.
+To achieve that, you need to coordinate individual change operations in each of the required Sync Gateway instances.</p>
 </div>
 <div class="sect2">
-<h3 id="lbl-revs"><a class="anchor" href="#lbl-revs"></a>Format</h3>
+<h3 id="use-cases"><a class="anchor" href="#use-cases"></a>Use Cases</h3>
 <div class="paragraph">
-<p>Couchbase creates a revision whenever a document is created, updated or deleted.
-Each revision is given a unique <em>Revision ID</em> in addition to the <em>Document ID</em>.</p>
-</div>
-<div class="paragraph">
-<p>The <em>revisions</em> are contained within a document&#8217;s <em>metadata</em>, as a <a href="#lbl-revtree">revision tree</a>.</p>
-</div>
-<div class="paragraph">
-<p>Sync Gateway uses a <em>revision id</em> to resolve conflicts arising when making concurrent changes to replicated copies of distributed data.
-It comprises two parts:</p>
+<p>Specific uses for the database offline/online functionality include:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>A generation ID<br>
-This is a sequential auto-incrementing number.
-It is specific to the database on which the document resides.
-Couchbase Lite generates simple integers.
-Sync Gateway generates more complex long base64 values.<br>
-The contents of remote revision IDs are implementation dependent.
-Do not base any processing logic on their contents.</p>
+<p>Taking a database offline, without affecting other databases.</p>
 </li>
 <li>
-<p>A hash derived from the document contents</p>
+<p>Changing configuration properties for a database (while it is offline), without needing to restart Sync Gateway.</p>
+</li>
+<li>
+<p>Resynchronizing a database while it is offline.</p>
+</li>
+<li>
+<p>Detecting a lost DCP or TAP feed, and taking the database offline automatically.</p>
+</li>
+<li>
+<p>Creating a database in an offline state, so that the start of service delivery for the database can be postponed or coordinated across Sync Gateway instances.</p>
+</li>
+<li>
+<p>Performing a Couchbase Server upgrade.</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="lbl-revtree"><a class="anchor" href="#lbl-revtree"></a>Structure</h3>
+<h3 id="how"><a class="anchor" href="#how"></a>How</h3>
 <div class="paragraph">
-<p>The revisions for each document form a <em>revision tree</em> within its metadata.</p>
+<p>By default, when Sync Gateway starts, it brings all databases that are defined in the configuration file online.</p>
 </div>
 <div class="paragraph">
-<p>This revision tree comprises all revisions made to the document throughout its lifetime to date, in sequence.
-The <em>current revision</em> (the most recent version of the document) being the tip of the tree, the <em>leaf</em> node.</p>
+<p>Use the Admin REST API to take a database offline and to bring it back online.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Set Database Offline</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Take a database offline using:<br>
+<a href="rest-api-admin.html#/database/post__db___offline" class="page">POST /\{db}/_offline</a></p>
+</li>
+<li>
+<p>Bring an offline database back online using:<br>
+<a href="rest-api-admin.html#/database/post__db___online" class="page">POST /\{db}/_online</a></p>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <div class="paragraph">
-<p>A revision tree&#8217;s growth is unlimited.
-So Couchbase periodically removes obsolete revisions to maintain performance levels.
-This process is known as <a href="#lbl-prune">Revision Pruning</a>.</p>
+<p>To keep a database offline when Sync Gateway starts, you can add the <code>offline</code> configuration property to the database configuration properties&#8201;&#8212;&#8201;see <a href="rest-api-admin.html#/Database_Configuration/" class="page">Database Configuration</a>.</p>
 </div>
 </div>
 </div>
@@ -2144,154 +2184,173 @@ It may result in obsolete revisions not being pruned or in the premature pruning
 </div>
 </div>
 <div class="sect1">
-<h2 id="lbl-caching"><a class="anchor" href="#lbl-caching"></a>Caching</h2>
+<h2 id="lbl-tomb-purge"><a class="anchor" href="#lbl-tomb-purge"></a>Purging Tombstones</h2>
 <div class="sectionbody">
-<div class="dlist">
-<dl>
-<dt class="hdlist1">In this section</dt>
-<dd>
-<p><a href="#lbl-ctrl">Control</a> | <a href="#lbl-size">Size</a> | <a href="#lbl-sharding">Sharding</a> | <a href="#lbl-deltasync">Delta Sync</a> | <a href="#lbl-disable">Disabling the Cache</a></p>
-</dd>
-</dl>
+<div class="paragraph">
+<p>To remove tombstones, you need to purge them.
+The table at <a href="#tbl-tomb-purge">Table 1</a> shows when tombstones are purged automatically and how to manually purge them.</p>
+</div>
+<table id="tbl-tomb-purge" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Purging tombstones</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-bottom" rowspan="2"></th>
+<th class="tableblock halign-center valign-bottom" colspan="2"><p class="tableblock">Value of <code>enable_shared_bucket_access`</code></p></th>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-bottom"><p class="tableblock"><code>false</code></p></th>
+<th class="tableblock halign-center valign-bottom"><p class="tableblock"><code>true</code></p></th>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Automatic</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tombstones are not automatically purged from the bucket.</p>
+<p class="tableblock">Tombstones can be purged by setting a server expiry on tombstone documents.
+This can be easily automated via Sync Gateway.</p>
+<p class="tableblock">Use the <a href="sync-function-api-expiry-cmd.html" class="page">expiry()</a> function in the Sync Function.</p>
+<p class="tableblock">Set the expiry time to be sufficient to allow for all other devices to sync and receive the delete notification&#8201;&#8212;&#8201; perhaps a week, or a month.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tombstones are automatically purged from the bucket based on the server&#8217;s metadata purge interval.</p></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Manual</p></th>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tombstones can be manually removed via Sync Gateway&#8217;s <a href="rest-api-admin.html#/document/post__db___purge" class="page">/\{tkn-db}/_purge</a> endpoint, or deleting documents directly in the bucket.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tombstones can be manually removed via Sync Gateway&#8217;s <a href="rest-api-admin.html#/document/post__db___purge" class="page">/\{tkn-db}/_purge</a> endpoint.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Purging of tombstones is also required on Couchbase Lite.
+For example, you might decide that if a document is deleted on a Couchbase Lite client, that you want to purge the document (on that device) as soon as the delete has been successfully replicated to Sync Gateway.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-tomb-cache"><a class="anchor" href="#lbl-tomb-cache"></a>Cache Ejection</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Deleted/expired tombstones aren&#8217;t automatically ejected from Sync Gateway&#8217;s in-memory channel caches.
+See <a href="#tbl-tomb-cache">Table 2</a>, which shows when channel caches are ejected.</p>
+</div>
+<table id="tbl-tomb-cache" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 2. Flushing Sync Gateway channel caches</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-bottom" rowspan="2"><p class="tableblock">Tombstone<br>
+Purged On</p></th>
+<td class="tableblock halign-center valign-bottom" colspan="2"><div class="content"><div class="paragraph">
+<p>Value of <code>enable_shared_bucket_access`</code></p>
+</div></div></td>
+</tr>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock"><code>false</code></p></th>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p><code>true</code></p>
+</div></div></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Couchbase Server</p></th>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p>Restarting Sync Gateway will flush the cache</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>Restarting Sync Gateway will flush the cache</p>
+</li>
+<li>
+<p>Running the <a href="rest-api-admin.html#/database/post__db___compact" class="page">/\{tkn-db}/_compact</a> endpoint will remove purged tombstones from the channel cache {fn-211}</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Sync Gateway</p></th>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>Restarting Sync Gateway will flush the cache.</p>
+</li>
+<li>
+<p>Starting in 2.1.1, this is done automatically.</p>
+</li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
+<li>
+<p>Restarting Sync Gateway will flush the cache.</p>
+</li>
+<li>
+<p>Starting in 2.1.1, this is done automatically.</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="compacting"><a class="anchor" href="#compacting"></a>Compacting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Attachments added post 3.0 are automatically removed from the bucket upon reference removal, document delete or document purge.
+This contrasts with the behavior of Legacy attachments, which can remain in the bucket even after their reference removal, document delete or document purge.</p>
 </div>
 <div class="paragraph">
-<p>Whenever a document is accessed its revision tree (or at least some portion of its revision tree) is also cached.</p>
+<p>The compaction garbage collection process (<code>/{db}/_compact</code>) will remove these legacy attachments and reclaim the underlying storage.</p>
 </div>
-<div class="sect2">
-<h3 id="lbl-ctrl"><a class="anchor" href="#lbl-ctrl"></a>Control</h3>
 <div class="paragraph">
-<p>You can control the size of the revision cache using the <a href="configuration-schema-database.html#database-cache-rev_cache" class="page">database.cache.rev_cache</a> settings within the configuration file, specifically:</p>
+<p>You can run the garbage collection process in one of two modes:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="configuration-schema-database.html#database-cache-rev_cache-size" class="page">rev_cache.size</a></p>
+<p>tombstone<br>
+Purges the JSON bodies of non-leaf revisions.</p>
 </li>
 <li>
-<p><a href="configuration-schema-database.html#database-cache-rev_cache-shard_count" class="page">rev_cache.shard_count</a></p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="lbl-size"><a class="anchor" href="#lbl-size"></a>Size</h3>
-<div class="paragraph">
-<p>Use the <a href="configuration-schema-database.html#database-cache-rev_cache-size" class="page">rev_cache.size</a> setting to specify the total number of document revisions to be cached in memory for all (recently accessed) documents.</p>
-</div>
-<div class="paragraph">
-<p>When the revision cache is full, Sync Gateway will remove older document revisions to make room for newer ones.</p>
-</div>
-<div class="paragraph">
-<p>By adjusting this setting you can fine-tune Sync Gateway&#8217;s memory consumption.
-This can be useful when working on servers with limited memory and in cases when Sync Gateway creates and-or updated many new documents relative to the number of read operations.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="lbl-sharding"><a class="anchor" href="#lbl-sharding"></a>Sharding</h3>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-This content relates only to <a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>The <strong>Community Edition</strong> is configured with the default value and ignores any <a href="configuration-schema-database.html#database-cache-rev_cache-shard_count" class="page">rev_cache.shard_count</a> value in the configuration file.</p>
-</div>
-<div class="paragraph">
-<p>You can control the number of shards into which Sync Gateway will split its revisions cache by using the
-<a href="configuration-schema-database.html#database-cache-rev_cache-shard_count" class="page">rev_cache.shard_count</a></p>
-</div>
-<div class="paragraph">
-<p>More shards means lower cache contention when accessing distinct revisions, at the cost of some memory overhead per-shard.</p>
-</div>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-Do not change the default <a href="configuration-schema-database.html#database-cache-rev_cache-shard_count" class="page">database.cache.rev_cache.shard_count</a> unless advised to do so by Couchbase Support&#8201;&#8212;&#8201;see: <a href="https://www.couchbase.com/support-policy">Couchbase Support Policy</a>.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="lbl-deltasync"><a class="anchor" href="#lbl-deltasync"></a>Delta Sync</h3>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-This content relates only to <a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>When executing a write operation with delta_sync enabled the revision body is backed up in the bucket and retained for <a href="configuration-schema-database.html#database-delta_sync-rev_max_age_seconds" class="page">database.delta_sync.rev_max_age_seconds</a>, during which time it is available for the  calculation of future revision deltas.</p>
-</div>
-<div class="paragraph">
-<p>As a result, new deltas can only be generated for read requests that come in within the <a href="configuration-schema-database.html#database-delta_sync-rev_max_age_seconds" class="page">database.delta_sync.rev_max_age_seconds</a> time window.</p>
-</div>
-<div class="paragraph">
-<p>Storing backed up revision bodies for delta sync incurs additional bucket storage, the size of which equates to:<br>
-<code>(doc_size * updates_per_day * 86400) / rev_max_age_seconds</code>&#8201;&#8212;&#8201;see <a href="#ex-deltastor">Example 1</a>.</p>
-</div>
-<div id="ex-deltastor" class="exampleblock">
-<div class="title">Example 1. Calculating Additional Delta-Sync Storage</div>
-<div class="content">
-<div class="paragraph">
-<p>Enabling delta sync would take up an additional 400 KB of storage on Couchbase Server, assuming:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The default {<code>rev_max_age_seconds</code>} value</p>
-</li>
-<li>
-<p>An average document size of 4 KB</p>
-</li>
-<li>
-<p>100 writes/day</p>
+<p>attachment<br>
+Removes redundant legacy attachments.<br>
+The legacy attachment compaction process scans all documents in the bucket, removing unreferenced attachments.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Equating to: <code>(4 * 100 * 86400)/86400 = 400 KB</code></p>
+<p>See the REST API call endpoint <a href="rest-api-admin.html#/Database_Management/post__db___compact" class="page">{db}/_compact</a>.</p>
 </div>
 </div>
+</div>
+<div class="sect1">
+<h2 id="lbl-resync"><a class="anchor" href="#lbl-resync"></a>Resync</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="why"><a class="anchor" href="#why"></a>Why</h3>
+<div class="paragraph">
+<p>The sync function is crucial to the security of your application.
+It is in charge of data validation, access control and routing.
+The function executes every time a new revision/update is made to a document.</p>
 </div>
 <div class="paragraph">
-<p>Setting <a href="configuration-schema-database.html#database-delta_sync-rev_max_age_seconds" class="page">database.delta_sync.rev_max_age_seconds</a> to zero will generate deltas opportunistically on pull replications, with no additional storage requirements.</p>
+<p>If the Sync Function is changed, Sync Gateway needs to reprocess all existing documents in the bucket to recalculate the routing and access assignments.</p>
+</div>
+<div class="paragraph">
+<p>To this end, the Admin REST API provides a <code>/{db}/_resync</code> endpoint that enables you to initiate the reprocessing of every document in the database again.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="lbl-disable"><a class="anchor" href="#lbl-disable"></a>Disabling the Cache</h3>
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-This content relates only to <a href="https://www.couchbase.com/products/editions">ENTERPRISE EDITION</a>
-</td>
-</tr>
-</table>
-</div>
+<h3 id="how-2"><a class="anchor" href="#how-2"></a>How</h3>
 <div class="paragraph">
-<p>Disabling the revision cache can be useful when there are very large documents or if you expect a very low cache hit rate.
-Otherwise it can negatively impact the latency of replications.</p>
+<p>To update the Sync Function and fully resync, you are recommended to follow the steps in <a href="#steps-to-resync">Steps to Update and Resync</a>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2300,33 +2359,94 @@ Otherwise it can negatively impact the latency of replications.</p>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-Do not disable the revision cache, unless advised to do so by Couchbase Support&#8201;&#8212;&#8201;see: <a href="https://www.couchbase.com/support-policy">Couchbase Support Policy</a>.
+This is an expensive operation because it requires every document in the database to be processed by the new function.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>To disable the revision cache entirely, set <a href="configuration-schema-database.html#database-cache-rev_cache-size" class="page">rev_cache.size</a> to zero.
-Community Edition ignores a zero setting.</p>
+<p>The database can accept no requests until this process is complete because no user&#8217;s full access privileges are known until all documents have been scanned.
+Therefore, the Sync Function update will result in application downtime whilst teh database is offline (that is, between the call to the <code>/{tkn-db}/_offline</code> and <code>/{tkn-db}/_online</code> endpoints in <a href="#steps-to-resync">Steps to Update and Resync</a>.</p>
 </div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="compacting"><a class="anchor" href="#compacting"></a>Compacting</h2>
-<div class="sectionbody">
+<div id="steps-to-resync" class="sidebarblock">
+<div class="content">
+<div class="title">Steps to Update and Resync</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Update the configuration file of the Sync Gateway instance</p>
+</li>
+<li>
+<p>Restart Sync Gateway</p>
+</li>
+<li>
+<p>Take the database offline<br>
+Use this Admin REST API endpoint:<br>
+<a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{tkn-db}/_offline</a></p>
+</li>
+<li>
+<p>Resync the database<br>
+Use this Admin REST API endpoint:<br>
+<a href="rest-api-admin.html#/Database_Management/post\/post<em>db</em>_resync" class="page">/{tkn-db}/resync</a></p>
 <div class="paragraph">
-<p>Attachments added post 3.0 are automatically removed from the bucket upon reference removal, document delete or document purge.</p>
+<p>The message body of the response contains the number of changes that were made as a result of calling resync</p>
+</div>
+</li>
+<li>
+<p>Bring the database back online<br>
+Use this Admin REST API endpoint:<br>
+<a href="rest-api-admin.html#/Database_Management/post__db___online" class="page">/{tkn-db}/_online</a></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="uses"><a class="anchor" href="#uses"></a>Uses</h3>
+<div class="sect3">
+<h4 id="changing-channel-assignment"><a class="anchor" href="#changing-channel-assignment"></a>Changing Channel Assignment</h4>
+<div class="paragraph">
+<p>When running a resync operation, the context in the Sync Function is the admin user.
+For that reason, calling the methods <code>requireUser</code>, <code>requireAccess</code>, and <code>requireRole</code> will always succeed.
+It is very likely that you are using those functions in production to govern write operations.
+But in a resync operation, all the documents are already written to the database.
+For that reason, it is recommended to use resync for changing the assignment to channels only (i.e. reads).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="changing-write-security-only"><a class="anchor" href="#changing-write-security-only"></a>Changing Write Security Only</h4>
+<div class="paragraph">
+<p>If the modifications to the Sync Function only impact write security (and not routing/access), you won&#8217;t need to run the resync operation.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="changing-channelaccess-rules"><a class="anchor" href="#changing-channelaccess-rules"></a>Changing Channel/Access Rules</h4>
+<div class="paragraph">
+<p>If you wish to change the channel/access rules, but only want those rules to apply to documents written after the change was made, then you don&#8217;t need to run the resync operation.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="access-revocation"><a class="anchor" href="#access-revocation"></a>Access Revocation</h4>
+<div class="paragraph">
+<p>If you change the sync function to revoke a user&#8217;s access to a document, the access will only take effect once a new revision to that document is saved on Sync Gateway.
+Running a resync operation does not revoke access to that document.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="database-availability"><a class="anchor" href="#database-availability"></a>Database Availability</h3>
+<div class="paragraph">
+<p>If you need to ensure access to the database during the update, you can create a read-only backup of the Sync Gateway&#8217;s bucket beforehand, then run a secondary Sync Gateway on the backup bucket, in read-only mode.
+After the update is complete, switch to the main Gateway and bucket.</p>
 </div>
 <div class="paragraph">
-<p>However, Legacy attachments can still remain in the bucket even after their reference removal, document delete or document purge.
-The compaction garbage collection process (_compact) will remove these and reclaim the underlying storage.</p>
-</div>
-<div class="paragraph">
-<p>The legacy attachment compaction process scans all documents in the bucket, removing unreferenced attachments.
-You can trigger this process on demand using the REST API call endpoint <a href="rest-api-admin.html#/Database_Management/post__db___compact" class="page">{db}/_compact</a>.</p>
+<p>In a clustered environment with multiple Sync Gateway instances sharing the load, all the instances need to share the same configuration, so they all need to be taken offline either by stopping the process or taking them offline using the <a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{tkn-db}/_offline</a> endpoint.
+After the configuration is updated, <strong>one</strong> instance should be brought up so it can update the database&#8212;&#8203;if more than one is running at this time, they&#8217;ll conflict with each other.
+After the first instance finishes opening the database, the others can be started.</p>
 </div>
 <hr>
+</div>
 </div>
 </div>
 <div class="sect1">
@@ -2381,6 +2501,13 @@ You can trigger this process on demand using the REST API call endpoint <a href=
 </div>
 </div>
 </div>
+
+        <nav class="pagination">
+
+                <span>&nbsp;</span>
+        
+                    <span class="next"><a href="stats-monitoring.html">Stats Monitoring</a></span>
+
 </article>
 </main>
 </div>
