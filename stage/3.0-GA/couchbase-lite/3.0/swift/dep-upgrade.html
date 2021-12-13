@@ -830,7 +830,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../java/dep-upgrade.html">Upgrade</a>
+    <a class="menu_title menu_link" href="../java/upgrade.html">Upgrade</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -3885,19 +3885,53 @@ let q = QueryBuilder.select([SelectResult.expression(Function.atan2(x: Expressio
 </div>
 </div>
 <div class="sect1">
-<h2 id="database-upgrade"><a class="anchor" href="#database-upgrade"></a>Database Upgrade</h2>
+<h2 id="lbl-db-upgrades"><a class="anchor" href="#lbl-db-upgrades"></a>1.x Databases Upgrades to 2.x</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Databases created using Couchbase Lite 1.2 or later can still be used with Couchbase Lite 2.x; but will be automatically updated to the  current 2.x version.
-This feature is only available for the default storage type (i.e., not a ForestDB database).
-Additionally, the automatic migration feature does not support encrypted databases, so if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the <a href="https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#database-encryption">1.x Database Guide</a>).</p>
+This feature is only available for the default storage type (i.e., not a ForestDB database).</p>
+</div>
+<div class="sect2">
+<h3 id="encrypted-databases"><a class="anchor" href="#encrypted-databases"></a>Encrypted Databases</h3>
+<div class="paragraph">
+<p>The automatic migration feature does not support encrypted databases.
+So if the 1.x database is encrypted you will first need to disable encryption using the Couchbase Lite 1.x API (see the <a href="https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#database-encryption">1.x Database Guide</a>).</p>
+</div>
+<div class="paragraph">
+<p>Thus, to upgrade an encrypted 1.x database, you should do the following:</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Upgrading Encrypted Databases</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Disable encryption using the Couchbase Lite 1.x framework (see <a href="https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#database-encryption">1.x encryption guide</a>)</p>
+</li>
+<li>
+<p>Open the database file with encryption enabled using the Couchbase Lite 2.x framework.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>Since it is not possible to package Couchbase Lite 1.x and Couchbase Lite 2.x in the same application this upgrade path would require two successive upgrades.</p>
+</div>
+<div class="paragraph">
+<p>If you are using Sync Gateway to synchronize the database content, it may be preferable to run a pull replication from a new 2.x database with encryption enabled and delete the 1.x local database.</p>
+</div>
 </div>
 <div class="sect2">
 <h3 id="handling-of-existing-conflicts"><a class="anchor" href="#handling-of-existing-conflicts"></a>Handling of Existing Conflicts</h3>
 <div class="paragraph">
-<p>If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.
-This functionality is related to the way conflicts are now being handled in Couchbase Lite&#8201;&#8212;&#8201;see <a href="conflict.html" class="page">Handling Data Conflicts</a>.
-Optionally, existing conflicts in the 1.x database can be resolved with the <a href="https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#resolving-conflicts">1.x API</a> prior to the database being upgraded.</p>
+<p>If there are existing conflicts in the 1.x database, the automatic upgrade process copies the default winning revision to the new database and does NOT copy any conflicting revisions.</p>
+</div>
+<div class="paragraph">
+<p>This functionality is related to the way conflicts are now being handled in Couchbase Lite&#8201;&#8212;&#8201;see <a href="conflict.html" class="page">Handling Data Conflicts</a>.</p>
+</div>
+<div class="paragraph">
+<p>Optionally, existing conflicts in the 1.x database can be resolved with the <a href="https://docs-archive.couchbase.com/couchbase-lite/1.4/swift.html#resolving-conflicts">1.x API</a> prior to the database being upgraded.</p>
 </div>
 </div>
 <div class="sect2">
@@ -3907,9 +3941,14 @@ Optionally, existing conflicts in the 1.x database can be resolved with the <a h
 NOTE: The relevant Couchbase Lite API is now called the <code>Blob</code> API not the <code>Attachments</code> API.</p>
 </div>
 <div class="paragraph">
-<p>The functionally is identical but the internal schema for attachments has changed.
-Blobs are stored anywhere in the document, just like other value types, whereas in 1.x they were stored under the <code>_attachments</code> field.
-The automatic upgrade functionality <strong>does not</strong> update the internal schema for attachments, so they remain accessible under the <code>_attachments</code> field.
+<p>The functionally is identical but the internal schema for attachments has changed.</p>
+</div>
+<div class="paragraph">
+<p>Blobs are stored anywhere in the document, just like other value types.
+Whereas in 1.x they were stored under the <code>_attachments</code> field.</p>
+</div>
+<div class="paragraph">
+<p>The automatic upgrade functionality <strong>does not</strong> update the internal schema for attachments, so they remain accessible under the <code>_attachments</code> field.
 See <a href="#ex-get-att">Example 1</a> for how to retrieve an attachment that was created in a 1.x database with a 2.x API.</p>
 </div>
 <div id="ex-get-att" class="exampleblock">
