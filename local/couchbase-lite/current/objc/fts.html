@@ -1985,16 +1985,25 @@ Related Content&#8201;&#8212;&#8201;<a href="querybuilder.html#lbl-predquery" cl
 <p>To run a full-text search (FTS) query, you must have created a full-text index on the expression being matched.
 Unlike regular queries, the index is not optional.</p>
 </div>
+<div class="paragraph">
+<p>You can choose to use N1QL or QueryBuilder syntaxes to create and use FTS indexes.</p>
+</div>
+<div class="paragraph">
+<p>The following examples use the data model introduced in <a href="indexing.html" class="page">Indexing</a>.
+They create and use an FTS index built from the hotel&#8217;s <code>Overview</code> text.</p>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="using-indexbuilder"><a class="anchor" href="#using-indexbuilder"></a>Using IndexBuilder</h2>
+<h2 id="n1ql"><a class="anchor" href="#n1ql"></a>N1QL</h2>
 <div class="sectionbody">
+<div class="sect2">
+<h3 id="create-index"><a class="anchor" href="#create-index"></a>Create Index</h3>
 <div class="paragraph">
-<p>The following example inserts documents and creates an FTS index on the <code>name</code> property.</p>
+<p>N1QL provides a configuration object to define Full Text Search indexes&#8201;&#8212;&#8201;<code>FullTextIndexConfiguration`</code>.</p>
 </div>
 <div id="ex-indexbuilder" class="exampleblock">
-<div class="title">Example 1. Using the IndexBuilder method</div>
+<div class="title">Example 1. Using N1QL&#8217;s FullTextIndexConfiguration</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2015,33 +2024,20 @@ index.ignoreAccents = NO;
 </div>
 </div>
 </div>
-<div class="exampleblock">
-<div class="title">Example 2. Indexing multiple properties</div>
-<div class="content">
+</div>
+<div class="sect2">
+<h3 id="using-the-index"><a class="anchor" href="#using-the-index"></a>Using the Index</h3>
 <div class="paragraph">
-<p>Multiple properties to index can be specified using the following method:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">IndexBuilder.FullTextIndex(params FullTextIndexItem[] items)</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="constructing-a-query"><a class="anchor" href="#constructing-a-query"></a>Constructing a Query</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>With the index created, you can construct and run a Full-text search (FTS) query on the indexed properties.</p>
+<p>FullTextSearch is enabled using the N1QL match() function.</p>
 </div>
 <div class="paragraph">
-<p>The full-text search criteria is defined as a <code>FullTextExpression</code>.
-The left-hand side is the <em>full-text index</em> to use and the right-hand side is the <em>pattern to match</em>.</p>
+<p>With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.</p>
 </div>
-<div id="ex-use-build-index" class="exampleblock">
-<div class="title">Example 3. Using the build index</div>
+<div class="paragraph">
+<p>The following example finds all hotels mentioning <em>Michigan</em> in their <em>Overview</em> text.</p>
+</div>
+<div id="ex-indexbuilder" class="exampleblock">
+<div class="title">Example 2. Using N1QL Full Text Search</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2061,14 +2057,73 @@ for (CBLQueryResult *result in rs) {
 </div>
 </div>
 </div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="querybuilder"><a class="anchor" href="#querybuilder"></a>QueryBuilder</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="create"><a class="anchor" href="#create"></a>Create</h3>
 <div class="paragraph">
-<p>In the example above, the pattern to match is a word, the full-text search query matches all documents that contain the word "buy" in the value of the <code>doc.name</code> property.</p>
+<p>The following example creates an FTS index on the <code>name</code> property.</p>
+</div>
+<div id="ex-indexbuilder-queyrbuilder" class="exampleblock">
+<div class="title">Example 3. Using the IndexBuilder method</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">[data-source-url=file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="use-the-index"><a class="anchor" href="#use-the-index"></a>Use the Index</h3>
+<div class="paragraph">
+<p>With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.</p>
+</div>
+<div class="paragraph">
+<p>The following example finds all hotels mentioning <em>Michigan</em> in their <em>Overview</em> text.</p>
+</div>
+<div id="ex-indexbuilder" class="exampleblock">
+<div class="title">Example 4. Using QueryBuilder Full Text Search</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">[data-source-url=file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m]</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="exampleblock">
+<div class="title">Example 5. Indexing multiple properties</div>
+<div class="content">
+<div class="paragraph">
+<p>Multiple properties to index can be specified using the following method:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">IndexBuilder.FullTextIndex(params FullTextIndexItem[] items)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="operation"><a class="anchor" href="#operation"></a>Operation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In the examples above, the pattern to match is a word, the full-text search query matches all documents that contain the word "michigan" in the value of the <code>doc.overview</code> property.</p>
 </div>
 <div class="paragraph">
 <p>Search is supported for all languages that use whitespace to separate words.</p>
 </div>
 <div class="paragraph">
-<p>Stemming, which is the process of fuzzy matching parts of speech, like "fast" and "faster", is supported in the following languages: danish, dutch, english, finnish, french, german, hungarian, italian, norwegian, portuguese, romanian, russian, spanish, swedish and turkish.</p>
+<p>Stemming, which is the process of fuzzy matching parts of speech, like "fast" and "faster", is supported in the following languages: Danish, Dutch, English, Finnish, French, German, Hungarian, Italian, Norwegian, Portuguese, Romanian, Russian, Spanish, Swedish and Turkish.</p>
 </div>
 </div>
 </div>
@@ -2084,7 +2139,7 @@ for (CBLQueryResult *result in rs) {
 <p>The query expression used to search for a term prefix is the prefix itself with a "*" character appended to it.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 4. Prefix query</div>
+<div class="title">Example 6. Prefix query</div>
 <div class="content">
 <div class="paragraph">
 <p>Query for all documents containing a term with the prefix "lin".</p>
@@ -2118,7 +2173,7 @@ This may be overridden by specifying a property name followed by a ":" character
 There may be space between the ":" and the term to query for, but not between the property name and the ":" character.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 5. Override indexed property name</div>
+<div class="title">Example 7. Override indexed property name</div>
 <div class="content">
 <div class="paragraph">
 <p>Query the database for documents for which the term "linux" appears in the document title, and the term "problems" appears in either the title or body of the document.</p>
@@ -2138,7 +2193,7 @@ There may be space between the ":" and the term to query for, but not between th
 Phrase queries are specified by enclosing a space separated sequence of terms or term prefixes in double quotes (").</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 6. Phrase query</div>
+<div class="title">Example 8. Phrase query</div>
 <div class="content">
 <div class="paragraph">
 <p>Query for all documents that contain the phrase "linux applications".</p>
@@ -2159,7 +2214,7 @@ A NEAR query is specified by putting the keyword "NEAR" between two phrase, toke
 To specify a proximity other than the default, an operator of the form "NEAR/" may be used, where is the maximum number of intervening terms allowed.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 7. Near query</div>
+<div class="title">Example 9. Near query</div>
 <div class="content">
 <div class="paragraph">
 <p>Search for a document that contains the phrase "replication" and the term "database" with not more than 2 terms separating the two.</p>
@@ -2181,7 +2236,7 @@ Operators must be entered using capital letters.
 Otherwise, they are interpreted as basic term queries instead of set operators.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 8. Using And, Or and Not</div>
+<div class="title">Example 10. Using And, Or and Not</div>
 <div class="content">
 <div class="paragraph">
 <p>Return the set of documents that contain the term "couchbase", and the term "database".</p>
@@ -2200,7 +2255,7 @@ Otherwise, they are interpreted as basic term queries instead of set operators.<
 <p>When using the enhanced query syntax, parenthesis may be used to specify the precedence of the various operators.</p>
 </div>
 <div class="exampleblock">
-<div class="title">Example 9. Operator precedence</div>
+<div class="title">Example 11. Operator precedence</div>
 <div class="content">
 <div class="paragraph">
 <p>Query for the set of documents that contains the term "linux", and at least one of the phrases "couchbase database" and "sqlite library".</p>
