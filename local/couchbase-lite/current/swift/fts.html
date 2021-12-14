@@ -831,7 +831,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../java/upgrade.html">Upgrade</a>
+    <a class="menu_title menu_link" href="../java/dep-upgrade.html">Upgrade</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -1982,7 +1982,7 @@ Related Content&#8201;&#8212;&#8201;<a href="querybuilder.html#lbl-predquery" cl
 <h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>To run a full-text search (FTS) query, you must have created a full-text index on the expression being matched.
+<p>To run a full-text search (FTS) query, you must create a full-text index on the expression being matched.
 Unlike regular queries, the index is not optional.</p>
 </div>
 <div class="paragraph">
@@ -2007,19 +2007,11 @@ They create and use an FTS index built from the hotel&#8217;s <code>Overview</co
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Insert documents
-let tasks = ["buy groceries", "play chess", "book travels", "buy museum tickets"]
-for task in tasks {
-    let doc = MutableDocument()
-    doc.setString("task", forKey: "type")
-    doc.setString(task, forKey: "name")
-    try database.saveDocument(doc)
-}
-
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
 // Create index
 do {
-    let config = FullTextIndexConfiguration(["type", "name"])
-    try database.createIndex(index, withName: "nameFTSIndex")
+    let config = FullTextIndexConfiguration(["overview"])
+    try database.createIndex(index, withName: "overviewFTSIndex")
 } catch let error {
     print(error.localizedDescription)
 }</code></pre>
@@ -2044,18 +2036,18 @@ do {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">    
-    let ftsStr = "SELECT * FROM _ WHERE MATCH(nameFTSIndex, 'Michigan' ORDER BY RANK(nameFTSIndex)"
-    
-    let query = database.createQuery(query: ftsStr)
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
+let ftsStr = "SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan' ORDER BY RANK(overviewFTSIndex)"
 
-    do {
-        for result in try query.execute() {
-            print("document id \(result.string(at: 0)!)")
-        }
-    } catch let error {
-        print(error.localizedDescription)
-    }</code></pre>
+let query = database.createQuery(query: ftsStr)
+
+do {
+    for result in try query.execute() {
+        print("document id \(result.string(at: 0)!)")
+    }
+} catch let error {
+    print(error.localizedDescription)
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2076,19 +2068,11 @@ do {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Insert documents
-let tasks = ["buy groceries", "play chess", "book travels", "buy museum tickets"]
-for task in tasks {
-    let doc = MutableDocument()
-    doc.setString("task", forKey: "type")
-    doc.setString(task, forKey: "name")
-    try database.saveDocument(doc)
-}
-
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
 // Create index
 do {
-    let index = IndexBuilder.fullTextIndex(items: FullTextIndexItem.property("name")).ignoreAccents(false)
-    try database.createIndex(index, withName: "nameFTSIndex")
+    let index = IndexBuilder.fullTextIndex(items: FullTextIndexItem.property("overview")).ignoreAccents(false)
+    try database.createIndex(index, withName: "overviewFTSIndex")
 } catch let error {
     print(error.localizedDescription)
 }</code></pre>
@@ -2110,7 +2094,7 @@ do {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let whereClause = FullTextExpression.index("nameFTSIndex").match("'buy'")
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let whereClause = FullTextExpression.index("overviewFTSIndex").match("'michigan'")
 let query = QueryBuilder
     .select(SelectResult.expression(Meta.id))
     .from(DataSource.database(database))

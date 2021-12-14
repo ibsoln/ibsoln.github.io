@@ -831,7 +831,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../java/upgrade.html">Upgrade</a>
+    <a class="menu_title menu_link" href="../java/dep-upgrade.html">Upgrade</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -2474,17 +2474,36 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false)
-        )
+        val config = FullTextIndexConfiguration(["overview"]).ignoreAccents(false);
+        database.createIndex( "overviewFTSIndex", config);
     }
 
     @Throws(CouchbaseLiteException::class)
     fun testFTS() {
+
+        val ftsQuery =
+              database.createQuery(
+                "SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan' ORDER BY RANK(overviewFTSIndex)");
+
+        val rs = ftsQuery.execute().allResults()
+        for (result in rs) {
+            Log.i(TAG, "document properties${result.getString(0)}")
+        }
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun prepareIndex_Querybuilder() {
+        database.createIndex(
+            "overviewFTSIndex",
+            IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false)
+        )
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun testFTS_Querybuilder() {
         val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
             .from(DataSource.database(database))
-            .where(FullTextExpression.index("nameFTSIndex").match("buy"))
+            .where(FullTextExpression.index("overviewFTSIndex").match("michigan"))
             .execute()
         for (result in rs) {
             Log.i(TAG, "document properties${result.getString(0)}")
