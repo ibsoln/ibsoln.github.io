@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv=content-security-policy content="default-src 'none'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https:; img-src 'self' data: https:; connect-src 'self' https:; worker-src blob:;">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>User Profile Sample: Data Sync Fundamentals | Couchbase Docs</title>
+<title>User Profile Sample: Couchbase Lite Data Sync | Couchbase Docs</title>
 <link rel="canonical" href="http://127.0.0.1:5000/userprofile-couchbase-mobile/current/userprofile/userprofile_sync.html">
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
@@ -184,11 +184,6 @@
 <li class="menu_list is-current-page" data-depth="1">
   <span class="menu_line">
     <a class="menu_title menu_link is-current-page" href="userprofile_sync.html">Sync</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../backgroundfetch/userprofile/background-fetch.html">Background Fetch</a>
   </span>
 </li>
 </ul>
@@ -446,7 +441,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="https://github.com/ibsoln/userprofile-couchbase-mobile/edit/DOC-9382-Sync/content/modules/userprofile/pages/userprofile_sync.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/pages/userprofile_sync.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -512,18 +507,13 @@
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">User Profile Sample: Data Sync Fundamentals</h1>
+<h1 class="page">User Profile Sample: Couchbase Lite Data Sync</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div id="preamble">
-<div class="sectionbody">
-<!-- toc disabled -->
-</div>
-</div>
-<div class="sect1">
+</div><div class="sect1">
 <h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -547,24 +537,27 @@ Couchbase Mobile 3.0 introduces centralized persistent module configuration of s
 </li>
 </ul>
 </div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">What You Will Learn</div>
 <div class="paragraph">
-<p>This tutorial will demonstrate how to -</p>
+<p>In this tutorial you will learn how to:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Setup a basic Couchbase Sync Gateway configuration to sync content between multiple Couchbase Lite enabled clients.
+<p>Setup a basic Couchbase Sync Gateway configuration to sync content between multiple Couchbase Lite enabled clients&#8201;&#8212;&#8201;see: <a href="#lbl-sync-gateway">Sync Gateway</a>.<br>
 We will will cover the basics of the <a href="../../../sync-gateway/current/configuration-overview.html" class="page">Sync Gateway Configuration</a></p>
 </li>
 <li>
-<p>Configure your Sync Gateway to enforce data routing, access control and authorization.
-We will cover the basics of the <a href="../../../sync-gateway/current/sync-function.html" class="page">Sync Function API</a></p>
+<p>Configure your Sync Gateway to enforce data routing, access control and authorization&#8201;&#8212;&#8201;see: <a href="#lbl-sync-function">Sync Function</a>.<br>
+We will cover the basics of the <a href="../../../sync-gateway/current/sync-function.html" class="page">Sync Function API</a>.</p>
 </li>
 <li>
 <p>Configure your Couchbase Lite clients for replication with the Sync Gateway</p>
 </li>
 <li>
-<p>Use "Live Queries" or Query events within your Couchbase Lite clients to be asynchronously notified of changes</p>
+<p>Use "Live Queries" or Query events within your Couchbase Lite clients to be asynchronously notified of changes&#8201;&#8212;&#8201;see: <a href="#lbl-query-events">Query Events / Live Queries</a></p>
 </li>
 </ul>
 </div>
@@ -575,6 +568,8 @@ We will cover the basics of the <a href="../../../sync-gateway/current/sync-func
 <div class="content">
 <div class="paragraph">
 <p>You can learn more about the Sync Gateway here in the <a href="../../../sync-gateway/current/index.html" class="page">Sync Gateway Documentation</a>.</p>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -593,11 +588,10 @@ We will cover the basics of the <a href="../../../sync-gateway/current/sync-func
 <div class="ulist">
 <ul>
 <li>
-<p>Fundamentals of using Couchbase Lite as a <a href="../../standalone/userprofile/userprofile_basic.html" class="page">Standalone</a> database</p>
+<p>Fundamentals of using Couchbase Lite as a standalone database&#8201;&#8212;&#8201;see: <a href="../../standalone/userprofile/userprofile_basic.html" class="page">Standalone tutorial</a>.</p>
 </li>
 <li>
-<p><a href="../../query/userprofile/userprofile_query.html" class="page">Query</a>
-with a prebuilt version of Couchbase Lite database</p>
+<p>Using queries with a prebuilt version of Couchbase Lite database&#8201;&#8212;&#8201;see: <a href="../../query/userprofile/userprofile_query.html" class="page">Query tutorial</a>.</p>
 </li>
 </ul>
 </div>
@@ -651,7 +645,7 @@ We will be using Docker to run images of both Couchbase Server and the Sync Gate
 <h2 id="system-overview"><a class="anchor" href="#system-overview"></a>System Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We will be working with the simple "User Profile" app which we introduced in the <a href="../../standalone/userprofile/userprofile_basic.html" class="page">Standalone</a> tutorial and extended in the <a href="../../query/userprofile/userprofile_query.html" class="page">Query</a> tutorial.</p>
+<p>We will be working with the simple "User Profile" app which we introduced in the <a href="../../standalone/userprofile/userprofile_basic.html" class="page">Standalone tutorial</a> and extended in the <a href="../../query/userprofile/userprofile_query.html" class="page">Query tutorial</a>.</p>
 </div>
 <div class="paragraph">
 <p>In this tutorial, we will be extending that app to support data sync.
@@ -694,7 +688,7 @@ Type the following command in your terminal</p>
 <div class="sect2">
 <h3 id="installing-couchbase-lite-framework"><a class="anchor" href="#installing-couchbase-lite-framework"></a>Installing Couchbase Lite Framework</h3>
 <div class="paragraph">
-<p>Next, we will download the Couchbase Lite 3.0.0 framework.</p>
+<p>Next, we will download the Couchbase Lite 3.0 framework.</p>
 </div>
 <div class="paragraph">
 <p>The Couchbase Lite iOS framework is distributed via SPM, CocoaPods, Carthage or you can download the pre-built framework&#8201;&#8212;&#8201;see the <a href="../../../couchbase-lite/current/swift/gs-install.html" class="page">Get Started - Install</a> documentation for more information.</p>
@@ -748,7 +742,7 @@ sh install_tutorial.sh</code></pre>
 <h2 id="data-model"><a class="anchor" href="#data-model"></a>Data Model</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>If you followed along with the <a href="../../query/userprofile/userprofile_query.html" class="page">Query</a> tutorial, you can skip this section and proceed to the <a href="#backend-installation">Backend Installation</a> section.
+<p>If you followed along with the <a href="../../query/userprofile/userprofile_query.html" class="page">Query tutorial</a>, you can skip this section and proceed to the <a href="#backend-installation">Backend Installation</a> section.
 We have not changed the Data model for this tutorial.</p>
 </div>
 <div class="paragraph">
@@ -790,7 +784,7 @@ The document ID is of the form <em>"user::demo@example.com"</em>.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/model/UserRecord.swift">let kUserRecordDocumentType = "user"
+<pre data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/model/UserRecord.swift">let kUserRecordDocumentType = "user"
 typealias ExtendedData = [[String:Any]]
 struct UserRecord : CustomStringConvertible{
     let type = kUserRecordDocumentType
@@ -850,7 +844,7 @@ Each Document represents a university&#8201;&#8212;&#8201;see <a href="#ex-unive
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/model/UniversityRecord.swift">typealias Universities = [UniversityRecord]
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/model/UniversityRecord.swift">typealias Universities = [UniversityRecord]
 // Native object
 struct UniversityRecord : CustomStringConvertible{
     
@@ -877,7 +871,7 @@ struct UniversityRecord : CustomStringConvertible{
 <h2 id="backend-installation"><a class="anchor" href="#backend-installation"></a>Backend Installation</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>We will install <a href="#couchbase-server">Couchbase Server</a> and <a href="#sync-gateway">Sync Gateway</a> using Docker.</p>
+<p>We will install <a href="#couchbase-server">Couchbase Server</a> and <a href="#lbl-sync-gateway">Sync Gateway</a> using Docker.</p>
 </div>
 <div class="sect2">
 <h3 id="prerequisites-2"><a class="anchor" href="#prerequisites-2"></a>Prerequisites</h3>
@@ -973,7 +967,7 @@ priyacouch/couchbase-server-userprofile:7.0.0-dev</code></pre>
 <div class="olist loweralpha">
 <ol class="loweralpha" type="a">
 <li>
-<p>Open up <a href="http://localhost:8091^" class="bare">http://localhost:8091^</a> in a browser</p>
+<p>Open up <a href="http://localhost:8091" target="_blank" rel="noopener">http://localhost:8091</a> in a browser</p>
 </li>
 <li>
 <p>Sign in as “Administrator” and “password” in login page</p>
@@ -1002,19 +996,20 @@ priyacouch/couchbase-server-userprofile:7.0.0-dev</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="sync-gateway"><a class="anchor" href="#sync-gateway"></a>Sync Gateway</h3>
+<h3 id="lbl-sync-gateway"><a class="anchor" href="#lbl-sync-gateway"></a>Sync Gateway</h3>
 <div class="paragraph">
 <p>Now we will install, configure and run Sync Gateway.</p>
 </div>
 <div class="sect3">
 <h4 id="lbl-install"><a class="anchor" href="#lbl-install"></a>Configuration</h4>
 <div class="paragraph">
-<p>When using Sync Gateway 3.0.0, we can opt to provide a bootstrap configuration&#8201;&#8212;&#8201;see: <a href="../../../sync-gateway/current/configuration-overview.html" class="page">Sync Gateway Configuration</a>.
+<p>When using Sync Gateway 3.0, we can opt to provide a bootstrap configuration&#8201;&#8212;&#8201;see: <a href="../../../sync-gateway/current/configuration-overview.html" class="page">Sync Gateway Configuration</a>.
 We would then provision database, sync and other configuration using the Admin REST endpoints
-Alternatively, we can continue to run in legacy-mode, using the Pre-3.0.0 configuration.</p>
+Alternatively, we can continue to run in legacy-mode, using the Pre-3.0 configuration.</p>
 </div>
 <div class="paragraph">
-<p>In this tutorial&#8201;&#8212;&#8201;for the purposes of backward compatibility&#8201;&#8212;&#8201;we will run 3.x using its <a href="../../../sync-gateway/current/configuration-properties-legacy.html" class="page">legacy configuration option</a>.
+<p>In this tutorial&#8201;&#8212;&#8201;for the purposes of backward compatibility&#8201;&#8212;&#8201;we will run 3.x using its
+<a href="../../../sync-gateway/current/configuration-properties-legacy.html" class="page">legacy configuration option</a>.
 That is, we will be running with the <code>disable_persistent_config</code> option in the configuration file set to <code>true</code>.
 You can, if you wish, run a 2.8 version of Sync Gateway instead.</p>
 </div>
@@ -1035,7 +1030,7 @@ They are available in the "sync" branch of the github repo hosting the app, whic
 <p>3.x</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile/blob/feature/sync/content/modules/userprofile/examples/sync-gateway-config-userprofile-demo-3-x-legacy.json">sync-gateway-config-userprofile-demo-3-x-legacy.json</a></p>
+<p><a href="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/DOC-9382-Sync/content/modules/userprofile/examples/sync-gateway-config-userprofile-demo-3-x-legacy.json">sync-gateway-config-userprofile-demo-3-x-legacy.json</a></p>
 </div></div></td>
 </tr>
 <tr>
@@ -1043,7 +1038,7 @@ They are available in the "sync" branch of the github repo hosting the app, whic
 <p>2.x</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile/blob/feature/sync/content/modules/userprofile/examples/sync-gateway-config-userprofile-demo-2-x.json">sync-gateway-config-userprofile-demo-2-x.json</a></p>
+<p><a href="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/DOC-9382-Sync/content/modules/userprofile/examples/sync-gateway-config-userprofile-demo-2-x.json">sync-gateway-config-userprofile-demo-2-x.json</a></p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1141,10 +1136,10 @@ couchbase/sync-gateway:2.8.4-enterprise \
 <div class="ulist tabs">
 <ul>
 <li>
-<p><a id="tabset2_sync-gateway-3-0"></a>Sync Gateway (3.0)</p>
+<p><a id="tabset2_sync-gateway-3-0"></a>Sync Gateway 3.0</p>
 </li>
 <li>
-<p><a id="tabset2_sync-gateway-2-x"></a>Sync Gateway (2.x)</p>
+<p><a id="tabset2_sync-gateway-2-x"></a>Sync Gateway 2.x</p>
 </li>
 </ul>
 </div>
@@ -1155,13 +1150,12 @@ couchbase/sync-gateway:2.8.4-enterprise \
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-dos hljs" data-lang="dos">docker run -p 4984-4985:4984-4985 ^
+<pre class="highlightjs highlight"><code class="language-dos hljs" data-lang="dos">docker run -p 4984-4986:4984-4986 ^
 --network workshop ^
 --name sync-gateway ^
 -d -v %cd%sync-gateway-config-userprofile-demo-3-x-legacy.json:^
 /etc/sync_gateway/sync_gateway.json ^
 couchbase/sync-gateway:3.0.0-enterprise ^
--adminInterface :4985 ^
 /etc/sync_gateway/sync_gateway.json</code></pre>
 </div>
 </div>
@@ -1172,14 +1166,13 @@ couchbase/sync-gateway:3.0.0-enterprise ^
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-dos hljs" data-lang="dos">docker run -p 4984-4985:4984-4985 ^
+<pre class="highlightjs highlight"><code class="language-dos hljs" data-lang="dos">docker run -p 4984-4986:4984-4986 ^
 --network workshop ^
 --name sync-gateway ^\
 -d ^
 -v %cd%/sync-gateway-config-userprofile-demo-2-x.json:^
 etc/sync_gateway/sync_gateway.json ^
 couchbase/sync-gateway:2.8.4-enterprise ^
--adminInterface :4985 ^
 /etc/sync_gateway/sync_gateway.json</code></pre>
 </div>
 </div>
@@ -1231,7 +1224,7 @@ You should see equivalent of the following message</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="sync-function"><a class="anchor" href="#sync-function"></a>Sync Function</h2>
+<h2 id="lbl-sync-function"><a class="anchor" href="#lbl-sync-function"></a>Sync Function</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>A key component of the sync process is the Sync Function and we will first look at how that can be set-up to control how data sync works.</p>
@@ -1438,7 +1431,7 @@ access(username, channelId);</code></pre>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">func startPushAndPullReplicationForCurrentUser() {</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">func startPushAndPullReplicationForCurrentUser() {</code></pre>
 </div>
 </div>
 </div>
@@ -1452,7 +1445,7 @@ You could also use this to, optionally, override the default configuration setti
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">let dbUrl = remoteUrl.appendingPathComponent(kDBName)
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">let dbUrl = remoteUrl.appendingPathComponent(kDBName)
 var config = ReplicatorConfiguration.init(database: db, target: URLEndpoint.init(url:dbUrl)) <i class="conum" data-value="1"></i><b>(1)</b>
 
 config.replicatorType = .pushAndPull <i class="conum" data-value="2"></i><b>(2)</b>
@@ -1506,7 +1499,7 @@ This means that if a client does not have access to documents in a channel, the 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">_pushPullRepl = Replicator.init(config: config)</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">_pushPullRepl = Replicator.init(config: config)</code></pre>
 </div>
 </div>
 </div>
@@ -1524,7 +1517,7 @@ It is an optional step and is shown here in <a href="#ex-callback">Example 12</a
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">_pushPullReplListener = _pushPullRepl?.addChangeListener({ (change) in
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">_pushPullReplListener = _pushPullRepl?.addChangeListener({ (change) in
     let s = change.status
     switch s.activity {
     case .busy:
@@ -1537,14 +1530,6 @@ It is an optional step and is shown here in <a href="#ex-callback">Example 12</a
         print("Replicator in offline state")
     case .stopped:
         print("Completed syncing documents")
-    }
-  
-    // Workarond for BUG :https://github.com/couchbase/couchbase-lite-ios/issues/1816.
-    if s.progress.completed == s.progress.total {
-        print("All documents synced")
-    }
-    else {
-         print("Documents \(s.progress.total - s.progress.completed) still pending sync")
     }
 })</code></pre>
 </div>
@@ -1559,7 +1544,7 @@ It is an optional step and is shown here in <a href="#ex-callback">Example 12</a
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">_pushPullRepl?.start()</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">_pushPullRepl?.start()</code></pre>
 </div>
 </div>
 </div>
@@ -1578,7 +1563,7 @@ It is an optional step and is shown here in <a href="#ex-callback">Example 12</a
 <p>Open the <strong><code>DatabaseManager.swift</code></strong> file and locate the <code>stopAllReplicationForCurrentUser()</code> function.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">func stopAllReplicationForCurrentUser() {</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">func stopAllReplicationForCurrentUser() {</code></pre>
 </div>
 </div>
 </li>
@@ -1586,7 +1571,7 @@ It is an optional step and is shown here in <a href="#ex-callback">Example 12</a
 <p>Stop the replicator and remove any associated change listeners</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">if let pushPullReplListener = _pushPullReplListener{
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/model/DatabaseManager.swift">if let pushPullReplListener = _pushPullReplListener{
     print(#function)
     _pushPullRepl?.removeChangeListener(withToken:  pushPullReplListener)
     _pushPullRepl = nil
@@ -1613,7 +1598,7 @@ When you close a database, any active replicators, listeners and-or live queries
 </div>
 </div>
 <div class="sect1">
-<h2 id="query-events-live-queries"><a class="anchor" href="#query-events-live-queries"></a>Query Events / Live Queries</h2>
+<h2 id="lbl-query-events"><a class="anchor" href="#lbl-query-events"></a>Query Events / Live Queries</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Couchbase Lite applications can set up <em>live queries</em> in order to be asynchronously notified of changes to the database that affect the results of the query.
@@ -1633,19 +1618,19 @@ This means that, if the replicator pulls down changes to the user profile, they 
 Calling this function with a value of <code>true</code> implies that the caller wishes to be notified of any changes to query results.</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/presenter/UserPresenter.swift">func fetchRecordForCurrentUserWithLiveModeEnabled(__ enabled:Bool = false) {</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/presenter/UserPresenter.swift">func fetchRecordForCurrentUserWithLiveModeEnabled(__ enabled:Bool = false) {</code></pre>
 </div>
 </div>
 </li>
 <li>
 <p>Build the Query&#8201;&#8212;&#8201;see: <a href="#ex-query">Example 14</a>&#8201;&#8212;&#8201;using <code>QueryBuilder</code> API.
-If you are unfamiliar with this API, please check out this <a href="../../query/userprofile/userprofile_query.html" class="page">Query</a> tutorial.</p>
+If you are unfamiliar with this API, please check out this <a href="../../query/userprofile/userprofile_query.html" class="page">Query tutorial</a>.</p>
 <div id="ex-query" class="exampleblock">
 <div class="title">Example 14. Defining a query using QueryBuilder</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/presenter/UserPresenter.swift">guard let db = dbMgr.db else {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/presenter/UserPresenter.swift">guard let db = dbMgr.db else {
     fatalError("db is not initialized at this point!")
 }
 userQuery = QueryBuilder
@@ -1673,7 +1658,7 @@ In our app, there should be exactly one user profile document corresponding to t
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile/blob/08f1a67c6c9ec40fd57d4dc285a0f5213733b865/content/modules/userprofile/examples/UserProfileDemo/presenter/UserPresenter.swift">userQueryToken = userQuery?.addChangeListener { [weak self] (change) in <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-ios/content/modules/userprofile/examples/UserProfileDemo/presenter/UserPresenter.swift">userQueryToken = userQuery?.addChangeListener { [weak self] (change) in <i class="conum" data-value="1"></i><b>(1)</b>
     guard let `self` = self else {return}
     switch change.error {
     case nil:
@@ -1834,10 +1819,14 @@ You will need this when you update the document</td>
 </li>
 <li>
 <p>In the command terminal, issue the following command to update the user profile document via <a href="https://docs.couchbase.com/sync-gateway/3.0/rest-api.html#/document/AddOrUpdateDocument">PUT Document REST API</a></p>
+<div class="paragraph">
+<p>We chose to update the address field via the REST API.
+You can choose to update any other profile information if you like.
+You will be prompted to enter the users password when you submit the curl command.</p>
+</div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request \
-PUT 'http://localhost:4984/userprofile/user::demo@example.com?rev=3-033fcbaf269d65a9247067be76d664f1111d033b' --user 'demo@example.com' \ <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://localhost:4984/userprofile/user::demo@example.com?rev=3-033fcbaf269d65a9247067be76d664f1111d033b' --user 'demo@example.com' \
 --header 'Content-Type: application/json' \
 --data-raw '{
     "address": "101 Main Street",
@@ -1854,18 +1843,18 @@ PUT 'http://localhost:4984/userprofile/user::demo@example.com?rev=3-033fcbaf269d
 }'</code></pre>
 </div>
 </div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we specify the user id (<code>user::demo@example.com</code>) and the revision Id (from the previous step) to select the item we want to update</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>We updated the address field via the REST API.
-You can choose to update any other profile information</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Here, in the <code>PUT</code>, we specify the:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>user id (<code>user::demo@example.com</code>)</p>
+</li>
+<li>
+<p>revision Id (from the previous step <code>3-033fcbaf269d65a9247067be76d664f1111d033b</code>) to select the item we want to update</p>
+</li>
+</ul>
 </div>
 </li>
 <li>
@@ -1875,7 +1864,7 @@ You can choose to update any other profile information</td>
 <p>As soon as you update the document via the Sync Gateway REST API, confirm that the changes show up in the mobile app on the simulator.</p>
 <div class="imageblock">
 <div class="content">
-<img src="https://raw.githubusercontent.com/couchbaselabs/userprofile-couchbase-mobile/sync/content/modules/userprofile/assets/images/sync_from_sgw.gif" alt="App Sync">
+<img src="_images/sync_from_sgw.gif" alt="App Sync">
 </div>
 </div>
 </li>
@@ -1892,7 +1881,7 @@ You can choose to update any other profile information</td>
 Couchbase Mobile supports <em>Automated Conflict Resolution</em>.</p>
 </div>
 <div class="paragraph">
-<p>You can learn more about automated conflict resolution in this <a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">blog post</a>.</p>
+<p>You can learn more about automated conflict resolution in this blog  <a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/" target="_blank" rel="noopener">Document Conflicts &amp; Resolution </a>.</p>
 </div>
 </div>
 </div>
@@ -1909,8 +1898,9 @@ We discussed how to configure your Sync Gateway to enforce relevant access contr
 <div class="paragraph">
 <p>Check out the following links for further details</p>
 </div>
-<div class="sect2">
-<h3 id="further-reading"><a class="anchor" href="#further-reading"></a>Further Reading</h3>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Further Reading</div>
 <div class="ulist">
 <ul>
 <li>
@@ -1920,12 +1910,16 @@ We discussed how to configure your Sync Gateway to enforce relevant access contr
 <p><a href="https://blog.couchbase.com">Couchbase Mobile Blog</a></p>
 </li>
 <li>
-<p><a href="https://blog.couchbase.com/?s=sync+function">Sync function blogs</a></p>
+<p><a href="https://blog.couchbase.com/?s=sync+function" target="_blank" rel="noopener">Sync function blogs</a></p>
 </li>
 <li>
-<p><a href="https://blog.couchbase.comdata-replication-couchbase-mobile/">Overview of Replication Protocol</a></p>
+<p><a href="https://blog.couchbase.comdata-replication-couchbase-mobile/" target="_blank" rel="noopener">Overview of Replication Protocol</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/" target="_blank" rel="noopener">Document Conflicts &amp; Resolution </a></p>
 </li>
 </ul>
+</div>
 </div>
 </div>
 </div>
