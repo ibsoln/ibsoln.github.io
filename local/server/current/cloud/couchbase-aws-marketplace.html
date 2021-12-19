@@ -4455,7 +4455,7 @@ If you don&#8217;t have one, <a href="https://aws.amazon.com/" target="_blank" r
 </div>
 </div>
 <div class="sect1">
-<h2 id="deploying-couchbase-enterprise"><a class="anchor" href="#deploying-couchbase-enterprise"></a>Deploying Couchbase Enterprise</h2>
+<h2 id="deploying-couchbase-server"><a class="anchor" href="#deploying-couchbase-server"></a>Deploying Couchbase Server</h2>
 <div class="sectionbody">
 <div class="admonitionblock important">
 <table>
@@ -4465,7 +4465,6 @@ If you don&#8217;t have one, <a href="https://aws.amazon.com/" target="_blank" r
 </td>
 <td class="content">
 The CloudFormation templates are provided as a starting point and may be customized as needed.
-Note that additional post deployment setup may be required.
 </td>
 </tr>
 </table>
@@ -4474,10 +4473,10 @@ Note that additional post deployment setup may be required.
 <ol class="arabic">
 <li>
 <p>Log in to your account on the <a href="https://aws.amazon.com/marketplace/" target="_blank" rel="noopener">Amazon Web Services Marketplace</a>, search for <code class="in">Couchbase</code> and select Couchbase Enterprise Edition.
-Alternately, you can click <a href="https://aws.amazon.com/marketplace/pp/prodview-zw6dtnc7i75ai" target="_blank" rel="noopener">here</a> to go to the Couchbase Enterprise Edition product page directly.</p>
+Alternately, you can click <a href="https://aws.amazon.com/marketplace/pp/prodview-zy5g2wqmqdyzw" target="_blank" rel="noopener">here</a> to go to the Couchbase Server product page directly.</p>
 </li>
 <li>
-<p>The Couchbase Enterprise product page provides a quick overview of the product offering and useful links.
+<p>The Couchbase Server product page provides a quick overview of the product offering and useful links.
 Click <strong class="ui">Continue to Subscribe</strong>.</p>
 <div class="imageblock">
 <div class="content">
@@ -4486,15 +4485,7 @@ Click <strong class="ui">Continue to Subscribe</strong>.</p>
 </div>
 </li>
 <li>
-<p>On the Subscribe screen, accept the terms and conditions for this software.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/deploying/aws-marketplace-couchbase-terms-conditions.png" alt="aws marketplace couchbase terms conditions" width="570">
-</div>
-</div>
-</li>
-<li>
-<p>Once your request is processed, you&#8217;ll be able to proceed by clicking <strong class="ui">Continue to Configuration</strong>.</p>
+<p>On the Subscribe to this software screen, accept the terms and conditions for this software.</p>
 <div class="imageblock">
 <div class="content">
 <img src="_images/aws/deploying/aws-marketplace-couchbase-ee-subscription-public-terms.png" alt="aws marketplace couchbase ee subscription public terms" width="570">
@@ -4502,7 +4493,15 @@ Click <strong class="ui">Continue to Subscribe</strong>.</p>
 </div>
 </li>
 <li>
-<p>Configure the software by selecting the how you wish to deploy the software, and providing information required to configure the deployment.
+<p>Once your request is processed, you&#8217;ll be able to proceed by clicking <strong class="ui">Continue to Configuration</strong>.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/aws/deploying/aws-marketplace-couchbase-terms-conditions.png" alt="aws marketplace couchbase terms conditions" width="570">
+</div>
+</div>
+</li>
+<li>
+<p>Configure the software by selecting CloudFormation Template from the <strong>Fulfillment option</strong> drop down. You can also customize the Couchbase Server version and the region where the software will be deployed.
 Then click <strong class="ui">Continue to Launch</strong>.</p>
 <div class="imageblock">
 <div class="content">
@@ -4511,20 +4510,7 @@ Then click <strong class="ui">Continue to Launch</strong>.</p>
 </div>
 </li>
 <li>
-<p>Review your configuration and then choose Launch CloudFormation to launch your configuration through the AWS CloudFormation console.</p>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-These templates are provided as a starting point and may be customized as needed.
-Note that additional post deployment setup may be required.
-</td>
-</tr>
-</table>
-</div>
+<p>Review your configuration and then choose Launch CloudFormation from the <strong>Choose Action</strong> drop down to launch your configuration through the AWS CloudFormation console.</p>
 <div class="imageblock">
 <div class="content">
 <img src="_images/aws/deploying/aws-marketplace-couchbase-ee-launch-action.png" alt="aws marketplace couchbase ee launch action" width="570">
@@ -4533,8 +4519,11 @@ Note that additional post deployment setup may be required.
 </li>
 <li>
 <p>You will be redirected to the AWS CloudFormation Console where you must create a stack.
-A stack is a group of related resources that you manage as a single unit.
-Select the <code class="in">Amazon S3 template URL</code> and then click <strong class="ui">Next</strong>.</p>
+A stack is a group of related resources that you manage as a single unit.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>In the <strong>Specify template</strong> section, choose the template source as the <code class="in">Amazon S3 URL</code> and then click <strong class="ui">Next</strong>.</p>
 <div class="imageblock">
 <div class="content">
 <img src="_images/aws/deploying/aws-marketplace-couchbase-ee-create-stack-select-template.png" alt="aws marketplace couchbase ee create stack select template" width="570">
@@ -4542,9 +4531,24 @@ Select the <code class="in">Amazon S3 template URL</code> and then click <strong
 </div>
 </li>
 <li>
-<p>Enter the stack name and parameter values.
-You can choose to use the default values defined in the AWS CloudFormation template or edit them.
-Then click <strong class="ui">Next</strong>.</p>
+<p>In the <strong>Specify stack details page</strong>
+Enter the stack name</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/aws/deploying/aws-marketplace-couchbase-ee-stack-stackname.png" alt="aws marketplace couchbase ee stack stackname" width="570">
+</div>
+</div>
+</li>
+<li>
+<p>Enter the <strong>Network Configuration/Access</strong> parameters, specifically the VPC where you would like to deploy the software, list of subnets, CIDR range to permit ssh access to the EC2 instances where the software is installed and the key-value pair to access the EC2 instances.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/aws/deploying/aws-marketplace-couchbase-ee-stack-stack-networkconfiguration.png" alt="aws marketplace couchbase ee stack stack networkconfiguration" width="570">
+</div>
+</div>
+</li>
+<li>
+<p>Enter the <strong>Core Server Configuration</strong> parameters. Other than specifying the database user name and password, you can choose to use the default values defined in the AWS CloudFormation template or edit them.</p>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -4557,14 +4561,21 @@ The user name and password will be required to log in to the Couchbase Server We
 </tr>
 </table>
 </div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/deploying/aws-marketplace-couchbase-ee-create-stack-parameters.png" alt="aws marketplace couchbase ee create stack parameters" width="570">
+<div class="paragraph">
+<p>image::aws/deploying/aws-marketplace-couchbase-ee-stack-stack-coreinstanceconfiguration.png</p>
 </div>
+</li>
+</ol>
 </div>
 </li>
 <li>
-<p>Optionally, you can specify tags for resources in your stack and the required permissions.
+<p>Optionally, if you plan to set up Couchbase Multi-Dimensional Scaling, you can customize the parameters in the <strong>Multi-Dimension Scaling Configuration</strong> section.</p>
+</li>
+<li>
+<p>Then click <strong class="ui">Next</strong>.</p>
+</li>
+<li>
+<p>Optionally, in the <strong>Configure stack options</strong> page, you can specify tags for resources and other options in your stack and the required permissions.
 Click <strong class="ui">Next</strong>.</p>
 <div class="imageblock">
 <div class="content">
@@ -4581,7 +4592,7 @@ Click <strong class="ui">Next</strong>.</p>
 </div>
 </li>
 <li>
-<p>The stack creation takes a short while to complete and the status is displayed on the screen.
+<p>The stack creation takes about 10 minutes to complete and the status is displayed on the screen.
 After the process is completed, you should see a <code class="out">CREATE_COMPLETE</code> status.</p>
 <div class="imageblock">
 <div class="content">
@@ -4605,7 +4616,7 @@ After the process is completed, you should see a <code class="out">CREATE_COMPLE
 </div>
 </div>
 <div class="paragraph">
-<p>Click <strong class="ui">Running Instances</strong> under Resources to view the running instances of Couchbase Server and Sync Gateway.
+<p>Click <strong class="ui">Instances(running)</strong> under Resources to view the running instances of Couchbase Server.
 You can select a particular instance to view details such as the instance ID, state, IPv4 Public IP, and so on.</p>
 </div>
 <div class="imageblock">
@@ -4631,7 +4642,7 @@ You can select a particular instance to view details such as the instance ID, st
 <p>Open a browser tab and enter the copied IPv4 Public IP along with port 8091 as <em class="path">&lt;ipv4-public-ip&gt;:8091</em> to open the Couchbase Server Web Console.</p>
 </li>
 <li>
-<p>Enter the Administrator user name and password you configured when creating the stack to sign in.</p>
+<p>Enter the database administrator user name and password you configured when creating the stack to sign in.</p>
 <div class="imageblock">
 <div class="content">
 <img src="_images/aws/logging-in/aws-couchbase-ee-login.png" alt="aws couchbase ee login" width="570">
@@ -4655,94 +4666,6 @@ You can select a particular instance to view details such as the instance ID, st
 </div>
 </li>
 </ol>
-</div>
-</li>
-<li>
-<p>This step describes how to log in to the Sync Gateway Admin portal.</p>
-<div class="olist loweralpha">
-<ol class="loweralpha" type="a">
-<li>
-<p>From the AWS EC2 console, select a running Couchbase Sync Gateway instance and copy the IPv4 Public IP.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/logging-in/aws-console-ec2-sync-gateway-instance-public-ip.png" alt="aws console ec2 sync gateway instance public ip" width="570">
-</div>
-</div>
-</li>
-<li>
-<p>Open a browser tab and enter the copied IPv4 Public IP along with port 4984 as <em class="path">&lt;ipv4-public-ip&gt;:4984</em>.
-This opens the interface for Couchbase Sync Gateway which is already setup and configured to connect to an empty bucket on the cluster.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/logging-in/aws-couchbase-sync-gateway-connection.png" alt="aws couchbase sync gateway connection" width="570">
-</div>
-</div>
-</li>
-<li>
-<p>Open another browser tab and enter <em class="path">&lt;ipv4-public-ip&gt;:4984/_admin/</em> to open the Couchbase Sync Gateway Admin Portal.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/logging-in/aws-couchbase-sync-gateway-admin-portal.png" alt="aws couchbase sync gateway admin portal" width="570">
-</div>
-</div>
-</li>
-</ol>
-</div>
-</li>
-</ol>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="scaling"><a class="anchor" href="#scaling"></a>Scaling Your Couchbase Cluster</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This section describes how to scale up your cluster in three simple steps.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Log in to the AWS EC2 Console and select <strong class="ui">Instances</strong> in the left navigation to list all the available instances.
-Select the Couchbase Server instance you wish to scale up.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/scaling/aws-ec2-network-interfaces-couchbase-server-instance.png" alt="aws ec2 network interfaces couchbase server instance" width="570">
-</div>
-</div>
-</li>
-<li>
-<p>On left navigation, select <strong class="ui">Auto Scaling Groups</strong>.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/scaling/aws-ec2-couchbase-server-auto-scaling-options.png" alt="aws ec2 couchbase server auto scaling options" width="570">
-</div>
-</div>
-</li>
-<li>
-<p>Edit the selected Auto Scaling Group and then <strong class="ui">Save</strong>.
-In the following screen captures, you&#8217;ll see that the number of server instances has been updated from 4 to 8.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/scaling/aws-ec2-couchbase-server-auto-scaling-group-edit.png" alt="aws ec2 couchbase server auto scaling group edit" width="570">
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/scaling/aws-ec2-couchbase-server-auto-scaling-group-save.png" alt="aws ec2 couchbase server auto scaling group save" width="570">
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/scaling/aws-ec2-couchbase-server-auto-scaling-group-updated.png" alt="aws ec2 couchbase server auto scaling group updated" width="570">
-</div>
-</div>
-</li>
-<li>
-<p>On a different browser tab, you can log in to the Couchbase Server Web Console to see the additional server nodes that were added to your cluster.</p>
-<div class="imageblock">
-<div class="content">
-<img src="_images/aws/scaling/aws-couchbase-web-console-servers-after-scaling.png" alt="aws couchbase web console servers after scaling" width="570">
-</div>
 </div>
 </li>
 </ol>

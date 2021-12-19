@@ -2039,7 +2039,7 @@ database.createIndex( config, "overviewFTSIndex")</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="using-the-index"><a class="anchor" href="#using-the-index"></a>Using the Index</h3>
+<h3 id="use-index"><a class="anchor" href="#use-index"></a>Use Index</h3>
 <div class="paragraph">
 <p>FullTextSearch is enabled using the N1QL match() function.</p>
 </div>
@@ -2068,293 +2068,14 @@ database.createIndex( config, "overviewFTSIndex")</code></pre>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">
-        val ftsQuery =
-              database.createQuery(
-                "SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan' ORDER BY RANK(overviewFTSIndex)");
+val ftsQuery =
+      database.createQuery(
+        "SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan' ORDER BY RANK(overviewFTSIndex)");
 
-        val rs = ftsQuery.execute().allResults()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
-        }
-        val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(FullTextExpression.index("overviewFTSIndex").match("michigan"))
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
-        }
-    }
-
-
-    fun testQuerySyntaxAll(currentUser: String) {
-        val listQuery: Query = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.database(openOrCreateDatabaseForUser(currentUser)))
-
-        val hotels: HashMap&lt;String, Hotel&gt; = HashMap()
-
-        for (result in listQuery.execute().allResults()) {
-            // get the k-v pairs from the 'hotel' key's value into a dictionary
-            val thisDocsProps = result.getDictionary(0) <i class="conum" data-value="1"></i><b>(1)</b>
-            val thisDocsId = thisDocsProps!!.getString("id")
-            val thisDocsName = thisDocsProps.getString("name")
-            val thisDocsType = thisDocsProps.getString("type")
-            val thisDocsCity = thisDocsProps.getString("city")
-
-            // Alternatively, access results value dictionary directly
-            val id = result.getDictionary(0)?.getString("id").toString() <i class="conum" data-value="2"></i><b>(2)</b>
-            hotels[id] = Hotel(
-                id,
-                result.getDictionary(0)?.getString("type"),
-                result.getDictionary(0)?.getString("name"),
-                result.getDictionary(0)?.getString("city"),
-                result.getDictionary(0)?.getString("country"),
-                result.getDictionary(0)?.getString("description")
-            )
-        }
-
-    }
-
-    @Throws(CouchbaseLiteException::class, JSONException::class)
-    fun testQuerySyntaxJson(currentUser: String, argDb: Database) {
-        val db = argDb
-        // Example assumes Hotel class object defined elsewhere
-
-        // Build the query
-        val listQuery: Query = QueryBuilder.select(SelectResult.all())
-            .from(DataSource.database(db))
-
-        // Uses Jackson JSON processor
-        val mapper = ObjectMapper()
-        val hotels: ArrayList&lt;Hotel&gt; = ArrayList()
-
-        for (result in listQuery.execute()) {
-
-            // Get result as JSON string
-            val json = result.toJSON() <i class="conum" data-value="3"></i><b>(3)</b>
-
-            // Get Hashmap from JSON string
-            val dictFromJSONstring = mapper.readValue(json, HashMap::class.java) <i class="conum" data-value="4"></i><b>(4)</b>
-
-            // Use created hashmap
-            val hotelId = dictFromJSONstring["id"].toString() //
-            val hotelType = dictFromJSONstring["type"].toString()
-            val hotelname = dictFromJSONstring["name"].toString()
-
-
-            // Get custom object from JSON string
-            val thisHotel = mapper.readValue(json, Hotel::class.java) <i class="conum" data-value="5"></i><b>(5)</b>
-            hotels.add(thisHotel)
-        }
-    }
-/* end func testQuerySyntaxJson <strong>/
-
-  fun docsOnlyQuerySyntaxN1QL(argDb: Database): List&lt;Result&gt; {
-      // For Documentation -- N1QL Query using parameters
-      val db = argDb
-      val thisQuery = db.createQuery(
-            "SELECT META().id AS id FROM _ WHERE type = \"hotel\"") <i class="conum" data-value="6"></i><b>(6)</b>
-
-      return thisQuery.execute().allResults()
-
-  }
-
-  fun docsOnlyQuerySyntaxN1QLParams(argDb: Database): List&lt;Result&gt; {
-      // For Documentation -- N1QL Query using parameters
-      val db = argDb
-      val thisQuery = db.createQuery(
-            "SELECT META().id AS id FROM _ WHERE type = \$type") <i class="conum" data-value="7"></i><b>(7)</b>
-
-      thisQuery.parameters = Parameters().setString("type", "hotel") <i class="conum" data-value="8"></i><b>(8)</b>
-
-      return thisQuery.execute().allResults()
-
-  }
-
-    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser)
-}
-
-
-
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
-
-
-
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
-//
-// Copyright (c) 2021 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// <a href="http://www.apache.org/licenses/LICENSE-2.0" class="bare">http://www.apache.org/licenses/LICENSE-2.0</a>
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-package com.couchbase.code_snippets
-
-import android.util.Log
-import com.couchbase.lite.</strong>
-import org.json.JSONException
-import org.json.JSONObject
-
-
-const val JSON = """[{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\",
-        \"country\":\"France\",\"description\":\"Undefined description for Hotel Ted\"},
-        {\"id\":\"1001\",\"type\":\"hotel\",\"name\":\"Hotel Fred\",\"city\":\"London\",
-        \"country\":\"England\",\"description\":\"Undefined description for Hotel Fred\"},
-        {\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",
-        \"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\",
-        \"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]"""
-
-
-class KtJSONExamples {
-    private val TAG = "SNIPPETS"
-
-    fun jsonArrayExample(db: Database) {
-        // github tag=tojson-array
-        val mArray = MutableArray(JSON) <i class="conum" data-value="9"></i><b>(9)</b>
-        for (i in 0 until mArray.count()) {
-            mArray.getDictionary(i)?.apply {
-                Log.i(TAG, getString("name") ?: "unknown")
-                db.save(MutableDocument(getString("id"), toMap()))
-            } <i class="conum" data-value="10"></i><b>(10)</b>
-        }
-
-        db.getDocument("1002")?.getArray("features")?.apply {
-            for (feature in toList()) {
-                Log.i(TAG, "$feature")
-            } <i class="conum" data-value="11"></i><b>(11)</b>
-            Log.i(TAG, toJSON())
-        } <i class="conum" data-value="12"></i><b>(12)</b>
-    }
-
-    fun jsonBlobExample(db: Database) {
-        // github tag=tojson-blob
-        val thisBlob = db.getDocument("thisdoc-id")!!.toMap()
-        if (!Blob.isBlob(thisBlob)) {
-          return
-        }
-        val blobType = thisBlob["content_type"].toString()
-        val blobLength = thisBlob["length"] as Number?
-    }
-
-    fun jsonDictionaryExample() {
-        // github tag=tojson-dictionary
-        val mDict = MutableDictionary(JSON) <i class="conum" data-value="13"></i><b>(13)</b>
-        Log.i(TAG, "$mDict")
-        Log.i(TAG, "Details for: ${mDict.getString("name")}")
-        for (key in mDict.keys) {
-          Log.i(TAG, key + " =&gt; " + mDict.getValue(key))
-        }
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
-        QueryBuilder
-            .select(SelectResult.expression(Meta.id).<code>as</code>("metaId"))
-            .from(DataSource.database(srcDb))
-            .execute()
-            .forEach {
-                it.getString("metaId")?.let { thisId -&gt;
-                    srcDb.getDocument(thisId)?.toJSON()?.let { json -&gt; <i class="conum" data-value="14"></i><b>(14)</b>
-                        Log.i(TAG, "JSON String = $json")
-                        val hotelFromJSON = MutableDocument(thisId, json) <i class="conum" data-value="15"></i><b>(15)</b>
-                        dstDb.save(hotelFromJSON)
-                        dstDb.getDocument(thisId)?.toMap()?.forEach { e -&gt;
-                            Log.i(TAG, "$e.key =&gt; $e.value")
-                        } <i class="conum" data-value="16"></i><b>(16)</b>
-                    }
-                }
-            }
-    }
-
-    @Throws(CouchbaseLiteException::class, JSONException::class)
-    fun jsonQueryExample(query: Query) {
-        query.execute().forEach {
-
-            // Use a Json Object to populate Native object
-            JSONObject(it.toJSON()).apply {
-                val (description, country, city, name, type, id) = Hotel(
-                    id = getString("id"),
-                    type = getString("type"),
-                    name = getString("name"),
-                    city = getString("city"),
-                    country = "Ghana, West Africa",
-                    description = "this hotel"
-                )
-            }
-        }
-    }
-}
-
-
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
-
-
-
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
-//
-// Copyright (c) 2021 Couchbase, Inc All rights reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// <a href="http://www.apache.org/licenses/LICENSE-2.0" class="bare">http://www.apache.org/licenses/LICENSE-2.0</a>
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-package com.couchbase.code_snippets
-
-import android.content.Context
-import android.util.Log
-import com.couchbase.lite.Blob
-import com.couchbase.lite.Database
-import com.couchbase.lite.MutableDictionary
-
-class KtBlobExamples {
-
-    // Example 2: Using Blobs
-    fun example2(context: Context, db: Database) {
-        val doc = db.getDocument("1000") ?: return
-
-        // Create a blob from an asset
-        val blob = Blob("image/png", context.assets.open("couchbaseimage.png"))
-
-        // This will fail:
-        // IllegalStateException("A Blob may be encoded as JSON only after it has been saved in a database")
-        blob.toJSON()
-
-        // Save the blob as part of a document
-        db.save(doc.toMutable().setBlob("avatar", blob))
-
-        // Experts only!!!
-        db.saveBlob(blob)
-
-        // Retrieve saved blob and get as JSON again
-        val blobAsJSONString = db.getDocument("1000")?.getBlob("avatar")?.toJSON() ?: return
-
-        // reconstitute
-        val blobAsMap = MutableDictionary().setJSON(blobAsJSONString).toMap()
-
-        // show the contents of the reconstituted blob
-        for key, value) in blobAsMap) {             Log.d("BLOB", "Data: $key -&gt; $value")         }          // verify that the reconstitued thing is still blob         if (Blob.isBlob(blobAsMap {
-            Log.d("BLOB", blobAsJSONString)
-        }
-    }
-}
-
-
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt </code></pre>
+val rs = ftsQuery.execute().allResults()
+for (result in rs) {
+    Log.i(TAG, "document properties${result.getString(0)}")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2385,7 +2106,7 @@ for (Result result : ftsQueryResult) {
 <h2 id="querybuilder"><a class="anchor" href="#querybuilder"></a>QueryBuilder</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="create"><a class="anchor" href="#create"></a>Create</h3>
+<h3 id="create-index-2"><a class="anchor" href="#create-index-2"></a>Create Index</h3>
 <div class="paragraph">
 <p>The following example creates an FTS index on the <code>name</code> property.</p>
 </div>
@@ -2429,7 +2150,7 @@ for (Result result : ftsQueryResult) {
 </div>
 </div>
 <div class="sect2">
-<h3 id="use-the-index"><a class="anchor" href="#use-the-index"></a>Use the Index</h3>
+<h3 id="use-index-2"><a class="anchor" href="#use-index-2"></a>Use Index</h3>
 <div class="paragraph">
 <p>With the index created, you can construct and run a Full-text search (FTS) query using the indexed properties.</p>
 </div>
@@ -2454,7 +2175,13 @@ for (Result result : ftsQueryResult) {
 <div class="tab-pane" aria-labelledby="tabset4_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
+    .from(DataSource.database(database))
+    .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
+    .execute()
+for (result in rs) {
+    Log.i(TAG, "document properties${result.getString(0)}")
+}</code></pre>
 </div>
 </div>
 </div>

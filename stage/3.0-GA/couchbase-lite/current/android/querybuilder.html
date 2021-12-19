@@ -2130,13 +2130,8 @@ See the <a href="indexing.html" class="page">Indexing</a> topic to learn more ab
 <div class="tab-pane" aria-labelledby="tabset1_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">database.createIndex(
-    "TypeNameIndex",
-    IndexBuilder.valueIndex(
-        ValueIndexItem.property("type"),
-        ValueIndexItem.property("name")
-    )
-)</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">database.createIndex( "TypeNameIndex",
+      ValueIndexConfiguration( "type", "name")</code></pre>
 </div>
 </div>
 </div>
@@ -4308,11 +4303,11 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 <pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/Peer2PeerExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -4355,6 +4350,11 @@ class QueryExamples(private val database: Database) {
     // <mark># Indexing
     @Throws(CouchbaseLiteException::class)
     fun testIndexing() {
+        database.createIndex( "TypeNameIndex",
+              ValueIndexConfiguration( "type", "name")
+    }
+
+    fun testIndexing_Querybuilder() {
         database.createIndex(
             "TypeNameIndex",
             IndexBuilder.valueIndex(
@@ -4759,7 +4759,7 @@ class QueryExamples(private val database: Database) {
     fun testFTS_Querybuilder() {
         val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
             .from(DataSource.database(database))
-            .where(FullTextExpression.index("overviewFTSIndex").match("michigan"))
+            .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
             .execute()
         for (result in rs) {
             Log.i(TAG, "document properties${result.getString(0)}")
@@ -4856,11 +4856,11 @@ class QueryExamples(private val database: Database) {
 
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/QueryExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -4974,11 +4974,11 @@ class KtJSONExamples {
 }
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt 
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/JSONExamples.kt
 
 
 
-// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt 
+// MODULE_BEGIN --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt
 //
 // Copyright (c) 2021 Couchbase, Inc All rights reserved.
 //
@@ -5035,7 +5035,7 @@ class KtBlobExamples {
 }
 
 
-// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt </code></pre>
+// MODULE_END --/Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/BlobExamples.kt</code></pre>
 </div>
 </div>
 </div>
