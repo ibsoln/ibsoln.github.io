@@ -2007,9 +2007,8 @@ They create and use an FTS index built from the hotel&#8217;s <code>Overview</co
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">database.createIndex(
-    "nameFTSIndex",
-    IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false));</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">FullTextIndexConfiguration config = FullTextIndexConfiguration(["Overview"])
+database.createIndex( config, "overviewFTSIndex");</code></pre>
 </div>
 </div>
 </div>
@@ -2031,10 +2030,10 @@ They create and use an FTS index built from the hotel&#8217;s <code>Overview</co
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">Expression whereClause = FullTextExpression.index("nameFTSIndex").match("buy");
-Query ftsQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
-    .from(DataSource.database(database))
-    .where(whereClause);
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">
+Query ftsQuery =
+    db.createQuery(
+      "SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan' ORDER BY RANK(overviewFTSIndex)");
 ResultSet ftsQueryResult = ftsQuery.execute();
 for (Result result : ftsQueryResult) {
     Log.i(
@@ -2061,7 +2060,9 @@ for (Result result : ftsQueryResult) {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">[data-source-url=file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">database.createIndex(
+    "nameFTSIndex",
+    IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false));</code></pre>
 </div>
 </div>
 </div>
@@ -2080,7 +2081,16 @@ for (Result result : ftsQueryResult) {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">[data-source-url=file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java]</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">Expression whereClause = FullTextExpression.index("nameFTSIndex").match("buy");
+Query ftsQuery = QueryBuilder.select(SelectResult.expression(Meta.id))
+    .from(DataSource.database(database))
+    .where(whereClause);
+ResultSet ftsQueryResult = ftsQuery.execute();
+for (Result result : ftsQueryResult) {
+    Log.i(
+        TAG,
+        String.format("document properties %s", result.getString(0)));
+}</code></pre>
 </div>
 </div>
 </div>

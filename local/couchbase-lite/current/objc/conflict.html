@@ -2182,11 +2182,11 @@ While this is true of any user defined functions, app developers must be strongl
 <div class="tab-pane" aria-labelledby="tabset1_local-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">@interface LocalWinConflictResolver: NSObject&lt;CBLConflictResolver&gt;
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">@interface LocalWinConflictResolver :NSObject&lt;CBLConflictResolver&gt;
 @end
 
 @implementation LocalWinConflictResolver
-- (CBLDocument*) resolve: (CBLConflict*)conflict {
+- (CBLDocument*) resolve:(CBLConflict*)conflict {
     return conflict.localDocument;
 }
 
@@ -2197,11 +2197,11 @@ While this is true of any user defined functions, app developers must be strongl
 <div class="tab-pane" aria-labelledby="tabset1_remote-wins">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">@interface RemoteWinConflictResolver: NSObject&lt;CBLConflictResolver&gt;
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">@interface RemoteWinConflictResolver:NSObject&lt;CBLConflictResolver&gt;
 @end
 
 @implementation RemoteWinConflictResolver
-- (CBLDocument*) resolve: (CBLConflict*)conflict {
+- (CBLDocument*) resolve:(CBLConflict*)conflict {
     return conflict.remoteDocument;
 }
 
@@ -2212,11 +2212,11 @@ While this is true of any user defined functions, app developers must be strongl
 <div class="tab-pane" aria-labelledby="tabset1_merge">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">@interface MergeConflictResolver: NSObject&lt;CBLConflictResolver&gt;
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">@interface MergeConflictResolver:NSObject&lt;CBLConflictResolver&gt;
 @end
 
 @implementation MergeConflictResolver
-- (CBLDocument*) resolve: (CBLConflict*)conflict {
+- (CBLDocument*) resolve:(CBLConflict*)conflict {
     NSDictionary *localDict = conflict.localDocument.toDictionary;
     NSDictionary *remoteDict = conflict.remoteDocument.toDictionary;
 
@@ -2329,11 +2329,11 @@ When the value is <code>null</code>, the default conflict resolution will be app
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSURL *url = [[NSURL alloc] initWithString:@"ws://localhost:4984/getting-started-db"];
 CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
-CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database target:target];
 config.conflictResolver = [[LocalWinConflictResolver alloc] init];
 
-CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
-[replicator start];</code></pre>
+self.replicator = [[CBLReplicator alloc] initWithConfig:config];
+[self.replicator start];</code></pre>
 </div>
 </div>
 </div>
@@ -2454,21 +2454,21 @@ In the event of conflicting keys, it will pick the key value from <code>new</cod
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDocument *document = [database documentWithID:@"xyz"];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDocument *document = [self.database documentWithID:@"xyz"];
 CBLMutableDocument *mutableDocument = [document toMutable];
 [mutableDocument setString:@"apples" forKey:@"name"];
 
-[database saveDocument:mutableDocument
+[self.database saveDocument:mutableDocument
        conflictHandler:^BOOL(CBLMutableDocument *new, CBLDocument *current) {
            NSDictionary *currentDict = current.toDictionary;
            NSDictionary *newDict = new.toDictionary;
 
            NSMutableDictionary *result = [NSMutableDictionary dictionaryWithDictionary:currentDict];
            [result addEntriesFromDictionary:newDict];
-           [new setData: result];
+           [new setData:result];
            return YES;
        }
-                 error: &amp;error];</code></pre>
+                 error:&amp;error];</code></pre>
 </div>
 </div>
 </div>

@@ -2187,27 +2187,19 @@ Statistics on delta-sync usage are available, including the total number of revi
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLURLEndpointListenerConfiguration* thisConfig;
-  thisConfig =
-    [[CBLURLEndpointListenerConfiguration alloc]
-      initWithDatabase: database]; <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLURLEndpointListenerConfiguration *config = [[CBLURLEndpointListenerConfiguration alloc]
+                                               initWithDatabase:self.database]; <i class="conum" data-value="1"></i><b>(1)</b>
 
-thisConfig.authenticator =
-  [[CBLListenerPasswordAuthenticator alloc]
-    initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
-      if ([self isValidCredentials: validUser password:validPassword]) {
-          return  YES;
-      }
-      return NO;
-  }]; <i class="conum" data-value="2"></i><b>(2)</b>
+config.authenticator = [[CBLListenerPasswordAuthenticator alloc]
+                            initWithBlock:^BOOL(NSString  *validUser, NSString  *validPassword) {
+    return [self isValidCredentials:validUser password:validPassword];
+}]; <i class="conum" data-value="2"></i><b>(2)</b>
 
-CBLURLEndpointListener* thisListener = nil;
-thisListener =
-  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig]; <i class="conum" data-value="3"></i><b>(3)</b>
+self.listener = [[CBLURLEndpointListener alloc] initWithConfig:config]; <i class="conum" data-value="3"></i><b>(3)</b>
 
-BOOL success = [thisListener startWithError: &amp;error];
+BOOL success = [self.listener startWithError:&amp;error];
 if (!success) {
-    NSLog(@"Cannot start the listener: %@", error);
+    NSLog(@"Cannot start the listener:%@", error);
 } <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
 </div>
@@ -2241,27 +2233,21 @@ if (!success) {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSURL *url =
-  [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-CBLURLEndpoint *theListenerURL =
-  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSURL *url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+CBLURLEndpoint *endpoint = [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="1"></i><b>(1)</b>
 
-CBLReplicatorConfiguration *thisConfig
-  = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:theListenerURL]; <i class="conum" data-value="2"></i><b>(2)</b>
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database
+                                                                                   target:endpoint]; <i class="conum" data-value="2"></i><b>(2)</b>
 
-thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="3"></i><b>(3)</b>
+config.acceptOnlySelfSignedServerCertificate = YES; // &lt;.&gt; //FIXME: Remove this from doc!
 
-thisConfig.authenticator =
-  [[CBLBasicAuthenticator alloc]
-    initWithUsername:@"valid.user"
-      password:@"valid.password.string"]; <i class="conum" data-value="4"></i><b>(4)</b>
+config.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"valid.user"
+                                                              password:@"valid.password.string"]; <i class="conum" data-value="3"></i><b>(3)</b>
 
 
-CBLReplicator *_thisReplicator;
-_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="5"></i><b>(5)</b>
+self.replicator = [[CBLReplicator alloc] initWithConfig:config]; <i class="conum" data-value="4"></i><b>(4)</b>
 
-[_thisReplicator start]; <i class="conum" data-value="6"></i><b>(6)</b></code></pre>
+[self.replicator start]; <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 </div>

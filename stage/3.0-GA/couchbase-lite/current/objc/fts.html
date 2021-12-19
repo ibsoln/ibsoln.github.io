@@ -2008,18 +2008,22 @@ They create and use an FTS index built from the hotel&#8217;s <code>Overview</co
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Insert documents
-NSArray *tasks = @[@"buy groceries", @"play chess", @"book travels", @"buy museum tickets"];
-for (NSString *task in tasks) {
+NSArray <strong>overviews = @[@"buy groceries", @"play chess", @"book travels", @"buy museum tickets"];
+for (NSString *overview in overviews) {
     CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
     [doc setString:@"task" forKey:@"type"];
-    [doc setString:task forKey:@"name"];
-    [database saveDocument:doc error:&amp;error];
+    [doc setString:overview forKey:@"overview"];
+    [self.database saveDocument:doc error:&amp;error];
 }
 
 // Create index
-CBLFullTextIndex *index = [CBLIndexBuilder fullTextIndexWithItems:@[[CBLFullTextIndexItem property:@"name"]]];
-index.ignoreAccents = NO;
-[database createIndex:index withName:@"nameFTSIndex" error:&amp;error];</code></pre>
+CBLFullTextIndexConfiguration</strong> config =
+    [[CBLFullTextIndexConfiguration alloc]
+        initWithExpression: @[@"overview"]
+        ignoreAccents: NO language: nil];
+
+[self.database createIndexWithConfig: config
+        name: @"overviewFTSIndex" error: &amp;error];</code></pre>
 </div>
 </div>
 </div>
@@ -2041,16 +2045,12 @@ index.ignoreAccents = NO;
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQueryExpression <strong>where =
-  [[CBLQueryFullTextExpression indexWithName:@"nameFTSIndex"] match:@"'buy'"];
-CBLQuery *query =
-  [CBLQueryBuilder
-    select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
-    from:[CBLQueryDataSource database:database]
-    where:where];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSString *ftsQueryString =
+@"SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan' ORDER BY RANK(overviewFTSIndex)";
 
-NSEnumerator</strong> rs = [query execute:&amp;error];
-for (CBLQueryResult *result in rs) {
+CBLQuery *ftsQuery = [self.database createQuery:ftsQueryString];
+NSEnumerator *results = [ftsQuery execute:&amp;error];
+for (CBLQueryResult *result in results) {
     NSLog(@"document id %@", [result stringAtIndex:0]);
 }</code></pre>
 </div>
@@ -2073,7 +2073,19 @@ for (CBLQueryResult *result in rs) {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Insert documents
+NSArray *tasks = @[@"buy groceries", @"play chess", @"book travels", @"buy museum tickets"];
+for (NSString *task in tasks) {
+    CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
+    [doc setString:@"task" forKey:@"type"];
+    [doc setString:task forKey:@"name"];
+    [self.database saveDocument:doc error:&amp;error];
+}
+
+// Create index
+CBLFullTextIndex *index = [CBLIndexBuilder fullTextIndexWithItems:@[[CBLFullTextIndexItem property:@"name"]]];
+index.ignoreAccents = NO;
+[self.database createIndex:index withName:@"nameFTSIndex" error:&amp;error];</code></pre>
 </div>
 </div>
 </div>
@@ -2092,7 +2104,18 @@ for (CBLQueryResult *result in rs) {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQueryExpression *where = [CBLQueryFullTextFunction matchWithIndexName:@"nameFTSIndex"
+                                                                   query:@"'buy'"];
+CBLQuery *query =
+  [CBLQueryBuilder
+    select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
+    from:[CBLQueryDataSource database:self.database]
+    where:where];
+
+NSEnumerator *rs = [query execute:&amp;error];
+for (CBLQueryResult *result in rs) {
+    NSLog(@"document id %@", [result stringAtIndex:0]);
+}</code></pre>
 </div>
 </div>
 </div>

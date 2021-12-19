@@ -2033,7 +2033,7 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// `myMLModel` is a fake implementation
 // this would be the implementation of the ml model you have chosen
 class myMLModel {
-    static func predictImage(data: Data) -&gt; [String : AnyObject] {}
+    static func predictImage(data: Data) -&gt; [String : AnyObject] { return [:] }
 }
 
 class ImageClassifierModel: PredictiveModel {
@@ -2104,7 +2104,7 @@ When documents are added or updated, the index will call the prediction function
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let input = Expression.dictionary(["photo": Expression.property("photo")])
-let prediction = PredictiveModel.predict(model: "ImageClassifier", input: input)
+let prediction = Function.prediction(model: "ImageClassifier", input: input)
 
 let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(prediction.property("label")))
 try database.createIndex(index, withName: "value-index-image-classifier")</code></pre>
@@ -2138,17 +2138,17 @@ try database.createIndex(index, withName: "predictive-index-image-classifier")</
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let input = Expression.dictionary(["photo": Expression.property("photo")])
-let prediction = PredictiveModel.predict(model: "ImageClassifier", input: input) <i class="conum" data-value="1"></i><b>(1)</b>
+let prediction = Function.prediction(model: "ImageClassifier", input: input) <i class="conum" data-value="1"></i><b>(1)</b>
 
 let query = QueryBuilder
     .select(SelectResult.all())
     .from(DataSource.database(database))
     .where(
         prediction.property("label").equalTo(Expression.string("car"))
-        .and(
-            prediction.property("probablity")
-                .greaterThanOrEqualTo(Expression.double(0.8))
-        )
+            .and(
+                prediction.property("probablity")
+                    .greaterThanOrEqualTo(Expression.double(0.8))
+            )
     )
 
 // Run the query.

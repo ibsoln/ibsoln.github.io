@@ -2231,16 +2231,20 @@ Further, you can no longer set a log level for a specific domain.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">fileprivate class LogTestLogger: Logger {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">class LogTestLogger: Logger {
 
     // set the log level
     var level: LogLevel = .none
+
+    // constructor for easiness
+    init(_ level: LogLevel) {
+        self.level = level
+    }
 
     func log(level: LogLevel, domain: LogDomain, message: String) {
         // handle the message, for example piping it to
         // a third party framework
     }
-
 }</code></pre>
 </div>
 </div>
@@ -2254,7 +2258,8 @@ Further, you can no longer set a log level for a specific domain.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">Database.log.custom = LogTestLogger(.warning) <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let logger = LogTestLogger(.warning)
+Database.log.custom =  logger <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2388,8 +2393,13 @@ This information is included for completeness only.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">Database.setLogLevel(.verbose, domain: .replicator)
-Database.setLogLevel(.verbose, domain: .query)</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// verbose / replicator
+Database.log.console.level = .verbose
+Database.log.console.domains = .replicator
+
+// verbose / query
+Database.log.console.level = .verbose
+Database.log.console.domains = .query</code></pre>
 </div>
 </div>
 </div>

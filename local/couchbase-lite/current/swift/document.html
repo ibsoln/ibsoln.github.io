@@ -2126,9 +2126,9 @@ This can often be useful to pass the document contents as a plain object to anot
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">newTask.toDictionary() <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">print(newTask.toDictionary())  <i class="conum" data-value="1"></i><b>(1)</b>
 
-newTask.toJSON() <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+print(newTask.toJSON()) <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2195,46 +2195,14 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">if let doc = database.document(withID: "1000") {<i class="conum" data-value="1"></i><b>(1)</b>
+    guard let array = doc.array(forKey: "list") else {
+        return
+    }
 
-
-
-
-let thisJSONstring = """
-    [{\"id\":\"1000\",\"type\":\"hotel\",\"name\":\"Hotel Ted\",\"city\":\"Paris\",
-    \"country\":\"France\",\"description\":\"Undefined description for Hotel Ted\"},
-    {\"id\":\"1001\",\"type\":\"hotel\",\"name\":\"Hotel Fred\",\"city\":\"London\",
-    \"country\":\"England\",\"description\":\"Undefined description for Hotel Fred\"},
-    {\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",
-    \"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\",
-    \"features\":[\"Cable TV\",\"Toaster\",\"Microwave\"]}]
-    """
-let myArray:MutableArrayObject =
-    try! MutableArrayObject.init(json: thisJSONstring) <i class="conum" data-value="1"></i><b>(1)</b>
-
-for i in 0...myArray.count-1 {
-
-    print(i+1, myArray.dictionary(at: i)!.string(forKey: "name")!)
-
-    var docid = myArray.dictionary(at: i)!.string(forKey: "id")
-
-    var newdoc:MutableDocument = <i class="conum" data-value="2"></i><b>(2)</b>
-        try! MutableDocument(id: docid,
-                 data: (myArray.dictionary(at: i)?.toDictionary())! )
-
-    try! dbnew.saveDocument(newdoc)
-
-}
-
-let extendedDoc = dbnew.document(withID: "1002")
-let features =
-    extendedDoc!.array(forKey: "features")?.toArray() <i class="conum" data-value="3"></i><b>(3)</b>
-for i in 0...features!.count-1 {
-    print(features![i])
-}
-
-print( extendedDoc!.array(
-        forKey: "features")?.toJSON() as! String) <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+    let json = array.toJSON() <i class="conum" data-value="2"></i><b>(2)</b>
+    print(json)
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2277,37 +2245,14 @@ print( extendedDoc!.array(
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Get a document
-  let thisDoc = db.document(withID: "1000")?.toMutable() <i class="conum" data-value="1"></i><b>(1)</b>
+if let doc = database.document(withID: "1000") {<i class="conum" data-value="1"></i><b>(1)</b>
+    guard let blob = doc.blob(forKey: "avatar") else {
+        return
+    }
 
-  // Get the image and add as a blob to the document
-  let contentType = "image/jpg";
-  let ourImage = UIImage(named: "couchbaseimage.png")!
-  let imageData = ourImage.jpegData(compressionQuality: 1)!
-  thisDoc?.setBlob(
-      Blob(contentType: contentType, data: imageData), forKey: "avatar") <i class="conum" data-value="2"></i><b>(2)</b>
-
- let theBlobAsJSONstringFails =
-        thisDoc?.blob(forKey: "avatar")!.toJSON();
-
-  // Save blob as part of doc or alternatively as a blob
-
-  try! db.saveDocument(thisDoc!);
-  try! db.saveBlob(
-          blob: Blob(contentType: contentType, data: imageData)); <i class="conum" data-value="3"></i><b>(3)</b>
-
-  // Retrieve saved blob as a JSON, reconstitue and check still blob
-  let sameDoc = db.document(withID: "1000")
-  let sameBlob = sameDoc?.blob(forKey: "avatar")
-  let theBlobAsJSONstring = sameBlob!.toJSON(); <i class="conum" data-value="4"></i><b>(4)</b>
-
-  for (key, value) in sameDoc!.toDictionary() {
-       print( "Data -- {0) = {1}", key, value);
-  }
-
-  if(Blob.isBlob(properties: sameBlob!.properties)) <i class="conum" data-value="5"></i><b>(5)</b>
-  {
-      print(theBlobAsJSONstring);
-  }</code></pre>
+    let json = blob.toJSON() <i class="conum" data-value="2"></i><b>(2)</b>
+    print(json)
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2340,25 +2285,13 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">if let doc = database.document(withID: "1000") {<i class="conum" data-value="1"></i><b>(1)</b>
+    guard let dictionary = doc.dictionary(forKey: "dictionary") else {
+        return
+    }
 
-
-var aJSONstring = """
-    {\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\",\"city\":\"Balmain\",
-    \"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\"}
-    """
-
-let myDict:MutableDictionaryObject =
-    try! MutableDictionaryObject(json: aJSONstring) <i class="conum" data-value="1"></i><b>(1)</b>
-print(myDict)
-
-let name = myDict.string(forKey: "name")
-print("Details for: ", name!)
-
-for key in myDict {
-
-    print(key, myDict.value(forKey: key) as! String)
-
+    let json = dictionary.toJSON() <i class="conum" data-value="2"></i><b>(2)</b>
+    print(json)
 }</code></pre>
 </div>
 </div>
@@ -2397,35 +2330,15 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
-
-let db = try! Database(name: "hotel")
-let dbnew = try! Database(name: "newhotels")
-var hotels = [String:Any]()
-
-let listQuery = QueryBuilder
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let database = try Database(name: "hotel")
+let query = QueryBuilder
     .select(SelectResult.expression(Meta.id).as("metaId"))
-    .from(DataSource.database(db))
+    .from(DataSource.database(database))
 
-
-for row in try! listQuery.execute() {
-    var thisId = row.string(forKey: "metaId")! as String
-
-    var thisJSONstring = try! db.document(withID: thisId)!.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
-
-    print("JSON String = ", thisJSONstring as! String)
-
-    let hotelFromJSON:MutableDocument = <i class="conum" data-value="2"></i><b>(2)</b>
-            try! MutableDocument(id: thisId as? String, json: thisJSONstring)
-
-    try! dbnew.saveDocument(hotelFromJSON)
-
-    let newhotel = dbnew.document(withID: thisId)
-
-    let keys = newhotel!.keys
-    for key in keys { <i class="conum" data-value="3"></i><b>(3)</b>
-        print(key, newhotel!.value(forKey: key) as! String)
-    }</code></pre>
+if let doc = database.document(withID: "doc-id") {
+    let json = doc.toJSON()
+    print(json)
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2474,38 +2387,30 @@ for row in try! listQuery.execute() {
 //   ... other class content
 // }
 
+let results = try query.execute()
+for row in  results {
 
-    do {
-        var results = try! listQuery.execute()
-        for row in  results {
+    // get the result into a JSON String
+    let jsonString = row.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
 
-            // get the result into a JSON String
-            let jsonString = row.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
+    let thisJsonObj:Dictionary =
+    try (JSONSerialization.jsonObject(
+        with: jsonString.data(using: .utf8)!,
+        options: .allowFragments)
+         as? [String: Any])! <i class="conum" data-value="2"></i><b>(2)</b>
 
-            let thisJsonObj:Dictionary =
-                try! (JSONSerialization.jsonObject(
-                        with: jsonString.data(using: .utf8)!,
-                                              options: .allowFragments)
-                        as? [String: Any])! <i class="conum" data-value="2"></i><b>(2)</b>
+    // Use Json Object to populate Native object
+    // Use Codable class to unpack JSON data to native object
+    var this_hotel: Hotel = try JSONDecoder().decode(Hotel.self, from: jsonString.data(using: .utf8)!) <i class="conum" data-value="3"></i><b>(3)</b>
 
-            // Use Json Object to populate Native object
-            // Use Codable class to unpack JSON data to native object
-            let this_hotel:Hotel =
-                (try JSONDecoder().decode(
-                    Hotel.self,
-                    from: jsonString.data(using: .utf8)!
-                    )
-                ) <i class="conum" data-value="3"></i><b>(3)</b>
+    // ALTERNATIVELY unpack in steps
+    this_hotel.id = thisJsonObj["id"] as! String
+    this_hotel.name = thisJsonObj["name"] as! String
+    this_hotel.type = thisJsonObj["type"] as! String
+    this_hotel.city = thisJsonObj["city"] as! String
+    hotels[this_hotel.id] = this_hotel
 
-            // ALTERNATIVELY unpack in steps
-            this_hotel.id = thisJsonObj["id"] as! String
-            this_hotel.name = thisJsonObj["name"] as! String
-            this_hotel.type = thisJsonObj["type"] as! String
-            this_hotel.city = thisJsonObj["city"] as! String
-            hotels[this_hotel.id] = this_hotel
-
-
-        } // end for</code></pre>
+} // end for</code></pre>
 </div>
 </div>
 </div>
@@ -2634,13 +2539,13 @@ let ttl = Calendar.current.date(byAdding: .day, value: 1, to: Date())
 try database.setDocumentExpiration(withID: "doc123", expiration: ttl)
 
 // Reset expiration
-try db.setDocumentExpiration(withID: "doc1", expiration: nil)
+try database.setDocumentExpiration(withID: "doc1", expiration: nil)
 
 // Query documents that will be expired in less than five minutes
 let fiveMinutesFromNow = Date(timeIntervalSinceNow: 60 * 5).timeIntervalSince1970
 let query = QueryBuilder
     .select(SelectResult.expression(Meta.id))
-    .from(DataSource.database(db))
+    .from(DataSource.database(database))
     .where(
         Meta.expiration.lessThan(
             Expression.double(fiveMinutesFromNow)

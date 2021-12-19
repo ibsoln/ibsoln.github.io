@@ -2163,13 +2163,13 @@ You can over ride that where necessary and output a plain text log.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSString* tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cbllog"];
-CBLLogFileConfiguration* config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder]; <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSString *tempFolder = [NSTemporaryDirectory() stringByAppendingPathComponent:@"cbllog"];
+CBLLogFileConfiguration *config = [[CBLLogFileConfiguration alloc] initWithDirectory:tempFolder]; <i class="conum" data-value="1"></i><b>(1)</b>
 config.maxRotateCount = 2; <i class="conum" data-value="2"></i><b>(2)</b>
 config.maxSize = 1024; <i class="conum" data-value="3"></i><b>(3)</b>
 config.usePlainText = YES; <i class="conum" data-value="4"></i><b>(4)</b>
 [CBLDatabase.log.file setConfig:config];
-[CBLDatabase.log.file setLevel: kCBLLogLevelInfo]; <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+[CBLDatabase.log.file setLevel:kCBLLogLevelInfo]; <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2232,7 +2232,7 @@ Further, you can no longer set a log level for a specific domain.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">@interface LogTestLogger : NSObject&lt;CBLLogger&gt;
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">@interface LogTestLogger :NSObject&lt;CBLLogger&gt;
 
 // set the log level
 @property (nonatomic) CBLLogLevel level;
@@ -2243,7 +2243,7 @@ Further, you can no longer set a log level for a specific domain.</p>
 
 @synthesize level=_level;
 
-- (void) logWithLevel: (CBLLogLevel)level domain: (CBLLogDomain)domain message: (NSString*)message {
+- (void) logWithLevel:(CBLLogLevel)level domain:(CBLLogDomain)domain message:(NSString*)message {
     // handle the message, for example piping it to
     // a third party framework
 }
@@ -2261,7 +2261,9 @@ Further, you can no longer set a log level for a specific domain.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[CBLDatabase.log setCustom:[[LogTestLogger alloc] initWithLogLevel: kCBLLogLevelWarning]];</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">LogTestLogger *logger = [[LogTestLogger alloc] init];
+logger.level = kCBLLogLevelWarning;
+[CBLDatabase.log setCustom:logger];</code></pre>
 </div>
 </div>
 </div>
@@ -2395,8 +2397,14 @@ This information is included for completeness only.
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[CBLDatabase setLogLevel: kCBLLogLevelVerbose domain: kCBLLogDomainReplicator];
-[CBLDatabase setLogLevel: kCBLLogLevelVerbose domain: kCBLLogDomainQuery];</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
+// Replicator / Verbose
+CBLDatabase.log.console.level = kCBLLogLevelVerbose;
+CBLDatabase.log.console.domains = kCBLLogDomainReplicator;
+
+// Query /  Verbose
+CBLDatabase.log.console.level = kCBLLogLevelVerbose;
+CBLDatabase.log.console.domains = kCBLLogDomainQuery;</code></pre>
 </div>
 </div>
 </div>

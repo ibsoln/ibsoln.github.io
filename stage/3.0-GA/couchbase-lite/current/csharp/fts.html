@@ -2007,8 +2007,9 @@ They create and use an FTS index built from the hotel&#8217;s <code>Overview</co
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var index = IndexBuilder.FullTextIndex(FullTextIndexItem.Property("name")).IgnoreAccents(false);
-db.CreateIndex("nameFTSIndex", index);</code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">string[] indexProperties = new string[] { "overview", "name" };
+var config = new FullTextIndexConfiguration(indexProperties);
+db.CreateIndex("overviewFTSIndex", config);</code></pre>
 </div>
 </div>
 </div>
@@ -2030,13 +2031,13 @@ db.CreateIndex("nameFTSIndex", index);</code></pre>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var whereClause = FullTextExpression.Index("nameFTSIndex").Match("'buy'");
-using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
-    .From(DataSource.Database(db))
-    .Where(whereClause)) {
-    foreach (var result in query.Execute()) {
-        Console.WriteLine($"Document id {result.GetString(0)}");
-    }
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">
+var db = _database;
+var ftsQuery = db.CreateQuery("SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan' ORDER BY RANK(overviewFTSIndex)");
+foreach (var result in ftsQuery.Execute())
+{
+    Console.WriteLine($"Document id {result.GetString(0)}");
+}
 }</code></pre>
 </div>
 </div>
@@ -2058,7 +2059,11 @@ using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#"></code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var db = _Database;
+
+
+var index = IndexBuilder.FullTextIndex(FullTextIndexItem.Property("overview")).IgnoreAccents(false);
+db.CreateIndex("overviewFTSIndex", index);</code></pre>
 </div>
 </div>
 </div>
@@ -2077,7 +2082,14 @@ using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#"></code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var whereClause = FullTextExpression.Index("overviewFTSIndex").Match("'michigan'");
+using (var query = QueryBuilder.Select(SelectResult.Expression(Meta.ID))
+    .From(DataSource.Database(db))
+    .Where(whereClause)) {
+    foreach (var result in query.Execute()) {
+        Console.WriteLine($"Document id {result.GetString(0)}");
+    }
+}</code></pre>
 </div>
 </div>
 </div>

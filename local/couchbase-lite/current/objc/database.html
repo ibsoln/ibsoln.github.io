@@ -2030,8 +2030,9 @@ the application sandbox
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSError *error;
 CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"my-database" error:&amp;error];
 if (!database) {
-    NSLog(@"Cannot open the database: %@", error);
-}</code></pre>
+    NSLog(@"Cannot open the database:%@", error);
+}
+self.database = database;</code></pre>
 </div>
 </div>
 </div>
@@ -2080,7 +2081,8 @@ Before closing, check that any attached listeners (query/replication/change) ind
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">tbd</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">if (![self.database close:&amp;error])
+    NSLog(@"Error closing db:%@", error);</code></pre>
 </div>
 </div>
 </div>
@@ -2120,9 +2122,9 @@ Provide this encryption key every time the database is opened&#8201;&#8212;&#820
 config.encryptionKey = [[CBLEncryptionKey alloc] initWithPassword:@"secretpassword"];
 
 NSError *error;
-CBLDatabase *database = [[CBLDatabase alloc] initWithName:@"my-database" config:config error:&amp;error];
-if (!database) {
-    NSLog(@"Cannot open the database: %@", error);
+self.database = [[CBLDatabase alloc] initWithName:@"my-database" config:config error:&amp;error];
+if (!self.database) {
+    NSLog(@"Cannot open the database:%@", error);
 }</code></pre>
 </div>
 </div>

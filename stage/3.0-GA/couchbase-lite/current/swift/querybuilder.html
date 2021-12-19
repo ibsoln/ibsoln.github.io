@@ -2175,7 +2175,7 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let query = QueryBuilder
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">query = QueryBuilder
     .select(SelectResult.all())
     .from(DataSource.database(database))</code></pre>
 </div>
@@ -2405,11 +2405,12 @@ do {
     )
     .from(DataSource.database(database))
     .where(Expression.property("type").equalTo(Expression.string("hotel"))
-        .and(ArrayFunction.contains(Expression.property("public_likes"), value: Expression.string("Armani Langworth")))
-)
+            .and(ArrayFunction.contains(Expression.property("public_likes"),
+                                        value: Expression.string("Armani Langworth")))
+    )
 
 do {
-     for result in try query.execute() {
+    for result in try query.execute() {
         print("public_likes :: \(result.array(forKey: "public_likes")!.toArray())")
     }
 }</code></pre>
@@ -2428,10 +2429,9 @@ The following example looks for documents whose <code>first</code>, <code>last</
     Expression.property("first"),
     Expression.property("last"),
     Expression.property("username")
-    ]
+]
 
-QueryBuilder
-    .select(SelectResult.all())
+let query = QueryBuilder.select(SelectResult.all())
     .from(DataSource.database(database))
     .where(Expression.string("Armani").in(values))</code></pre>
 </div>
@@ -2484,7 +2484,8 @@ To perform case insensitive matching, use <code>Function.lower</code> or <code>F
     )
     .from(DataSource.database(database))
     .where(Expression.property("type").equalTo(Expression.string("landmark"))
-        .and(Function.lower(Expression.property("name")).like(Expression.string("royal engineers museum")))
+            .and(Function.lower(Expression.property("name"))
+                    .like(Expression.string("royal engineers museum")))
     )
     .limit(Expression.int(10))
 
@@ -2528,7 +2529,8 @@ Notice that the matches may span word boundaries.</p>
     )
     .from(DataSource.database(database))
     .where(Expression.property("type").equalTo(Expression.string("landmark"))
-        .and(Function.lower(Expression.property("name")).like(Expression.string("eng%e%")))
+            .and(Function.lower(Expression.property("name"))
+                    .like(Expression.string("eng%e%")))
     )
     .limit(Expression.int(10))</code></pre>
 </div>
@@ -2558,7 +2560,7 @@ The query returns "landmark" type documents with names such as "Engineer", "engi
     )
     .from(DataSource.database(database))
     .where(Expression.property("type").equalTo(Expression.string("landmark"))
-        .and(Expression.property("name").like(Expression.string("eng____r")))
+            .and(Expression.property("name").like(Expression.string("eng____r")))
     )
     .limit(Expression.int(10))</code></pre>
 </div>
@@ -2599,7 +2601,7 @@ The <code>regex</code> operator is case sensitive, use <code>upper</code> or <co
     )
     .from(DataSource.database(database))
     .where(Expression.property("type").equalTo(Expression.string("landmark"))
-        .and(Expression.property("name").regex(Expression.string("\\bEng.*e\\b"))) <i class="conum" data-value="1"></i><b>(1)</b>
+            .and(Expression.property("name").regex(Expression.string("\\bEng.*e\\b"))) <i class="conum" data-value="1"></i><b>(1)</b>
     )
     .limit(Expression.int(10))</code></pre>
 </div>
@@ -2644,7 +2646,7 @@ For more on the regex spec used by Couchbase&#160;Lite see <a href="http://www.c
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Query documents that have been deleted
 let query = QueryBuilder
     .select(SelectResult.expression(Meta.id))
-    .from(DataSource.database(db))
+    .from(DataSource.database(database))
     .where(Meta.isDeleted)</code></pre>
 </div>
 </div>
@@ -2684,13 +2686,15 @@ For example to combine airline details with route details, linked by the airline
             .on(
                 Meta.id.from("airline")
                     .equalTo(Expression.property("airlineid").from("route"))
-        )
+            )
     )
     .where(
         Expression.property("type").from("route").equalTo(Expression.string("route"))
-            .and(Expression.property("type").from("airline").equalTo(Expression.string("airline")))
-            .and(Expression.property("sourceairport").from("route").equalTo(Expression.string("RIX")))
-)</code></pre>
+            .and(Expression.property("type").from("airline")
+                    .equalTo(Expression.string("airline")))
+            .and(Expression.property("sourceairport").from("route")
+                    .equalTo(Expression.string("RIX")))
+    )</code></pre>
 </div>
 </div>
 </div>
@@ -2738,11 +2742,15 @@ For example to combine airline details with route details, linked by the airline
     ).groupBy(
         Expression.property("country"),
         Expression.property("tz")
-)
+    )
 
 do {
     for result in try query.execute() {
-        print("There are \(result.int(forKey: "$1")) airports on the \(result.string(forKey: "tz")!) timezone located in \(result.string(forKey: "country")!) and above 300 ft")
+        print("""
+            There are \(result.int(forKey: "$1")) airports on
+                        the \(result.string(forKey: "tz")!)timezone located
+                        in \(result.string(forKey: "country")!) and above 300 ft
+        """)
     }
 }</code></pre>
 </div>
@@ -2917,11 +2925,8 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let db = try! Database(name: "hotel")
-var hotels = [String:Any]()
-
-let listQuery = QueryBuilder.select(SelectResult.all())
-    .from(DataSource.database( db))</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let database = try Database(name: "hotel")
+let query = QueryBuilder.select(SelectResult.all()).from(DataSource.database(database))</code></pre>
 </div>
 </div>
 </div>
@@ -2991,28 +2996,23 @@ let listQuery = QueryBuilder.select(SelectResult.all())
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
-do {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let results = try query.execute()
+for row in results {
+    let docsProps = row.dictionary(at: 0)! <i class="conum" data-value="1"></i><b>(1)</b>
 
-    for row in try! listQuery.execute() {
+    let docid = docsProps.string(forKey: "id")
+    let name = docsProps.string(forKey: "name")
+    let type = docsProps.string(forKey: "type")
+    let city = docsProps.string(forKey: "city")
 
-        let thisDocsProps =
-            row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="1"></i><b>(1)</b>
+    print("\(docid): \(name), \(type), \(city)")
+    let hotel = row.dictionary(at: 0)!  <i class="conum" data-value="2"></i><b>(2)</b>
+    guard let hotelId = hotel.string(forKey: "id") else {
+        continue
+    }
 
-        let docid = thisDocsProps!["id"] as! String
-
-        let name = thisDocsProps!["name"] as! String
-
-        let type = thisDocsProps!["type"] as! String
-
-        let city = thisDocsProps!["city"] as! String
-
-        let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="2"></i><b>(2)</b>
-        let hotelId = hotel!["id"] as! String
-        hotels[hotelId] = hotel
-    } // end for
-
-} //end do-block</code></pre>
+    hotels[hotelId] = hotel
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3044,17 +3044,15 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let db = try! Database(name: "hotel")
-var hotels = [String:Any]()
-var hotel:Hotel = Hotel.init()
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let database = try! Database(name: "hotel")
 
-let listQuery = QueryBuilder
+let query = QueryBuilder
     .select(SelectResult.expression(Meta.id).as("metaId"),
             SelectResult.expression(Expression.property("id")),
             SelectResult.expression(Expression.property("name")),
             SelectResult.expression(Expression.property("city")),
             SelectResult.expression(Expression.property("type")))
-            .from(DataSource.database(db))</code></pre>
+    .from(DataSource.database(database))</code></pre>
 </div>
 </div>
 </div>
@@ -3112,27 +3110,17 @@ let listQuery = QueryBuilder
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">for (_, result) in try! listQuery.execute().enumerated() {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">for result in try! query.execute() {
+    let docID = result.string(forKey: "metaId")!
+    print("processing doc: \(docID)")
 
-
-    let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="1"></i><b>(1)</b>
-        // Store dictionary data in hotel object and save in arry
-    hotel.id = thisDoc!["id"] as! String
-    hotel.name = thisDoc!["name"] as! String
-    hotel.city = thisDoc!["city"] as! String
-    hotel.type = thisDoc!["type"] as! String
-    hotels[hotel.id] = hotel
-
-    // Use result content directly
-    let docid = result.string(forKey: "metaId")
-    let hotelId = result.string(forKey: "id")
-    let name = result.string(forKey: "name")
-    let city = result.string(forKey: "city")
-    let type = result.string(forKey: "type")
-
-    // ... process document properties as required
-    print("Result properties are: ", docid, hotelId,name, city, type)
-  } // end for</code></pre>
+    let id = result.string(forKey: "id")!
+    var hotel = Hotel(id: id)
+    hotel.name = result.string(forKey: "name")
+    hotel.city = result.string(forKey: "city")
+    hotel.type = result.string(forKey: "type")
+    hotels[id] = hotel
+} // end for</code></pre>
 </div>
 </div>
 </div>
@@ -3151,9 +3139,9 @@ let listQuery = QueryBuilder
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let db = try! Database(name: "hotel")
-let listQuery = QueryBuilder.select(SelectResult.expression(Meta.id).as("metaId"))
-            .from(DataSource.database(db))</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let database = try Database(name: "hotel")
+let query = QueryBuilder.select(SelectResult.expression(Meta.id).as("metaId"))
+    .from(DataSource.database(database))</code></pre>
 </div>
 </div>
 </div>
@@ -3193,29 +3181,30 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">for (_, result) in try! listQuery.execute().enumerated() {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let results = try query.execute()
+for result in results {
 
     print(result.toDictionary())
-    print("Document Id is -- ", result["metaId"].string!)
 
-    let thisDocsId = result["metaId"].string! <i class="conum" data-value="1"></i><b>(1)</b>
+    let docId = result.string(forKey: "metaId")! <i class="conum" data-value="1"></i><b>(1)</b>
+    print("Document Id is -- \(docId)")
 
     // Now you can get the document using the ID
-    var thisDoc = db.document(withID: thisDocsId)!.toDictionary()
+    let doc = database.document(withID: docId)!
 
-    let hotelId = thisDoc["id"] as! String
+    let hotelId = doc.string(forKey: "id")!
 
-    let name = thisDoc["name"] as! String
+    let name = doc.string(forKey: "name")
 
-    let city = thisDoc["city"] as! String
+    let city = doc.string(forKey: "city")
 
-    let type = thisDoc["type"] as! String
+    let type = doc.string(forKey: "type")
 
     // ... process document properties as required
-    print("Result properties are: ", hotelId,name, city, type)
+    print("Result properties are: \(hotelId), \(name), \(city), \(type)")
 
 
-} // end for</code></pre>
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3239,11 +3228,10 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let db = try! Database(name: "hotel")
-do {
-    let listQuery = QueryBuilder
-        .select(SelectResult.expression(Function.count(Expression.all())).as("mycount"))
-        .from (DataSource.database(db)).groupBy(Expression.property("type"))</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let database = try Database(name: "hotel")
+let query = QueryBuilder
+    .select(SelectResult.expression(Function.count(Expression.all())).as("mycount"))
+    .from (DataSource.database(database)).groupBy(Expression.property("type"))</code></pre>
 </div>
 </div>
 </div>
@@ -3294,19 +3282,10 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
-        for result in try! listQuery.execute() {
-            let dict = result.toDictionary() as? [String: Int]
-            let thiscount = dict!["mycount"]! <i class="conum" data-value="1"></i><b>(1)</b>
-            print("There are ", thiscount, " rows")
-
-            // Alternatively
-            print ( result["mycount"] )
-
-        } // end for
-
-    } // end do
-} // end function</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">for result in try query.execute() {
+    let count = result.int(forKey: "mycount") <i class="conum" data-value="1"></i><b>(1)</b>
+    print("There are ", count, " rows")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3332,14 +3311,13 @@ Use the <code>limit</code> and <code>offset</code> feature, to return a defined 
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let thisOffset = 0;
-let thisLimit = 20;
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let offset = 0;
+let limit = 20;
 //
-let listQuery = QueryBuilder
-        .select(SelectResult.all())
-        .from(DataSource.database(db))
-        .limit(Expression.int(thisLimit),
-          offset: Expression.int(thisOffset))</code></pre>
+let query = QueryBuilder
+    .select(SelectResult.all())
+    .from(DataSource.database(database))
+    .limit(Expression.int(limit), offset: Expression.int(offset))</code></pre>
 </div>
 </div>
 </div>
@@ -3395,38 +3373,30 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 //   ... other class content
 // }
 
+let results = try query.execute()
+for row in  results {
 
-    do {
-        var results = try! listQuery.execute()
-        for row in  results {
+    // get the result into a JSON String
+    let jsonString = row.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
 
-            // get the result into a JSON String
-            let jsonString = row.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
+    let thisJsonObj:Dictionary =
+    try (JSONSerialization.jsonObject(
+        with: jsonString.data(using: .utf8)!,
+        options: .allowFragments)
+         as? [String: Any])! <i class="conum" data-value="2"></i><b>(2)</b>
 
-            let thisJsonObj:Dictionary =
-                try! (JSONSerialization.jsonObject(
-                        with: jsonString.data(using: .utf8)!,
-                                              options: .allowFragments)
-                        as? [String: Any])! <i class="conum" data-value="2"></i><b>(2)</b>
+    // Use Json Object to populate Native object
+    // Use Codable class to unpack JSON data to native object
+    var this_hotel: Hotel = try JSONDecoder().decode(Hotel.self, from: jsonString.data(using: .utf8)!) <i class="conum" data-value="3"></i><b>(3)</b>
 
-            // Use Json Object to populate Native object
-            // Use Codable class to unpack JSON data to native object
-            let this_hotel:Hotel =
-                (try JSONDecoder().decode(
-                    Hotel.self,
-                    from: jsonString.data(using: .utf8)!
-                    )
-                ) <i class="conum" data-value="3"></i><b>(3)</b>
+    // ALTERNATIVELY unpack in steps
+    this_hotel.id = thisJsonObj["id"] as! String
+    this_hotel.name = thisJsonObj["name"] as! String
+    this_hotel.type = thisJsonObj["type"] as! String
+    this_hotel.city = thisJsonObj["city"] as! String
+    hotels[this_hotel.id] = this_hotel
 
-            // ALTERNATIVELY unpack in steps
-            this_hotel.id = thisJsonObj["id"] as! String
-            this_hotel.name = thisJsonObj["name"] as! String
-            this_hotel.type = thisJsonObj["type"] as! String
-            this_hotel.city = thisJsonObj["city"] as! String
-            hotels[this_hotel.id] = this_hotel
-
-
-        } // end for</code></pre>
+} // end for</code></pre>
 </div>
 </div>
 </div>
@@ -3536,7 +3506,7 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// <code>myMLModel</code> is a fake implementation
 // this would be the implementation of the ml model you have chosen
 class myMLModel {
-    static func predictImage(data: Data) -&gt; [String : AnyObject] {}
+    static func predictImage(data: Data) -&gt; [String : AnyObject] { return [:] }
 }
 
 class ImageClassifierModel: PredictiveModel {
@@ -3617,7 +3587,7 @@ When documents are added or updated, the index will call the prediction function
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let input = Expression.dictionary(["photo": Expression.property("photo")])
-let prediction = PredictiveModel.predict(model: "ImageClassifier", input: input)
+let prediction = Function.prediction(model: "ImageClassifier", input: input)
 
 let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(prediction.property("label")))
 try database.createIndex(index, withName: "value-index-image-classifier")</code></pre>
@@ -3661,17 +3631,17 @@ try database.createIndex(index, withName: "predictive-index-image-classifier")</
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let input = Expression.dictionary(["photo": Expression.property("photo")])
-let prediction = PredictiveModel.predict(model: "ImageClassifier", input: input) <i class="conum" data-value="1"></i><b>(1)</b>
+let prediction = Function.prediction(model: "ImageClassifier", input: input) <i class="conum" data-value="1"></i><b>(1)</b>
 
 let query = QueryBuilder
     .select(SelectResult.all())
     .from(DataSource.database(database))
     .where(
         prediction.property("label").equalTo(Expression.string("car"))
-        .and(
-            prediction.property("probablity")
-                .greaterThanOrEqualTo(Expression.double(0.8))
-        )
+            .and(
+                prediction.property("probablity")
+                    .greaterThanOrEqualTo(Expression.double(0.8))
+            )
     )
 
 // Run the query.

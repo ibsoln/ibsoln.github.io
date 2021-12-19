@@ -2155,28 +2155,23 @@ The properties are presented in the value as an array of key-value pairs (proper
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
-do {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let results = try query.execute()
+for row in results {
+    let docsProps = row.dictionary(at: 0)! <i class="conum" data-value="1"></i><b>(1)</b>
 
-    for row in try! listQuery.execute() {
+    let docid = docsProps.string(forKey: "id")
+    let name = docsProps.string(forKey: "name")
+    let type = docsProps.string(forKey: "type")
+    let city = docsProps.string(forKey: "city")
 
-        let thisDocsProps =
-            row.dictionary(at: 0)?.toDictionary() <i class="conum" data-value="1"></i><b>(1)</b>
+    print("\(docid): \(name), \(type), \(city)")
+    let hotel = row.dictionary(at: 0)!  <i class="conum" data-value="2"></i><b>(2)</b>
+    guard let hotelId = hotel.string(forKey: "id") else {
+        continue
+    }
 
-        let docid = thisDocsProps!["id"] as! String
-
-        let name = thisDocsProps!["name"] as! String
-
-        let type = thisDocsProps!["type"] as! String
-
-        let city = thisDocsProps!["city"] as! String
-
-        let hotel = row.dictionary(at: 0)?.toDictionary()  <i class="conum" data-value="2"></i><b>(2)</b>
-        let hotelId = hotel!["id"] as! String
-        hotels[hotelId] = hotel
-    } // end for
-
-} //end do-block</code></pre>
+    hotels[hotelId] = hotel
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2213,29 +2208,30 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">for (_, result) in try! listQuery.execute().enumerated() {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let results = try query.execute()
+for result in results {
 
     print(result.toDictionary())
-    print("Document Id is -- ", result["metaId"].string!)
 
-    let thisDocsId = result["metaId"].string! <i class="conum" data-value="1"></i><b>(1)</b>
+    let docId = result.string(forKey: "metaId")! <i class="conum" data-value="1"></i><b>(1)</b>
+    print("Document Id is -- \(docId)")
 
     // Now you can get the document using the ID
-    var thisDoc = db.document(withID: thisDocsId)!.toDictionary()
+    let doc = database.document(withID: docId)!
 
-    let hotelId = thisDoc["id"] as! String
+    let hotelId = doc.string(forKey: "id")!
 
-    let name = thisDoc["name"] as! String
+    let name = doc.string(forKey: "name")
 
-    let city = thisDoc["city"] as! String
+    let city = doc.string(forKey: "city")
 
-    let type = thisDoc["type"] as! String
+    let type = doc.string(forKey: "type")
 
     // ... process document properties as required
-    print("Result properties are: ", hotelId,name, city, type)
+    print("Result properties are: \(hotelId), \(name), \(city), \(type)")
 
 
-} // end for</code></pre>
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2264,27 +2260,17 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">for (_, result) in try! listQuery.execute().enumerated() {
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">for result in try! query.execute() {
+    let docID = result.string(forKey: "metaId")!
+    print("processing doc: \(docID)")
 
-
-    let thisDoc = result.toDictionary() as? [String:Any]  <i class="conum" data-value="1"></i><b>(1)</b>
-        // Store dictionary data in hotel object and save in arry
-    hotel.id = thisDoc!["id"] as! String
-    hotel.name = thisDoc!["name"] as! String
-    hotel.city = thisDoc!["city"] as! String
-    hotel.type = thisDoc!["type"] as! String
-    hotels[hotel.id] = hotel
-
-    // Use result content directly
-    let docid = result.string(forKey: "metaId")
-    let hotelId = result.string(forKey: "id")
-    let name = result.string(forKey: "name")
-    let city = result.string(forKey: "city")
-    let type = result.string(forKey: "type")
-
-    // ... process document properties as required
-    print("Result properties are: ", docid, hotelId,name, city, type)
-  } // end for</code></pre>
+    let id = result.string(forKey: "id")!
+    var hotel = Hotel(id: id)
+    hotel.name = result.string(forKey: "name")
+    hotel.city = result.string(forKey: "city")
+    hotel.type = result.string(forKey: "type")
+    hotels[id] = hotel
+} // end for</code></pre>
 </div>
 </div>
 </div>
@@ -2317,38 +2303,30 @@ You can add this dictionary to an array of returned matches, for processing else
 //   ... other class content
 // }
 
+let results = try query.execute()
+for row in  results {
 
-    do {
-        var results = try! listQuery.execute()
-        for row in  results {
+    // get the result into a JSON String
+    let jsonString = row.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
 
-            // get the result into a JSON String
-            let jsonString = row.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
+    let thisJsonObj:Dictionary =
+    try (JSONSerialization.jsonObject(
+        with: jsonString.data(using: .utf8)!,
+        options: .allowFragments)
+         as? [String: Any])! <i class="conum" data-value="2"></i><b>(2)</b>
 
-            let thisJsonObj:Dictionary =
-                try! (JSONSerialization.jsonObject(
-                        with: jsonString.data(using: .utf8)!,
-                                              options: .allowFragments)
-                        as? [String: Any])! <i class="conum" data-value="2"></i><b>(2)</b>
+    // Use Json Object to populate Native object
+    // Use Codable class to unpack JSON data to native object
+    var this_hotel: Hotel = try JSONDecoder().decode(Hotel.self, from: jsonString.data(using: .utf8)!) <i class="conum" data-value="3"></i><b>(3)</b>
 
-            // Use Json Object to populate Native object
-            // Use Codable class to unpack JSON data to native object
-            let this_hotel:Hotel =
-                (try JSONDecoder().decode(
-                    Hotel.self,
-                    from: jsonString.data(using: .utf8)!
-                    )
-                ) <i class="conum" data-value="3"></i><b>(3)</b>
+    // ALTERNATIVELY unpack in steps
+    this_hotel.id = thisJsonObj["id"] as! String
+    this_hotel.name = thisJsonObj["name"] as! String
+    this_hotel.type = thisJsonObj["type"] as! String
+    this_hotel.city = thisJsonObj["city"] as! String
+    hotels[this_hotel.id] = this_hotel
 
-            // ALTERNATIVELY unpack in steps
-            this_hotel.id = thisJsonObj["id"] as! String
-            this_hotel.name = thisJsonObj["name"] as! String
-            this_hotel.type = thisJsonObj["type"] as! String
-            this_hotel.city = thisJsonObj["city"] as! String
-            hotels[this_hotel.id] = this_hotel
-
-
-        } // end for</code></pre>
+} // end for</code></pre>
 </div>
 </div>
 </div>

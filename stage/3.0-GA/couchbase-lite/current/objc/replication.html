@@ -2075,50 +2075,46 @@ So we don&#8217;t recommend to rely on that when using the replication or databa
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Set listener DB endpoint
-NSURL <strong>url =
-  [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
-CBLURLEndpoint *thisListener =
-  [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="1"></i><b>(1)</b>
+NSURL <strong>url = [NSURL URLWithString:@"ws://listener.com:55990/otherDB"];
+CBLURLEndpoint *endpoint = [[CBLURLEndpoint alloc] initWithURL:url]; <i class="conum" data-value="1"></i><b>(1)</b>
 
-CBLReplicatorConfiguration *thisConfig =
-  [[CBLReplicatorConfiguration alloc]
-    initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="2"></i><b>(2)</b>
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc]
+                                      initWithDatabase:self.database target:endpoint]; <i class="conum" data-value="2"></i><b>(2)</b>
 
-thisConfig.replicatorType = kCBLReplicatorTypePush;
+config.replicatorType = kCBLReplicatorTypePush;
 
 // set auto-purge behavior (here we override default)
-thisConfig.enableAutoPurge = NO; <i class="conum" data-value="3"></i><b>(3)</b>
+config.enableAutoPurge = NO; <i class="conum" data-value="3"></i><b>(3)</b>
 
-thisConfig.continuous = YES;
+config.continuous = YES;
 
 // Configure Server Authentication
 // Here - expect and accept self-signed certs
-thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="4"></i><b>(4)</b>
+config.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="4"></i><b>(4)</b>
 
 // Configure Client Authentication
 // Here set client to use basic authentication
 // Providing username and password credentials
 // If prompted for them by server
-thisConfig.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="5"></i><b>(5)</b>
+config.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"Our Username" password:@"Our Password"]; <i class="conum" data-value="5"></i><b>(5)</b>
 
 /</strong> Optionally set custom conflict resolver call back */
-thisConfig.conflictResolver = [[LocalWinConflictResolver alloc] <i class="conum" data-value="6"></i><b>(6)</b>
+config.conflictResolver = [[LocalWinConflictResolver alloc] init]; <i class="conum" data-value="6"></i><b>(6)</b>
 
 // Apply configuration settings to the replicator
-_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="7"></i><b>(7)</b>
+self.replicator = [[CBLReplicator alloc] initWithConfig:config]; <i class="conum" data-value="7"></i><b>(7)</b>
 
 // Optionally add a change listener <i class="conum" data-value="8"></i><b>(8)</b>
 // Retain token for use in deletion
-id&lt;CBLListenerToken&gt; thisListenerToken
-  = [thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
-      if (thisChange.status.activity == kCBLReplicatorStopped) {
+id&lt;CBLListenerToken&gt; listenerToken = [self.replicator addChangeListener:^(CBLReplicatorChange *change) {
+    if (change.status.activity == kCBLReplicatorStopped) {
         NSLog(@"Replication stopped");
-        } else {
-        NSLog(@"Status: %d", thisChange.status.activity);
-        };
-    }];
+    } else {
+        NSLog(@"Status:%d", change.status.activity);
+    };
+}];
 // Run the replicator using the config settings
-[thisReplicator start]; <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
+[self.replicator start]; <i class="conum" data-value="9"></i><b>(9)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2239,11 +2235,10 @@ Initialize and define the replication configuration with local and remote databa
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Set listener DB endpoint
 NSURL *url = [NSURL URLWithString:@"ws://10.0.2.2.com:55990/travel-sample"];
-CBLURLEndpoint *thisListener = [[CBLURLEndpoint alloc] initWithURL:url];
+CBLURLEndpoint *listener = [[CBLURLEndpoint alloc] initWithURL:url];
 
-CBLReplicatorConfiguration *thisConfig
-  = [[CBLReplicatorConfiguration alloc]
-      initWithDatabase:thisDB target:thisListener]; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc]
+                                      initWithDatabase:self.database target:listener]; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2293,9 +2288,9 @@ to ensure TLS encryption&#8201;&#8212;&#8201;strongly recommended in production&
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">thisConfig.replicatorType = kCBLReplicatorTypePush;
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">config.replicatorType = kCBLReplicatorTypePush;
 
-thisConfig.continuous = YES;</code></pre>
+config.continuous = YES;</code></pre>
 </div>
 </div>
 </div>
@@ -2416,26 +2411,22 @@ thisConfig.continuous = YES;</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">id target =
-  [[CBLURLEndpoint alloc] initWithURL: [NSURL URLWithString: @"ws://foo.cbl.com/db"]];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">id target = [[CBLURLEndpoint alloc] initWithURL:[NSURL URLWithString:@"ws://foo.cbl.com/db"]];
 
-CBLReplicatorConfiguration* config =
-    [[CBLReplicatorConfiguration alloc] initWithDatabase: db target: target];
-config.type = kCBLReplicatorTypePush;
-config.continuous: YES;
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database
+                                                                                   target:target];
+config.replicatorType = kCBLReplicatorTypePush;
+config.continuous = YES;
 //  other config as required . . .
 
 config.heartbeat = 150; <i class="conum" data-value="1"></i><b>(1)</b>
 
-config.maxattempts = 20; <i class="conum" data-value="2"></i><b>(2)</b>
+config.maxAttempts = 20; <i class="conum" data-value="2"></i><b>(2)</b>
 
-config.maxattemptwaittime = 600; <i class="conum" data-value="3"></i><b>(3)</b>
+config.maxAttemptWaitTime = 600; <i class="conum" data-value="3"></i><b>(3)</b>
 
 //  other config as required . . .
-repl = [[CBLReplicator alloc] initWithConfig: config];
-
-// Cleanup:
-repl = nil;</code></pre>
+self.replicator = [[CBLReplicator alloc] initWithConfig:config];</code></pre>
 </div>
 </div>
 </div>
@@ -2533,7 +2524,7 @@ If the server cannot provide acceptable credentials then the connection will fai
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Configure Server Security -- only accept CA Certs
-thisConfig.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+config.acceptOnlySelfSignedServerCertificate = NO; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2555,7 +2546,7 @@ Self signed certificates are not allowed.</td>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Configure Server Authentication
 // Here - expect and accept self-signed certs
-thisConfig.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+config.acceptOnlySelfSignedServerCertificate = YES; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2574,25 +2565,28 @@ Any certificates that are not self-signed are rejected.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m#L2481-L2500">NSURL *certURL =
-  [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
-NSData *data =
-  [[NSData alloc] initWithContentsOfURL: certURL];
-SecCertificateRef certificate =
-  SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m#L1151-L1161">NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"cer"];
+NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
+SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
 
-NSURL *url =
-  [NSURL URLWithString:@"ws://localhost:4984/db"];
+NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
 
-CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database
+                                                                                   target:target];
+config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
 
-CBLReplicatorConfiguration *thisConfig =
-  [[CBLReplicatorConfiguration alloc] initWithDatabase:database
-                                      target:target];
-thisConfig.pinnedServerCertificate =
-  (SecCertificateRef)CFAutorelease(certificate);
+NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"cer"];
+NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
+SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
 
-thisConfig.acceptOnlySelfSignedServerCertificate=false;</code></pre>
+NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
+CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database
+                                                                                   target:target];
+config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
+
+config.acceptOnlySelfSignedServerCertificate=false;</code></pre>
 </div>
 </div>
 </div>
@@ -2624,11 +2618,11 @@ This is the recommended way of using basic authentication.
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
 CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
-CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database target:target];
 config.authenticator = [[CBLBasicAuthenticator alloc] initWithUsername:@"john" password:@"pass"];
 
-CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
-[replicator start];</code></pre>
+self.replicator = [[CBLReplicator alloc] initWithConfig:config];
+[self.replicator start];</code></pre>
 </div>
 </div>
 </div>
@@ -2651,11 +2645,11 @@ The HTTP response contains a session ID which can then be used to authenticate a
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
 CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
-CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database target:target];
 config.authenticator = [[CBLSessionAuthenticator alloc] initWithSessionID:@"904ac010862f37c8dd99015a33ab5a3565fd8447"];
 
-CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
-[replicator start];</code></pre>
+self.replicator = [[CBLReplicator alloc] initWithConfig:config];
+[self.replicator start];</code></pre>
 </div>
 </div>
 </div>
@@ -2674,8 +2668,8 @@ As an example, this feature can be useful to pass additional credentials when th
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:endpoint];
-config.headers = @{@"CustomHeaderName" : @"Value"};</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database target:endpoint];
+config.headers = @{@"CustomHeaderName" :@"Value"};</code></pre>
 </div>
 </div>
 </div>
@@ -2696,18 +2690,18 @@ For instance, high-priority documents could be pushed first, or documents in a "
 <div class="title">Push Filter</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
-CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
 
-CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
-config.pushFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) { <i class="conum" data-value="1"></i><b>(1)</b>
-    if ([[document stringForKey: @"type"] isEqualToString: @"draft"]) {
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database target:target];
+config.pushFilter = ^BOOL(CBLDocument *document, CBLDocumentFlags flags) { <i class="conum" data-value="1"></i><b>(1)</b>
+    if ([[document stringForKey:@"type"] isEqualToString:@"draft"]) {
         return false;
     }
     return true;
 };
 
-CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
-[replicator start];</code></pre>
+self.replicator = [[CBLReplicator alloc] initWithConfig:config];
+[self.replicator start];</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2743,18 +2737,18 @@ Sync Gateway <a href="../../../sync-gateway/current/channels.html" class="page">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
-CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
 
-CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database target:target];
-config.pullFilter = ^BOOL(CBLDocument * _Nonnull document, CBLDocumentFlags flags) { <i class="conum" data-value="1"></i><b>(1)</b>
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database target:target];
+config.pullFilter = ^BOOL(CBLDocument *document, CBLDocumentFlags flags) { <i class="conum" data-value="1"></i><b>(1)</b>
     if ((flags &amp; kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
         return false;
     }
     return true;
 };
 
-CBLReplicator *replicator = [[CBLReplicator alloc] initWithConfig:config];
-[replicator start];</code></pre>
+self.replicator = [[CBLReplicator alloc] initWithConfig:config];
+[self.replicator start];</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2980,7 +2974,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// set auto-purge behavior (here we override default)
-thisConfig.enableAutoPurge = NO; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+config.enableAutoPurge = NO; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -3095,10 +3089,10 @@ You can, optionally, add a change listener (see <a href="#lbl-repl-mon">Monitor<
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Apply configuration settings to the replicator
-_thisReplicator = [[CBLReplicator alloc] initWithConfig:thisConfig]; <i class="conum" data-value="1"></i><b>(1)</b>
+self.replicator = [[CBLReplicator alloc] initWithConfig:config]; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Run the replicator using the config settings
-[thisReplicator start]; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+[self.replicator start]; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 </div>
@@ -3131,11 +3125,8 @@ However, if you do want to force the replication to start again from zero, use t
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">if (resetCheckpointRequired_Example) {
-  [replicator startWithReset];  <i class="conum" data-value="1"></i><b>(1)</b>
-else
-  [replicator start];
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">if (restCheckpoint)
+    [self.replicator startWithReset:restCheckpoint]; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -3251,25 +3242,24 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">// Retain token for use in deletion
-id&lt;CBLListenerToken&gt; thisListenerToken
-  = [thisReplicator addChangeListener:^(CBLReplicatorChange *thisChange) {
-      if (thisChange.status.activity == kCBLReplicatorStopped) {
+id&lt;CBLListenerToken&gt; listenerToken = [self.replicator addChangeListener:^(CBLReplicatorChange *change) {
+    if (change.status.activity == kCBLReplicatorStopped) {
         NSLog(@"Replication stopped");
-        } else {
-        NSLog(@"Status: %d", thisChange.status.activity);
-        };
-    }];</code></pre>
+    } else {
+        NSLog(@"Status:%d", change.status.activity);
+    };
+}];</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_using-replicator-status">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">if (thisChange.status.activity == kCBLReplicatorStopped) {
-  NSLog(@"Replication stopped");
-  } else {
-  NSLog(@"Status: %d", thisChange.status.activity);
-  };</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc">if (change.status.activity == kCBLReplicatorStopped) {
+    NSLog(@"Replication stopped");
+} else {
+    NSLog(@"Status:%d", change.status.activity);
+};</code></pre>
 </div>
 </div>
 </div>
@@ -3367,11 +3357,11 @@ Stop the listener as shown in <a href="#ex-stop-doc-listener">Example 14</a>.</p
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">id token = [replicator addDocumentReplicationListener:^(CBLDocumentReplication * _Nonnull replication) {
-    NSLog(@"Replication type :: %@", replication.isPush ? @"Push" : @"Pull");
-    for (CBLReplicatedDocument* document in replication.documents) {
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">id token = [self.replicator addDocumentReplicationListener:^(CBLDocumentReplication  *replication) {
+    NSLog(@"Replication type ::%@", replication.isPush ? @"Push" :@"Pull");
+    for (CBLReplicatedDocument *document in replication.documents) {
         if (document.error == nil) {
-            NSLog(@"Doc ID :: %@", document.id);
+            NSLog(@"Doc ID ::%@", document.id);
             if ((document.flags &amp; kCBLDocumentFlagsDeleted) == kCBLDocumentFlagsDeleted) {
                 NSLog(@"Successfully replicated a deleted document");
             }
@@ -3381,7 +3371,7 @@ Stop the listener as shown in <a href="#ex-stop-doc-listener">Example 14</a>.</p
     }
 }];
 
-[replicator start];</code></pre>
+[self.replicator start];</code></pre>
 </div>
 </div>
 </div>
@@ -3394,7 +3384,7 @@ Stop the listener as shown in <a href="#ex-stop-doc-listener">Example 14</a>.</p
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[replicator removeChangeListenerWithToken: token];</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[self.replicator removeChangeListenerWithToken:token];</code></pre>
 </div>
 </div>
 </div>
@@ -3443,44 +3433,38 @@ Use it in preference to returning a list of pending document IDs, where possible
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
-CBLDatabase <strong>database = self.db;
 NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
-CBLURLEndpoint *target =
-  [[CBLURLEndpoint alloc] initWithURL: url];
-CBLReplicatorConfiguration *config =
-  [[CBLReplicatorConfiguration alloc]
-    initWithDatabase:database
-    target:target];
+CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database
+                                                                                   target:target];
 
 config.replicatorType = kCBLReplicatorTypePush;
 
-CBLReplicator *replicator =
-  [[CBLReplicator alloc] initWithConfig:config];
+self.replicator = [[CBLReplicator alloc] initWithConfig:config];
 
 // Get list of pending doc IDs
-NSError</strong> err = nil;
-NSSet <strong>mydocids =
-  [NSSet setWithSet:[replicator pendingDocumentIDs:&amp;err]]; <i class="conum" data-value="1"></i><b>(1)</b>
+NSError *err = nil;
+NSSet *pendingDocIds = [self.replicator pendingDocumentIDs:&amp;err]; <i class="conum" data-value="1"></i><b>(1)</b>
 
 
-if ([mydocids count] &gt; 0) {
+if ([pendingDocIds count] &gt; 0) {
 
-  NSLog(@"There are %lu documents pending", (unsigned long)[mydocids count]);
+    NSLog(@"There are %lu documents pending", (unsigned long)[pendingDocIds count]);
 
-  [replicator addChangeListener:^(CBLReplicatorChange *change) {
+    [self.replicator addChangeListener:^(CBLReplicatorChange *change) {
 
-    NSLog(@"Replicator activity level is %u", change.status.activity);
-    // iterate and report-on the pending doc IDs  in 'mydocids'
-    for (thisid in mydocids) {
+        NSLog(@"Replicator activity level is %u", change.status.activity);
+        // iterate and report-on the pending doc IDs  in 'mydocids'
+        for (NSString *docID in pendingDocIds) {
 
-      NSError</strong> err = nil;
-      if (![replicator isDocumentPending: thisid error: &amp;err]) { <i class="conum" data-value="2"></i><b>(2)</b>
-        NSLog(@"Doc ID %@ now pushed", thisid);
-      }
-    }
+            NSError *err = nil;
+            if (![change.replicator isDocumentPending:docID error:&amp;err]) { <i class="conum" data-value="2"></i><b>(2)</b>
+                NSLog(@"Doc ID %@ now pushed", docID);
+            }
+        }
 
-  }];
-  [replicator start];
+    }];
+    [self.replicator start];
 
 };</code></pre>
 </div>
@@ -3521,10 +3505,10 @@ Your app should account for this potential delay before attempting any subsequen
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Remove the change listener
-[thisReplicator removeChangeListenerWithToken: thisListenerToken];
+[self.replicator removeChangeListenerWithToken:listenerToken];
 
 // Stop the replicator
-[thisReplicator stop];</code></pre>
+[self.replicator stop];</code></pre>
 </div>
 </div>
 </div>
@@ -3554,9 +3538,9 @@ It will stop any active <a href="#lbl-repl-chng">change listener</a> once the re
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[replicator addChangeListener:^(CBLReplicatorChange *change) {
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[self.replicator addChangeListener:^(CBLReplicatorChange *change) {
     if (change.status.error) {
-        NSLog(@"Error code: %ld", change.status.error.code);
+        NSLog(@"Error code:%ld", change.status.error.code);
     }
 }];</code></pre>
 </div>
@@ -3661,19 +3645,16 @@ After completing this step, Sync Gateway is reachable over <code>https</code>/<c
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// tag=p2p-act-rep-config-cacert-pinned[]
-NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
-NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"cer"];
+NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
 SecCertificateRef certificate = SecCertificateCreateWithData(NULL, (__bridge CFDataRef)data);
 
 NSURL *url = [NSURL URLWithString:@"ws://localhost:4984/db"];
-CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL: url];
+CBLURLEndpoint *target = [[CBLURLEndpoint alloc] initWithURL:url];
 
-CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:database
+CBLReplicatorConfiguration *config = [[CBLReplicatorConfiguration alloc] initWithDatabase:self.database
                                                                                    target:target];
-config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);
-
-// end=p2p-act-rep-config-cacert-pinned[]</code></pre>
+config.pinnedServerCertificate = (SecCertificateRef)CFAutorelease(certificate);</code></pre>
 </div>
 </div>
 </div>
@@ -3706,9 +3687,12 @@ You can increase the log output for activity related to replication with Sync Ga
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Replicator
-[CBLDatabase setLogLevel:kCBLLogLevelVerbose domain:kCBLLogDomainReplicator];
+CBLDatabase.log.console.level = kCBLLogLevelVerbose;
+CBLDatabase.log.console.domains = kCBLLogDomainReplicator;
+
 // Network
-[CBLDatabase setLogLevel:kCBLLogLevelVerbose domain:kCBLLogDomainNetwork];</code></pre>
+CBLDatabase.log.console.level = kCBLLogLevelVerbose;
+CBLDatabase.log.console.domains = kCBLLogDomainNetwork;</code></pre>
 </div>
 </div>
 </div>

@@ -2074,25 +2074,17 @@ So we don&#8217;t recommend to rely on that when using the replication or databa
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let validUser = "syncuser"
-let validPassword = "sync9455"
-let cert:SecCertificate?
-let passivePeerEndpoint = "10.1.1.12:8920"
-let passivePeerPort = "8920"
-let passiveDbName = "userdb"
-var actDb:Database?
-var thisReplicator:Replicator?
-var replicatorListener:ListenerToken?
-
-
-let tgtUrl = URL(string: "wss://10.1.1.12:8092/actDb")!
-let targetEndpoint = URLEndpoint(url: tgtUrl)
-var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
+guard let targetURL = URL(string: "wss://10.1.1.12:8092/otherDB") else {
+    fatalError("Invalid URL")
+}
+let targetEndpoint = URLEndpoint(url: targetURL)
+var config = ReplicatorConfiguration(database: database, target: targetEndpoint) <i class="conum" data-value="1"></i><b>(1)</b>
 
 config.replicatorType = .pushAndPull
 
 // set auto-purge behavior (here we override default)
-thisConfig.enableAutoPurge = false <i class="conum" data-value="2"></i><b>(2)</b>
+config.enableAutoPurge = false <i class="conum" data-value="2"></i><b>(2)</b>
 
 // Configure Sync Mode
 config.continuous = true
@@ -2102,29 +2094,28 @@ config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value
 
 // Configure Client Security <i class="conum" data-value="4"></i><b>(4)</b>
 //  Set Authentication Mode
-let thisAuthenticator = BasicAuthenticator(username: "Our Username", password: "Our Password")
-config.authenticator = thisAuthenticator
+config.authenticator = BasicAuthenticator(username: "cbl-user-01",
+                                          password: "secret")
 
-/* Optionally set custom conflict resolver call back <strong>/
-config.conflictResolver = ( /</strong> define resolver function */); <i class="conum" data-value="5"></i><b>(5)</b>
+/* Optionally set custom conflict resolver call back
+ config.conflictResolver = LocalWinConflictResolver()  <i class="conum" data-value="5"></i><b>(5)</b>
+ */
 
 // Apply configuration settings to the replicator
-thisReplicator = Replicator.init( config: config) <i class="conum" data-value="6"></i><b>(6)</b>
+self.replicator = Replicator.init( config: config) <i class="conum" data-value="6"></i><b>(6)</b>
 
 // Optionally add a change listener
 // Retain token for use in deletion
-let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="7"></i><b>(7)</b>
-  if change.status.activity == .stopped {
-      print("Replication stopped")
-  }
-  else {
-      print("Replicator is currently ", thisReplicator?.status.activity)
-  }
-})
+let token = self.replicator.addChangeListener { change in <i class="conum" data-value="7"></i><b>(7)</b>
+    if change.status.activity == .stopped {
+        print("Replication stopped")
+    } else {
+        print("Replicator is currently : \(self.replicator.status.activity)")
+    }
+}
 
-
-    // Run the replicator using the config settings
-    thisReplicator?.start()  <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
+// Run the replicator using the config settings
+self.replicator.start()  <i class="conum" data-value="8"></i><b>(8)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2245,7 +2236,7 @@ Initialize and define the replication configuration with local and remote databa
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let tgtUrl = URL(string: "wss://10.1.1.12:8092/travel-sample")!
 let targetEndpoint = URLEndpoint(url: tgtUrl)
-var config = ReplicatorConfiguration(database: actDb!, target: targetEndpoint) <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+var config = ReplicatorConfiguration(database: database!, target: targetEndpoint) <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2419,18 +2410,17 @@ config.continuous = true</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let target =
-  URLEndpoint(url: URL(string: "ws://foo.couchbase.com/db")!)
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let target = URLEndpoint(url: URL(string: "ws://foo.couchbase.com/db")!)
 
-let config =  ReplicatorConfiguration(database: database, target: targetDatabase)
-config.type = .pushAndPull
+var config =  ReplicatorConfiguration(database: database, target: target)
+config.replicatorType = .pushAndPull
 config.continuous = true
 config.heartbeat = 150 <i class="conum" data-value="1"></i><b>(1)</b>
 
-config.maxattempts = 20 <i class="conum" data-value="2"></i><b>(2)</b>
+config.maxAttempts = 20 <i class="conum" data-value="2"></i><b>(2)</b>
 
-config.maxattemptwaittime = 600 <i class="conum" data-value="3"></i><b>(3)</b>
-repl = Replicator(config: config)</code></pre>
+config.maxAttemptWaitTime = 600 <i class="conum" data-value="3"></i><b>(3)</b>
+self.replicator = Replicator(config: config)</code></pre>
 </div>
 </div>
 </div>
@@ -2552,7 +2542,7 @@ Self signed certificates are not allowed.</td>
 config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Configure Server Security -- only accept self-signed certs
-config.acceptOnlySelfSignedServerCertificate = true; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+config.acceptOnlySelfSignedServerCertificate = true <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2571,21 +2561,21 @@ Any certificates that are not self-signed are rejected.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift#L4003-L4018">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift#L2098-L2113">
 // Get bundled resource and read into localcert
-guard let pathToCert = Bundle.main.path(forResource: "listener-pinned-cert", ofType: "cer")
-  else { /* process error */ }
-guard let localCertificate:NSData =
-             NSData(contentsOfFile: pathToCert)
-  else { /* process error */ }
+guard
+    let pathToCert = Bundle.main.path(forResource: "listener-pinned-cert", ofType: "cer"),
+    let localCertificate:NSData = NSData(contentsOfFile: pathToCert)
+else { /* process error */ return }
 
 // Create certificate
 // using its DER representation as a CFData
-guard let pinnedCert = SecCertificateCreateWithData(nil, localCertificate)
-  else { /* process error */ }
+guard
+    let pinnedCert = SecCertificateCreateWithData(nil, localCertificate)
+else { /* process error */  return }
 
-// Add `pinnedCert` and `acceptOnlySelfSignedServerCertificate=false` to `ReplicatorConfiguration`
-config.acceptOnlySelfSignedServerCertificate = false
+// Add `pinnedCert` and `acceptOnlySelfSignedServerCertificate=false`(by default)
+// to `ReplicatorConfiguration`
 config.pinnedServerCertificate = pinnedCert</code></pre>
 </div>
 </div>
@@ -2618,7 +2608,7 @@ This is the recommended way of using basic authentication.
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let url = URL(string: "ws://localhost:4984/mydatabase")!
 let target = URLEndpoint(url: url)
-let config = ReplicatorConfiguration(database: database, target: target)
+var config = ReplicatorConfiguration(database: database, target: target)
 config.authenticator = BasicAuthenticator(username: "john", password: "pass")
 
 self.replicator = Replicator(config: config)
@@ -2645,7 +2635,7 @@ The HTTP response contains a session ID which can then be used to authenticate a
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let url = URL(string: "ws://localhost:4984/mydatabase")!
 let target = URLEndpoint(url: url)
-let config = ReplicatorConfiguration(database: database, target: target)
+var config = ReplicatorConfiguration(database: database, target: target)
 config.authenticator = SessionAuthenticator(sessionID: "904ac010862f37c8dd99015a33ab5a3565fd8447")
 
 self.replicator = Replicator(config: config)
@@ -2668,7 +2658,7 @@ As an example, this feature can be useful to pass additional credentials when th
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let config = ReplicatorConfiguration(database: database, target: target)
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">var config = ReplicatorConfiguration(database: database, target: target)
 config.headers = ["CustomHeaderName": "Value"]</code></pre>
 </div>
 </div>
@@ -2692,7 +2682,7 @@ For instance, high-priority documents could be pushed first, or documents in a "
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let url = URL(string: "ws://localhost:4984/mydatabase")!
 let target = URLEndpoint(url: url)
 
-let config = ReplicatorConfiguration(database: database, target: target)
+var config = ReplicatorConfiguration(database: database, target: target)
 config.pushFilter = { (document, flags) in <i class="conum" data-value="1"></i><b>(1)</b>
     if (document.string(forKey: "type") == "draft") {
         return false
@@ -2739,7 +2729,7 @@ Sync Gateway <a href="../../../sync-gateway/current/channels.html" class="page">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let url = URL(string: "ws://localhost:4984/mydatabase")!
 let target = URLEndpoint(url: url)
 
-let config = ReplicatorConfiguration(database: database, target: target)
+var config = ReplicatorConfiguration(database: database, target: target)
 config.pullFilter = { (document, flags) in <i class="conum" data-value="1"></i><b>(1)</b>
     if (flags.contains(.deleted)) {
         return false
@@ -2974,7 +2964,7 @@ Clients wishing to sync previously removed documents must use the resetCheckpoin
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// set auto-purge behavior (here we override default)
-thisConfig.enableAutoPurge = false <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+config.enableAutoPurge = false <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -3089,11 +3079,11 @@ You can, optionally, add a change listener (see <a href="#lbl-repl-mon">Monitor<
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Apply configuration settings to the replicator
-thisReplicator = Replicator.init( config: config) <i class="conum" data-value="1"></i><b>(1)</b>
+self.replicator = Replicator.init( config: config) <i class="conum" data-value="1"></i><b>(1)</b>
 
 
-    // Run the replicator using the config settings
-    thisReplicator?.start()  <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+// Run the replicator using the config settings
+self.replicator.start()  <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 </div>
@@ -3126,10 +3116,11 @@ However, if you do want to force the replication to start again from zero, use t
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">if (resetCheckpointRequired_Example) {
-  self.replicator.start(reset: true)  <i class="conum" data-value="1"></i><b>(1)</b>
-else
-  self.replicator.start()
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
+if doResetCheckpointRequired {
+    self.replicator.start(reset: true)  <i class="conum" data-value="1"></i><b>(1)</b>
+} else {
+    self.replicator.start()
 }</code></pre>
 </div>
 </div>
@@ -3247,23 +3238,22 @@ That is, whether it is actively transferring data or if it has stopped&#8201;&#8
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">// Optionally add a change listener
 // Retain token for use in deletion
-let pushPullReplListener:ListenerToken? = thisReplicator?.addChangeListener({ (change) in <i class="conum" data-value="1"></i><b>(1)</b>
-  if change.status.activity == .stopped {
-      print("Replication stopped")
-  }
-  else {
-      print("Replicator is currently ", thisReplicator?.status.activity)
-  }
-})</code></pre>
+let token = self.replicator.addChangeListener { change in <i class="conum" data-value="1"></i><b>(1)</b>
+    if change.status.activity == .stopped {
+        print("Replication stopped")
+    } else {
+        print("Replicator is currently : \(self.replicator.status.activity)")
+    }
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_using-replicator-status">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">      print("Replicator is currently ", thisReplicator?.status.activity)
-  }
-})</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift">        print("Replicator is currently : \(self.replicator.status.activity)")
+    }
+}</code></pre>
 </div>
 </div>
 </div>
@@ -3440,27 +3430,29 @@ Use it in preference to returning a list of pending document IDs, where possible
 let url = URL(string: "ws://localhost:4984/mydatabase")!
 let target = URLEndpoint(url: url)
 
-let config = ReplicatorConfiguration(database: database, target: target)
+var config = ReplicatorConfiguration(database: database, target: target)
 config.replicatorType = .push
 
 self.replicator = Replicator(config: config)
-let mydocids:Set = self.replicator.pendingDocumentIds() <i class="conum" data-value="1"></i><b>(1)</b>
+let myDocIDs = try self.replicator.pendingDocumentIds() <i class="conum" data-value="1"></i><b>(1)</b>
 
-if(!mydocids.isEmpty) {
-  print("There are \(mydocids.count) documents pending")
+if(!myDocIDs.isEmpty) {
+    print("There are \(myDocIDs.count) documents pending")
+    let thisID = myDocIDs.first!
 
-  self.replicator.addChangeListener { (change) in
-    print("Replicator activity level is \(change.status.activity.toString())")
-    // iterate and report-on previously
-    // retrieved pending docids 'list'
-    for thisId in mydocids.sorted() {
-      if(!self.replicator.isDocumentPending(thisid)) { <i class="conum" data-value="2"></i><b>(2)</b>
-        print("Doc ID \(thisId) now pushed")
-      }
+    self.replicator.addChangeListener { (change) in
+        print("Replicator activity level is \(change.status.activity)")
+        do {
+            let isPending = try self.replicator.isDocumentPending(thisID)
+            if(!isPending) { <i class="conum" data-value="2"></i><b>(2)</b>
+                print("Doc ID \(thisID) now pushed")
+            }
+        } catch {
+            print(error)
+        }
     }
-  }
 
-  self.replicator.start()</code></pre>
+    self.replicator.start()</code></pre>
 </div>
 </div>
 </div>
@@ -3498,11 +3490,12 @@ Your app should account for this potential delay before attempting any subsequen
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Remove the change listener
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
+// Remove the change listener
+self.replicator.removeChangeListener(withToken: token)
 
-thisReplicator?.removeChangeListener(withToken: pushPullReplListener)
 // Stop the replicator
-thisReplicator?.stop()</code></pre>
+self.replicator.stop()</code></pre>
 </div>
 </div>
 </div>
@@ -3646,7 +3639,7 @@ let certificate = SecCertificateCreateWithData(nil, data as CFData)
 let url = URL(string: "wss://localhost:4985/db")!
 let target = URLEndpoint(url: url)
 
-let config = ReplicatorConfiguration(database: database, target: target)
+var config = ReplicatorConfiguration(database: database, target: target)
 config.pinnedServerCertificate = certificate</code></pre>
 </div>
 </div>
@@ -3679,10 +3672,13 @@ You can increase the log output for activity related to replication with Sync Ga
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Replicator
-Database.setLogLevel(.verbose, domain: .replicator)
-// Network
-Database.setLogLevel(.verbose, domain: .network)</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Verbose / Replicator
+Database.log.console.level = .verbose
+Database.log.console.domains = .replicator
+
+// Verbose / Network
+Database.log.console.level = .verbose
+Database.log.console.domains = .network</code></pre>
 </div>
 </div>
 </div>

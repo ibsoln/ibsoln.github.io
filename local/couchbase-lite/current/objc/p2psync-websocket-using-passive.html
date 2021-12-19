@@ -2059,46 +2059,37 @@ There is no limit on the number of listeners you may configure&#8201;&#8212;&#82
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Initialize the listener config <i class="conum" data-value="1"></i><b>(1)</b>
-CBLURLEndpointListenerConfiguration* thisConfig;
-thisConfig =
-  [[CBLURLEndpointListenerConfiguration alloc]
-    initWithDatabase: database];
+CBLURLEndpointListenerConfiguration *config = [[CBLURLEndpointListenerConfiguration alloc]
+                                               initWithDatabase:self.database];
 
-  thisConfig.port =  55990; <i class="conum" data-value="2"></i><b>(2)</b>
+config.port =  55990; <i class="conum" data-value="2"></i><b>(2)</b>
 
-  NSString <strong>thisURL = @"10.1.1.10";
-  thisConfig.networkInterface = thisURL; <i class="conum" data-value="3"></i><b>(3)</b>
+config.networkInterface = @"10.1.1.10"; <i class="conum" data-value="3"></i><b>(3)</b>
 
-  thisConfig.enableDeltaSync = true; <i class="conum" data-value="4"></i><b>(4)</b>
+config.enableDeltaSync = true; <i class="conum" data-value="4"></i><b>(4)</b>
 
-  // Configure server security
-  thisConfig.disableTLS  = false; <i class="conum" data-value="5"></i><b>(5)</b>
+// Configure server security
+config.disableTLS  = false; <i class="conum" data-value="5"></i><b>(5)</b>
 
 
-  // Use an anonymous self-signed cert
-  thisConfig.tlsIdentity = nil; <i class="conum" data-value="6"></i><b>(6)</b>
+// Use an anonymous self-signed cert
+config.tlsIdentity = nil; <i class="conum" data-value="6"></i><b>(6)</b>
 
-  // Configure Client Security using an Authenticator
-  // For example, Basic Authentication <i class="conum" data-value="7"></i><b>(7)</b>
-  thisConfig.authenticator =
-    [[CBLListenerPasswordAuthenticator alloc]
-      initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
-        if ([self isValidCredentials: validUser password:validPassword]) {
-            return  YES;
-        }
-        return NO;
-    }];
+// Configure Client Security using an Authenticator
+// For example, Basic Authentication <i class="conum" data-value="7"></i><b>(7)</b>
+config.authenticator = [[CBLListenerPasswordAuthenticator alloc]
+                        initWithBlock:^BOOL(NSString *username, NSString *password) {
+    return [self isValidCredentials:username password:password];
+}];
 
-  // Initialize the listener <i class="conum" data-value="8"></i><b>(8)</b>
-  CBLURLEndpointListener</strong> thisListener = nil;
-  thisListener =
-    [[CBLURLEndpointListener alloc] initWithConfig: thisConfig];
+// Initialize the listener <i class="conum" data-value="8"></i><b>(8)</b>
+self.listener = [[CBLURLEndpointListener alloc] initWithConfig:config];
 
-  // start the listener <i class="conum" data-value="9"></i><b>(9)</b>
-  BOOL success = [thisListener startWithError: &amp;error];
-  if (!success) {
-      NSLog(@"Cannot start the listener: %@", error);
-  }</code></pre>
+// start the listener <i class="conum" data-value="9"></i><b>(9)</b>
+BOOL success = [self.listener startWithError:&amp;error];
+if (!success) {
+    NSLog(@"Cannot start the listener:%@", error);
+}</code></pre>
 </div>
 </div>
 </div>
@@ -2193,10 +2184,8 @@ Couchbase sets no hard limit on the number of listeners you can initialize.</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Initialize the listener config <i class="conum" data-value="1"></i><b>(1)</b>
-CBLURLEndpointListenerConfiguration* thisConfig;
-thisConfig =
-  [[CBLURLEndpointListenerConfiguration alloc]
-    initWithDatabase: database];</code></pre>
+CBLURLEndpointListenerConfiguration *config = [[CBLURLEndpointListenerConfiguration alloc]
+                                               initWithDatabase:self.database];</code></pre>
 </div>
 </div>
 </div>
@@ -2226,7 +2215,7 @@ The database must be opened before the listener is started.<br>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">thisConfig.port =  55990; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">config.port =  55990; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2251,8 +2240,7 @@ Ensure that any port you do specify is not blocked by firewall rules.<br></td>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSString *thisURL = @"10.1.1.10";
-thisConfig.networkInterface = thisURL; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">config.networkInterface = @"10.1.1.10"; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2282,7 +2270,7 @@ Both valuable benefits, especially when network bandwidth is constrained.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">thisConfig.enableDeltaSync = true; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">config.enableDeltaSync = true; <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2393,26 +2381,23 @@ Typically, you will configure the listener&#8217;s TLS Identity once during init
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">  thisConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">config.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Use CA Cert
 // Create a TLSIdentity from a key-pair and
 // certificate in secure storage
-  NSURL <strong>certURL =
-    [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="2"></i><b>(2)</b>
+NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"p12"]; <i class="conum" data-value="2"></i><b>(2)</b>
 
-  NSData *data =
-    [[NSData alloc] initWithContentsOfURL: certURL];
-  CBLTLSIdentity</strong> thisIdentity =
-    [CBLTLSIdentity importIdentityWithData: data
-      password: @"123"
-      label: @"couchbase-docs-cert"
-      error: &amp;error]; <i class="conum" data-value="3"></i><b>(3)</b>
+NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
+CBLTLSIdentity *tlsIdentity = [CBLTLSIdentity importIdentityWithData:data
+                                                            password:@"123"
+                                                               label:@"couchbase-docs-cert"
+                                                               error:&amp;error]; <i class="conum" data-value="3"></i><b>(3)</b>
 
-  config.tlsIdentity = thisIdentity; <i class="conum" data-value="4"></i><b>(4)</b>
+config.tlsIdentity = tlsIdentity; <i class="conum" data-value="4"></i><b>(4)</b>
 
 // set the TLS Identity
-thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+config.tlsIdentity = tlsIdentity; <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2445,21 +2430,19 @@ thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="5"></i><b>(5
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">  thisConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">config.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Use a self-signed certificate
-NSDictionary* attrs =
-  @{ kCBLCertAttrCommonName: @"Couchbase Inc" }; <i class="conum" data-value="2"></i><b>(2)</b>
+NSDictionary <strong>attrs = @{ kCBLCertAttrCommonName:@"Couchbase Inc" }; <i class="conum" data-value="2"></i><b>(2)</b>
 
-thisIdentity =
-  [CBLTLSIdentity createIdentityForServer: YES /* isServer */
-      attributes: attrs
-      expiration: [NSDate dateWithTimeIntervalSinceNow: 86400]
-            label: @" couchbase-docs-cert"
-            error: &amp;error]; <i class="conum" data-value="3"></i><b>(3)</b>
+tlsIdentity = [CBLTLSIdentity createIdentityForServer:YES /</strong> isServer */
+                                           attributes:attrs
+                                           expiration:[NSDate dateWithTimeIntervalSinceNow:86400]
+                                                label:@"couchbase-docs-cert"
+                                                error:&amp;error]; <i class="conum" data-value="3"></i><b>(3)</b>
 
 // set the TLS Identity
-thisConfig.tlsIdentity = thisIdentity; <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
+config.tlsIdentity = tlsIdentity; <i class="conum" data-value="4"></i><b>(4)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2493,10 +2476,10 @@ Add to secure storage as 'couchbase-docs-cert'.</td>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">thisConfig.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">config.disableTLS  = false; <i class="conum" data-value="1"></i><b>(1)</b>
 
 // Use an anonymous self-signed cert
-thisConfig.tlsIdentity = nil; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+config.tlsIdentity = nil; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2572,14 +2555,10 @@ To use client-supplied certificates instead&#8201;&#8212;&#8201;see: <a href="#u
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Configure Client Security using an Authenticator
 // For example, Basic Authentication <i class="conum" data-value="1"></i><b>(1)</b>
-thisConfig.authenticator =
-  [[CBLListenerPasswordAuthenticator alloc]
-    initWithBlock: ^BOOL(NSString * validUser, NSString * validPassword) {
-      if ([self isValidCredentials: validUser password:validPassword]) {
-          return  YES;
-      }
-      return NO;
-  }];</code></pre>
+config.authenticator = [[CBLListenerPasswordAuthenticator alloc]
+                        initWithBlock:^BOOL(NSString *username, NSString *password) {
+    return [self isValidCredentials:username password:password];
+}];</code></pre>
 </div>
 </div>
 </div>
@@ -2627,25 +2606,19 @@ The logic should take the form of function or block (such as, a closure expressi
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
-    NSURL *certURL = [[NSBundle mainBundle] URLForResource: @"cert" withExtension: @"cer"];
-    NSData *data = [[NSData alloc] initWithContentsOfURL: certURL];
-    SecCertificateRef rootCertRef = SecCertificateCreateWithData(NULL, (<em>bridge CFDataRef)data);
+NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"cer"];
+NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
+SecCertificateRef rootCertRef = SecCertificateCreateWithData(NULL, (<em>bridge CFDataRef)data);
 
-    config.authenticator = [[CBLListenerCertificateAuthenticator alloc]
-                            initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];
+config.authenticator = [[CBLListenerCertificateAuthenticator alloc]
+                        initWithRootCerts:@[(id)CFBridgingRelease(rootCertRef)]];
 // Configure the client authenticator
-NSURL *certURL =
-  [[NSBundle mainBundle]
-    URLForResource: @"cert" withExtension: @"p12"]; <i class="conum" data-value="1"></i><b>(1)</b>
-NSData *data =
-  [[NSData alloc]
-    initWithContentsOfURL: certURL];
-SecCertificateRef rootCertRef =
-  SecCertificateCreateWithData(NULL, (</em>bridge CFDataRef)data);
+NSURL *certURL = [[NSBundle mainBundle] URLForResource:@"cert" withExtension:@"p12"]; <i class="conum" data-value="1"></i><b>(1)</b>
+NSData *data = [[NSData alloc] initWithContentsOfURL:certURL];
+SecCertificateRef rootCertRef = SecCertificateCreateWithData(NULL, (</em>bridge CFDataRef)data);
 
-thisConfig.authenticator =
-  [[CBLListenerCertificateAuthenticator alloc]
-    initWithRootCerts: @[(id)CFBridgingRelease(rootCertRef)]];  <i class="conum" data-value="2"></i><b>(2)</b> <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+config.authenticator = [[CBLListenerCertificateAuthenticator alloc]
+                        initWithRootCerts:@[(id)CFBridgingRelease(rootCertRef)]];  <i class="conum" data-value="2"></i><b>(2)</b> <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2677,38 +2650,20 @@ A valid client will provide one or more certificates that match a certificate in
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
-    CBLListenerCertificateAuthenticator* listenerAuth =
-    [[CBLListenerCertificateAuthenticator alloc] initWithBlock: ^BOOL(NSArray <strong>certs) {
-        SecCertificateRef cert = (<em>bridge SecCertificateRef)(certs[0]);
-        CFStringRef cnRef;
-        OSStatus status = SecCertificateCopyCommonName(cert, &amp;cnRef);
-        if (status == errSecSuccess) {
-            NSString</strong> cn = (NSString*)CFBridgingRelease(cnRef);
-            if ([self._allowlistedUsers containsObject: cn])
-                return YES;
-        }
-        return NO;
-    }];
+CBLListenerCertificateAuthenticator *listenerAuth =
+[[CBLListenerCertificateAuthenticator alloc] initWithBlock:^BOOL(NSArray *certs) {
+    return [self isValidCertificates:certs];
+}];
 
-    config.authenticator = listenerAuth;
+config.authenticator = listenerAuth;
 // Authenticate self-signed cert
 // using application logic
-CBLListenerCertificateAuthenticator* thisListenerAuth =
-  [[CBLListenerCertificateAuthenticator alloc]
-    initWithBlock: ^BOOL(NSArray <strong>certs) {
-      SecCertificateRef cert =
-        (</em>bridge SecCertificateRef)(certs[0]); <i class="conum" data-value="1"></i><b>(1)</b>
-      CFStringRef cnRef;
-      OSStatus status = SecCertificateCopyCommonName(cert, &amp;cnRef);
-      if (status == errSecSuccess) {
-          NSString</strong> cn = (NSString*)CFBridgingRelease(cnRef);
-          if ([self._allowlistedCommonNames containsObject: cn])
-              return YES;
-      }
-      return NO;
-  }];  <i class="conum" data-value="2"></i><b>(2)</b>
+CBLListenerCertificateAuthenticator *authenticator = [[CBLListenerCertificateAuthenticator alloc]
+                                                      initWithBlock:^BOOL(NSArray *certs) {
+    return [self isValidCertificates:certs];
+}];  <i class="conum" data-value="1"></i><b>(1)</b>
 
-thisConfig.authenticator = thisListenerAuth; <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+config.authenticator = authenticator; <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
 </div>
 </div>
@@ -2744,7 +2699,7 @@ It must return a boolean value; with <code>true</code> denoting the client suppl
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
-[CBLTLSIdentity deleteIdentityWithLabel:thisSecId error: &amp;error];</code></pre>
+[CBLTLSIdentity deleteIdentityWithLabel:@"doco-sync-server-1" error:&amp;error];</code></pre>
 </div>
 </div>
 </div>
@@ -2839,14 +2794,12 @@ It must return a boolean value; with <code>true</code> denoting the client suppl
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Initialize the listener <i class="conum" data-value="1"></i><b>(1)</b>
-CBLURLEndpointListener* thisListener = nil;
-thisListener =
-  [[CBLURLEndpointListener alloc] initWithConfig: thisConfig];
+self.listener = [[CBLURLEndpointListener alloc] initWithConfig:config];
 
 // start the listener <i class="conum" data-value="2"></i><b>(2)</b>
-BOOL success = [thisListener startWithError: &amp;error];
+BOOL success = [self.listener startWithError:&amp;error];
 if (!success) {
-    NSLog(@"Cannot start the listener: %@", error);
+    NSLog(@"Cannot start the listener:%@", error);
 }</code></pre>
 </div>
 </div>
@@ -2868,8 +2821,8 @@ if (!success) {
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSUInteger totalConnections = thisListener.status.connectionCount;
-NSUInteger activeConnections = thisListener.status.activeConnectionCount;</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSUInteger totalConnections = self.listener.status.connectionCount;
+NSUInteger activeConnections = self.listener.status.activeConnectionCount;</code></pre>
 </div>
 </div>
 </div>
@@ -2887,7 +2840,7 @@ NSUInteger activeConnections = thisListener.status.activeConnectionCount;</code>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[thisListener stop];</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[self.listener stop];</code></pre>
 </div>
 </div>
 </div>
