@@ -4576,10 +4576,10 @@ You should deploy nodes across all available Availability Zones and then create 
 <div class="title">Storage</div>
 <ul>
 <li>
-<p>EBS <code>gp2</code> and EBS <code>io1</code> are recommended.</p>
+<p>EBS <code>gp3</code> and EBS <code>io1</code> are recommended.</p>
 <div class="paragraph">
 <p>The persistence of EBS offers a significant advantage.
-For most deployments, EBS <code>gp2</code> provides a good balance of performance and cost.</p>
+For most deployments, EBS <code>gp3</code> provides a good balance of performance and cost.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -4628,7 +4628,16 @@ This configuration can be further secured by specifying CIDR blocks to whitelist
 It&#8217;s also recommended to restrict access to intra-cluster communication ports to the security group.</p>
 </li>
 <li>
-<p>Disk encryption is recommended, and is <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html" target="_blank" rel="noopener">available for EBS disks</a>.</p>
+<p>Use of Secret Manager is recommended for storage of Couchbase Server credentials.
+Secret manager enables secure access for applications to <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/retrieving-secrets.html" target="_blank" rel="noopener">retrieve</a> database credentials.
+Secret manager also provides mechanisms for <a href="https://docs.aws.amazon.com/secretsmanager/latest/userguide/rotating-secrets.html" target="_blank" rel="noopener">rotating</a> your secrets automatically.
+Secret manager can also be configured to rotate secrets from within a <a href="https://aws.amazon.com/premiumsupport/knowledge-center/rotate-secrets-manager-secret-vpc/" target="_blank" rel="noopener">private VPC</a>
+If Couchbase Server is deployed by the AWS Marketplace Cloud Formation Template, admin credentials will be stored in a Secret Manager Secret.</p>
+</li>
+<li>
+<p>Disk encryption is recommended, and is <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/EBSEncryption.html" target="_blank" rel="noopener">available for EBS disks</a>.
+Disk encryption can be enabled account-wide by default and is recommended.
+If Couchbase Server is deployed by the AWS Marketplace Cloud Formation Template, the data disk will be encrypted.</p>
 </li>
 <li>
 <p>If using Couchbase Sync Gateway, it&#8217;s recommended that you secure the admin interface for access from <code>127.0.0.1</code> only.
