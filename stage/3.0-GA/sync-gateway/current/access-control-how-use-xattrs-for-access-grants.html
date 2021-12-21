@@ -1899,7 +1899,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="https://github.com/ibsoln/docs-sync-gateway/edit/stage/3.0-GA/modules/ROOT/pages/access-control-how-use-xattrs-for-access-grants.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/pages/access-control-how-use-xattrs-for-access-grants.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -2122,7 +2122,94 @@ See <a href="#ex-cbs-metadata">Example 3</a> for an example of the metadata mode
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#">Unresolved include directive in modules/ROOT/pages/_partials/howto/how-to-use-xattrs-for-access-grants.adoc - include::example$code/csharp/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/examples/code/csharp/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs">using System;
+using System.Threading.Tasks;
+using Couchbase;
+using Couchbase.KeyValue; <i class="conum" data-value="1"></i><b>(1)</b>
+
+
+namespace examples
+{
+
+    class Program
+    {
+        static async Task Main(string[] args)
+        {
+            // Set scope - cluster, bucket and collection
+            var cluster =
+                    await Cluster.ConnectAsync(
+                                    "couchbase://localhost",
+                                    "Administrator",
+                                    "password");
+
+            var bucket = await cluster.BucketAsync("hotels");
+            var collection = bucket.DefaultCollection();
+
+            // Set required  user_xattr_key name and value
+            var our_user_xattr_key_name = "channelXattr"; <i class="conum" data-value="2"></i><b>(2)</b>
+            String[] channelXattrValue =
+                {"channel1","channel3", "useradmin" }; <i class="conum" data-value="3"></i><b>(3)</b>
+
+            var ourDocumentType = "hotel";
+            var documentKey = "";
+
+            // Find our documents and get their ids
+            var queryResult =
+               await cluster.QueryAsync&lt;dynamic&gt;(
+                   "select meta().id from `hotels`.`_default`.`_default` h where h.type = $1",
+                        new Couchbase.Query.QueryOptions().Parameter(ourDocumentType)); <i class="conum" data-value="4"></i><b>(4)</b>
+            await foreach (var row in queryResult)
+            {
+                documentKey = row.id;
+                Console.WriteLine("Working with document id: {0} ",
+                                    documentKey);
+
+                // Check if the document has an existing
+                // user_xattr_key and update or insert new value
+                var result =
+                    await collection.LookupInAsync(
+                            documentKey,
+                            specs =&gt; specs.Exists(
+                                path: our_user_xattr_key_name,
+                                isXattr: true)
+                            ); <i class="conum" data-value="5"></i><b>(5)</b>
+
+                if (result.Exists(0))
+                {
+                    // Update xattr for retrieved Id
+                    await collection.MutateInAsync(
+                            documentKey,
+                            specs =&gt; specs.Upsert(
+                                path: our_user_xattr_key_name, <i class="conum" data-value="6"></i><b>(6)</b>
+                                value: channelXattrValue, <i class="conum" data-value="7"></i><b>(7)</b>
+                                isXattr: true)); <i class="conum" data-value="8"></i><b>(8)</b>
+
+                    Console.Write("Updated Existing user_xattr_key: {0} to this value: {1}\n",
+                        our_user_xattr_key_name,
+                        string.Join(", ", channelXattrValue));
+
+                }
+                else
+                {
+                    // Insert xattr for retrieved id
+                    await collection.MutateInAsync(
+                            documentKey,
+                            specs =&gt; specs.Insert(
+                                path: our_user_xattr_key_name, <i class="conum" data-value="9"></i><b>(9)</b>
+                                value: channelXattrValue, <i class="conum" data-value="10"></i><b>(10)</b>
+                                isXattr: true)); <i class="conum" data-value="11"></i><b>(11)</b>
+
+                    Console.Write("Inserted New user_xattr_key: {0} with value {1}\n",
+                        our_user_xattr_key_name,
+                        string.Join(", ", channelXattrValue));
+
+                }
+
+            }
+            Console.WriteLine("Completed Changes\n");
+        }
+    }
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2249,7 +2336,7 @@ You will set the value of the xattr using the SDK API when the document is creat
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript" data-source-url="https://github.com/ibsoln/docs-sync-gateway/blob/f6b82ed948b303b2f0f011b352e3ab09d1141ae9/modules/ROOT/examples/code/javascript/javasnippets.js">function (doc, oldDoc, meta) { <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/examples/code/javascript/javasnippets.js">function (doc, oldDoc, meta) { <i class="conum" data-value="1"></i><b>(1)</b>
 
   if (meta.xattrs.channelXattr == "undefined") <i class="conum" data-value="2"></i><b>(2)</b>
     {
