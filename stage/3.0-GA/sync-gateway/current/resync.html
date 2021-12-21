@@ -1314,7 +1314,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="whatsnew.html"><strong><em>New in 3.0 {prerelease}</em></strong></a>
+    <a class="menu_title menu_link" href="whatsnew.html"><strong><em>New in 3.0</em></strong></a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1969,7 +1969,6 @@
 <div class="labels">
 <ul>
 <li class="edition"><a href="https://www.couchbase.com/products/editions">3.0</a></li>
-<li class="status"><span>{prerelease}</span></li>
 </ul>
 </div>
 </div>
@@ -2001,8 +2000,32 @@ This content explains the resync feature</p>
 <div class="paragraph">
 <p>If the Sync Function is changed, Sync Gateway needs to reprocess all existing documents in the bucket to recalculate the routing and access assignments.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="resync-api"><a class="anchor" href="#resync-api"></a>Resync API</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>To this end, the Admin REST API provides a resync endpoint that enables you to initiate the reprocessing of every document in the database again.</p>
+<p>The Admin REST API provides a <a href="rest-api-admin.html#/Database_Management/post__db___resync" class="page">/{db}/resync+</a> endpoint that enables you to start or stop a resync operation.
+Starting the resync will initiate the reprocessing of every document in the database again.</p>
+</div>
+<div class="paragraph">
+<p>There is also a 'support-only' option to regenerate sequences whilst resyncing.</p>
+</div>
+<div class="paragraph">
+<p>The resync action is carried out <strong>only</strong> on the node that the POST is made to.
+It is not cross-node aware.</p>
+</div>
+<div class="paragraph">
+<p>In a multi-node cluster, the resync must be only run on one node.
+Users should bring other nodes offline before initiating this action.
+Starting it on more than one node will result in multiple resyncs running, with undefined system behavior.</p>
+</div>
+<div class="paragraph">
+<p>A _resync operation will block until all documents in the database have been processed.</p>
+</div>
+<div class="paragraph">
+<p>You can use <a href="rest-api-admin.html#/Database_Management/get__db___resync" class="page">/{db}/resync+</a> to establish the status of a running resync operation.</p>
 </div>
 </div>
 </div>
@@ -2026,7 +2049,7 @@ This is an expensive operation because it requires every document in the databas
 </div>
 <div class="paragraph">
 <p>The database can accept no requests until this process is complete because no user&#8217;s full access privileges are known until all documents have been scanned.
-Therefore, the Sync Function update will result in application downtime whilst teh database is offline (that is, between the call to the <code>/{tkn-db}/_offline</code> and <code>/{tkn-db}/_online</code> endpoints in <a href="#steps-to-resync">Steps to Update and Resync</a>.</p>
+Therefore, the Sync Function update will result in application downtime whilst the database is offline (that is, between the call to the <code>/{db}/_offline</code> and <code>/{db}/_online</code> endpoints in <a href="#steps-to-resync">Steps to Update and Resync</a>.</p>
 </div>
 <div id="steps-to-resync" class="openblock">
 <div class="title">Steps to Update and Resync</div>
@@ -2042,12 +2065,12 @@ Therefore, the Sync Function update will result in application downtime whilst t
 <li>
 <p>Take the database offline<br>
 Use this Admin REST API endpoint:<br>
-<a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{tkn-db}/_offline</a></p>
+<a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline+</a></p>
 </li>
 <li>
 <p>Resync the database<br>
 Use this Admin REST API endpoint:<br>
-<a href="rest-api-admin.html#/Database_Management/post\/post<em>db</em>_resync" class="page">/{tkn-db}/resync</a></p>
+{resync_api}</p>
 <div class="paragraph">
 <p>The message body of the response contains the number of changes that were made as a result of calling resync</p>
 </div>
@@ -2055,7 +2078,7 @@ Use this Admin REST API endpoint:<br>
 <li>
 <p>Bring the database back online<br>
 Use this Admin REST API endpoint:<br>
-<a href="rest-api-admin.html#/Database_Management/post__db___online" class="page">/{tkn-db}/_online</a></p>
+<a href="rest-api-admin.html#/Database_Management/post__db___online" class="page">/{db}/_online+</a></p>
 </li>
 </ol>
 </div>
@@ -2088,7 +2111,7 @@ Running a resync operation does not revoke access to that document.</p>
 After the update is complete, switch to the main Gateway and bucket.</p>
 </div>
 <div class="paragraph">
-<p>In a clustered environment with multiple Sync Gateway instances sharing the load, all the instances need to share the same configuration, so they all need to be taken offline either by stopping the process or taking them offline using the <a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{tkn-db}/_offline</a> endpoint.
+<p>In a clustered environment with multiple Sync Gateway instances sharing the load, all the instances need to share the same configuration, so they all need to be taken offline either by stopping the process or taking them offline using the <a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline+</a> endpoint.
 After the configuration is updated, <strong>one</strong> instance should be brought up so it can update the database&#8212;&#8203;if more than one is running at this time, they&#8217;ll conflict with each other.
 After the first instance finishes opening the database, the others can be started.</p>
 </div>
