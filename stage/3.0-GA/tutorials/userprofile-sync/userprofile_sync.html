@@ -1121,7 +1121,7 @@ They are available in the "sync" branch of the github repo hosting the app, whic
 <p>3.x</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="_attachments/sync-gateway-config-userprofile-demo-3-x-legacy.json" target="_blank" rel="noopener">sync-gateway-config-userprofile-demo-3-x-legacy.json</a></p>
+<p><a href="../examples/sync-gateway-config-userprofile-demo-3-x-legacy.json" target="_blank" rel="noopener">sync-gateway-config-userprofile-demo-3-x-legacy.json</a></p>
 </div></div></td>
 </tr>
 <tr>
@@ -1129,7 +1129,7 @@ They are available in the "sync" branch of the github repo hosting the app, whic
 <p>2.x</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p><a href="_attachments/sync-gateway-config-userprofile-demo-2-x.json" target="_blank" rel="noopener">sync-gateway-config-userprofile-demo-2-x.json</a></p>
+<p><a href="../examples/sync-gateway-config-userprofile-demo-2-x.json" target="_blank" rel="noopener">sync-gateway-config-userprofile-demo-2-x.json</a></p>
 </div></div></td>
 </tr>
 </tbody>
@@ -1358,7 +1358,11 @@ You will see that we are using the Sync function&#8217;s <a href="../../sync-gat
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-JavaScript hljs" data-lang="JavaScript">function sync(doc, oldDoc) {
 
-Unresolved include directive in modules/userprofile-sync/pages/userprofile_sync.adoc - include::example$sync-gateway-config-userprofile-demo-3-x-legacy.json[]
+/* Authorization */
+
+// Verify the user making the request is the same as the one in doc's email
+requireUser(doc.email);
+
 
 }</code></pre>
 </div>
@@ -1376,7 +1380,20 @@ Unresolved include directive in modules/userprofile-sync/pages/userprofile_sync.
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">Unresolved include directive in modules/userprofile-sync/pages/userprofile_sync.adoc - include::example$sync-gateway-config-userprofile-demo-3-x-legacy.json[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">/* Data Validation */
+
+// Validate the presence of email field.
+// This is the "username" <i class="conum" data-value="1"></i><b>(1)</b>
+validateNotEmpty("email", doc.email);
+
+// Validate that the document Id _id is prefixed by owner <i class="conum" data-value="2"></i><b>(2)</b>
+var expectedDocId = "user" + "::" + doc.email;
+
+<i class="conum" data-value="3"></i><b>(3)</b>
+if (expectedDocId != doc._id) {
+  // reject document
+  throw({forbidden: "user doc Id must be of form user::email"});
+}</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1431,7 +1448,14 @@ They are typically used to route/segregate documents based on the contents of th
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">Unresolved include directive in modules/userprofile-sync/pages/userprofile_sync.adoc - include::example$sync-gateway-config-userprofile-demo-3-x-legacy.json[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">/* Routing */
+
+// Add doc to the user's channel.
+var username = getEmail(); <i class="conum" data-value="1"></i><b>(1)</b>
+
+var channelId = "channel."+ username; <i class="conum" data-value="2"></i><b>(2)</b>
+
+channel(channelId); <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -1466,7 +1490,8 @@ The approach shown in <a href="#ex-access">Example 8</a> ensures that only users
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">Unresolved include directive in modules/userprofile-sync/pages/userprofile_sync.adoc - include::example$sync-gateway-config-userprofile-demo-3-x-legacy.json[]</code></pre>
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">// Give user access to document <i class="conum" data-value="1"></i><b>(1)</b>
+access(username, channelId);</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2054,7 +2079,7 @@ We discussed how to configure your Sync Gateway to enforce relevant access contr
     </div>
     <div class="footer-terms">
       <div class="footer-terms-copyright">
-          <span>© 2021 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+          <span>© 2022 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
       </div>
       <div class="footer-terms-links">
         <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>

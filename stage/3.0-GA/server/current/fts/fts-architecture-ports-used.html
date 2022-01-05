@@ -1722,7 +1722,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-architecture-rest-gRPC.html">Search Service Metrics (REST, gRPC)</a>
+    <a class="menu_title menu_link" href="#fts:fts-architecture-rest-gRPC.adoc">Search Service Metrics (REST, gRPC)</a>
   </span>
 </li>
 <li class="menu_list is-current-page" data-depth="3">
@@ -1745,7 +1745,7 @@
 <li class="menu_list is-parent closed" data-depth="2">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="fts.html">Full Text Indexes</a>
+    <a class="menu_title menu_link" href="#fts:fts.adoc">Full Text Indexes</a>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
@@ -1977,7 +1977,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-search-facets.html">Search Facets</a>
+    <a class="menu_title menu_link" href="#fts:fts-search-facets.adoc">Search Facets</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -1988,7 +1988,7 @@
 <li class="menu_list is-parent closed" data-depth="2">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="fts-searching-from-UI.html">Searching from UI</a>
+    <a class="menu_title menu_link" href="#fts:fts-searching-from-UI.adoc">Searching from UI</a>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
@@ -2069,7 +2069,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-search-response-array-positions.html">Array Positions</a>
+    <a class="menu_title menu_link" href="#fts:fts-search-response-array-positions.adoc">Array Positions</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -2084,7 +2084,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-search-response-index-partition.html">Index Partitions</a>
+    <a class="menu_title menu_link" href="#fts:fts-search-response-index-partition.adoc">Index Partitions</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -7949,9 +7949,7 @@
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
+</div><div class="paragraph">
 <p>The following table lists the FTS port details:</p>
 </div>
 <table id="table-ports-detailed" class="tableblock frame-all grid-all stretch">
@@ -7986,9 +7984,9 @@
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>fts_grpc_port</code> / <code>fts_grpc_ssl_port</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">9130 / 19130</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8094 / 18094</p></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
-<p>Search Service gRPC port used for <a href="../learn/services-and-indexes/services/search-service.html" class="page">scatter-gather</a> operations between FTS nodes</p>
+<p>Search Service gRPC port used for <a href="fts-architecture-scatter-gather.html" class="page">scatter-gather</a> operations between FTS nodes</p>
 </div></div></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
@@ -7996,56 +7994,6 @@
 </tr>
 </tbody>
 </table>
-</div>
-</div>
-<div class="sect1">
-<h2 id="partial-and-full-results"><a class="anchor" href="#partial-and-full-results"></a>Partial and Full Results</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The search service reserves the capability of delivering partial results when some of the nodes in the Couchbase system are unreachable. The search request provides an option for a user who wishes to obtain either the complete result set or none at all.</p>
-</div>
-<div class="paragraph">
-<p>Every search returns the number of partition indexes that succeeded, along with the search hits from those indexes. This information is merged and sorted into a single result-set, either partial or full, providing a fault tolerance mechanism.</p>
-</div>
-<div class="sect2">
-<h3 id="full-results"><a class="anchor" href="#full-results"></a>Full Results</h3>
-<div class="paragraph">
-<p>If the query successfully executes for the given attributes, the developer can use the full result option to display the complete result of the query, including all response objects.</p>
-</div>
-<div class="sect3">
-<h4 id="example"><a class="anchor" href="#example"></a>Example</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">{
-  "status":{"total":1,"failed":0,"successful":1},
-  "request":{
-    "query":{"query":"+name:air* +country:france"},"size":10,"from":0,"highlight":null,"fields":null,"facets":null,"explain":false,"sort":["-_score"],"includeLocations":false,"search_after":null,"search_before":null
-  },
-  "hits":[
-    {"index":"DemoIndex_580e3ee6ba3ac900_4c1c5584","id":"hotel_19199","score":3.166810600229102,"sort":["_score"],"fields":{"_$c":"hotel"}}
-  ],
-  "total_hits":1,"max_score":3.166810600229102,"took":593704,"facets":null
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="partial-results"><a class="anchor" href="#partial-results"></a>Partial Results</h3>
-<div class="paragraph">
-<p>Suppose some of the partition indexes fail to respond before the timeout, or respond with an error. In that case, the developers can use the partial result option to display the result for partial execution of the query.</p>
-</div>
-<div class="sect3">
-<h4 id="example-2"><a class="anchor" href="#example-2"></a>Example</h4>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-JSON hljs" data-lang="JSON">"error":"rest_index: Query, indexName: DemoIndex, err: context deadline exceeded","request":{"ctl":{"timeout":2},"from":10,"query":{"field":"country","wildcard":"f*ce"},"size":10},"status":"fail"}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
 </article>
 </main>
 </div>
@@ -8105,7 +8053,7 @@
     </div>
     <div class="footer-terms">
       <div class="footer-terms-copyright">
-          <span>© 2021 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+          <span>© 2022 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
       </div>
       <div class="footer-terms-links">
         <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>

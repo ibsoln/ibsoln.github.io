@@ -1722,7 +1722,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-architecture-rest-gRPC.html">Search Service Metrics (REST, gRPC)</a>
+    <a class="menu_title menu_link" href="#fts:fts-architecture-rest-gRPC.adoc">Search Service Metrics (REST, gRPC)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1745,7 +1745,7 @@
 <li class="menu_list is-parent closed" data-depth="2">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="fts.html">Full Text Indexes</a>
+    <a class="menu_title menu_link" href="#fts:fts.adoc">Full Text Indexes</a>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
@@ -1977,7 +1977,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-search-facets.html">Search Facets</a>
+    <a class="menu_title menu_link" href="#fts:fts-search-facets.adoc">Search Facets</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -1988,7 +1988,7 @@
 <li class="menu_list is-parent closed" data-depth="2">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="fts-searching-from-UI.html">Searching from UI</a>
+    <a class="menu_title menu_link" href="#fts:fts-searching-from-UI.adoc">Searching from UI</a>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
@@ -2069,7 +2069,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-search-response-array-positions.html">Array Positions</a>
+    <a class="menu_title menu_link" href="#fts:fts-search-response-array-positions.adoc">Array Positions</a>
   </span>
 </li>
 <li class="menu_list is-current-page" data-depth="3">
@@ -2084,7 +2084,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-search-response-index-partition.html">Index Partitions</a>
+    <a class="menu_title menu_link" href="#fts:fts-search-response-index-partition.adoc">Index Partitions</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -7960,6 +7960,31 @@ Facets are aggregate information collected on a particular result set.
 <p>In Facets, you already have a search in mind, and you want to collect additional facet information along with it.</p>
 </div>
 <div class="paragraph">
+<p>Facet-query results may not equal the total number of documents across all buckets if:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>There is more than one pindex.</p>
+</li>
+<li>
+<p>Facets_size is less than the possible values for the field.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Facets Results:
+For each facet you build, a FacetResult is returned containing the following:
+* Field - the name of the field the facet was built on
+* Total - the total number of values encountered (if each document had one term, this should match the total number of documents in the search result)
+* Missing - the number of documents which do not have any value for this field
+* Other - the number of documents for which a value exists, but it was not in the top N number of facet buckets requested
+* Array of Facets - each Facet contains the count indicating the number of items in this facet range/bucket
+<strong> Term - Terms Facets include the name of the term
+</strong> Numeric Range - Numeric Range Facets include the range for this bucket
+** DateTime Range - DateTime Range Facets include the datetime range for this bucket</p>
+</div>
+<div class="paragraph">
 <p>All of the facet examples given in this topic are for the query "<code class="code">water</code>" on the beer-sample dataset.</p>
 </div>
 <div class="paragraph">
@@ -7973,12 +7998,72 @@ Most of the time, this only makes sense for relatively low cardinality fields, l
 It would not make sense to use it on a unique field like an ID.</p>
 </li>
 <li>
+<p>Field: the field over which you want to gather the facet information.</p>
+</li>
+<li>
+<p>Size: the number of top categories per partition to be considered for the facet results.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>e.g: size - 3 &#8658; facets results returns the top 3 categories across all partitions and merges them as the final result.</p>
+</li>
+<li>
+<p>Varying size value varies the count value of each facet and the “others” value as well. This is due to the fact that when the size is varied, some of the categories fall out of the top “n” and into the “others” category.</p>
+</li>
+<li>
+<p>It is recommended to keep the size reasonably large, close to the number of unique terms to get consistent results.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p><strong>Numeric Range Facet</strong> - A numeric range facet works by the user defining their own buckets (numeric ranges).
 The facet then counts how many of the matching documents fall into a particular bucket for a particular field.</p>
 </li>
 <li>
+<p>Along with the two fields from term facet, “numeric_ranges” field has to include all the numeric ranges for the faceted field.</p>
+</li>
+<li>
+<p>“Numeric_ranges” could possibly be an array of ranges and each entry of it must specify either min, max or both for the range.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Name - name for the facet</p>
+</li>
+<li>
+<p>Min - the lower bound value of this range.</p>
+</li>
+<li>
+<p>Max - the upper bound value of this range.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
 <p><strong>Date Range Facet</strong> - same as numeric, but on dates instead of numbers.
 Full text search and Bleve expect dates to be in the format specified by <a href="https://www.ietf.org/rfc/rfc3339.txt" target="_blank" rel="noopener">RFC-3339</a>, which is a specific profile of ISO-8601 that is more restrictive.</p>
+</li>
+<li>
+<p>Along with the two fields from term facet, “date_ranges” field has to include all the numeric ranges for the faceted field.</p>
+</li>
+<li>
+<p>The facet ranges go under a field named “date_ranges”.</p>
+</li>
+<li>
+<p>“date_ranges” could possibly be an array of ranges and each entry of it must specify either start, end or both for the range.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Name - name for the facet</p>
+</li>
+<li>
+<p>Start - start date for this range</p>
+</li>
+<li>
+<p>End - end date for this range</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -7999,10 +8084,12 @@ Most of the time, when building a term facet, you must use the keyword analyzer.
 <div class="sect1">
 <h2 id="example"><a class="anchor" href="#example"></a>Example</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p>Term Facet - computes facet on the type field which has 2 values: <code>beer</code> and <code>brewery</code>.</p>
+<div class="paragraph">
+<p><strong>Term Facet</strong> - computes facet on the type field which has 2 values: <code>beer</code> and <code>brewery</code>.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre>curl -X POST -H "Content-Type: application/json" \
@@ -8023,8 +8110,12 @@ http://localhost:8094/api/index/bix/query -d \
 </div>
 </div>
 <div class="paragraph">
-<p>The result snippet below, only shows the facet section for clarity.
+<p>+
+The result snippet below, only shows the facet section for clarity.
 Run the curl command to see the HTTP response containing the full results.</p>
+</div>
+<div class="paragraph">
+<p>+</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -8048,9 +8139,12 @@ Run the curl command to see the HTTP response containing the full results.</p>
 }</code></pre>
 </div>
 </div>
-</li>
-<li>
-<p>Numeric Range Facet - computes facet on the <code>abv</code> field with two buckets describing <code>high</code> (greater than 7) and <code>low</code> (less than 7).</p>
+<div class="paragraph">
+<p><strong>Numeric Range Facet</strong> - computes facet on the <code>abv</code> field with two buckets describing <code>high</code> (greater than 7) and <code>low</code> (less than 7).</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre>curl -X POST -H "Content-Type: application/json" \
@@ -8081,7 +8175,11 @@ http://localhost:8094/api/index/bix/query -d \
 </div>
 </div>
 <div class="paragraph">
-<p>Results:</p>
+<p>+
+Results:</p>
+</div>
+<div class="paragraph">
+<p>+</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -8107,8 +8205,87 @@ http://localhost:8094/api/index/bix/query -d \
 }</code></pre>
 </div>
 </div>
-</li>
-</ul>
+</div>
+</div>
+<div class="sect1">
+<h2 id="date-range-facet"><a class="anchor" href="#date-range-facet"></a>Date Range Facet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Date Range facet is same as numeric facet, but on dates instead of numbers.</p>
+</div>
+<div class="paragraph">
+<p>Full text search and Bleve expect dates to be in the format specified by <a href="https://www.ietf.org/rfc/rfc3339.txt" target="_blank" rel="noopener">RFC-3339</a>, which is a specific profile of ISO-8601 that is more restrictive.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="example-2"><a class="anchor" href="#example-2"></a>Example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Date Range Facet</strong> - computes facet on the ‘updated’ field that has 2 values old and new</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>curl -XPOST -H "Content-Type: application/json" -u username:password http://&lt;node&gt;:8094/api/index/bix/query -d '{
+"ctl": {"timeout": 0},
+"from": 0,
+"size": 0,
+"query": {
+            "field": "country",
+            "term": "united"
+},
+        "facets": {
+        "types": {
+        "size": 10,
+        "field": "updated",
+        "date_ranges": [
+        {
+        "name": "old",
+        "end": "2010-08-01"
+        },
+        {
+        "name": "new",
+        "start": "2010-08-01"
+        }
+]
+}
+}
+}'</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>+
+Results</p>
+</div>
+<div class="paragraph">
+<p>+</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json"> "facets": {
+             "types": {
+                "field": "updated",
+                "total": 954,
+                "missing": 0,
+                "other": 0,
+             "date_ranges": [
+              {
+                "name": "old",
+                "end": "2010-08-01T00:00:00Z",
+                "count": 934
+              },
+              {
+                "name": "new",
+                "start": "2010-08-01T00:00:00Z",
+                "count": 20
+              }
+               ]
+             }
+           }</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -8171,7 +8348,7 @@ http://localhost:8094/api/index/bix/query -d \
     </div>
     <div class="footer-terms">
       <div class="footer-terms-copyright">
-          <span>© 2021 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+          <span>© 2022 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
       </div>
       <div class="footer-terms-links">
         <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
