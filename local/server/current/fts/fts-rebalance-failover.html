@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv=content-security-policy content="default-src 'none'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https:; img-src 'self' data: https:; connect-src 'self' https:; worker-src blob:;">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Rebalance/Failover for Search Service | Couchbase Docs</title>
+<title>FTS Rebalance/Failover | Couchbase Docs</title>
 <link rel="canonical" href="http://127.0.0.1:5000/server/current/fts/fts-rebalance-failover.html">
 <link rel="stylesheet" href="../../../_/css/site.css">
 <script src="../../../_/js/vendor/jquery.js"></script>
@@ -1721,7 +1721,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-architecture-rest-gRPC.html">Search Service Metrics (REST, gRPC)</a>
+    <a class="menu_title menu_link" href="#fts:fts-architecture-rest-gRPC.adoc">Search Service Metrics (REST, gRPC)</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -1744,7 +1744,7 @@
 <li class="menu_list is-parent closed" data-depth="2">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="fts.html">Full Text Indexes</a>
+    <a class="menu_title menu_link" href="#fts:fts.adoc">Full Text Indexes</a>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
@@ -1976,7 +1976,7 @@
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-search-facets.html">Search Facets</a>
+    <a class="menu_title menu_link" href="#fts:fts-search-facets.adoc">Search Facets</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -1987,7 +1987,7 @@
 <li class="menu_list is-parent closed" data-depth="2">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="fts-searching-from-UI.html">Searching from UI</a>
+    <a class="menu_title menu_link" href="#fts:fts-searching-from-UI.adoc">Searching from UI</a>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
@@ -2068,7 +2068,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-search-response-array-positions.html">Array Positions</a>
+    <a class="menu_title menu_link" href="#fts:fts-search-response-array-positions.adoc">Array Positions</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -2083,7 +2083,7 @@
 </li>
 <li class="menu_list" data-depth="3">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="fts-search-response-index-partition.html">Index Partitions</a>
+    <a class="menu_title menu_link" href="#fts:fts-search-response-index-partition.adoc">Index Partitions</a>
   </span>
 </li>
 <li class="menu_list" data-depth="3">
@@ -4411,7 +4411,7 @@
 </div>
 <article class="doc">
 <div class="page-heading-title">
-<h1 class="page">Rebalance/Failover for Search Service</h1>
+<h1 class="page">FTS Rebalance/Failover</h1>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -4429,10 +4429,19 @@
 <h2 id="handling-partitions-during-a-rebalance"><a class="anchor" href="#handling-partitions-during-a-rebalance"></a>Handling partitions during a rebalance</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The search service redistributes the index partitions across the available search service nodes for a balanced partition-node assignment during a rebalance operation. The newly assigned index partitions are built afresh over DCP feed on the new nodes. Once the new partitions are built up to the current / latest sequence numbers, the partitions are promoted to handle live traffic, and the older partitions are deleted from the system.</p>
+<p>The search service redistributes the index partitions across the available search service nodes for a balanced partition-node assignment during a rebalance operation. The newly assigned index partitions are built utilizing the DCP feed on the new nodes. Once the new partitions are built up to the most current or latest sequence numbers, the partitions are promoted to handle live traffic, and the older partitions are deleted from the system.</p>
 </div>
-<div class="paragraph">
-<p>FTS Rebalance operation involving FTS nodes does not wait for indexes' replicas partitions to be built entirely. While doing the FTS rebalance, the users need to know that this is the expected behavior.</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+During rebalancing, the search service does not wait for all replicas of an index to be built. This is expected behavior since the replica partitions are not used for serving FTS query traffic.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -4449,14 +4458,19 @@ If the user has mutations happening on their data service nodes, the new data wi
 <h2 id="tips-for-faster-rebalance-operations"><a class="anchor" href="#tips-for-faster-rebalance-operations"></a>Tips for faster rebalance operations</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>As the rebalance is a resource-consuming cluster management operation, it is always recommended to perform rebalance during off-peak hours.
-Search service moves or builds the index partitions one at a time per node during the rebalance operations, which could significantly increase the overall time taken for the rebalance operation.</p>
+<p>As the rebalance is a resource-consuming cluster management operation, it is always recommended to perform rebalancing during off-peak hours.</p>
 </div>
 <div class="paragraph">
-<p>There is a configurable option <code>maxConcurrentPartitionMovesPerNode</code> to bring the additional concurrency to how we move/build partitions during a rebalance operation.</p>
+<p>Search service moves or builds the index partitions one at a time per node during the rebalance operations, which could significantly increase the overall time taken for the rebalance operation.</p>
 </div>
 <div class="paragraph">
-<p>If we override this parameter <code>maxConcurrentPartitionMovesPerNode</code> as a runtime cluster option, then we could concurrently build that many partitions in parallel per node at a time, and the rebalance ought to complete faster.</p>
+<p>There is a configurable option [maxConcurrentPartitionMovesPerNode] to bring the additional concurrency to how we move/build partitions during a rebalance operation.</p>
+</div>
+<div class="paragraph">
+<p>By overriding the maxConcurrentPartitionMovesPerNode parameter using the runtime cluster option, we can control the concurrency of partition moves, enabling faster rebalance completion times.</p>
+</div>
+<div class="paragraph">
+<p>Knowing what value to configure this parameter depends on the particular use case and available network bandwidth. Adequate testing must be done in a pre-production environment prior to deploying production clusters with this setting.</p>
 </div>
 <div class="sect2">
 <h3 id="configuring-the-maximum-concurrent-partition-moves-per-node"><a class="anchor" href="#configuring-the-maximum-concurrent-partition-moves-per-node"></a>Configuring the maximum concurrent partition moves per node</h3>
@@ -4465,8 +4479,8 @@ Search service moves or builds the index partitions one at a time per node durin
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -XPUT -uAdministrator:asdasd http://&lt;nodeIP&gt;:8094/api/managerOptions
--d '{"maxConcurrentPartitionMovesPerNode":"5"}'</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -XPUT -u &lt;username&gt;:&lt;password&gt; http://&lt;nodeIP&gt;:8094/api/managerOptions -d '
+{"maxConcurrentPartitionMovesPerNode":"5"}'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4474,11 +4488,11 @@ Search service moves or builds the index partitions one at a time per node durin
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -XGET -uAdministrator:asdasd http://&lt;nodeIP&gt;:8094/api/manager</code></pre>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -XGET -u &lt;username&gt;:&lt;password&gt; http://&lt;nodeIP&gt;:8094/api/manager</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Note: When multiple partitions are built parallel, it needs more RAM and mandates a higher RAM quota. As the rebalance operations consume resources, it is always advisable to plan them during non-peak hours. One way to speed up the rebalance operation is to enable the movement of partitions in parallel in a configurable way.</p>
+<p>Note: When multiple partitions are built parallel, it needs more RAM and mandates a higher RAM quota. As the rebalance operations consume resources, it is always advisable to plan them during non-peak hours. One way to speed up the rebalance operation is to enable the movement of partitions in parallell in a configurable way.</p>
 </div>
 </div>
 </div>
