@@ -1896,7 +1896,7 @@
 </aside>
 <aside class="toc sidebar"
       data-title="Contents"
-      data-levels="1">
+      data-levels="2@">
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
@@ -2024,7 +2024,7 @@ This content explains how Sync Gateway synchronizes document changes made throug
 <li>
 <p>Enable_Shared_Bucket_Access</p>
 <div class="paragraph">
-<p>This setting ensures that both Sync Gateway and Couchbase Server can read and write to the same bucket simultaneously And that Sync Gateway can access Couchbase Server document XATTRS<br>
+<p>This setting ensures that both Sync Gateway and Couchbase Server can read and write to the same bucket simultaneously and that Sync Gateway can access Couchbase Server document XATTRS<br>
 See: <a href="#sgw-paths">Figure 1</a> and <a href="configuration-schema-database.html#database-enable_xttrs" class="page">database.enable_shared_bucket_access</a>.</p>
 </div>
 </li>
@@ -2039,16 +2039,79 @@ See: <a href="#sgw-paths">Figure 1</a> and <a href="configuration-schema-databas
 <div class="paragraph">
 <p>You can configure both these properties using the Admin Rest API <a href="configuration-schema-database.html" class="page">Database Configuration</a> endpoint.</p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="sba-feature"><a class="anchor" href="#sba-feature"></a>Shared Bucket Access</h2>
-<div class="sectionbody">
 <div id="sgw-paths" class="imageblock">
 <div class="content">
 <img src="_images/shared-bucket-access.png" alt="shared bucket access">
 </div>
 <div class="title">Figure 1. Sync Gateway Data Access Paths</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="sba-feature"><a class="anchor" href="#sba-feature"></a>Shared Bucket Access</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Mobile applications require additional metadata in order to manage security and replication.</p>
+</div>
+<div class="paragraph">
+<p>Sync Gateway stores this information using Couchbase Server XATTRs (see Couchbase Server documentation on <a href="#server:learn/data/extended-attributes-fundamentals.html" class="page unresolved">Extended Attributes</a>).</p>
+</div>
+<div class="sect2">
+<h3 id="extended-attributes-xattrs"><a class="anchor" href="#extended-attributes-xattrs"></a>Extended Attributes (XATTRs)</h3>
+<div class="paragraph">
+<p>A document can be associated with zero or more extended attributes.</p>
+</div>
+<div class="paragraph">
+<p>There are currently three types of XATTRS: User, System and Virtual.</p>
+</div>
+<div class="paragraph">
+<p>Extended attributes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Are JSON objects that can be associated with Couchbase documents.</p>
+</li>
+<li>
+<p>Are stored and replicated along with the associated document in both intra-cluster and XDCR replication.</p>
+</li>
+<li>
+<p>Can be accessed via Couchbase Server SDKs using the sub-document API, via command-line tools, and via views.</p>
+</li>
+<li>
+<p>Are accessible from N1QL in Couchbase Server using the <code>().xattrs`</code> property.<br>
+For example, <code>SELECT meta().xattrs._sync from travel-sample where Meta().id = "user::demo"</code>;.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Both Sync Gateway and Couchbase Server use a System extended attribute, with the following characteristics to support mobile convergence (shared bucket access):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Shares lifetime with the document metadata - when a document is deleted, system xattrs are preserved with the tombstone.</p>
+</li>
+<li>
+<p>Allocated 1MB of storage, independent of the 20MB available for the document</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+The sync metadata is maintained internally by Sync Gateway and its structure can change at any time.
+It should not be used to drive business logic of applications.
+The direct use of the N1QL query is unsupported and must not be used in production environments.
+The <code>_raw</code> endpoint (/db/_raw/{docid}) on Sync Gateway&#8217;s Admin REST API returns both the document and its associated mobile metadata.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="documents"><a class="anchor" href="#documents"></a>Documents</h3>
@@ -2056,7 +2119,8 @@ See: <a href="#sgw-paths">Figure 1</a> and <a href="configuration-schema-databas
 <p>With bucket-sharing enabled, Couchbase Server documents can be inserted directly (using <em>N1QL</em> or <em>SDKs</em>) or by using Sync Gateway&#8217;s <a href="rest-api.html" class="page">Public REST API</a>.</p>
 </div>
 <div class="paragraph">
-<p>Sync Gateway <sup class="footnote" id="_footnote_sgw1x5">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> creates the metadata it needs by abstracting it from the SDK or N1QL applications reading and writing data directly to Couchbase Server buckets. It uses Couchbase Server XATTRs <sup class="footnote" id="_footnote_cbs5x0">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> to store that metadata into an external document fragment&#8201;&#8212;&#8201;see <a href="../../server/current/learn/data/extended-attributes-fundamentals.html" class="page">Extended Attributes (XATTR)</a>.</p>
+<p>Sync Gateway <sup class="footnote" id="_footnote_sgw1x5">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> creates the metadata it needs by abstracting it from the SDK or N1QL applications reading and writing data directly to Couchbase Server buckets.
+It uses Couchbase Server XATTRs <sup class="footnote" id="_footnote_cbs5x0">[<a id="_footnoteref_2" class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> to store that metadata into an external document fragment&#8201;&#8212;&#8201;see <a href="../../server/current/learn/data/extended-attributes-fundamentals.html" class="page">Extended Attributes (XATTR)</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2111,7 +2175,7 @@ You can see a practical example in this blog post&#8201;&#8212;&#8201;<a href="h
 <div class="sect2">
 <h3 id="accessing-sync-metadata"><a class="anchor" href="#accessing-sync-metadata"></a>Accessing Sync Metadata</h3>
 <div class="paragraph">
-<p>Mobile metadata is not kept in the document, but in a system extended attribute (XATTR) in Couchbase Server.</p>
+<p>As stated, mobile metadata is not kept in the document, but in a system extended attribute (XATTR) in Couchbase Server.</p>
 </div>
 <div class="paragraph">
 <p>The N1QL query language <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup> supports the ability to query these extended attributes (XATTRS) and hence the document&#8217;s sync metadata&#8201;&#8212;&#8201;see: <a href="#simple-query">Example 1</a>.</p>
@@ -2171,25 +2235,6 @@ You can enable it without bringing down the entire Sync Gateway cluster &#8201;&
 </table>
 </div>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="reference"><a class="anchor" href="#reference"></a>Reference</h3>
-<div class="paragraph">
-<p>Configuration file references:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="configuration-schema-database.html#database-enable_shared_bucket_access" class="page">$dbname.enable_shared_bucket_access</a> to enable convergence for a given database.</p>
-</li>
-<li>
-<p><a href="configuration-schema-database.html#database-import_docs" class="page">$dbname.import_docs</a> to give a particular Sync Gateway node the role of importing the documents.</p>
-</li>
-<li>
-<p><a href="configuration-schema-database.html#database-import_filter" class="page">$dbname.import_filter</a> to select which document(s) to make aware to mobile clients.</p>
-</li>
-</ul>
 </div>
 </div>
 </div>
@@ -2337,12 +2382,16 @@ Workload isolation may be preferable in deployments with high write throughput.<
 <div class="paragraph">
 <p><span class="image"><img src="_images/workload-isolation.png" alt="workload isolation"></span></p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="reference-2"><a class="anchor" href="#reference-2"></a>Reference</h3>
-<div class="paragraph">
-<p>The reference to the configuration properties can be found below.</p>
-</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Further reading</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Couchbase Server documentation on <a href="#server:learn/data/extended-attributes-fundamentals.html" class="page unresolved">Extended Attributes</a></p>
+</li>
+<li>
+<p>Configuration file references:</p>
 <div class="ulist">
 <ul>
 <li>
@@ -2355,6 +2404,11 @@ Workload isolation may be preferable in deployments with high write throughput.<
 <p><a href="configuration-schema-database.html#database-import_filter" class="page">$dbname.import_filter</a> to select which document(s) to make aware to mobile clients.</p>
 </li>
 </ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
 </div>
 <hr>
 </div>
