@@ -3419,28 +3419,22 @@ This content explains the resync feature</p>
 <div class="paragraph">
 <p>Related <em>sync</em> topics: <a href="rest-api-admin.html" class="page">Admin REST API</a> |    <a href="configuration-schema-database.html" class="page">Database Configuration</a>  |  <a href="configuration-schema-database.html#database-sync" class="page">database.sync</a>  |  <a href="configuration-properties-legacy.html" class="page">Legacy Pre-3.0 BETA Configuration</a></p>
 </div>
-<div class="paragraph">
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-:resync_api_put: <a href="rest-api-admin.html#/Database_Management/post<em>db</em>_resync" class="page">/{db}/resync+</a>
-:resync_api_get: <a href="rest-api-admin.html#/Database_Management/get<em>db</em>_resync" class="page">/{db}/resync+</a></p>
 </div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>&gt;&gt;&gt;&gt;&gt;&gt;&gt; a0e28e6 (DOC-7857&#8201;&#8212;&#8201;Resync API)</p>
 </div>
-<div class="paragraph">
-<p>== Introduction</p>
-</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The <em>Sync Function</em> computes both the document routing to channels and the user access to channels at document write time.</p>
 </div>
 <div class="paragraph">
 <p>If the Sync Function is changed, Sync Gateway needs to reprocess all existing documents in the bucket to recalculate the routing and access assignments.</p>
 </div>
-<div class="paragraph">
-<p>== Resync API</p>
 </div>
+</div>
+<div class="sect1">
+<h2 id="resync-api"><a class="anchor" href="#resync-api"></a>Resync API</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>The Admin REST API provides a <a href="rest-api-admin.html#/Database_Management/post__db___resync" class="page">/{db}/resync</a> endpoint that enables you to start or stop a resync operation.
 Starting the resync will initiate the reprocessing of every document in the database again.</p>
@@ -3463,9 +3457,13 @@ Starting it on more than one node will result in multiple resyncs running, with 
 <div class="paragraph">
 <p>You can use <a href="rest-api-admin.html#/Database_Management/get__db___resync" class="page">/{db}/resync</a> to establish the status of a running resync operation.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="updating-the-sync-function"><a class="anchor" href="#updating-the-sync-function"></a>Updating the Sync Function</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>== Updating the Sync Function
-To update the Sync Function and fully resync, you are recommended to follow the steps in <a href="#steps-to-resync">Steps to Update and Resync</a>.</p>
+<p>To update the Sync Function and fully resync, you are recommended to follow the steps in <a href="#steps-to-resync">Steps to Update and Resync</a>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -3497,13 +3495,20 @@ Therefore, the Sync Function update will result in application downtime whilst t
 <li>
 <p>Take the database offline<br>
 Use this Admin REST API endpoint:<br>
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-<a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline+</a></p>
+<a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline</a></p>
 </li>
 <li>
 <p>Resync the database<br>
 Use this Admin REST API endpoint:<br>
-{resync_api}</p>
+{resync_api_post}</p>
+<div class="paragraph">
+<p>The message body of the response contains the number of changes that were made as a result of calling resync</p>
+</div>
+</li>
+<li>
+<p>Bring the database back online<br>
+Use this Admin REST API endpoint:<br>
+<a href="rest-api-admin.html#/Database_Management/post__db___online" class="page">/{db}/_online</a></p>
 </li>
 </ol>
 </div>
@@ -3511,41 +3516,17 @@ Use this Admin REST API endpoint:<br>
 </div>
 </div>
 </div>
-<div class="paragraph">
-<p><a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline</a>
-. Resync the database<br>
-Use this Admin REST API endpoint:<br>
-{resync_api_post}
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; a0e28e6 (DOC-7857&#8201;&#8212;&#8201;Resync API)</p>
-</div>
-<div class="paragraph">
-<p>+
-The message body of the response contains the number of changes that were made as a result of calling resync
-. Bring the database back online<br>
-Use this Admin REST API endpoint:<br>
-&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-<a href="rest-api-admin.html#/Database_Management/post__db___online" class="page">/{db}/_online+</a></p>
-</div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p><a href="rest-api-admin.html#/Database_Management/post__db___online" class="page">/{db}/_online</a>
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; a0e28e6 (DOC-7857&#8201;&#8212;&#8201;Resync API)</p>
-</div>
-<div class="openblock">
-<div class="content">
-<div class="paragraph">
-<p>== Running Resync</p>
-</div>
+<div class="sect1">
+<h2 id="running-resync"><a class="anchor" href="#running-resync"></a>Running Resync</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>If the modifications to the Sync Function only impact write security (and not routing/access), you won&#8217;t need to run the resync operation.</p>
 </div>
 <div class="paragraph">
 <p>If you wish to change the channel/access rules, but only want those rules to apply to documents written after the change was made, then you don&#8217;t need to run the resync operation.</p>
 </div>
-<div class="paragraph">
-<p>=== Resync Context</p>
-</div>
+<div class="sect2">
+<h3 id="resync-context"><a class="anchor" href="#resync-context"></a>Resync Context</h3>
 <div class="paragraph">
 <p>When running a resync operation, the context in the Sync Function is the admin user.
 For that reason, calling the methods <code>requireUser</code>, <code>requireAccess</code>, and <code>requireRole</code> will always succeed.
@@ -3553,39 +3534,34 @@ It is very likely that you are using those functions in production to govern wri
 But in a resync operation, all the documents are already written to the database.
 For that reason, it is recommended to use resync for changing the assignment to channels only (i.e. reads).</p>
 </div>
-<div class="paragraph">
-<p>=== Revoking Access</p>
 </div>
+<div class="sect2">
+<h3 id="revoking-access"><a class="anchor" href="#revoking-access"></a>Revoking Access</h3>
 <div class="paragraph">
 <p>If you change the sync function to revoke a user&#8217;s access to a document, the access will only take effect once a new revision to that document is saved on Sync Gateway.
 Running a resync operation does not revoke access to that document.</p>
 </div>
-<div class="paragraph">
-<p>=== Availability</p>
 </div>
+<div class="sect2">
+<h3 id="availability"><a class="anchor" href="#availability"></a>Availability</h3>
 <div class="paragraph">
 <p>If you need to ensure access to the database during the update, you can create a read-only backup of the Sync Gateway&#8217;s bucket beforehand, then run a secondary Sync Gateway on the backup bucket, in read-only mode.
 After the update is complete, switch to the main Gateway and bucket.</p>
 </div>
-<div class="paragraph">
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-In a clustered environment with multiple Sync Gateway instances sharing the load, all the instances need to share the same configuration, so they all need to be taken offline either by stopping the process or taking them offline using the <a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline+</a> endpoint.</p>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div class="sect2">
-<h3 id="clusters"><a class="anchor" href="#clusters"></a>Clusters</h3>
+<h3 id="updating-cluster"><a class="anchor" href="#updating-cluster"></a>Updating Cluster</h3>
 <div class="paragraph">
-<p>In a clustered environment with multiple Sync Gateway instances sharing the load, all the instances need to share the same configuration, so they all need to be taken offline either by stopping the process or taking them offline using the <a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline</a> endpoint.
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; a0e28e6 (DOC-7857&#8201;&#8212;&#8201;Resync API)
-After the configuration is updated, <strong>one</strong> instance should be brought up so it can update the database&#8212;&#8203;if more than one is running at this time, they&#8217;ll conflict with each other.
+<p>In a clustered environment with multiple Sync Gateway instances sharing the load, all the instances need to share the same configuration.
+To ensure this happens, you must taken all instances offline using the <a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline</a> endpoint.</p>
+</div>
+<div class="paragraph">
+<p>After the configuration is updated, <strong>one</strong> instance should be brought up so it can update the database&#8212;&#8203;if more than one is running at this time, they&#8217;ll conflict with each other.
 After the first instance finishes opening the database, the others can be started.</p>
 </div>
 <hr>
+</div>
+</div>
 </div>
 <div class="sect1">
 <h2 id=""><a class="anchor" href="#"></a></h2>
