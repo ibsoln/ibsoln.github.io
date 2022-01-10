@@ -653,7 +653,6 @@ paths:
         Compaction does not remove JSON bodies of leaf nodes (conflicting branches).
         So it is also important to resolve conflicts in your application in order to re-claim disk space.
 
-
         *Sync Gateway Roles Required (CBS 7.0.2 Developer Preview):*
 
         -- Sync Gateway Architect
@@ -943,18 +942,13 @@ paths:
       summary: Get attachment
       description: |+
         Use this request to get the file attachment associated with a document.
-        It returns the raw data of the associated attachment, just as if you were accessing a static file.
+        It returns the raw data of the associated attachmen, just as if you were accessing a static file.
 
         The Content-Type response header is the same content type set when the document attachment was added to the database.
 
         To remove an attachment from a document, simply update the `_attachments` dictionary of the document in the PUT "/{db}/{id}" request.
 
         Use the `meta` parameter to request that only the document ID of the attachment blob be returned
-
-        *Sync Gateway Roles Required:*
-
-        -- Sync Gateway Application
-        -- Sync Gateway Application Read Only
 
 
         *Sync Gateway Roles Required (CBS 7.0.2 Developer Preview):*
@@ -1012,10 +1006,7 @@ paths:
         Uploading an attachment updates the corresponding document revision.
         Revisions are tracked for the parent document, not individual attachments.
 
-        *Sync Gateway Roles Required:*
-
-        -- Sync Gateway Application
-
+        To remove an attachment from a document, simply update the `_attachments` dictionary of the document in the PUT "{db}/{id}" request.
 
         *Sync Gateway Roles Required (CBS 7.0.2 Developer Preview):*
 
@@ -1788,7 +1779,7 @@ paths:
         200:
           description: OK – online request accepted.
         503:
-          description: Service Unavailable - Database resync is in progress.
+          description: Service Unavailable – Database resync is in progress.
   /{db}/_purge:
     post:
       tags:
@@ -1866,7 +1857,7 @@ paths:
       - $ref: '#/parameters/db'
       responses:
         200:
-          $ref: '#/responses/200-resync-get'
+          $ref: '#/responses/200-resync'
 
     post:
       tags:
@@ -1907,7 +1898,7 @@ paths:
 
         *Sync Gateway Roles Required (CBS 7.0.2 Developer Preview):*
 
-        - Sync Gateway Architect
+        – Sync Gateway Architect
 
       parameters:
       - $ref: '#/parameters/db'
@@ -1916,11 +1907,11 @@ paths:
 
       responses:
         200:
-          $ref: '#/responses/200-resync-put'
+          $ref: '#/responses/200-resync'
         400:
-          $ref: '#/responses/400-resync-put-stopped'
+          $ref: '#/responses/400-resync-post-stopped'
         503:
-          $ref: '#/responses/503-resync-put'
+          $ref: '#/responses/503-resync-post'
 
 
   /{db}/_revtree/{doc}:
@@ -2460,10 +2451,10 @@ responses:
     schema:
       $ref: '#/definitions/user'
 
-  '200-resync-get':
+  '200-resync':
     description: OK
     schema:
-      $ref: '#/definitions/Resync-get-response'
+      $ref: '#/definitions/Resync-response'
     example:
       {
         "status": "completed",
@@ -2473,38 +2464,24 @@ responses:
         "docs_processed": 0
       }
 
-
-  '200-resync-put':
-    description: OK
-    schema:
-      $ref: '#/definitions/Resync-put-response'
-    example:
-      {
-        "status": "completed",
-        "start_time": "2022-01-05T15:05:27.521824Z",
-        "last_error": "",
-        "docs_changed": 0,
-        "docs_processed": 0
-      }
-
-  '400-resync-put-stopped':
+  '400-resync-post-stopped':
     description: 400 - Database _resync not running
     # schema:
-    #   $ref: '#/definitions/Resync-put-error-response'
+    #   $ref: '#/definitions/resync-post-error-response'
 
-  # '503-resync-put-running':
+  # '503-resync-post-running':
   #   description: 503 - Database _resync already in progress
     # schema:
-    #   $ref: '#/definitions/Resync-put-error-response'
+    #   $ref: '#/definitions/resync-post-error-response'
 
-  '503-resync-put':
+  '503-resync-post':
     description: |+
       503 error code. The meaning varies depending on the action parameter:
 
       - action=start -- Database must be offline before calling _resync.
       - action=stop -- Database _resync already in progress
     # schema:
-    #   $ref: '#/definitions/Resync-put-error-response'
+    #   $ref: '#/definitions/resync-post-error-response'
 
   OK:
     description: 200 - OK - Operation successful
@@ -5582,13 +5559,13 @@ definitions:
 
           It comprises the replication definition as would be returned using a `GET` request to the  `_replication` endpoint.
 #
-  Resync-get-response:
+  Resync-response:
     type: object
     properties:
       status:
         type: string
         description: |+
-          Indicates theStatus of the resync operation.
+          Indicates the status of the resync operation.
 
           Possible values:
 
@@ -5596,6 +5573,12 @@ definitions:
           -- stopped,
           -- stopping,
           -- stopped on error
+
+      start_time:
+        type: string
+        description: |+
+          The `_resync` process start time in ISO 8601 format (for example: `2012-04-23T18:25:43.511Z`)
+
 
       docs_changed:
         type: integer
@@ -5609,17 +5592,17 @@ definitions:
           Shows the number of documents that have been run through the sync function.
 
       last_error:
-        type: boolean
+        type: string
         description: |+
           Will ONLY be present when status = “stopped on error”
 
-          In the event an error in the resync process this field will contain error details.
+          In the event of an error in the `_resync` process this field will contain error details.
           Otherwise it is not visible.
 #
 
 
 #
-  Resync-put-response:
+  resync-post-response:
     type: object
     properties:
       status:
@@ -5629,6 +5612,11 @@ definitions:
 
           For `start` this will return ```running``` status
           For `stop`` this will return ```stopping``` status
+
+      start_time:
+        type: string
+        description: |+
+          The `_resync` process start time in ISO 8601 format (for example: `2012-04-23T18:25:43.511Z`)
 
       docs_changed:
         type: integer
@@ -6966,12 +6954,8 @@ parameters:
       The action query can be “start” or “stop”.
       If neither is provided,“start” is used as the default.
 
-      - Start will begin the resync operation.
-      It will return
-      ```{"status": "running", "docs_changed": 0, "docs_processed": 0}```
-
+      - Start will 'begin' the asynchrounous resync operation.
       - Stop will stop the resync operation and will return
-      ```{"status": "stopping", "docs_changed": 0, "docs_processed": 0}```
 
   resync-regenerate:
     in: query
