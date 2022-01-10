@@ -2287,7 +2287,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html"><strong><em>New in 3.0 {prerelease}</em></strong></a>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html"><strong><em>New in 3.0</em></strong></a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -3430,73 +3430,71 @@ This snippet demonstrates how to run basic CRUD operations, a simple Query and r
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs#L51-L119">
-            // using System;
-            // using Couchbase.Lite;
-            // using Couchbase.Lite.Query;
-            // using Couchbase.Lite.Sync;
+    // using System;
+    // using Couchbase.Lite;
+    // using Couchbase.Lite.Query;
+    // using Couchbase.Lite.Sync;
 
-            // Get the database (and create it if it doesn't exist)
-            var database = new Database("mydb");
-            // Create a new document (i.e. a record) in the database
-            string id = null;
-            using (var mutableDoc = new MutableDocument())
-            {
-                mutableDoc.SetFloat("version", 2.0f)
-                    .SetString("type", "SDK");
+    // Get the database (and create it if it doesn't exist)
+    var database = new Database("mydb");
+    // Create a new document (i.e. a record) in the database
+    string id = null;
+    using (var mutableDoc = new MutableDocument())
+    {
+        mutableDoc.SetFloat("version", 2.0f)
+            .SetString("type", "SDK");
 
-                // Save it to the database
-                database.Save(mutableDoc);
-                id = mutableDoc.Id;
-            }
+        // Save it to the database
+        database.Save(mutableDoc);
+        id = mutableDoc.Id;
+    }
 
-            // Update a document
-            using (var doc = database.GetDocument(id))
-            using (var mutableDoc = doc.ToMutable())
-            {
-                mutableDoc.SetString("language", "C#");
-                database.Save(mutableDoc);
+    // Update a document
+    using (var doc = database.GetDocument(id))
+    using (var mutableDoc = doc.ToMutable())
+    {
+        mutableDoc.SetString("language", "C#");
+        database.Save(mutableDoc);
 
-                using (var docAgain = database.GetDocument(id))
-                {
-                    Console.WriteLine($"Document ID :: {docAgain.Id}");
-                    Console.WriteLine($"Learning {docAgain.GetString("language")}");
-                }
-            }
-
-            // Create a query to fetch documents of type SDK
-            // i.e. SELECT * FROM database WHERE type = "SDK"
-            using (var query = QueryBuilder.Select(SelectResult.All())
-                .From(DataSource.Database(database))
-                .Where(Expression.Property("type").EqualTo(Expression.String("SDK"))))
-            {
-                // Run the query
-                var result = query.Execute();
-                Console.WriteLine($"Number of rows :: {result.AllResults().Count}");
-            }
-
-            // Create replicator to push and pull changes to and from the cloud
-            var targetEndpoint = new URLEndpoint(new Uri("ws://localhost:4984/getting-started-db"));
-            var replConfig = new ReplicatorConfiguration(database, targetEndpoint);
-
-            // Add authentication
-            replConfig.Authenticator = new BasicAuthenticator("john", "pass");
-
-            // Create replicator (make sure to add an instance or static variable
-            // named _Replicator)
-            var _Replicator = new Replicator(replConfig);
-            _Replicator.AddChangeListener((sender, args) =&gt;
-            {
-                if (args.Status.Error != null)
-                {
-                    Console.WriteLine($"Error :: {args.Status.Error}");
-                }
-            });
-
-            _Replicator.Start();
-
-            // Later, stop and dispose the replicator *before* closing/disposing the
+        using (var docAgain = database.GetDocument(id))
+        {
+            Console.WriteLine($"Document ID :: {docAgain.Id}");
+            Console.WriteLine($"Learning {docAgain.GetString("language")}");
         }
     }
+
+    // Create a query to fetch documents of type SDK
+    // i.e. SELECT * FROM database WHERE type = "SDK"
+    using (var query = QueryBuilder.Select(SelectResult.All())
+        .From(DataSource.Database(database))
+        .Where(Expression.Property("type").EqualTo(Expression.String("SDK"))))
+    {
+        // Run the query
+        var result = query.Execute();
+        Console.WriteLine($"Number of rows :: {result.AllResults().Count}");
+    }
+
+    // Create replicator to push and pull changes to and from the cloud
+    var targetEndpoint = new URLEndpoint(new Uri("ws://localhost:4984/getting-started-db"));
+    var replConfig = new ReplicatorConfiguration(database, targetEndpoint);
+
+    // Add authentication
+    replConfig.Authenticator = new BasicAuthenticator("john", "pass");
+
+    // Create replicator (make sure to add an instance or static variable
+    // named _Replicator)
+    var _Replicator = new Replicator(replConfig);
+    _Replicator.AddChangeListener((sender, args) =&gt;
+    {
+        if (args.Status.Error != null)
+        {
+            Console.WriteLine($"Error :: {args.Status.Error}");
+        }
+    });
+
+    _Replicator.Start();
+
+    // Later, stop and dispose the replicator *before* closing/disposing the
 }</code></pre>
 </div>
 </div>

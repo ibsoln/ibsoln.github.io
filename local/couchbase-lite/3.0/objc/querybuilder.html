@@ -2287,7 +2287,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html"><strong><em>New in 3.0 {prerelease}</em></strong></a>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html"><strong><em>New in 3.0</em></strong></a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -3557,10 +3557,12 @@ See the <a href="indexing.html" class="page">Indexing</a> topic to learn more ab
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLValueIndexItem *type = [CBLValueIndexItem property:@"type"];
-CBLValueIndexItem *name = [CBLValueIndexItem property:@"name"];
-CBLIndex *index = [CBLIndexBuilder valueIndexWithItems:@[type, name]];
-[self.database createIndex:index withName:@"TypeNameIndex" error:&amp;error];</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
+CBLValueIndexConfiguration* config =
+            [[CBLValueIndexConfiguration alloc]
+                initWithExpression: @[@"type", @"name"]];
+
+[self.database createIndexWithConfig: config name: @"TypeNameIndex" error: &amp;error];</code></pre>
 </div>
 </div>
 </div>
@@ -4427,15 +4429,15 @@ CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult all]]
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQueryResultSet *results = [query execute:&amp;error];
 
 for (CBLQueryResult *result in results) {
-    
+
     NSDictionary *data = [result valueAtIndex:0];
-    
+
     // Use dictionary values
     NSLog(@"id = %@", [data valueForKey:@"id"]);
     NSLog(@"name = %@", [data valueForKey:@"name"]);
     NSLog(@"type = %@", [data valueForKey:@"type"]);
     NSLog(@"city = %@", [data valueForKey:@"city"]);
-    
+
 } // end for</code></pre>
 </div>
 </div>
@@ -4545,7 +4547,7 @@ for (CBLQueryResult *result in results) { // all results
     NSLog(@"name = %@", [result stringForKey:@"name"]);
     NSLog(@"type = %@", [result stringForKey:@"type"]);
     NSLog(@"city = %@", [result stringForKey:@"city"]);
-    
+
 }</code></pre>
 </div>
 </div>
@@ -4616,11 +4618,11 @@ CBLDocument *doc = nil;
 NSString *docId = nil;
 for (CBLQueryResult *result in results) {
     docId = [result stringForKey:@"id"]; <i class="conum" data-value="1"></i><b>(1)</b>
-    
+
     // Now you can get the document using its ID
     // for example using
     doc = [self.database documentWithID:docId];
-    
+
 }</code></pre>
 </div>
 </div>
@@ -4658,7 +4660,7 @@ CBLQueryResultSet *results = [query execute:&amp;error];
 
 for (CBLQueryResult *result in results) {
     count = [result integerForKey:@"myCount"]; <i class="conum" data-value="2"></i><b>(2)</b>
-    
+
 } // end for</code></pre>
 </div>
 </div>
@@ -4714,7 +4716,7 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
 
 for (CBLQueryResult *result in results) {
     count = [result integerForKey:@"myCount"]; <i class="conum" data-value="1"></i><b>(1)</b>
-    
+
 } // end for</code></pre>
 </div>
 </div>
@@ -4796,20 +4798,20 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQueryResultSet *rs = [query execute:&amp;error];
 for (CBLQueryResult *result in rs) {
-    
+
     // Get result as a JSON string
     NSString *json = [result toJSON]; <i class="conum" data-value="1"></i><b>(1)</b>
-    
+
     // Get an native Obj-C object from the Json String
     NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[json dataUsingEncoding:NSUTF8StringEncoding]
                                                                      options:NSJSONReadingAllowFragments
                                                                        error:&amp;error]; <i class="conum" data-value="2"></i><b>(2)</b>
-    
+
     // Log generated Json and Native objects
     // For demo/example purposes
     NSLog(@"Json String %@", json);
     NSLog(@"Native Object %@", dict);
-    
+
 }; // end for</code></pre>
 </div>
 </div>

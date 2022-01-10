@@ -2286,7 +2286,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="whatsnew.html"><strong><em>New in 3.0 {prerelease}</em></strong></a>
+    <a class="menu_title menu_link" href="whatsnew.html"><strong><em>New in 3.0</em></strong></a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -3394,7 +3394,6 @@
 <div class="labels">
 <ul>
 <li class="edition"><a href="https://www.couchbase.com/products/editions">3.0</a></li>
-<li class="status"><span>{prerelease}</span></li>
 </ul>
 </div>
 </div>
@@ -3444,12 +3443,14 @@ It is not cross-node aware.</p>
 </div>
 <div class="paragraph">
 <p>In a multi-node cluster, the resync must be only run on one node.
-Users should take other nodes offline before initiating this action.
-Starting resync on more than one node will result in multiple instances running, with undefined system behavior.</p>
+Users should bring other nodes offline before initiating this action.
+Starting it on more than one node will result in multiple resyncs running, with undefined system behavior.</p>
 </div>
 <div class="paragraph">
-<p>The resync operation is run asynchronously.
-Use <a href="rest-api-admin.html#/Database_Management/get__db___resync" class="page">/{db}/resync</a> to establish the current status of a resync operation.</p>
+<p>A _resync operation will block until all documents in the database have been processed.</p>
+</div>
+<div class="paragraph">
+<p>You can use <a href="rest-api-admin.html#/Database_Management/get__db___resync" class="page">/{db}/resync</a> to establish the status of a running resync operation.</p>
 </div>
 </div>
 </div>
@@ -3472,25 +3473,12 @@ This is an expensive operation because it requires every document in the databas
 </table>
 </div>
 <div class="paragraph">
-<p>The database can accept no requests until resync is complete because no user&#8217;s full access privileges are known until all documents have been scanned.
+<p>The database can accept no requests until this process is complete because no user&#8217;s full access privileges are known until all documents have been scanned.
 Therefore, the Sync Function update will result in application downtime whilst the database is offline (that is, between the call to the <code>/{db}/_offline</code> and <code>/{db}/_online</code> endpoints in <a href="#steps-to-resync">Steps to Update and Resync</a>.</p>
 </div>
-<div class="paragraph">
-<p>You won&#8217;t need to run the resync operation, if either:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>The modifications to the Sync Function only impact write security (and not routing/access), or,</p>
-</li>
-<li>
-<p>You only want changes to channel/access rules to apply to documents written after the change was made.</p>
-</li>
-</ul>
-</div>
-<div id="steps-to-resync" class="sidebarblock">
-<div class="content">
+<div id="steps-to-resync" class="openblock">
 <div class="title">Steps to Update and Resync</div>
+<div class="content">
 <div class="olist arabic">
 <ol class="arabic">
 <li>
@@ -3501,22 +3489,20 @@ Therefore, the Sync Function update will result in application downtime whilst t
 </li>
 <li>
 <p>Take the database offline<br>
-Use this Admin REST API endpoint:
+Use this Admin REST API endpoint:<br>
 <a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline</a></p>
 </li>
 <li>
 <p>Resync the database<br>
-Use this Admin REST API endpoint: <a href="rest-api-admin.html#/Database_Management/post__db___resync" class="page">/{db}/resync</a></p>
-</li>
-<li>
-<p>Monitor the resync status using <a href="rest-api-admin.html#/Database_Management/get__db___resync" class="page">/{db}/resync</a> to see when it completes.</p>
+Use this Admin REST API endpoint:<br>
+{resync_api_post}</p>
 <div class="paragraph">
 <p>The message body of the response contains the number of changes that were made as a result of calling resync</p>
 </div>
 </li>
 <li>
 <p>Bring the database back online<br>
-Use this Admin REST API endpoint:
+Use this Admin REST API endpoint:<br>
 <a href="rest-api-admin.html#/Database_Management/post__db___online" class="page">/{db}/_online</a></p>
 </li>
 </ol>
@@ -3529,11 +3515,10 @@ Use this Admin REST API endpoint:
 <h2 id="running-resync"><a class="anchor" href="#running-resync"></a>Running Resync</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Resync is run asynchronously.
-Its status can be monitored using <a href="rest-api-admin.html#/Database_Management/get__db___resync" class="page">/{db}/resync</a>.</p>
+<p>If the modifications to the Sync Function only impact write security (and not routing/access), you won&#8217;t need to run the resync operation.</p>
 </div>
 <div class="paragraph">
-<p>Be sure to take the database offline using <a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline</a></p>
+<p>If you wish to change the channel/access rules, but only want those rules to apply to documents written after the change was made, then you don&#8217;t need to run the resync operation.</p>
 </div>
 <div class="sect2">
 <h3 id="resync-context"><a class="anchor" href="#resync-context"></a>Resync Context</h3>
@@ -3555,18 +3540,15 @@ Running a resync operation does not revoke access to that document.</p>
 <div class="sect2">
 <h3 id="availability"><a class="anchor" href="#availability"></a>Availability</h3>
 <div class="paragraph">
-<p>If you need to ensure access to the database during a Sync function update and resync, you can create a read-only backup of the Sync Gateway&#8217;s bucket beforehand, then run a secondary Sync Gateway on the backup bucket, in read-only mode.
-Once you detect the resync is complete, switch back to the main Sync Gateway and bucket.</p>
+<p>If you need to ensure access to the database during the update, you can create a read-only backup of the Sync Gateway&#8217;s bucket beforehand, then run a secondary Sync Gateway on the backup bucket, in read-only mode.
+After the update is complete, switch to the main Gateway and bucket.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="updating-clusters"><a class="anchor" href="#updating-clusters"></a>Updating Clusters</h3>
+<h3 id="clusters"><a class="anchor" href="#clusters"></a>Clusters</h3>
 <div class="paragraph">
-<p>In a clustered environment with multiple Sync Gateway instances sharing the load, all the instances need to share the same configuration.
-To ensure this happens, you must taken all instances offline using the <a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline</a> endpoint.</p>
-</div>
-<div class="paragraph">
-<p>After the configuration is updated, <strong>one</strong> instance should be brought up so it can update the database&#8212;&#8203;if more than one is running at this time, they&#8217;ll conflict with each other.
+<p>In a clustered environment with multiple Sync Gateway instances sharing the load, all the instances need to share the same configuration, so they all need to be taken offline either by stopping the process or taking them offline using the <a href="rest-api-admin.html#/Database_Management/post__db___offline" class="page">/{db}/_offline</a> endpoint.
+After the configuration is updated, <strong>one</strong> instance should be brought up so it can update the database&#8212;&#8203;if more than one is running at this time, they&#8217;ll conflict with each other.
 After the first instance finishes opening the database, the others can be started.</p>
 </div>
 <hr>

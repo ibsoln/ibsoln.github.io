@@ -2286,7 +2286,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html"><strong><em>New in 3.0 {prerelease}</em></strong></a>
+    <a class="menu_title menu_link" href="../../../sync-gateway/current/whatsnew.html"><strong><em>New in 3.0</em></strong></a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -5028,6 +5028,11 @@ class QueryExamples(private val database: Database) {
     // <mark># Indexing
     @Throws(CouchbaseLiteException::class)
     fun testIndexing() {
+        database.createIndex( "TypeNameIndex",
+              ValueIndexConfiguration( "type", "name")
+    }
+
+    fun testIndexing_Querybuilder() {
         database.createIndex(
             "TypeNameIndex",
             IndexBuilder.valueIndex(
@@ -5403,17 +5408,36 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false)
-        )
+        val config = FullTextIndexConfiguration(["overview"]).ignoreAccents(false);
+        database.createIndex( "overviewFTSIndex", config);
     }
 
     @Throws(CouchbaseLiteException::class)
     fun testFTS() {
+
+        val ftsQuery =
+              database.createQuery(
+                "SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)");
+
+        val rs = ftsQuery.execute().allResults()
+        for (result in rs) {
+            Log.i(TAG, "document properties${result.getString(0)}")
+        }
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun prepareIndex_Querybuilder() {
+        database.createIndex(
+            "overviewFTSIndex",
+            IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false)
+        )
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun testFTS_Querybuilder() {
         val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
             .from(DataSource.database(database))
-            .where(FullTextExpression.index("nameFTSIndex").match("buy"))
+            .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
             .execute()
         for (result in rs) {
             Log.i(TAG, "document properties${result.getString(0)}")
