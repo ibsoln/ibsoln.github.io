@@ -833,7 +833,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../java/upgrade.html">Upgrade</a>
+    <a class="menu_title menu_link" href="../java/dep-upgrade.html">Upgrade</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -1815,12 +1815,12 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0.{base}/couchbase-lite-java/">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0.{base}/couchbase-lite-java/index.html?">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../java/upgrade.html">Upgrade</a>
+    <a class="menu_title menu_link" href="../java/dep-upgrade.html">Upgrade</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -3390,12 +3390,6 @@
 <article class="doc">
 <div class="page-heading-title">
 <h1 class="page">Predictive Query&#8201;&#8212;&#8201;Working with Queries</h1>
-<div class="labels">
-<ul>
-<li class="edition"><a href="https://www.couchbase.com/products/editions">3.0 https://www.couchbase.com/products/editions[ENTERPRISE EDITION]</a></li>
-<li class="status"><span>{prerelease}:page-role:</span></li>
-</ul>
-</div>
 </div>
 <div class="contributor-list-box">
 <span class="last-commit-date" id="commitdate">    </span>
@@ -3915,7 +3909,8 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
-        val config = FullTextIndexConfiguration(["overview"]).ignoreAccents(false);
+        val config = FullTextIndexConfiguration("overview").ignoreAccents(false)
+
         database.createIndex( "overviewFTSIndex", config);
     }
 
@@ -3924,12 +3919,12 @@ class QueryExamples(private val database: Database) {
 
         val ftsQuery =
               database.createQuery(
-                "SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)");
+                "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)")
 
-        val rs = ftsQuery.execute().allResults()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}")
         }
+
     }
 
     @Throws(CouchbaseLiteException::class)
@@ -3942,13 +3937,20 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class)
     fun testFTS_Querybuilder() {
-        val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
-        }
+
+        val ftsQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id),
+                                  SelectResult.expression(overview))
+                          .from(DataSource.database(database))
+                          .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
+                          .execute()
+
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("Meta.id")}: ${result.getString("overview")}")
+          }
+
+
+
     }
 
 
@@ -4689,7 +4691,7 @@ The null value returned by the prediction method will be interpreted as MISSING 
 </template>
 <script id="site-script" src="../../../_/js/site.js"></script>
 <script defer src="../../../_/js/vendor/fontawesome-icon-defs.js"></script>
-<script defer src="../../../_/js/vendor/fontawesome.js"></script>
+<script defer src="../../../_/js/vendor/fontawesome.js" data-search-pseudo-elements="true"></script>
 <script async src="../../../_/js/vendor/highlight.js"></script>
 </body>
 </html>

@@ -113,7 +113,7 @@
       <div class="component_list-version">
         <span class="component_list_title">Couchbase Lite</span>
         <select class="version_list" data-component="couchbase-lite">
-          <option value="3.0" data-url="../index.html" selected>3.0.0</option>
+          <option value="3.0" data-url="../index.html" selected>3.0</option>
         </select>
       </div>
       <div class="version_items hide" data-version="3.0">
@@ -3973,7 +3973,8 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
-        val config = FullTextIndexConfiguration(["overview"]).ignoreAccents(false);
+        val config = FullTextIndexConfiguration("overview").ignoreAccents(false)
+
         database.createIndex( "overviewFTSIndex", config);
     }
 
@@ -3982,12 +3983,12 @@ class QueryExamples(private val database: Database) {
 
         val ftsQuery =
               database.createQuery(
-                "SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)");
+                "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)")
 
-        val rs = ftsQuery.execute().allResults()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}")
         }
+
     }
 
     @Throws(CouchbaseLiteException::class)
@@ -4000,13 +4001,20 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class)
     fun testFTS_Querybuilder() {
-        val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
-        }
+
+        val ftsQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id),
+                                  SelectResult.expression(overview))
+                          .from(DataSource.database(database))
+                          .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
+                          .execute()
+
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("Meta.id")}: ${result.getString("overview")}")
+          }
+
+
+
     }
 
 
