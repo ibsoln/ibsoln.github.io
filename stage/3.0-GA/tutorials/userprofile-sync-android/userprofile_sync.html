@@ -1,0 +1,2075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv=content-security-policy content="default-src 'none'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https:; img-src 'self' data: https:; connect-src 'self' https:; worker-src blob:;">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>User Profile Sample: Data Sync Fundamentals | Couchbase Docs</title>
+<link rel="canonical" href="https://ibsoln.github.io/stage/3.0-GA/tutorials/userprofile-sync-android/userprofile_sync.html">
+<link rel="stylesheet" href="../../_/css/site.css">
+<script src="../../_/js/vendor/jquery.js"></script>
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+
+
+<meta name="dcterms.subject" content="tutorials">
+<meta name="dcterms.identifier" content="master">
+<meta name="page-url" content="/tutorials/userprofile-sync-android/userprofile_sync.html">
+<meta name="generator" content="Antora 3.0.0-alpha.5">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+              <ul class="navbar-brand-list">
+                <li class="brand-logo">
+                  <a class="navbar-brand" href="https://www.couchbase.com">
+                    <img src="../../_/img/couchbase-logo.svg" alt="Couchbase" />
+                  </a>
+                </li>
+                <li>
+                  <a class="navbar-brand cb-documentation" href="https://ibsoln.github.io/stage/3.0-GA/home/index.html">
+                    <img src="../../_/img/cb-documentation.svg" alt="Couchbase Documentation" class="cb-docs" />
+                    <img src="../../_/img/cb-docs-hover.svg" alt="Couchbase Documentation" class="hide cb-hover-docs" />
+                  </a>
+                </li>
+              </ul>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a href="https://ibsoln.github.io/stage/3.0-GA/home/index.html" class="nav-link">
+                      <i class="fas fa-home"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/mobile.html">
+                      Mobile Stage
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/sdk.html">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../index.html">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <a href="https://cloud.couchbase.com/sign-up" class="free-trial-link" onclick="(window.dataLayer=window.dataLayer||[]).push({'event':'customEvent', 'category':'CTA', 'action':'Button Click',  'label':'Free Trial'});" >
+                  <i class="fas fa-cloud"></i>
+                  Free Trial
+                </a>
+                <a class="btn btn-primary try-btn"  onclick="(window.dataLayer=window.dataLayer||[]).push({'event':'customEvent', 'category':'CTA', 'action':'Button Click',  'label':'Download'});" href="https://www.couchbase.com/downloads">
+                  Downloads
+                </a>
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container">
+<aside class="nav left-sidebar">
+  <div class="nav-container">
+    <a href="#" class="menu-expand-toggle"><span>Navigation</span><i class="fas fa-times-circle"></i><i class="fas fa-chevron-circle-left"></i></a>
+<div class="components">
+  <div class="components_group-title">
+    <a href="../index.html">Tutorials</a>
+  </div>
+  <ul class="components_list">
+    <li class="components_list-items">
+      <div class="component_list-version">
+        <span class="component_list_title">Tutorials</span>
+      </div>
+      <div class="version_items hide" data-version="master">
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Couchbase Server</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#:session-storage:partial$nav.adoc">:session-storage:partial$nav.adoc</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <span class="menu_title menu_text">User Profile Storage
+Unresolved include directive in modules/ROOT/nav.adoc - include::profile-store:partial$nav.adoc[]</span>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Couchbase Mobile</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Travel Sample</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/introduction.html">Introduction</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Swift</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="3">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/installation/index.html">Backend Installation</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/installation/manual.html">Manual</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/installation/docker.html">Docker (Local)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/installation/cloud.html">Cloud (RightScale)</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/installation/travel-mobile-app.html">Installation</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/design/data-modeling.html">Data Modeling</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/develop/mvp-architecture.html">MVP Architecture</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/develop/the-basics.html">The Basics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/develop/security.html">Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/develop/sync.html">Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/develop/pre-built-database.html">Pre-built database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/develop/query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/swift/develop/full-text-search.html">Full Text Search</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Android-Java</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="3">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/installation/index.html">Backend Installation</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/installation/manual.html">Manual</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/installation/docker.html">Docker (Local)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/installation/cloud.html">Cloud (RightScale)</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/installation/travel-mobile-app.html">Installation</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/design/data-modeling.html">Data Modeling</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/develop/mvp-architecture.html">MVP Architecture</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/develop/the-basics.html">The Basics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/develop/security.html">Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/develop/sync.html">Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/develop/pre-built-database.html">Pre-built database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/develop/query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/android/develop/full-text-search.html">Full Text Search</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Java</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="3">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/installation/index.html">Backend Installation</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/installation/manual.html">Manual</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/installation/docker.html">Docker (Local)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/installation/cloud.html">Cloud (RightScale)</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/installation/travel-mobile-app.html">Installation</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/design/data-modeling.html">Data Modeling</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/develop/mvp-architecture.html">MVP Architecture</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/develop/the-basics.html">The Basics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/develop/security.html">Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/develop/sync.html">Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/develop/pre-built-database.html">Pre-built database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/develop/query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/java/develop/full-text-search.html">Full Text Search</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">C#</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="3">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/installation/index.html">Backend Installation</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/installation/manual.html">Manual</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/installation/docker.html">Docker (Local)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/installation/cloud.html">Cloud (RightScale)</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/installation/travel-mobile-app.html">Installation</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/design/data-modeling.html">Data Modeling</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/develop/mvvm-architecture.html">MVVM Architecture</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/develop/the-basics.html">The Basics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/develop/security.html">Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/develop/sync.html">Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/develop/pre-built-database.html">Pre-built database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/develop/query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-sample/csharp/develop/full-text-search.html">Full Text Search</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Getting Started on iOS</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-standalone/userprofile_basic.html">Standalone</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-query/userprofile_query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-sync/userprofile_sync.html">Sync</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Getting Started on Xamarin</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-standalone-xamarin/userprofile_basic.html">Standalone</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-query-xamarin/userprofile_query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-sync-xamarin/userprofile_sync.html">Sync</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Getting Started on Android</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-standalone-android/userprofile_basic.html">Standalone</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-query-android/userprofile_query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list is-current-page" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link is-current-page" href="userprofile_sync.html">Sync</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Getting Started with Peer-to-Peer Sync</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../cbl-p2p-sync-websockets/swift/cbl-p2p-sync-websockets.html">iOS/Swift</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../cbl-p2p-sync-websockets/dotnet/cbl-p2p-sync-websockets.html">Xamarin/C#</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Build Your Own</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <span class="menu_title menu_text">Tutorial Template
+Unresolved include directive in modules/ROOT/nav.adoc - include::tutorial-template:partial$nav.adoc[]</span>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+      </div>
+    </li>
+  </ul>
+</div>
+  </div>
+</aside>
+<aside class="toc sidebar"
+      data-title="Contents"
+      data-levels="1">
+  <div class="sidebar-box">
+    <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="https://github.com/ibsoln/userprofile-couchbase-mobile-android/edit/DOC-9383-sync/content/modules/userprofile-sync-android/pages/userprofile_sync.adoc" title="Edit Page" target="_blank" rel="noopener">Edit on GitHub</a></li>
+</ul>
+</div>
+    <div class="toc-menu"></div>
+    <div class="is-this-helpful-box">
+      <h4> Is this page helpful?</h4>
+      <div class="btn-row">
+        <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                <i class="far fa-thumbs-up"></i>
+            Yes
+
+            </a>
+        <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+      </div>
+      <div class="any-feedback">
+        <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+      </div>
+      <div class="dialog-box" id="dialogBox">
+        <form>
+            <div class="form-group " id="additionalFeedbackBox">
+              <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+              <div class="action-btn-row ">
+                <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                  <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                  <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+              </div>
+
+
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="../index.html">Tutorials</a></li>
+<li class="crumb">Couchbase Mobile</li>
+<li class="crumb">Getting Started on Android</li>
+<li class="crumb"><a href="userprofile_sync.html">Sync</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">User Profile Sample: Data Sync Fundamentals</h1>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<!-- toc disabled -->
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Sync Gateway is a key component of the Couchbase Mobile stack.
+It is an internet-facing synchronization mechanism that securely syncs data across devices as well as between devices and the cloud.
+Couchbase Mobile is built upon a websocket based
+<a href="https://blog.couchbase.com/data-replication-couchbase-mobile/">replication protocol</a>.</p>
+</div>
+<div class="paragraph">
+<p>The core functions of the Sync Gateway include</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Data Synchronization across devices and the cloud</p>
+</li>
+<li>
+<p>Authorization</p>
+</li>
+<li>
+<p>Access Control</p>
+</li>
+<li>
+<p>Data Validation</p>
+</li>
+</ul>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">What You Will Learn</div>
+<div class="paragraph">
+<p>This tutorial will demonstrate how to -</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Setup the Couchbase Sync Gateway (in walrus mode) to sync content between multiple Couchbase Lite enabled clients.
+We will will cover the basics of the
+<a href="https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/config-properties/index.html">Sync Gateway Configuration</a>.</p>
+</li>
+<li>
+<p>Configure your Sync Gateway to enforce data routing, access control and authorization.
+We will cover the basics of
+<a href="https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/sync-function-api-guide/index.html">Sync Function API</a></p>
+</li>
+<li>
+<p>Configure your Couchbase Lite clients for replication with the Sync Gateway.</p>
+</li>
+<li>
+<p>Use "Live Queries" or Query events within your Couchbase Lite clients to be asynchronously notified of changes.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>We will be using an Android app as an example of a Couchbase Lite enabled client.</p>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>You can learn more about Sync Gateway
+<a href="https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/index.html">here</a></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="prerequisites"><a class="anchor" href="#prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This tutorial assumes familiarity with building
+<a href="https://www.android.com/">Android</a>
+apps using
+<a href="https://www.java.com">Java</a>
+and with the basics of Couchbase Lite.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you are unfamiliar with the basics of Couchbase Lite, it is recommended that you walk through the following tutorials:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.couchbase.com/userprofile-couchbase-mobile/standalone/userprofile/android/userprofile_basic.html">Fundamentals</a> of using Couchbase Lite as a standalone database</p>
+</li>
+<li>
+<p><a href="https://docs.couchbase.com/userprofile-couchbase-mobile/query/userprofile/android/userprofile_query.html">Query Basics</a> with a prebuilt version of Couchbase Lite database</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>To follow the tutorial it will be useful to have:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://developer.android.com/studio">Android Studio</a></p>
+</li>
+<li>
+<p>Android device or emulator running API level 29 or above</p>
+</li>
+<li>
+<p>Android SDK 29+</p>
+</li>
+<li>
+<p>Android Build Tools 29+</p>
+</li>
+<li>
+<p><a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">JDK 8</a></p>
+</li>
+<li>
+<p>git (Optional)<br>
+This is required if you want prefer to pull the source code from GitHub repo.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Create a
+<a href="https://github.com">free github account</a>
+if you don&#8217;t already have one</p>
+</li>
+<li>
+<p>git can be downloaded from
+<a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">git-scm.org</a></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>curl HTTP client<br>
+We use <strong>curl</strong> in our tutorial.
+Download latest version from
+<a href="https://curl.haxx.se/download.html">curl website</a>,
+or use the HTTP client of your choice.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="system-overview"><a class="anchor" href="#system-overview"></a>System Overview</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="userprofile-sample-app"><a class="anchor" href="#userprofile-sample-app"></a>Userprofile Sample App</h3>
+<div class="paragraph">
+<p>We will be working with a simple "User Profile" app which we introduced in the
+<a href="https://developer.couchbase.com/documentation/mobile/2.0/userprofile_basic.html">Fundamentals Tutorial</a> and extended in the
+<a href="https://developer.couchbase.com/documentation/mobile/2.0/userprofile_query.html">Query Tutorial</a>.</p>
+</div>
+<div class="paragraph">
+<p>In this tutorial, we will be extending that app to support data sync. It will now also:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Allows users to log in and create or update his/her user profile information.<br>
+The user profile view is <em>automatically updated</em> every time the profile information changes in the underlying database</p>
+</li>
+<li>
+<p>The user profile information is synced with a remote Sync Gateway which then syncs it to other devices (subject to access control and routing configurations specified in the <code>sync function</code>)</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/userprofile_app_overview.gif" alt="App with Sync">
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="sample-app-architecture"><a class="anchor" href="#sample-app-architecture"></a>Sample App Architecture</h3>
+<div class="paragraph">
+<p>The sample app follows the
+<a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter">MVP pattern</a>,
+separating the internal data model, from a passive view through a presenter that handles the logic of our application and acts as the conduit between the model and the view.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/mvp_architecture.png" alt="MVP Architecture">
+</div>
+</div>
+<div class="paragraph">
+<p>In the Android Studio project, the code is structured by feature.
+You can select the Android option in the left navigator to view the files by package.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/mvp_as.png" alt="MVP Android Studio">
+</div>
+</div>
+<div class="paragraph">
+<p>Each package contains 3 different files:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Activity</strong>: This is where all the view logic resides.</p>
+</li>
+<li>
+<p><strong>Presenter</strong>: This is where all the business logic resides to fetch and persist data to a web service or the embedded Couchbase Lite database.</p>
+</li>
+<li>
+<p><strong>Contract</strong>: An interface that the <code>Presenter</code> and <code>Activity</code> implement.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/mvp_package.png" alt="MVP Package">
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="app-installation"><a class="anchor" href="#app-installation"></a>App Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Clone the
+<a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/sync"><strong><em>sync</em></strong> branch</a>
+of the <code>User Profile Demo</code> project from GitHub.
+Type the following command in your terminal</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone -b sync https://github.com/couchbaselabs/userprofile-couchbase-mobile-android</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="installing-couchbase-lite"><a class="anchor" href="#installing-couchbase-lite"></a>Installing Couchbase Lite</h3>
+<div class="paragraph">
+<p>This <a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/sync/modules/userprofile/examples/src">sample project</a> already contains the appropriate additions for downloading, and utilizing the Android Couchbase Lite dependency module.
+However, in the future, to include Couchbase Lite support within an Android app include the following in <a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/sync/modules/userprofile/examples/src/app/build.gradle">app/build.gradle</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">  dependencies {
+    ...
+
+    implementation 'com.couchbase.lite:couchbase-lite-android-ee:3.0.0'
+}</code></pre>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Try it out</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Open
+<a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/sync/modules/userprofile/examples/src/app/build.gradle">build.gradle</a>
+using Android Studio.</p>
+</li>
+<li>
+<p>Build and run the project.</p>
+</li>
+<li>
+<p>Verify that you see the login screen.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/user_profile_login.png" alt="User Profile Login Screen Image">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="data-model"><a class="anchor" href="#data-model"></a>Data Model</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If have followed the tutorial on [Query Basics], you can skip this section and proceed to the <a href="#backend-installation">Backend Installation</a>. section.
+We have not made any changes to the Data model for this tutorial.</p>
+</div>
+<div class="paragraph">
+<p>Couchbase Lite is a JSON Document Store.
+A Document is a logical collection of named fields and values.The values are any valid JSON types.
+In addition to the standard JSON types, Couchbase Lite supports some special types like <code>Date</code> and <code>Blob</code>.
+While it is not required or enforced, it is a recommended practice to include a <em>"type"</em> property that can serve as a namespace for related.</p>
+</div>
+<div class="sect2">
+<h3 id="the-user-profile-document"><a class="anchor" href="#the-user-profile-document"></a>The "User Profile" Document</h3>
+<div class="paragraph">
+<p>The app deals with a single Document with a <em>"type"</em> property of <em>"user"</em>.
+The document ID is of the form <em>"user::&lt;email&gt;"</em>.
+An example of a document would be:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "type":"user",
+    "name":"Jane Doe",
+    "email":"jame.doe@earth.org",
+    "address":"101 Main Street",
+    "image":CBLBlob (image/jpg),
+    "university":"Missouri State University"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="userprofile"><a class="anchor" href="#userprofile"></a>UserProfile</h3>
+<div class="paragraph">
+<p>For the purpose of this tutorial the <em>"user"</em> <code>Document</code> is first stored within an <code>Object</code> of type <code>Map&lt;String, Object&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/profile/UserProfileActivity.java">Map&lt;String, Object&gt; profile = new HashMap&lt;&gt;();
+profile.put("name", nameInput.getText().toString());
+profile.put("email", emailInput.getText().toString());
+profile.put("address", addressInput.getText().toString());
+profile.put("university", universityText.getText().toString());
+profile.put("type", "user");
+byte[] imageViewBytes = getImageViewBytes();
+
+if (imageViewBytes != null) {
+    profile.put("imageData", new com.couchbase.lite.Blob("image/jpeg", imageViewBytes));
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="the-university-document"><a class="anchor" href="#the-university-document"></a>The "University" Document</h3>
+<div class="paragraph">
+<p>The app comes bundled with a collection of Documents of type <em>"university"</em>. Each <code>Document</code> represents a university.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "type":"university","web_pages": [
+      "http://www.missouristate.edu/"
+    ],
+    "name": "Missouri State University",
+    "alpha_two_code": "US",
+    "state-province": MO,
+    "domains": [
+      "missouristate.edu"
+    ],
+    "country": "United States"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="the-university-record"><a class="anchor" href="#the-university-record"></a>The University Record</h3>
+<div class="paragraph">
+<p>When <em>"university"</em> <code>Document</code> is retrieved from the database it is stored within an <code>Object</code> of type <code>Map&lt;String, Object&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/universities/UniversitiesPresenter.java">Map&lt;String, Object&gt; properties = new HashMap&lt;&gt;();
+properties.put("name", row.getDictionary("universities").getString("name"));
+properties.put("country", row.getDictionary("universities").getString("country"));
+properties.put("web_pages", row.getDictionary("universities").getArray("web_pages"));</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="backend-installation"><a class="anchor" href="#backend-installation"></a>Backend Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We will install <a href="#couchbase-server">Couchbase Server</a> and <a href="#lbl-sync-gateway">Sync Gateway</a> using Docker.</p>
+</div>
+<div class="sect2">
+<h3 id="prerequisites-2"><a class="anchor" href="#prerequisites-2"></a>Prerequisites</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>You must have Docker installed on your laptop.
+For more on Docker&#8201;&#8212;&#8201;see: <a href="https://docs.docker.com/get-docker/" target="_blank" rel="noopener">Get Docker</a></p>
+</li>
+<li>
+<p>On Windows, you may need admin privileges.</p>
+</li>
+<li>
+<p>Ensure that you have sufficient memory and cores allocated to docker.
+At Least 3GB of RAM is recommended.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="docker-network"><a class="anchor" href="#docker-network"></a>Docker Network</h3>
+<div class="paragraph">
+<p>Create a docker network named “workshop”</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker network ls
+
+docker network create -d bridge workshop</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="couchbase-server"><a class="anchor" href="#couchbase-server"></a>Couchbase Server</h3>
+<div class="sect3">
+<h4 id="install"><a class="anchor" href="#install"></a>Install</h4>
+<div class="paragraph">
+<p>We have a custom docker image <code>priyacouch/couchbase-server-userprofile:7.0.0-dev</code> of Couchbase Server, which creates an empty bucket named “userprofile” and an RBAC user “admin” with “sync gateway” role.</p>
+</div>
+<div class="paragraph">
+<p>Alternatively, you can follow the instructions in our documentation&#8201;&#8212;&#8201;see: <a href="../../sync-gateway/current/get-started-prepare.html" class="page">Get Started - Prepare</a>, to install Couchbase Server and configure it with the relevant bucket.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Optionally, remove any existing Docker container</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker stop cb-server &amp;&amp; docker rm cb-server</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Start Couchbase Server in a Docker container</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -d --name cb-server \
+--network workshop \
+-p 8091-8094:8091-8094 -p 11210:11210 \
+priyacouch/couchbase-server-userprofile:7.0.0-dev</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="test-server-install"><a class="anchor" href="#test-server-install"></a>Test Server Install</h4>
+<div class="paragraph">
+<p>The server could take a few minutes to deploy and fully initialize; so be patient.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check the Docker logs using the command:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker logs -f cb-server</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the setup is completed, you should see output similar to that shown in <a href="#ex-server-setup-output">Figure 1</a>.</p>
+</div>
+<div id="ex-server-setup-output" class="imageblock">
+<div class="content">
+<img src="_images/log-output.png" alt="log output">
+</div>
+<div class="title">Figure 1. Server set-up output</div>
+</div>
+</li>
+<li>
+<p>Now check the required data is in place:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Open up <a href="http://localhost:8091" target="_blank" rel="noopener">http://localhost:8091</a> in a browser</p>
+</li>
+<li>
+<p>Sign in as “Administrator” and “password” in login page</p>
+</li>
+<li>
+<p>Go to “buckets” menu and confirm “userprofile” bucket is created</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/confirm-bucket-created.png" alt="confirm bucket created">
+</div>
+</div>
+</li>
+<li>
+<p>Go to “security” menu and confirm “admin” user is created</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/confirm-admin-user-created.png" alt="confirm admin user created">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="lbl-sync-gateway"><a class="anchor" href="#lbl-sync-gateway"></a>Sync Gateway</h3>
+<div class="paragraph">
+<p>Now we will install, configure and run Sync Gateway.</p>
+</div>
+<div class="sect3">
+<h4 id="lbl-install"><a class="anchor" href="#lbl-install"></a>Configuration</h4>
+<div class="paragraph">
+<p>When using Sync Gateway 3.0, we can opt to provide a bootstrap configuration&#8201;&#8212;&#8201;see: <a href="../../sync-gateway/current/configuration-overview.html" class="page">Sync Gateway Configuration</a>.
+We would then provision database, sync and other configuration using the Admin REST endpoints
+Alternatively, we can continue to run in legacy-mode, using the Pre-3.0 configuration.</p>
+</div>
+<div class="paragraph">
+<p>In this tutorial&#8201;&#8212;&#8201;for the purposes of backward compatibility&#8201;&#8212;&#8201;we will run 3.x using its
+<a href="../../sync-gateway/current/configuration-properties-legacy.html" class="page">legacy configuration option</a>.
+That is, we will be running with the <code>disable_persistent_config</code> option in the configuration file set to <code>true</code>.
+You can, if you wish, run a 2.8 version of Sync Gateway instead.</p>
+</div>
+<div class="paragraph">
+<p>The configuration files corresponding to this sample application are shown in <a href="#tbl-config-files">Table 1</a>.
+They are available in the "sync" branch of the github repo hosting the app, which you cloned&#8201;&#8212;&#8201;look in:<br>
+<code>/path/to/cloned/repo/userprofile-couchbase-mobile/content/modules/userprofile-sync/examples/</code><br>
+</p>
+</div>
+<table id="tbl-config-files" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Available configuration files</caption>
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<tbody>
+<tr>
+<th class="tableblock halign-center valign-top"><p class="tableblock">Release</p></th>
+<th class="tableblock halign-left valign-top"><p class="tableblock">Filename</p></th>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>3.x</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/sync/content/modules/userprofile-sync-android/examples/sync-gateway-config-userprofile-demo-3-x-legacy.json" target="_blank" rel="noopener">sync-gateway-config-userprofile-demo-3-x-legacy.json</a></p>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>2.x</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
+<p><a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/sync/content/modules/userprofile-sync-android/examples/sync-gateway-config-userprofile-demo-2-x.json" target="_blank" rel="noopener">sync-gateway-config-userprofile-demo-2-x.json</a></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="lbl-deploy"><a class="anchor" href="#lbl-deploy"></a>Deploy</h4>
+<div class="paragraph">
+<p>Configure and launch Sync Gateway in a Docker container.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Switch to the the folder containing the cloned configuration files, using:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd /path/to/cloned/repo/userprofile-couchbase-mobile-android/content/modules/userprofile-sync/examples</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Make sure no Sync Gateway container exists, using:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker stop sync-gateway &amp;&amp; docker rm sync-gateway</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Launch Sync Gateway in a Docker container</p>
+<div class="paragraph">
+<p>You should see configuration files for the latest major version and the previous major version in this folder&#8201;&#8212;&#8201;see: <a href="#tbl-config-files">Table 1</a>.
+Choose an appropriate version.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">For non-Windows Systems</dt>
+<dd>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_sync-gateway-3-0"></a>Sync Gateway 3.0</p>
+</li>
+<li>
+<p><a id="tabset1_sync-gateway-2-x"></a>Sync Gateway 2.x</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_sync-gateway-3-0">
+<div class="paragraph">
+<p>Configure and run Sync Gateway 3.0 in Docker using the configuration file <code>sync-gateway-config-userprofile-demo-3-x-legacy.json</code>.</p>
+</div>
+<div class="paragraph">
+<p>Note the use of <code>disable_persistent_config</code> in the configuration file to force legacy configuration mode.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -p 4984-4986:4984-4986 \
+--network workshop \
+--name sync-gateway \
+-d \
+-v `pwd`/sync-gateway-config-userprofile-demo-3-x-legacy.json:\
+/etc/sync_gateway/sync_gateway.json \
+couchbase/sync-gateway:3.0-enterprise \
+/etc/sync_gateway/sync_gateway.json</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_sync-gateway-2-x">
+<div class="paragraph">
+<p>Configure and run Sync Gateway 2.8 in Docker</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker run -p 4984-4986:4984-4986 \
+--network workshop \
+--name sync-gateway \
+-d \
+-v `pwd`/sync-gateway-config-userprofile-demo-2-x.json:\
+/etc/sync_gateway/sync_gateway.json \
+couchbase/sync-gateway:2.8.4-enterprise \
+/etc/sync_gateway/sync_gateway.json</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</dd>
+<dt class="hdlist1">For Windows Systems</dt>
+<dd>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_sync-gateway-3-0"></a>Sync Gateway 3.0</p>
+</li>
+<li>
+<p><a id="tabset2_sync-gateway-2-x"></a>Sync Gateway 2.x</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_sync-gateway-3-0">
+<div class="paragraph">
+<p>Configure and run Sync Gateway 3.0 in legacy mode</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dos hljs" data-lang="dos">docker run -p 4984-4986:4984-4986 ^
+--network workshop ^
+--name sync-gateway ^
+-d -v %cd%sync-gateway-config-userprofile-demo-3-x-legacy.json:^
+/etc/sync_gateway/sync_gateway.json ^
+couchbase/sync-gateway:3.0.0-enterprise ^
+/etc/sync_gateway/sync_gateway.json</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset2_sync-gateway-2-x">
+<div class="paragraph">
+<p>Configuring and running Sync Gateway 2.8</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-dos hljs" data-lang="dos">docker run -p 4984-4986:4984-4986 ^
+--network workshop ^
+--name sync-gateway ^\
+-d ^
+-v %cd%/sync-gateway-config-userprofile-demo-2-x.json:^
+etc/sync_gateway/sync_gateway.json ^
+couchbase/sync-gateway:2.8.4-enterprise ^
+/etc/sync_gateway/sync_gateway.json</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</dd>
+</dl>
+</div>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<h4 id="test-the-installation"><a class="anchor" href="#test-the-installation"></a>Test the Installation</h4>
+<div class="paragraph">
+<p>Now we can confirm that the Sync Gateway is up and running.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check the log messages</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">docker logs -f sync-gateway</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You will see a series of log messages.
+Make sure there are no errors.</p>
+</div>
+</li>
+<li>
+<p>Open up
+<a href="http://localhost:4984" target="_blank" rel="noopener">http://localhost:4984</a>
+in a browser.<br>
+You should see equivalent of the following message</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">{"couchdb":"Welcome","vendor":{"name":"Couchbase Sync Gateway","version":"3.0"},"version":"Couchbase Sync Gateway/3.0.0(145;e3f46be) EE"}</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now that we have the server and the sync gateway installed, we can verify data sync between Couchbase Lite enabled apps.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="sync-function"><a class="anchor" href="#sync-function"></a>Sync Function</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Sync Function is a Javascript function that is specified as part of the <a href="#lbl-install">Sync Gateway Configuration</a>.
+The Sync Function handles data validation, authorization, access control and data routing.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Open the <code><strong>sync-gateway-config-userprofile-android-walrus.json</strong></code> file using any text editor of your choice.
+The <code>sync-gateway-config-userprofile-android-walrus.json</code> is located in the app bundle at <code>/path/to/UserProfileDemo/modules/userprofile/examples/src</code>.</p>
+</li>
+<li>
+<p>Locate the <code>sync</code> setting and follow along with the rest of the sections below</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="authorization"><a class="anchor" href="#authorization"></a>Authorization</h3>
+<div class="paragraph">
+<p>We use the
+<a href="https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/sync-function-api-guide/index.html#requireuserusername"><code>requireUser()</code></a>
+API to verify that the <code>email</code> property specified in the Document matches the Id of the user making the request.
+The Id of the user making the request is specified in the <code>Authorization</code> header.
+We will be using <em>Basic Authentication</em> in our application.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function sync(doc, oldDoc) {
+
+   /* Authorization */
+
+  // Verify the user making the request is the same as the one in doc's email
+  requireUser(doc.email);
+
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="data-validation"><a class="anchor" href="#data-validation"></a>Data Validation</h3>
+<div class="paragraph">
+<p>In this case, we are doing some basic validation of the contents of the Document</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">function sync(doc, oldDoc) {
+
+   /* Data Validation */
+
+   if (!isDelete()) {
+      // Validate the presence of email fields
+      validateNotEmpty("email", doc.email); <i class="conum" data-value="1"></i><b>(1)</b>
+
+      // Check if document is being created / added for first time
+      // We allow any user to create the document
+      if (isCreate()) {
+
+        // Validate that the document Id _id is prefixed by owner.
+        var expectedDocId = "user" + "::" + doc.email;
+
+        if (expectedDocId != doc._id) { <i class="conum" data-value="2"></i><b>(2)</b>
+            throw({forbidden: "user doc Id must be of form user:email"});
+        }
+
+      } else {
+         // Validate that the email hasn't changed.
+        validateReadOnly("email", doc.email, oldDoc.email); <i class="conum" data-value="3"></i><b>(3)</b>
+      }
+
+    }
+  }
+
+
+  // Verify that specified property exists
+  function validateNotEmpty(key, value) {
+    if (!value) {
+      throw({forbidden: key + " is not provided."});
+    }
+  }
+
+  // Verify that specified property value has not changed during update
+  function validateReadOnly(name, value, oldValue) {
+    if (value != oldValue) {
+      throw({forbidden: name + " is read-only."});
+    }
+  }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Verify that the <code>email</code> property is not null. If it&#8217;s null, we throw a JS exception (see <code>validateNotEmpty()</code> function)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If this a new document, then verify that the <code>Id</code> of the Document is of the required format (i.e. <em>"user::&lt;email&gt;"</em>). We throw an exception if that&#8217;s not the case.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>If this is a document update, then verify that the <code>email</code> property value has not changed. Again, we throw an exception if that&#8217;s not the case.</td>
+</tr>
+</table>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>You can learn more about the Sync Function in this
+<a href="https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/sync-function-api-guide/index.htm">guide</a></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="data-routing"><a class="anchor" href="#data-routing"></a>Data Routing</h3>
+<div class="paragraph">
+<p><a href="https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/channels/index.html#introduction-to-channels"><code>channels</code></a> are a mechanism to "tag" documents and is typically used to seggregate documents based on the contents of the document. Combined with <a href="https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/sync-function-api-guide/index.html#access-username-channelname">access API</a> and [<code>requireAccess API</code>], it can be used to enforce <a href="#access-control">Access Control</a>. As we shall see in a later section, clients can use channels to pull only a subset of documents.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">  /* Routing */
+  // Subsequent updates to document must be authorized
+  var email = getEmail();
+
+  // Add doc to the user's channel.
+  channel("channel." + email); <i class="conum" data-value="1"></i><b>(1)</b>
+
+  // get email Id property
+  function getEmail() {
+    return (isDelete() ? oldDoc.email : doc.email);
+  }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The channel comes into existance the first time a document is added to it. In our case, the channel name is generated from the <code>email</code> property specified in the document</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="access-control"><a class="anchor" href="#access-control"></a>Access Control</h3>
+<div class="paragraph">
+<p>You can enforce access control to channels using the <a href="https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/sync-function-api-guide/index.html#access-username-channelname">access API</a>. This will ensure that only users with access to a specific channel will be able to retrieve documents in the channel.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-javascript hljs" data-lang="javascript">  /* Access Control */
+  // Give user read access to channel
+   if(!isDelete()) {
+    // Deletion of user document is essentially deletion of user
+       access(email,"channel." + email)
+   }</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="starting-replication"><a class="anchor" href="#starting-replication"></a>Starting Replication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Two-way Replication between the app and the Sync Gateway is enabled when user logs into the app.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Open the <a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/sync/modules/userprofile/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java"><strong>DatabaseManager.java</strong></a> file and locate the <code>startPushAndPullReplicationForCurrentUser()</code> function.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static void startPushAndPullReplicationForCurrentUser(String username, String password)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Next, we create an instance of the <code>ReplicatorConfiguration</code> instance that specifies the source and target database and you can optionally, override the default configuration settings.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">ReplicatorConfiguration config = new ReplicatorConfiguration(userprofileDatabase, new URLEndpoint(url)); <i class="conum" data-value="1"></i><b>(1)</b>
+config.setType(ReplicatorType.PUSH_AND_PULL); <i class="conum" data-value="2"></i><b>(2)</b>
+config.setContinuous(true); <i class="conum" data-value="3"></i><b>(3)</b>
+
+config.setAuthenticator(new BasicAuthenticator(username, password.toCharArray())); <i class="conum" data-value="4"></i><b>(4)</b>
+config.setChannels(Arrays.asList("channel." + username)); <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Initialize with <code>source</code> as the local Couchbase Lite database and the <code>remote</code> target as the Sync Gateway</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Replication <code>type</code> of <code>PUSH_AND_PULL</code> indicates that we require two-way sync.
+A value of <code>.PUSH</code> specifies that we only pull data from the Sync Gateway.
+A value of <code>.PULL</code> specifies that we only push data.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>continuous</code> mode is specified to be <em>true</em>, which means that changes are synced in real-time.
+A value of <em>false</em>  implies that data is only pulled from the Sync Gateway.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>This is where you specify the authentication credentials of the user.
+In the <a href="#authorization">Authorization</a> section, we discussed that the Sync Gateway can enforce authorization check using the <code>requireUser</code> API.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>The <code>channels</code> are used to specify the channels to pull from.
+Only documents belonging to the specified channels are synced.
+This is subject to <a href="#access-control">Access Control</a> rights enforced at the Sync Gateway.
+This means that if a client does not have access to documents in a channel, the documents will not be synched even if the client specifies it in the replicator configuration.
+<div class="ulist">
+<ul>
+<li>
+<p>Initialize the <code>Replicator</code> with the <code>ReplicatorConfiguration</code></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">replicator = new Replicator(config);</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>We attach a callback listener to the <code>Replicator</code> to be asynchronously notified of state changes. This could be useful for instance, to inform the user of the progress of the replication. This is an optional step</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">replicatorListenerToken = replicator.addChangeListener(new ReplicatorChangeListener() {
+    @Override
+    public void changed(ReplicatorChange change) {
+
+        if (change.getReplicator().getStatus().getActivityLevel().equals(ReplicatorActivityLevel.IDLE)) {
+            Log.e("Replication Comp Log", "Scheduler Completed");
+        }
+        if (change.getReplicator().getStatus().getActivityLevel().equals(ReplicatorActivityLevel.STOPPED)
+                || change.getReplicator().getStatus().getActivityLevel().equals(ReplicatorActivityLevel.OFFLINE)) {
+            Log.e("Rep Scheduler  Log", "ReplicationTag Stopped");
+        }
+    }
+});</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Start the replicator</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">replicator.start();</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="stopping-replication"><a class="anchor" href="#stopping-replication"></a>Stopping Replication</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When user logs out of the app, the replication is stopped before the database is closed.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Open the <a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/sync/modules/userprofile/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java"><strong>DatabaseManager.java</strong></a> file and locate the <code>stopAllReplicationForCurrentUser()</code> function.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">public static void stopAllReplicationForCurrentUser()</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Stop the replicator and remove any associated change listeners</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">replicator.removeChangeListener(replicatorListenerToken);
+replicator.stop();</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+All open replicators must be stopped before database is closed. There will be an exception if you attempt to close the database without closing the active replicators.
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="query-events-live-queries"><a class="anchor" href="#query-events-live-queries"></a>Query Events / Live Queries</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Lite apps can set up <em>live queries</em> in order to be asynchronously notified of changes to the database that affect the results of the query.
+This would be very useful for instance, to keep a UI View up-to-date with the results of a query.</p>
+</div>
+<div class="paragraph">
+<p>In our app, the user profile view is kept up-to-date with a live query that fetches the user profile data that is used to populate the view.
+This means that, if the replicator pulls down changes to the user profile, it will be automatically reflected in the view.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Open the <a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/sync/modules/userprofile/examples/src/app/src/main/java/com/couchbase/userprofile/profile/UserProfilePresenter.java"><strong>UserProfilePresenter.java</strong></a> file and locate the <code>fetchProfile()</code> function.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/profile/UserProfilePresenter.java"> public void fetchProfile()</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Build the Query using <code>QueryBuilder</code> API. If you are unfamiliar with this API, please check out this <a href="https://developer.couchbase.com/documentation/mobile/2.0/userprofile_query.html">tutorial</a>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/profile/UserProfilePresenter.java">Query query = QueryBuilder
+                .select(SelectResult.all())
+                .from(DataSource.database(database))
+                .where(Meta.id.equalTo(Expression.string(docId))); <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>We query for documents based on document Id. In our app, there should be exactly one user profile document corresponding to this Id.</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Attach listener callback to the query to make it <em>live</em></p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="https://github.com/ibsoln/userprofile-couchbase-mobile-android/blob/8172cee1ad7424ddc189e081f39bd6006ec35a9b/content/modules/userprofile-sync-android/examples/src/app/src/main/java/com/couchbase/userprofile/profile/UserProfilePresenter.java">query.addChangeListener(new QueryChangeListener() {
+
+    @Override
+    public void changed(QueryChange change) { <i class="conum" data-value="1"></i><b>(1)</b>
+        ResultSet rows = change.getResults();
+
+        Result row = null;
+        Map&lt;String, Object&gt; profile = new HashMap&lt;&gt;(); <i class="conum" data-value="2"></i><b>(2)</b>
+
+        profile.put("email", DatabaseManager.getSharedInstance().currentUser);
+
+        while ((row = rows.next()) != null) {
+            Dictionary dictionary = row.getDictionary("userprofile"); <i class="conum" data-value="3"></i><b>(3)</b>
+
+            if (dictionary != null) {
+                profile.put("name", dictionary.getString("name")); <i class="conum" data-value="4"></i><b>(4)</b>
+                profile.put("address", dictionary.getString("address")); <i class="conum" data-value="4"></i><b>(4)</b>
+                profile.put("imageData", dictionary.getBlob("imageData")); <i class="conum" data-value="4"></i><b>(4)</b>
+                profile.put("university", dictionary.getString("university")); <i class="conum" data-value="4"></i><b>(4)</b>
+                profile.put("type", dictionary.getString("type")); <i class="conum" data-value="4"></i><b>(4)</b>
+            }
+        }
+
+        mUserProfileView.showProfile(profile);
+    }
+});</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Attach a listener callback to the query. Attaching a listerner automatically makes it <em>live</em> so any time there is a change in the user profile data in the underlying database, the callback would be invoked</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Create an instance of <a href="#UserRecord">[UserRecord]</a>. This will be populated with the query results.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>SelectResult.all()</code> method is used to query all the properties of a document. In this case, the document in the result is embedded in a dictionary where the key is the database name, which is <em>"userprofile"</em>. So we retrieve the <a href="https://docs.couchbase.com/mobile/2.0/couchbase-lite-java/db021/index.html?com/couchbase/lite/Dictionary.html"><code>Dictionary</code></a> at key <em>"userprofile"</em>.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>We use appropriate <em>type getters</em> to retrieve values and populate the <em>UserRecord</em> instance</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exercises"><a class="anchor" href="#exercises"></a>Exercises</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="exercise-1"><a class="anchor" href="#exercise-1"></a>Exercise 1</h3>
+<div class="paragraph">
+<p>In this exercise, we will observe how changes made on one app are synced across to the other app</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The app should be running in two simulators side by side</p>
+</li>
+<li>
+<p>Log into both the simulators with same userId and password. Use the values <em>"<a href="mailto:demo@example.com">demo@example.com</a>"</em> and <em>"password"</em> for user Id and password fields respectively</p>
+</li>
+<li>
+<p>On one simulator, enter values in the user and address fields.</p>
+</li>
+<li>
+<p>Confirm that changes show up in the app on the other simulator.</p>
+</li>
+<li>
+<p>Similarly, make changes to the app in the other simulator and confirm that the changes are synced over to the first simulator.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="exercise-2"><a class="anchor" href="#exercise-2"></a>Exercise 2</h3>
+<div class="paragraph">
+<p>In this exercise, we will observe changes made via Sync Gateway are synced over to the apps.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Make sure you complete <a href="#exercise-1">Exercise 1</a>.<br>
+This is to ensure that you have the appropriate user profile document (with document Id of "user::&lt;emailId&gt;") created through the app and synced over to the Sync Gateway.</p>
+</li>
+<li>
+<p>Open the command terminal and issue the following command to get the user profile document via [GET Document REST API].<br>
+We will be using <code>curl</code> to issue the request.
+If you haven&#8217;t done so, please install curl as indicated in the <a href="#prerequisites">Prerequisites</a> section</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X GET \
+  http://localhost:4985/userprofile/user::demo@example.com \
+  -H 'Accept: application/json' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json'</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Your response should look something like the response below.<br>
+The exact contents depends on the user profile information that you provided via your mobile app.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">{
+    "_attachments": { <i class="conum" data-value="1"></i><b>(1)</b>
+        "blob_1": {
+            "content_type": "image/jpeg",
+            "digest": "sha1-S8asPSgzA+F+fp8/2DdIy4K+0U8=",
+            "length": 14989,
+            "revpos": 2,
+            "stub": true
+        }
+    },
+    "_id": "user::demo@example.com",
+    "_rev": "2-3a76cfa911e2c54d1e82b29dbffc7f4e5a9bc265", <i class="conum" data-value="2"></i><b>(2)</b>
+    "address": "",
+    "email": "demo@example.com",
+    "image": {
+        "@type": "blob",
+        "content_type": "image/jpeg",
+        "digest": "sha1-S8asPSgzA+F+fp8/2DdIy4K+0U8=",
+        "length": 14989
+    },
+    "name": "",
+    "type": "user",
+    "university": "Missouri State University"
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>If you had updated an image via the mobile app, you should see an * "_attachments"* property.
+This entry holds an array of attachments corresponding to each image blob entry added by the mobile app.
+This property is added by the Sync Gateway when it processes the document.
+You can learn more about how image Blob types are mapped to attachments [here].</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Record the revision Id of the document.
+You will need this when you update the document</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>In the command terminal, issue the following command to update the user profile document via [PUT Document REST API]</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl -X PUT \
+  'http://localhost:4985/userprofile/user::demo@example.com?rev=3-12d203d6024c8b844c5ed736c726ac63379e05dc' \
+  -H 'Accept: application/json' \
+  -H 'Cache-Control: no-cache' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "address": "101 Main Street", <i class="conum" data-value="1"></i><b>(1)</b>
+    "email": "demo@example.com",
+    "image": {
+        "@type": "blob",
+        "content_type": "image/jpeg",
+        "digest": "sha1-S8asPSgzA+F+fp8/2DdIy4K+0U8=",
+        "length": 14989
+    },
+    "name": "",
+    "type": "user",
+    "university": "Missouri State University"
+}'</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>I updated the university field via the REST API.
+You can choose to update any other profile information</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>Confirm that you get a HTTP <em>"201 Created"</em> status code</p>
+</li>
+<li>
+<p>As soon as you update the document via the Sync Gateway REST API, confirm that the changes show up in the mobile app on the simulator.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/sync_from_sgw.gif" alt="App Sync">
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="handling-conflicts-during-data-synchronization"><a class="anchor" href="#handling-conflicts-during-data-synchronization"></a>Handling Conflicts during Data Synchronization</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Data conflicts are inevitable in an environment where you can potentially have multiple writes updating the same data concurrently.
+Couchbase MObile supports <em>Automated Conflict Resolution</em>.</p>
+</div>
+<div class="paragraph">
+<p>You can learn more about automated conflict resolution in this
+<a href="https://blog.couchbase.com/document-conflicts-couchbase-mobile/">blog post</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="learn-more"><a class="anchor" href="#learn-more"></a>Learn More</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Congratulations on completing this tutorial!</p>
+</div>
+<div class="paragraph">
+<p>This tutorial walked you through an example of how to use a Sync Gateway to synchronize data between Couchbase Lite enabled clients.
+We discussed how to configure your Sync Gateway to enforce relevant access control, authorization and data routing between Couchbase Lite enabled clients.</p>
+</div>
+<div class="paragraph">
+<p>Check out the following links for further details</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Further Reading</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://developer.couchbase.com/documentation/mobile/2.0/guides/sync-gateway/config-properties/index.html">Sync Gateway Configuration</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/data-replication-couchbase-mobile/">Overview of Replication Protocol 2.0</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/couchbase-mobile-docker/">Installing Sync Gateway using Docker</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../_/img/couchbase-logo.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2022 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<template id="run-code-panel">
+<div class="action-panel">
+  <form class="action-panel-control" method="POST" action="https://couchbase.live/run" target="run-code-output">
+    <input type="hidden" name="lang">
+    <input type="hidden" name="code">
+    <input type="hidden" name="from" value="docs">
+    <div class="controls">
+      <button class="control-button rerun" type="submit"><i class="fas fa-redo"></i></button>
+      <span class="shell-name control-label">Output</span>
+      <button class="control-button close"><i class="fas fa-times"></i> Close</button>
+    </div>
+  </form>
+  <iframe class="run-code-output" name="run-code-output"></iframe>
+</div>
+</template>
+<script id="site-script" src="../../_/js/site.js"></script>
+<script defer src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script defer src="../../_/js/vendor/fontawesome.js" data-search-pseudo-elements="true"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
