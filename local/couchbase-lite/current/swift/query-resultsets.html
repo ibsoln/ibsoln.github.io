@@ -114,7 +114,7 @@
       <div class="component_list-version">
         <span class="component_list_title">Couchbase Lite</span>
         <select class="version_list" data-component="couchbase-lite">
-          <option value="3.0" data-url="../index.html" selected>3.0.0</option>
+          <option value="3.0" data-url="../index.html" selected>3.0</option>
           <option value="2.8" data-url="../../2.8/index.html">2.8</option>
         </select>
       </div>
@@ -127,7 +127,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../cbl-whatsnew.html">New in 3.0 BETA</a>
+    <a class="menu_title menu_link" href="../cbl-whatsnew.html">New in 3.0</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -3588,18 +3588,18 @@ The properties are presented in the value as an array of key-value pairs (proper
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let results = try query.execute()
 for row in results {
     let docsProps = row.dictionary(at: 0)! <i class="conum" data-value="1"></i><b>(1)</b>
-    
+
     let docid = docsProps.string(forKey: "id")
     let name = docsProps.string(forKey: "name")
     let type = docsProps.string(forKey: "type")
     let city = docsProps.string(forKey: "city")
-    
+
     print("\(docid): \(name), \(type), \(city)")
     let hotel = row.dictionary(at: 0)!  <i class="conum" data-value="2"></i><b>(2)</b>
     guard let hotelId = hotel.string(forKey: "id") else {
         continue
     }
-    
+
     hotels[hotelId] = hotel
 }</code></pre>
 </div>
@@ -3640,27 +3640,27 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let results = try query.execute()
 for result in results {
-    
+
     print(result.toDictionary())
-    
+
     let docId = result.string(forKey: "metaId")! <i class="conum" data-value="1"></i><b>(1)</b>
     print("Document Id is -- \(docId)")
-    
+
     // Now you can get the document using the ID
     let doc = database.document(withID: docId)!
-    
+
     let hotelId = doc.string(forKey: "id")!
-    
+
     let name = doc.string(forKey: "name")
-    
+
     let city = doc.string(forKey: "city")
 
     let type = doc.string(forKey: "type")
-    
+
     // ... process document properties as required
     print("Result properties are: \(hotelId), \(name), \(city), \(type)")
-    
-    
+
+
 }</code></pre>
 </div>
 </div>
@@ -3693,7 +3693,7 @@ for result in results {
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">for result in try! query.execute() {
     let docID = result.string(forKey: "metaId")!
     print("processing doc: \(docID)")
-    
+
     let id = result.string(forKey: "id")!
     var hotel = Hotel(id: id)
     hotel.name = result.string(forKey: "name")
@@ -3735,27 +3735,27 @@ for result in results {
 
 let results = try query.execute()
 for row in  results {
-    
+
     // get the result into a JSON String
     let jsonString = row.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
-    
+
     let thisJsonObj:Dictionary =
     try (JSONSerialization.jsonObject(
         with: jsonString.data(using: .utf8)!,
         options: .allowFragments)
          as? [String: Any])! <i class="conum" data-value="2"></i><b>(2)</b>
-    
+
     // Use Json Object to populate Native object
     // Use Codable class to unpack JSON data to native object
     var this_hotel: Hotel = try JSONDecoder().decode(Hotel.self, from: jsonString.data(using: .utf8)!) <i class="conum" data-value="3"></i><b>(3)</b>
-    
+
     // ALTERNATIVELY unpack in steps
     this_hotel.id = thisJsonObj["id"] as! String
     this_hotel.name = thisJsonObj["name"] as! String
     this_hotel.type = thisJsonObj["type"] as! String
     this_hotel.city = thisJsonObj["city"] as! String
     hotels[this_hotel.id] = this_hotel
-    
+
 } // end for</code></pre>
 </div>
 </div>

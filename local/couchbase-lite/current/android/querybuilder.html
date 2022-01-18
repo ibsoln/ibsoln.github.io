@@ -114,7 +114,7 @@
       <div class="component_list-version">
         <span class="component_list_title">Couchbase Lite</span>
         <select class="version_list" data-component="couchbase-lite">
-          <option value="3.0" data-url="../index.html" selected>3.0.0</option>
+          <option value="3.0" data-url="../index.html" selected>3.0</option>
           <option value="2.8" data-url="../../2.8/index.html">2.8</option>
         </select>
       </div>
@@ -127,7 +127,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../cbl-whatsnew.html">New in 3.0 BETA</a>
+    <a class="menu_title menu_link" href="../cbl-whatsnew.html">New in 3.0</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -3560,24 +3560,16 @@ See the <a href="indexing.html" class="page">Indexing</a> topic to learn more ab
 <div class="tab-pane" aria-labelledby="tabset1_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">database.createIndex(
-    "TypeNameIndex",
-    IndexBuilder.valueIndex(
-        ValueIndexItem.property("type"),
-        ValueIndexItem.property("name")
-    )
-)</code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">database.createIndex( "TypeNameIndex",
+      ValueIndexConfiguration( "type", "name")</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">database.createIndex(
-    "TypeNameIndex",
-    IndexBuilder.valueIndex(
-        ValueIndexItem.property("type"),
-        ValueIndexItem.property("name")));</code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">
+database.createIndex(ValueIndexConfiguration(["type", "name"]), "TypeNameIndex");</code></pre>
 </div>
 </div>
 </div>
@@ -5786,6 +5778,11 @@ class QueryExamples(private val database: Database) {
     // <mark># Indexing
     @Throws(CouchbaseLiteException::class)
     fun testIndexing() {
+        database.createIndex( "TypeNameIndex",
+              ValueIndexConfiguration( "type", "name")
+    }
+
+    fun testIndexing_Querybuilder() {
         database.createIndex(
             "TypeNameIndex",
             IndexBuilder.valueIndex(
@@ -6161,21 +6158,48 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
-        database.createIndex(
-            "nameFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false)
-        )
+        val config = FullTextIndexConfiguration("overview").ignoreAccents(false)
+
+        database.createIndex( "overviewFTSIndex", config);
     }
 
     @Throws(CouchbaseLiteException::class)
     fun testFTS() {
-        val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
-            .from(DataSource.database(database))
-            .where(FullTextExpression.index("nameFTSIndex").match("buy"))
-            .execute()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
+
+        val ftsQuery =
+              database.createQuery(
+                "SELECT _id, overview FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)")
+
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("id")}: ${result.getString("overview")}")
         }
+
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun prepareIndex_Querybuilder() {
+        database.createIndex(
+            "overviewFTSIndex",
+            IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false)
+        )
+    }
+
+    @Throws(CouchbaseLiteException::class)
+    fun testFTS_Querybuilder() {
+
+        val ftsQuery =
+              QueryBuilder.select(SelectResult.expression(Meta.id),
+                                  SelectResult.expression(overview))
+                          .from(DataSource.database(database))
+                          .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
+                          .execute()
+
+        ftsQuery.execute().allResults().forEach {
+          Log.i(TAG, "${result.getString("Meta.id")}: ${result.getString("overview")}")
+          }
+
+
+
     }
 
 
