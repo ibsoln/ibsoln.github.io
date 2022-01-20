@@ -3539,11 +3539,6 @@ class QueryExamples(private val database: Database) {
     // ### Indexing
     @Throws(CouchbaseLiteException::class)
     fun testIndexing() {
-        database.createIndex( "TypeNameIndex",
-              ValueIndexConfiguration( "type", "name")
-    }
-
-    fun testIndexing_Querybuilder() {
         database.createIndex(
             "TypeNameIndex",
             IndexBuilder.valueIndex(
@@ -3919,36 +3914,17 @@ class QueryExamples(private val database: Database) {
 
     @Throws(CouchbaseLiteException::class)
     fun prepareIndex() {
-        val config = FullTextIndexConfiguration(["overview"]).ignoreAccents(false);
-        database.createIndex( "overviewFTSIndex", config);
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun testFTS() {
-
-        val ftsQuery =
-              database.createQuery(
-                "SELECT * FROM _ WHERE MATCH(overviewFTSIndex, 'michigan') ORDER BY RANK(overviewFTSIndex)");
-
-        val rs = ftsQuery.execute().allResults()
-        for (result in rs) {
-            Log.i(TAG, "document properties${result.getString(0)}")
-        }
-    }
-
-    @Throws(CouchbaseLiteException::class)
-    fun prepareIndex_Querybuilder() {
         database.createIndex(
-            "overviewFTSIndex",
-            IndexBuilder.fullTextIndex(FullTextIndexItem.property("overview")).ignoreAccents(false)
+            "nameFTSIndex",
+            IndexBuilder.fullTextIndex(FullTextIndexItem.property("name")).ignoreAccents(false)
         )
     }
 
     @Throws(CouchbaseLiteException::class)
-    fun testFTS_Querybuilder() {
+    fun testFTS() {
         val rs = QueryBuilder.select(SelectResult.expression(Meta.id))
             .from(DataSource.database(database))
-            .where(FullTextFunction.match("overviewFTSIndex", "michigan"))
+            .where(FullTextExpression.index("nameFTSIndex").match("buy"))
             .execute()
         for (result in rs) {
             Log.i(TAG, "document properties${result.getString(0)}")
@@ -4693,7 +4669,7 @@ The null value returned by the prediction method will be interpreted as MISSING 
 </template>
 <script id="site-script" src="../../../_/js/site.js"></script>
 <script defer src="../../../_/js/vendor/fontawesome-icon-defs.js"></script>
-<script defer src="../../../_/js/vendor/fontawesome.js"></script>
+<script defer src="../../../_/js/vendor/fontawesome.js" data-search-pseudo-elements="true"></script>
 <script async src="../../../_/js/vendor/highlight.js"></script>
 </body>
 </html>

@@ -3557,7 +3557,8 @@ See the <a href="indexing.html" class="page">Indexing</a> topic to learn more ab
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let config = ValueIndexConfiguration(["type", "name"])
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(Expression.property("type")),
+                                    ValueIndexItem.expression(Expression.property("name")))
 try database.createIndex(index, withName: "TypeNameIndex")</code></pre>
 </div>
 </div>
@@ -4439,18 +4440,18 @@ let query = QueryBuilder.select(SelectResult.all()).from(DataSource.database(dat
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let results = try query.execute()
 for row in results {
     let docsProps = row.dictionary(at: 0)! <i class="conum" data-value="1"></i><b>(1)</b>
-
+    
     let docid = docsProps.string(forKey: "id")
     let name = docsProps.string(forKey: "name")
     let type = docsProps.string(forKey: "type")
     let city = docsProps.string(forKey: "city")
-
+    
     print("\(docid): \(name), \(type), \(city)")
     let hotel = row.dictionary(at: 0)!  <i class="conum" data-value="2"></i><b>(2)</b>
     guard let hotelId = hotel.string(forKey: "id") else {
         continue
     }
-
+    
     hotels[hotelId] = hotel
 }</code></pre>
 </div>
@@ -4553,7 +4554,7 @@ let query = QueryBuilder
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">for result in try! query.execute() {
     let docID = result.string(forKey: "metaId")!
     print("processing doc: \(docID)")
-
+    
     let id = result.string(forKey: "id")!
     var hotel = Hotel(id: id)
     hotel.name = result.string(forKey: "name")
@@ -4623,27 +4624,27 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let results = try query.execute()
 for result in results {
-
+    
     print(result.toDictionary())
-
+    
     let docId = result.string(forKey: "metaId")! <i class="conum" data-value="1"></i><b>(1)</b>
     print("Document Id is -- \(docId)")
-
+    
     // Now you can get the document using the ID
     let doc = database.document(withID: docId)!
-
+    
     let hotelId = doc.string(forKey: "id")!
-
+    
     let name = doc.string(forKey: "name")
-
+    
     let city = doc.string(forKey: "city")
 
     let type = doc.string(forKey: "type")
-
+    
     // ... process document properties as required
     print("Result properties are: \(hotelId), \(name), \(city), \(type)")
-
-
+    
+    
 }</code></pre>
 </div>
 </div>
@@ -4815,27 +4816,27 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 
 let results = try query.execute()
 for row in  results {
-
+    
     // get the result into a JSON String
     let jsonString = row.toJSON() <i class="conum" data-value="1"></i><b>(1)</b>
-
+    
     let thisJsonObj:Dictionary =
     try (JSONSerialization.jsonObject(
         with: jsonString.data(using: .utf8)!,
         options: .allowFragments)
          as? [String: Any])! <i class="conum" data-value="2"></i><b>(2)</b>
-
+    
     // Use Json Object to populate Native object
     // Use Codable class to unpack JSON data to native object
     var this_hotel: Hotel = try JSONDecoder().decode(Hotel.self, from: jsonString.data(using: .utf8)!) <i class="conum" data-value="3"></i><b>(3)</b>
-
+    
     // ALTERNATIVELY unpack in steps
     this_hotel.id = thisJsonObj["id"] as! String
     this_hotel.name = thisJsonObj["name"] as! String
     this_hotel.type = thisJsonObj["type"] as! String
     this_hotel.city = thisJsonObj["city"] as! String
     hotels[this_hotel.id] = this_hotel
-
+    
 } // end for</code></pre>
 </div>
 </div>
@@ -4954,12 +4955,12 @@ class ImageClassifierModel: PredictiveModel {
         guard let blob = input.blob(forKey: "photo") else {
             return nil
         }
-
+        
         let imageData = blob.content!
         // <code>myMLModel</code> is a fake implementation
         // this would be the implementation of the ml model you have chosen
         let modelOutput = myMLModel.predictImage(data: imageData)
-
+        
         let output = MutableDictionaryObject(data: modelOutput)
         return output <i class="conum" data-value="1"></i><b>(1)</b>
     }
@@ -5284,7 +5285,7 @@ The null value returned by the prediction method will be interpreted as MISSING 
 </template>
 <script id="site-script" src="../../../_/js/site.js"></script>
 <script defer src="../../../_/js/vendor/fontawesome-icon-defs.js"></script>
-<script defer src="../../../_/js/vendor/fontawesome.js"></script>
+<script defer src="../../../_/js/vendor/fontawesome.js" data-search-pseudo-elements="true"></script>
 <script async src="../../../_/js/vendor/highlight.js"></script>
 </body>
 </html>
