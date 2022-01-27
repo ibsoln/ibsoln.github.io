@@ -4250,7 +4250,8 @@ The query returns "landmark" type documents with names such as "Engineer", "engi
 <div class="tab-pane" aria-labelledby="tabset9_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">
+val rs = QueryBuilder
     .select(
         SelectResult.expression(Meta.id),
         SelectResult.property("country"),
@@ -5055,7 +5056,14 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="tab-pane" aria-labelledby="tabset17_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">
+val rs = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("country"),
+        SelectResult.property("name")
+    )
+    .from(DataSource.database(database))</code></pre>
 </div>
 </div>
 </div>
@@ -5148,7 +5156,9 @@ Query listQuery =
 <div class="tab-pane" aria-labelledby="tabset18_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">for (result in rs.execute) {
+    Log.i(TAG, "name -&gt; ${result.getString("name")}")
+}</code></pre>
 </div>
 </div>
 </div>
@@ -5992,6 +6002,7 @@ class QueryExamples(private val database: Database) {
     // Wildcard Character Match
     @Throws(CouchbaseLiteException::class)
     fun testWildCharacterMatch() {
+
         val rs = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
@@ -6251,7 +6262,25 @@ class QueryExamples(private val database: Database) {
     }
 /</strong> end func testQuerySyntaxJson <strong>/
 
-  fun docsOnlyQuerySyntaxN1QL(argDb: Database): List&lt;Result&gt; {
+
+
+    fun testQuerySyntaxProps(currentUser: String) {
+
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+
+
+        for (result in rs.execute) {
+            Log.i(TAG, "name -&gt; ${result.getString("name")}")
+        }
+    }
+
+    fun docsOnlyQuerySyntaxN1QL(argDb: Database): List&lt;Result&gt; {
       // For Documentation -- N1QL Query using parameters
       val db = argDb
       val thisQuery = db.createQuery(

@@ -1897,11 +1897,11 @@
 </aside>
 <aside class="toc sidebar"
       data-title="Contents"
-      data-levels="1">
+      data-levels="2@">
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="https://github.com/ibsoln/docs-couchbase-lite/edit/staging/3.0-GA/modules/swift/pages/document.adoc" title="Edit Page" target="_blank" rel="noopener" class="remove-ext-icon">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/pages/document.adoc" title="Edit Page" target="_blank" rel="noopener" class="remove-ext-icon">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -2008,48 +2008,95 @@ Used in conjunction with an appropriate serialization/de-serialization strategy 
 <h2 id="supporting-data-types"><a class="anchor" href="#supporting-data-types"></a>Supporting Data Types</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="types"><a class="anchor" href="#types"></a>Types</h3>
+<h3 id="scalars"><a class="anchor" href="#scalars"></a>Scalars</h3>
 <div class="paragraph">
-<p>The document content will itself comprise one or more supporting data types.</p>
+<p>The <code>Document</code> class offers a set of property accessors for various scalar types, including boolean, integers, floating-point and strings.
+These accessors take care of converting to/from JSON encoding, and make sure you get the type you&#8217;re expecting.</p>
 </div>
 <div class="paragraph">
-<p>The Document object support a range of scalar types such as:</p>
+<p>So your document content may well comprise one or more supporting data types such as:</p>
 </div>
-<div class="ulist">
+<table class="tableblock frame-all grid-none stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
 <ul>
 <li>
 <p>Boolean</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Date</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Double</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Enumerator</p>
 </li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Float</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>HashCode</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Int</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Long</p>
 </li>
-<li>
-<p>String</p>
-</li>
 </ul>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
-<p>In addition to those basic data types Couchbase Lite provides for the following:</p>
+<p>In addition to these basic data types Couchbase Lite provides for the following:</p>
 </div>
-<div class="ulist">
+<table class="tableblock frame-all grid-none stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
 <ul>
 <li>
 <p>Dictionary&#8201;&#8212;&#8201;represents a read-only key-value pair collection</p>
@@ -2057,16 +2104,51 @@ Used in conjunction with an appropriate serialization/de-serialization strategy 
 <li>
 <p>MutableDictionary&#8201;&#8212;&#8201;represents a writeable key-value pair collection</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Array&#8201;&#8212;&#8201;represents a readonly ordered collection of objects</p>
 </li>
 <li>
 <p>MutableArray&#8201;&#8212;&#8201;represents a writeable collection of objects</p>
 </li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Blob&#8201;&#8212;&#8201;represents an arbitrary piece of binary data</p>
 </li>
 </ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="date-accessors"><a class="anchor" href="#date-accessors"></a>Date accessors</h3>
+<div class="paragraph">
+<p>As a convenience Couchbase Lite offers <em>Date</em> accessors.
+Dates are a common data type, but JSON doesn&#8217;t natively support them, so the convention is to store them as strings in ISO-8601 format.</p>
+</div>
+<div id="ex-date-getter" class="exampleblock">
+<div class="title">Example 1. Date Getter</div>
+<div class="content">
+<div class="paragraph">
+<p>This example sets the date on the <code>createdAt</code> property and reads it back using the <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC4date6forKey10Foundation4DateVSgSS_tF">Document.date()</a> accessor method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">newTask.setValue(Date(), forKey: "createdAt")
+let date = newTask.date(forKey: "createdAt")</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2082,28 +2164,47 @@ Used in conjunction with an appropriate serialization/de-serialization strategy 
 </li>
 </ul>
 </div>
-<div class="sect3">
-<h4 id="read-only"><a class="anchor" href="#read-only"></a>Read Only</h4>
-<div class="exampleblock">
-<div class="title">Example 1. Initialize and use</div>
+<div id="ex-dict" class="exampleblock">
+<div class="title">Example 2. Read Only</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift"></code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// NOTE: No error handling, for brevity (see getting started)
+let document = database?.document(withID:"doc1");
+
+// Getting a dictionary from the document's properties
+let dict = document?.dictionary(forKey: "address");
+
+// Access a value with a key from the dictionary
+let street = dict?.string(forKey: "street");
+
+// Iterate dictionary
+for key in dict!.keys {
+    print("Key \(key) = \(dict!.value(forKey:key))");
+}
+
+// Create a mutable copy
+let mutable_dict = dict?.toMutable();</code></pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="sect3">
-<h4 id="mutable"><a class="anchor" href="#mutable"></a>Mutable</h4>
-<div class="exampleblock">
-<div class="title">Example 2. Initialize and use</div>
+<div id="ex-mutdict" class="exampleblock">
+<div class="title">Example 3. Mutable</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift"></code></pre>
-</div>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// NOTE: No error handling, for brevity (see getting started)
+
+// Create a new mutable dictionary and populate some keys/values
+var mutable_dict = MutableDictionaryObject();
+mutable_dict.setString("1 Main st.", forKey: "street");
+mutable_dict.setString("San Francisco", forKey: "city");
+
+// Add the dictionary to a document's properties and save the document
+var mutable_doc = MutableDocument(id: "doc1");
+mutable_doc.setDictionary(mutable_dict, forKey: "address");
+try!database.saveDocument(mutable_doc);</code></pre>
 </div>
 </div>
 </div>
@@ -2122,40 +2223,65 @@ Used in conjunction with an appropriate serialization/de-serialization strategy 
 </li>
 </ul>
 </div>
-<div class="sect3">
-<h4 id="read-only-2"><a class="anchor" href="#read-only-2"></a>Read Only</h4>
-<div class="exampleblock">
-<div class="title">Example 3. Initialize and use</div>
+<div id="ex-array" class="exampleblock">
+<div class="title">Example 4. Read Only</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift"></code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// NOTE: No error handling, for brevity (see getting started)
+let document = database.document(withID:"doc1");
+
+// Getting a phones array from the document's properties
+let array = document?.array(forKey: "phones")
+
+// Get element count
+let count = array!.count;
+
+// Access an array element by index
+if count &gt;= 0 { let phone = array![1]; }
+
+// Iterate dictionary
+for (index, element) in array!.enumerated() {
+    print("Index \(index) = \(element)");
+}
+
+// Create a mutable copy
+var mutable_array = array!.toMutable();</code></pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="sect3">
-<h4 id="mutable-2"><a class="anchor" href="#mutable-2"></a>Mutable</h4>
-<div class="exampleblock">
-<div class="title">Example 4. Initialize and use</div>
+<div id="ex-mutarray" class="exampleblock">
+<div class="title">Example 5. Mutable</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift"></code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// NOTE: No error handling, for brevity (see getting started)
+
+// Create a new mutable array and populate data into the array
+var mutable_array = MutableArrayObject();
+mutable_array.addString("650-000-0000");
+mutable_array.addString("650-000-0001");
+
+    // Set the array to document's properties and save the document
+var mutable_doc = MutableDocument(id: "doc1");
+mutable_doc.setArray(mutable_array, forKey:"phones");
+try!database.saveDocument(mutable_doc);</code></pre>
 </div>
 </div>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="using-blobs"><a class="anchor" href="#using-blobs"></a>Using Blobs</h3>
 <div class="paragraph">
 <p>For more on working with blobs&#8201;&#8212;&#8201;see {blobs&#8212;&#8203;xref}</p>
 </div>
 </div>
 </div>
 </div>
-</div>
 <div class="sect1">
-<h2 id="initializers"><a class="anchor" href="#initializers"></a>Initializers</h2>
+<h2 id="document-initializers"><a class="anchor" href="#document-initializers"></a>Document Initializers</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The following methods/initializers can be used:</p>
@@ -2176,14 +2302,14 @@ This method can be used to check if a document with a given ID already exists in
 </ul>
 </div>
 <div id="ex-persists-doc" class="exampleblock">
-<div class="title">Example 5. Persist a document</div>
+<div class="title">Example 6. Persist a document</div>
 <div class="content">
 <div class="paragraph">
 <p>The following code example creates a document and persists it to the database.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">let newTask = MutableDocument()
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let newTask = MutableDocument()
     .setString("task", forKey: "type")
     .setString("todo", forKey: "owner")
     .setDate(Date(), forKey: "createdAt")
@@ -2202,14 +2328,14 @@ try database.saveDocument(newTask)</code></pre>
 The <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC9toMutableAA0fD0CyF">Document.toMutable()</a> method should be used to create an instance of the document which can be updated.</p>
 </div>
 <div id="ex-update-doc" class="exampleblock">
-<div class="title">Example 6. Make a mutable document</div>
+<div class="title">Example 7. Make a mutable document</div>
 <div class="content">
 <div class="paragraph">
 <p>Changes to the document are persisted to the database when the <code>save</code> method is called.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">guard let document = database.document(withID: "xyz") else { return }
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">guard let document = database.document(withID: "xyz") else { return }
 let mutableDocument = document.toMutable()
 mutableDocument.setString("apples", forKey: "name")
 try database.saveDocument(mutableDocument)</code></pre>
@@ -2232,48 +2358,20 @@ Any user change to the value of reserved keys (<code>_id</code>, <code>_rev</cod
 </div>
 </div>
 <div class="sect1">
-<h2 id="typed-accessors"><a class="anchor" href="#typed-accessors"></a>Typed Accessors</h2>
+<h2 id="checking-a-document-for-properties"><a class="anchor" href="#checking-a-document-for-properties"></a>Checking a Document for properties</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="scalar-type"><a class="anchor" href="#scalar-type"></a>Scalar type</h3>
 <div class="paragraph">
-<p>The <code>Document</code> class now offers a set of property accessors for various scalar types, including boolean, integers, floating-point and strings.
-These accessors take care of converting to/from JSON encoding, and make sure you get the type you&#8217;re expecting.<br>
-See: <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-swift/Classes/DictionaryObject.html">property accessors</a>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="date-accessors"><a class="anchor" href="#date-accessors"></a>Date accessors</h3>
-<div class="paragraph">
-<p>In addition, as a convenience we offer <code>Date</code> accessors.
-Dates are a common data type, but JSON doesn&#8217;t natively support them, so the convention is to store them as strings in ISO-8601 format.</p>
-</div>
-<div id="ex-date-getter" class="exampleblock">
-<div class="title">Example 7. Date Getter</div>
-<div class="content">
-<div class="paragraph">
-<p>This example sets the date on the <code>createdAt</code> property and reads it back using the <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC4date6forKey10Foundation4DateVSgSS_tF">Document.date()</a> accessor method.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">newTask.setValue(Date(), forKey: "createdAt")
-let date = newTask.date(forKey: "createdAt")</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="checking-for-properties"><a class="anchor" href="#checking-for-properties"></a>Checking for properties</h3>
-<div class="paragraph">
-<p>To check whether a given property exists in the document, you should use the <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC8contains3keySbSS_tF">Document.Contains(key:)</a> method.</p>
+<p>To check whether a given pro
+perty exists in the document, you should use the <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC8contains3keySbSS_tF">Document.Contains(key:)</a> method.</p>
 </div>
 <div class="paragraph">
 <p>If the property doesn&#8217;t exist in the document it will return the default value for that getter method (0 for <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC3int6forKeySiSS_tF">Document.int()</a> 0.0 for <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-swift/Classes/Document.html#/s:18CouchbaseLiteSwift8DocumentC5float6forKeySfSS_tF">Document.float()</a> etc.).</p>
 </div>
 </div>
-<div class="sect2">
-<h3 id="document-conversion"><a class="anchor" href="#document-conversion"></a>Document Conversion</h3>
+</div>
+<div class="sect1">
+<h2 id="document-conversion"><a class="anchor" href="#document-conversion"></a>Document Conversion</h2>
+<div class="sectionbody">
 <div class="paragraph">
 <p>A <code>Document</code> can be converted to a plain dictionary type and-or to a JSON string.
 This can often be useful to pass the document contents as a plain object to another method.</p>
@@ -2283,7 +2381,7 @@ This can often be useful to pass the document contents as a plain object to anot
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">print(newTask.toDictionary())  <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">print(newTask.toDictionary())  <i class="conum" data-value="1"></i><b>(1)</b>
 
 print(newTask.toJSON()) <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
 </div>
@@ -2303,6 +2401,159 @@ print(newTask.toJSON()) <i class="conum" data-value="2"></i><b>(2)</b></code></p
 :param-leader!:</td>
 </tr>
 </table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="batch-operations"><a class="anchor" href="#batch-operations"></a>Batch operations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If you&#8217;re making multiple changes to a database at once, it&#8217;s faster to group them together.
+The following example persists a few documents in batch.</p>
+</div>
+<div id="ex-batch-ops" class="exampleblock">
+<div class="title">Example 9. Batch operations</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">do {
+    try database.inBatch {
+        for i in 0...10 {
+            let doc = MutableDocument()
+            doc.setValue("user", forKey: "type")
+            doc.setValue("user \(i)", forKey: "name")
+            doc.setBoolean(false, forKey: "admin")
+            try database.saveDocument(doc)
+            print("saved user document \(doc.string(forKey: "name")!)")
+        }
+    }
+} catch let error {
+    print(error.localizedDescription)
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>At the <strong>local</strong> level this operation is still transactional: no other <code>Database</code> instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
+But Couchbase Mobile is a distributed system, and due to the way replication works, there&#8217;s no guarantee that Sync Gateway or other devices will receive your changes all at once.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="document-change-events"><a class="anchor" href="#document-change-events"></a>Document change events</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It&#8217;s also possible to register for document changes.
+The following example registers for changes to the document with ID <code>user.john</code> and prints the <code>verified_account</code> property.</p>
+</div>
+<div id="ex-doc-events" class="exampleblock">
+<div class="title">Example 10. Document change events</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">database.addDocumentChangeListener(withID: "user.john") { (change) in
+    if let document = self.database.document(withID: change.documentID) {
+        print("Status :: \(document.string(forKey: "verified_account")!)")
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="document-expiration"><a class="anchor" href="#document-expiration"></a>Document Expiration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Document expiration allows users to set the expiration date to a document.
+When the document is expired, the document will be purged from the database.
+The purge will not be replicated to Sync Gateway.</p>
+</div>
+<div id="ex-set-doc-exp" class="exampleblock">
+<div class="title">Example 11. Set document expiration</div>
+<div class="content">
+<div class="paragraph">
+<p>This example sets the TTL for a document to 5 minutes from the current time.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Purge the document one day from now
+let ttl = Calendar.current.date(byAdding: .day, value: 1, to: Date())
+try database.setDocumentExpiration(withID: "doc123", expiration: ttl)
+
+// Reset expiration
+try database.setDocumentExpiration(withID: "doc1", expiration: nil)
+
+// Query documents that will be expired in less than five minutes
+let fiveMinutesFromNow = Date(timeIntervalSinceNow: 60 * 5).timeIntervalSince1970
+let query = QueryBuilder
+    .select(SelectResult.expression(Meta.id))
+    .from(DataSource.database(database))
+    .where(
+        Meta.expiration.lessThan(
+            Expression.double(fiveMinutesFromNow)
+        )
+    )</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-doc-constraints"><a class="anchor" href="#lbl-doc-constraints"></a>Document Constraints</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
+This is to facilitate the creation of documents for use either in <em>local only</em> mode where documents are not synced, or when used exclusively in peer-to-peer sync.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+"_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes&#8201;&#8212;&#8201;see <a href="#res-keys">Example 12</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
+To be future proof, you are advised to avoid creating such documents.
+Use of these attributes for user-level data may result in undefined system behavior.</p>
+</div>
+<div class="paragraph">
+<p>For more guidance&#8201;&#8212;&#8201;see: <a href="../../../sync-gateway/current/data-modeling.html" class="page">Sync Gateway - data modeling guidelines</a></p>
+</div>
+<div id="res-keys" class="exampleblock">
+<div class="title">Example 12. Reserved Keys List</div>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_attachments</p>
+</li>
+<li>
+<p>_deleted <sup class="footnote" id="_footnote_fn1">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</li>
+<li>
+<p>_id <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</li>
+<li>
+<p>_removed</p>
+</li>
+<li>
+<p>_rev <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</li>
+<li>
+<p>_sequence</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 </div>
@@ -2328,7 +2579,7 @@ print(newTask.toJSON()) <i class="conum" data-value="2"></i><b>(2)</b></code></p
 <div class="sect2">
 <h3 id="lbl-array"><a class="anchor" href="#lbl-array"></a>Arrays</h3>
 <div class="paragraph">
-<p>Convert an <code>ArrayObject</code> to and from JSON using the <code>toJSON()</code> and <code>toArray</code> methods&#8201;&#8212;&#8201;see: <a href="#ex-array">Example 9</a>.</p>
+<p>Convert an <code>ArrayObject</code> to and from JSON using the <code>toJSON()</code> and <code>toArray</code> methods&#8201;&#8212;&#8201;see: <a href="#ex-array">Example 4</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -2337,7 +2588,7 @@ print(newTask.toJSON()) <i class="conum" data-value="2"></i><b>(2)</b></code></p
 <ul>
 <li>
 <p>Initialize a 'MutableArrayObject' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-array">Example 9</a></p>
+This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-array">Example 4</a></p>
 </li>
 <li>
 <p>Convert an <code>ArrayFragment</code> object to a JSON String</p>
@@ -2348,11 +2599,11 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 </ul>
 </div>
 <div id="ex-array" class="exampleblock">
-<div class="title">Example 9. Arrays as JSON strings</div>
+<div class="title">Example 13. Arrays as JSON strings</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">if let doc = database.document(withID: "1000") {<i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">if let doc = database.document(withID: "1000") {<i class="conum" data-value="1"></i><b>(1)</b>
     guard let array = doc.array(forKey: "list") else {
         return
     }
@@ -2388,20 +2639,20 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 <div class="sect2">
 <h3 id="lbl-blob"><a class="anchor" href="#lbl-blob"></a>Blobs</h3>
 <div class="paragraph">
-<p>Convert a <code>Blob</code> to JSON using the <code>toJSON</code> method&#8201;&#8212;&#8201;see <a href="#ex-blob">Example 10</a>.</p>
+<p>Convert a <code>Blob</code> to JSON using the <code>toJSON</code> method&#8201;&#8212;&#8201;see <a href="#ex-blob">Example 14</a>.</p>
 </div>
 <div class="paragraph">
-<p>You can also check whether a given dictionary object is a blob, or not, using <code>isBlob()</code>&#8201;&#8212;&#8201;again, see <a href="#ex-blob">Example 10</a>.</p>
+<p>You can also check whether a given dictionary object is a blob, or not, using <code>isBlob()</code>&#8201;&#8212;&#8201;again, see <a href="#ex-blob">Example 14</a>.</p>
 </div>
 <div class="paragraph">
 <p>Note that the blob object must first be saved to the database (generating required metadata) before you can use the <code>toJSON</code> method.</p>
 </div>
 <div id="ex-blob" class="exampleblock">
-<div class="title">Example 10. Blobs as JSON strings</div>
+<div class="title">Example 14. Blobs as JSON strings</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Get a document
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Get a document
 if let doc = database.document(withID: "1000") {<i class="conum" data-value="1"></i><b>(1)</b>
     guard let blob = doc.blob(forKey: "avatar") else {
         return
@@ -2421,7 +2672,7 @@ if let doc = database.document(withID: "1000") {<i class="conum" data-value="1">
 <div class="sect2">
 <h3 id="lbl-dictionary"><a class="anchor" href="#lbl-dictionary"></a>Dictionaries</h3>
 <div class="paragraph">
-<p>Convert a <code>DictionaryObject</code> to and from JSON using the <code>toJSON</code> and <code>toDictionary</code> methods&#8201;&#8212;&#8201;see <a href="#ex-dictionary">Example 11</a>.</p>
+<p>Convert a <code>DictionaryObject</code> to and from JSON using the <code>toJSON</code> and <code>toDictionary</code> methods&#8201;&#8212;&#8201;see <a href="#ex-dictionary">Example 15</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -2430,7 +2681,7 @@ if let doc = database.document(withID: "1000") {<i class="conum" data-value="1">
 <ul>
 <li>
 <p>Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-dictionary">Example 11</a></p>
+This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-dictionary">Example 15</a></p>
 </li>
 <li>
 <p>Set data with a JSON string using <code>setJSON()</code></p>
@@ -2438,11 +2689,11 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 </ul>
 </div>
 <div id="ex-dictionary" class="exampleblock">
-<div class="title">Example 11. Dictionaries as JSON strings</div>
+<div class="title">Example 15. Dictionaries as JSON strings</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">if let doc = database.document(withID: "1000") {<i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">if let doc = database.document(withID: "1000") {<i class="conum" data-value="1"></i><b>(1)</b>
     guard let dictionary = doc.dictionary(forKey: "dictionary") else {
         return
     }
@@ -2466,7 +2717,7 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 <div class="sect2">
 <h3 id="lbl-document"><a class="anchor" href="#lbl-document"></a>Documents</h3>
 <div class="paragraph">
-<p>Convert a <code>Document</code> to and from JSON strings using the <code>toJSON()</code> and <code>setJSON()</code> methods&#8201;&#8212;&#8201;see <a href="#ex-document">Example 12</a>.</p>
+<p>Convert a <code>Document</code> to and from JSON strings using the <code>toJSON()</code> and <code>setJSON()</code> methods&#8201;&#8212;&#8201;see <a href="#ex-document">Example 16</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -2475,7 +2726,7 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 <ul>
 <li>
 <p>Initialize a 'MutableDocument' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> and-or <code>init(id: json:)</code> constructor-- see: <a href="#ex-document">Example 12</a></p>
+This is done using the <code>init(json)</code> and-or <code>init(id: json:)</code> constructor-- see: <a href="#ex-document">Example 16</a></p>
 </li>
 <li>
 <p>Set data with a JSON string using <code>setJSON()</code></p>
@@ -2483,11 +2734,11 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 </ul>
 </div>
 <div id="ex-document" class="exampleblock">
-<div class="title">Example 12. Documents as JSON strings</div>
+<div class="title">Example 16. Documents as JSON strings</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">let database = try Database(name: "hotel")
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let database = try Database(name: "hotel")
 let query = QueryBuilder
     .select(SelectResult.expression(Meta.id).as("metaId"))
     .from(DataSource.database(database))
@@ -2523,14 +2774,14 @@ if let doc = database.document(withID: "doc-id") {
 <p>Convert a <code>Query Result</code> to JSON using its <code>toJSON()</code> accessor method.</p>
 </div>
 <div id="ex-json" class="exampleblock">
-<div class="title">Example 13. Using JSON Results</div>
+<div class="title">Example 17. Using JSON Results</div>
 <div class="content">
 <div class="paragraph">
 <p>Use <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-swift/Classes/Result.htmls:18CouchbaseLiteSwift6ResultC6toJSONSSyF">result.toJSON()</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
 // In this example the Hotel class is defined using Codable
 //
 // class Hotel : Codable {
@@ -2611,160 +2862,6 @@ for row in  results {
   key1: "value1",
   keyx: "valuex"
 }</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="batch-operations"><a class="anchor" href="#batch-operations"></a>Batch operations</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>If you&#8217;re making multiple changes to a database at once, it&#8217;s faster to group them together.
-The following example persists a few documents in batch.</p>
-</div>
-<div id="ex-batch-ops" class="exampleblock">
-<div class="title">Example 14. Batch operations</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">do {
-    try database.inBatch {
-        for i in 0...10 {
-            let doc = MutableDocument()
-            doc.setValue("user", forKey: "type")
-            doc.setValue("user \(i)", forKey: "name")
-            doc.setBoolean(false, forKey: "admin")
-            try database.saveDocument(doc)
-            print("saved user document \(doc.string(forKey: "name")!)")
-        }
-    }
-} catch let error {
-    print(error.localizedDescription)
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>At the <strong>local</strong> level this operation is still transactional: no other <code>Database</code> instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
-But Couchbase Mobile is a distributed system, and due to the way replication works, there&#8217;s no guarantee that Sync Gateway or other devices will receive your changes all at once.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="document-change-events"><a class="anchor" href="#document-change-events"></a>Document change events</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>It&#8217;s also possible to register for document changes.
-The following example registers for changes to the document with ID <code>user.john</code> and prints the <code>verified_account</code> property.</p>
-</div>
-<div id="ex-doc-events" class="exampleblock">
-<div class="title">Example 15. Document change events</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">database.addDocumentChangeListener(withID: "user.john") { (change) in
-    if let document = self.database.document(withID: change.documentID) {
-        print("Status :: \(document.string(forKey: "verified_account")!)")
-    }
-}</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="document-expiration"><a class="anchor" href="#document-expiration"></a>Document Expiration</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Document expiration allows users to set the expiration date to a document.
-When the document is expired, the document will be purged from the database.
-The purge will not be replicated to Sync Gateway.</p>
-</div>
-<div id="ex-set-doc-exp" class="exampleblock">
-<div class="title">Example 16. Set document expiration</div>
-<div class="content">
-<div class="paragraph">
-<p>This example sets the TTL for a document to 5 minutes from the current time.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Purge the document one day from now
-let ttl = Calendar.current.date(byAdding: .day, value: 1, to: Date())
-try database.setDocumentExpiration(withID: "doc123", expiration: ttl)
-
-// Reset expiration
-try database.setDocumentExpiration(withID: "doc1", expiration: nil)
-
-// Query documents that will be expired in less than five minutes
-let fiveMinutesFromNow = Date(timeIntervalSinceNow: 60 * 5).timeIntervalSince1970
-let query = QueryBuilder
-    .select(SelectResult.expression(Meta.id))
-    .from(DataSource.database(database))
-    .where(
-        Meta.expiration.lessThan(
-            Expression.double(fiveMinutesFromNow)
-        )
-    )</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-doc-constraints"><a class="anchor" href="#lbl-doc-constraints"></a>Document Constraints</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
-This is to facilitate the creation of documents for use either in <em>local only</em> mode where documents are not synced, or when used exclusively in peer-to-peer sync.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-"_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes&#8201;&#8212;&#8201;see <a href="#res-keys">Example 17</a>.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
-To be future proof, you are advised to avoid creating such documents.
-Use of these attributes for user-level data may result in undefined system behavior.</p>
-</div>
-<div class="paragraph">
-<p>For more guidance&#8201;&#8212;&#8201;see: <a href="../../../sync-gateway/current/data-modeling.html" class="page">Sync Gateway - data modeling guidelines</a></p>
-</div>
-<div id="res-keys" class="exampleblock">
-<div class="title">Example 17. Reserved Keys List</div>
-<div class="content">
-<div class="ulist">
-<ul>
-<li>
-<p>_attachments</p>
-</li>
-<li>
-<p>_deleted <sup class="footnote" id="_footnote_fn1">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
-</li>
-<li>
-<p>_id <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
-</li>
-<li>
-<p>_removed</p>
-</li>
-<li>
-<p>_rev <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
-</li>
-<li>
-<p>_sequence</p>
-</li>
-</ul>
 </div>
 </div>
 </div>

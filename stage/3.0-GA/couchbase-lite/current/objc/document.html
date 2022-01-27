@@ -1897,11 +1897,11 @@
 </aside>
 <aside class="toc sidebar"
       data-title="Contents"
-      data-levels="1">
+      data-levels="2@">
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="https://github.com/ibsoln/docs-couchbase-lite/edit/staging/3.0-GA/modules/objc/pages/document.adoc" title="Edit Page" target="_blank" rel="noopener" class="remove-ext-icon">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/pages/document.adoc" title="Edit Page" target="_blank" rel="noopener" class="remove-ext-icon">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -2008,48 +2008,95 @@ Used in conjunction with an appropriate serialization/de-serialization strategy 
 <h2 id="supporting-data-types"><a class="anchor" href="#supporting-data-types"></a>Supporting Data Types</h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="types"><a class="anchor" href="#types"></a>Types</h3>
+<h3 id="scalars"><a class="anchor" href="#scalars"></a>Scalars</h3>
 <div class="paragraph">
-<p>The document content will itself comprise one or more supporting data types.</p>
+<p>The <code>Document</code> class offers a set of property accessors for various scalar types, including boolean, integers, floating-point and strings.
+These accessors take care of converting to/from JSON encoding, and make sure you get the type you&#8217;re expecting.</p>
 </div>
 <div class="paragraph">
-<p>The Document object support a range of scalar types such as:</p>
+<p>So your document content may well comprise one or more supporting data types such as:</p>
 </div>
-<div class="ulist">
+<table class="tableblock frame-all grid-none stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
 <ul>
 <li>
 <p>Boolean</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Date</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Double</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Enumerator</p>
 </li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Float</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>HashCode</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Int</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Long</p>
 </li>
-<li>
-<p>String</p>
-</li>
 </ul>
-</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
-<p>In addition to those basic data types Couchbase Lite provides for the following:</p>
+<p>In addition to these basic data types Couchbase Lite provides for the following:</p>
 </div>
-<div class="ulist">
+<table class="tableblock frame-all grid-none stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
 <ul>
 <li>
 <p>Dictionary&#8201;&#8212;&#8201;represents a read-only key-value pair collection</p>
@@ -2057,16 +2104,51 @@ Used in conjunction with an appropriate serialization/de-serialization strategy 
 <li>
 <p>MutableDictionary&#8201;&#8212;&#8201;represents a writeable key-value pair collection</p>
 </li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Array&#8201;&#8212;&#8201;represents a readonly ordered collection of objects</p>
 </li>
 <li>
 <p>MutableArray&#8201;&#8212;&#8201;represents a writeable collection of objects</p>
 </li>
+</ul>
+</div></div></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<ul>
 <li>
 <p>Blob&#8201;&#8212;&#8201;represents an arbitrary piece of binary data</p>
 </li>
 </ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="date-accessors"><a class="anchor" href="#date-accessors"></a>Date accessors</h3>
+<div class="paragraph">
+<p>As a convenience Couchbase Lite offers <em>Date</em> accessors.
+Dates are a common data type, but JSON doesn&#8217;t natively support them, so the convention is to store them as strings in ISO-8601 format.</p>
+</div>
+<div id="ex-date-getter" class="exampleblock">
+<div class="title">Example 1. Date Getter</div>
+<div class="content">
+<div class="paragraph">
+<p>This example sets the date on the <code>createdAt</code> property and reads it back using the <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Protocols/CBLDictionary.html#/c:objc(pl)CBLDictionary(im)dateForKey:">dateForKey:</a> accessor method.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[newTask setValue:[NSDate date] forKey:@"createdAt"];
+NSDate *date = [newTask dateForKey:@"createdAt"];</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2075,35 +2157,56 @@ Used in conjunction with an appropriate serialization/de-serialization strategy 
 <div class="title">API References</div>
 <ul>
 <li>
-<p>Dictionary.html[CBLDictionary]</p>
+<p><a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Classes/CBLDictionary.html">CBLDictionary</a></p>
 </li>
 <li>
-<p>Dictionary.html[CBLMutableDictionary]</p>
+<p><a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Classes/CBLMutableDictionary.html">CBLMutableDictionary</a></p>
 </li>
 </ul>
 </div>
-<div class="sect3">
-<h4 id="read-only"><a class="anchor" href="#read-only"></a>Read Only</h4>
-<div class="exampleblock">
-<div class="title">Example 1. Initialize and use</div>
+<div id="ex-dict" class="exampleblock">
+<div class="title">Example 2. Read Only</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDocument *document = [self.database documentWithID:@"doc1"];
+
+// Getting a dictionary value from the document
+CBLDictionary *dict = [document dictionaryForKey:@"address"];
+
+// Access a value from the dictionary
+NSString *street = [dict stringForKey:@"street"];
+NSLog(@"Street:: %@", street);
+
+// Iterate dictionary
+for (NSString *key in dict) {
+    id value = [dict valueForKey:key];
+    NSLog(@"Value:: %@", value);
+}
+
+// Create a mutable copy
+CBLMutableDictionary *mutableDict = [dict toMutable];
+[mutableDict setString:@"1 Great sts" forKey:@"street"];</code></pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="sect3">
-<h4 id="mutable"><a class="anchor" href="#mutable"></a>Mutable</h4>
-<div class="exampleblock">
-<div class="title">Example 2. Initialize and use</div>
+<div id="ex-mutdict" class="exampleblock">
+<div class="title">Example 3. Mutable</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
-</div>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
+// Create a new mutable dictionary and populate some keys/values
+CBLMutableDictionary *dict = [[CBLMutableDictionary alloc] init];
+[dict setString:@"1 Main st" forKey:@"street"];
+[dict setString:@"San Francisco" forKey:@"city"];
+
+// Set the dictionary to a document and save the document
+CBLMutableDocument *document = [[CBLMutableDocument alloc] init];
+[document setDictionary:dict forKey:@"address"];
+NSError *error;
+[self.database saveDocument:document error:&amp;error];</code></pre>
 </div>
 </div>
 </div>
@@ -2115,47 +2218,75 @@ Used in conjunction with an appropriate serialization/de-serialization strategy 
 <div class="title">API References</div>
 <ul>
 <li>
-<p><a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Classes/CBLArray.html">Array</a></p>
+<p><a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Classes/CBLArray.html">CBLArray</a></p>
 </li>
 <li>
-<p><a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Classes/CBLMutableArray.html">MutableArray</a></p>
+<p><a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Classes/CBLMutableArray.html">CBLMutableArray</a></p>
 </li>
 </ul>
 </div>
-<div class="sect3">
-<h4 id="read-only-2"><a class="anchor" href="#read-only-2"></a>Read Only</h4>
-<div class="exampleblock">
-<div class="title">Example 3. Initialize and use</div>
+<div id="ex-array" class="exampleblock">
+<div class="title">Example 4. Read Only</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDocument *document = [self.database documentWithID:@"doc1"];
+
+// Getting an array value from the document
+CBLArray *array = [document arrayForKey:@"phones"];
+
+// Get element count
+NSUInteger count = array.count;
+NSLog(@"Count:: %lu", (unsigned long)count);
+
+// Access an array element by index
+if (count &gt; 0) {
+    id value = [array valueAtIndex:0];
+    NSLog(@"Value:: %@", value);
+}
+
+// Iterate the array
+for (id value in array) {
+    NSLog(@"Value:: %@", value);
+}
+
+// Create a mutable copy
+CBLMutableArray *mutableArray = [array toMutable];
+[mutableArray addString:@"650-000-0002"];</code></pre>
 </div>
 </div>
 </div>
 </div>
-</div>
-<div class="sect3">
-<h4 id="mutable-2"><a class="anchor" href="#mutable-2"></a>Mutable</h4>
-<div class="exampleblock">
-<div class="title">Example 4. Initialize and use</div>
+<div id="ex-mutarray" class="exampleblock">
+<div class="title">Example 5. Mutable</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc"></code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Create a new mutable array and populate data into the array
+CBLMutableArray *array = [[CBLMutableArray alloc] init];
+[array addString:@"650-000-0000"];
+[array addString:@"650-000-0001"];
+
+// Set the array to a document and save the document
+CBLMutableDocument *document = [[CBLMutableDocument alloc] init];
+[document setArray:array forKey:@"address"];
+NSError *error;
+[self.database saveDocument:document error:&amp;error];</code></pre>
 </div>
 </div>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="using-blobs"><a class="anchor" href="#using-blobs"></a>Using Blobs</h3>
 <div class="paragraph">
 <p>For more on working with blobs&#8201;&#8212;&#8201;see {blobs&#8212;&#8203;xref}</p>
 </div>
 </div>
 </div>
 </div>
-</div>
 <div class="sect1">
-<h2 id="initializers"><a class="anchor" href="#initializers"></a>Initializers</h2>
+<h2 id="document-initializers"><a class="anchor" href="#document-initializers"></a>Document Initializers</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The following methods/initializers can be used:</p>
@@ -2176,14 +2307,14 @@ This method can be used to check if a document with a given ID already exists in
 </ul>
 </div>
 <div id="ex-persists-doc" class="exampleblock">
-<div class="title">Example 5. Persist a document</div>
+<div class="title">Example 6. Persist a document</div>
 <div class="content">
 <div class="paragraph">
 <p>The following code example creates a document and persists it to the database.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLMutableDocument *newTask = [[CBLMutableDocument alloc] init];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLMutableDocument *newTask = [[CBLMutableDocument alloc] init];
 [newTask setString:@"task" forKey:@"task"];
 [newTask setString:@"todo" forKey:@"owner"];
 [newTask setString:@"task" forKey:@"createdAt"];
@@ -2202,14 +2333,14 @@ This method can be used to check if a document with a given ID already exists in
 The <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Classes/CBLMutableDocument.htmlc:objc(cs)CBLDocument(im)toMutable">(nonnull CBLMutableDocument *)toMutable;</a> method should be used to create an instance of the document which can be updated.</p>
 </div>
 <div id="ex-update-doc" class="exampleblock">
-<div class="title">Example 6. Make a mutable document</div>
+<div class="title">Example 7. Make a mutable document</div>
 <div class="content">
 <div class="paragraph">
 <p>Changes to the document are persisted to the database when the <code>save</code> method is called.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDocument *document = [self.database documentWithID:@"xyz"];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDocument *document = [self.database documentWithID:@"xyz"];
 CBLMutableDocument *mutableDocument = [document toMutable];
 [mutableDocument setString:@"apples" forKey:@"name"];
 [self.database saveDocument:mutableDocument error:&amp;error];</code></pre>
@@ -2232,34 +2363,149 @@ Any user change to the value of reserved keys (<code>_id</code>, <code>_rev</cod
 </div>
 </div>
 <div class="sect1">
-<h2 id="typed-accessors"><a class="anchor" href="#typed-accessors"></a>Typed Accessors</h2>
+<h2 id="batch-operations"><a class="anchor" href="#batch-operations"></a>Batch operations</h2>
 <div class="sectionbody">
-<div class="sect2">
-<h3 id="scalar-type"><a class="anchor" href="#scalar-type"></a>Scalar type</h3>
 <div class="paragraph">
-<p>The <code>Document</code> class now offers a set of property accessors for various scalar types, including boolean, integers, floating-point and strings.
-These accessors take care of converting to/from JSON encoding, and make sure you get the type you&#8217;re expecting.<br>
-See: Dictionary.html[CBLDictionary].</p>
+<p>If you&#8217;re making multiple changes to a database at once, it&#8217;s faster to group them together.
+The following example persists a few documents in batch.</p>
+</div>
+<div id="ex-batch-ops" class="exampleblock">
+<div class="title">Example 8. Batch operations</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[self.database inBatch:&amp;error usingBlock:^{
+    for (int i = 0; i &lt; 10; i++) {
+        CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
+        [doc setValue:@"user" forKey:@"type"];
+        [doc setValue:[NSString stringWithFormat:@"user %d", i] forKey:@"name"];
+        [doc setBoolean:NO forKey:@"admin"];
+
+        NSError *err = nil;
+        [self.database saveDocument:doc error:&amp;err];
+    }
+}];</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="date-accessors"><a class="anchor" href="#date-accessors"></a>Date accessors</h3>
+</div>
+</div>
 <div class="paragraph">
-<p>In addition, as a convenience we offer <code>Date</code> accessors.
-Dates are a common data type, but JSON doesn&#8217;t natively support them, so the convention is to store them as strings in ISO-8601 format.</p>
+<p>At the <strong>local</strong> level this operation is still transactional: no other <code>Database</code> instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
+But Couchbase Mobile is a distributed system, and due to the way replication works, there&#8217;s no guarantee that Sync Gateway or other devices will receive your changes all at once.</p>
 </div>
-<div id="ex-date-getter" class="exampleblock">
-<div class="title">Example 7. Date Getter</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="document-change-events"><a class="anchor" href="#document-change-events"></a>Document change events</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>It&#8217;s also possible to register for document changes.
+The following example registers for changes to the document with ID <code>user.john</code> and prints the <code>verified_account</code> property.</p>
+</div>
+<div id="ex-doc-events" class="exampleblock">
+<div class="title">Example 9. Document change events</div>
+<div class="content">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[self.database addDocumentChangeListenerWithID:@"user.john" listener:^(CBLDocumentChange  *change) {
+    CBLDocument *document = [wSelf.database documentWithID:change.documentID];
+    NSLog(@"Status ::%@)", [document stringForKey:@"verified_account"]);
+}];</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="document-expiration"><a class="anchor" href="#document-expiration"></a>Document Expiration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Document expiration allows users to set the expiration date to a document.
+When the document is expired, the document will be purged from the database.
+The purge will not be replicated to Sync Gateway.</p>
+</div>
+<div id="ex-set-doc-exp" class="exampleblock">
+<div class="title">Example 10. Set document expiration</div>
 <div class="content">
 <div class="paragraph">
-<p>This example sets the date on the <code>createdAt</code> property and reads it back using the <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Protocols/CBLDictionary.html#/c:objc(pl)CBLDictionary(im)dateForKey:">dateForKey:</a> accessor method.</p>
+<p>This example sets the TTL for a document to 5 minutes from the current time.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">[newTask setValue:[NSDate date] forKey:@"createdAt"];
-NSDate *date = [newTask dateForKey:@"createdAt"];</code></pre>
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Purge the document one day from now
+NSDate *ttl = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitDay
+                                                       value:1
+                                                      toDate:[NSDate date]
+                                                     options:0];
+[self.database setDocumentExpirationWithID:@"doc123" expiration:ttl error:&amp;error];
+
+// Reset expiration
+[self.database setDocumentExpirationWithID:@"doc1" expiration:nil error:&amp;error];
+
+// Query documents that will be expired in less than five minutes
+NSTimeInterval fiveMinutesFromNow = [[NSDate dateWithTimeIntervalSinceNow:60 * 5] timeIntervalSince1970];
+CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
+                                     from:[CBLQueryDataSource database:self.database]
+                                    where:[[CBLQueryMeta expiration]
+                                            lessThan:[CBLQueryExpression double:fiveMinutesFromNow]]];</code></pre>
 </div>
 </div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="lbl-doc-constraints"><a class="anchor" href="#lbl-doc-constraints"></a>Document Constraints</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
+This is to facilitate the creation of documents for use either in <em>local only</em> mode where documents are not synced, or when used exclusively in peer-to-peer sync.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+"_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes&#8201;&#8212;&#8201;see <a href="#res-keys">Example 11</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
+To be future proof, you are advised to avoid creating such documents.
+Use of these attributes for user-level data may result in undefined system behavior.</p>
+</div>
+<div class="paragraph">
+<p>For more guidance&#8201;&#8212;&#8201;see: <a href="../../../sync-gateway/current/data-modeling.html" class="page">Sync Gateway - data modeling guidelines</a></p>
+</div>
+<div id="res-keys" class="exampleblock">
+<div class="title">Example 11. Reserved Keys List</div>
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>_attachments</p>
+</li>
+<li>
+<p>_deleted <sup class="footnote" id="_footnote_fn1">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</li>
+<li>
+<p>_id <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</li>
+<li>
+<p>_removed</p>
+</li>
+<li>
+<p>_rev <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
+</li>
+<li>
+<p>_sequence</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -2286,7 +2532,7 @@ NSDate *date = [newTask dateForKey:@"createdAt"];</code></pre>
 <div class="sect2">
 <h3 id="lbl-array"><a class="anchor" href="#lbl-array"></a>Arrays</h3>
 <div class="paragraph">
-<p>Convert an <code>ArrayObject</code> to and from JSON using the <code>toJSON()</code> and <code>toArray</code> methods&#8201;&#8212;&#8201;see: <a href="#ex-array">Example 8</a>.</p>
+<p>Convert an <code>ArrayObject</code> to and from JSON using the <code>toJSON()</code> and <code>toArray</code> methods&#8201;&#8212;&#8201;see: <a href="#ex-array">Example 4</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -2295,7 +2541,7 @@ NSDate *date = [newTask dateForKey:@"createdAt"];</code></pre>
 <ul>
 <li>
 <p>Initialize a 'MutableArrayObject' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-array">Example 8</a></p>
+This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-array">Example 4</a></p>
 </li>
 <li>
 <p>Convert an <code>ArrayFragment</code> object to a JSON String</p>
@@ -2306,11 +2552,11 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 </ul>
 </div>
 <div id="ex-array" class="exampleblock">
-<div class="title">Example 8. Arrays as JSON strings</div>
+<div class="title">Example 12. Arrays as JSON strings</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">NSString *json = @"[\"1000\",\"1001\",\"1002\",\"1003\"]";
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSString *json = @"[\"1000\",\"1001\",\"1002\",\"1003\"]";
 
 CBLMutableArray *myArray = [[CBLMutableArray alloc] initWithJSON:json error:&amp;error];
 
@@ -2345,20 +2591,20 @@ for (NSString *item in myArray) {
 <div class="sect2">
 <h3 id="lbl-blob"><a class="anchor" href="#lbl-blob"></a>Blobs</h3>
 <div class="paragraph">
-<p>Convert a <code>Blob</code> to JSON using the <code>toJSON</code> method&#8201;&#8212;&#8201;see <a href="#ex-blob">Example 9</a>.</p>
+<p>Convert a <code>Blob</code> to JSON using the <code>toJSON</code> method&#8201;&#8212;&#8201;see <a href="#ex-blob">Example 13</a>.</p>
 </div>
 <div class="paragraph">
-<p>You can also check whether a given dictionary object is a blob, or not, using <code>isBlob()</code>&#8201;&#8212;&#8201;again, see <a href="#ex-blob">Example 9</a>.</p>
+<p>You can also check whether a given dictionary object is a blob, or not, using <code>isBlob()</code>&#8201;&#8212;&#8201;again, see <a href="#ex-blob">Example 13</a>.</p>
 </div>
 <div class="paragraph">
 <p>Note that the blob object must first be saved to the database (generating required metadata) before you can use the <code>toJSON</code> method.</p>
 </div>
 <div id="ex-blob" class="exampleblock">
-<div class="title">Example 9. Blobs as JSON strings</div>
+<div class="title">Example 13. Blobs as JSON strings</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
 CBLDocument *doc = [self.database documentWithID:@"doc-1000"];
 CBLBlob *blob = [doc blobForKey:@"avatar"];
 NSString *json = [blob toJSON];
@@ -2374,7 +2620,7 @@ NSLog(@"json string is %@", json);</code></pre>
 <div class="sect2">
 <h3 id="lbl-dictionary"><a class="anchor" href="#lbl-dictionary"></a>Dictionaries</h3>
 <div class="paragraph">
-<p>Convert a <code>DictionaryObject</code> to and from JSON using the <code>toJSON</code> and <code>toDictionary</code> methods&#8201;&#8212;&#8201;see <a href="#ex-dictionary">Example 10</a>.</p>
+<p>Convert a <code>DictionaryObject</code> to and from JSON using the <code>toJSON</code> and <code>toDictionary</code> methods&#8201;&#8212;&#8201;see <a href="#ex-dictionary">Example 14</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -2383,7 +2629,7 @@ NSLog(@"json string is %@", json);</code></pre>
 <ul>
 <li>
 <p>Initialize a 'MutableDictionaryObject' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-dictionary">Example 10</a></p>
+This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-dictionary">Example 14</a></p>
 </li>
 <li>
 <p>Set data with a JSON string using <code>setJSON()</code></p>
@@ -2391,11 +2637,11 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 </ul>
 </div>
 <div id="ex-dictionary" class="exampleblock">
-<div class="title">Example 10. Dictionaries as JSON strings</div>
+<div class="title">Example 14. Dictionaries as JSON strings</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">NSString *aJSONstring = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSString *aJSONstring = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
 "\"city\":\"Balmain\",\"country\":\"Australia\",\"description\":\"Undefined description for Hotel Ned\"}";
 
 
@@ -2423,7 +2669,7 @@ for (NSString *key in myDict) {
 <div class="sect2">
 <h3 id="lbl-document"><a class="anchor" href="#lbl-document"></a>Documents</h3>
 <div class="paragraph">
-<p>Convert a <code>Document</code> to and from JSON strings using the <code>toJSON()</code> and <code>setJSON()</code> methods&#8201;&#8212;&#8201;see <a href="#ex-document">Example 11</a>.</p>
+<p>Convert a <code>Document</code> to and from JSON strings using the <code>toJSON()</code> and <code>setJSON()</code> methods&#8201;&#8212;&#8201;see <a href="#ex-document">Example 15</a>.</p>
 </div>
 <div class="paragraph">
 <p>Additionally you can:</p>
@@ -2432,7 +2678,7 @@ for (NSString *key in myDict) {
 <ul>
 <li>
 <p>Initialize a 'MutableDocument' using data supplied as a JSON string.
-This is done using the <code>init(json)</code> and-or <code>init(id: json:)</code> constructor-- see: <a href="#ex-document">Example 11</a></p>
+This is done using the <code>init(json)</code> and-or <code>init(id: json:)</code> constructor-- see: <a href="#ex-document">Example 15</a></p>
 </li>
 <li>
 <p>Set data with a JSON string using <code>setJSON()</code></p>
@@ -2440,11 +2686,11 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 </ul>
 </div>
 <div id="ex-document" class="exampleblock">
-<div class="title">Example 11. Documents as JSON strings</div>
+<div class="title">Example 15. Documents as JSON strings</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
 CBLDocument *doc = [self.database documentWithID:@"doc-1000"];
 NSString *json = [doc toJSON];
 NSLog(@"json %@", json);</code></pre>
@@ -2475,14 +2721,14 @@ NSLog(@"json %@", json);</code></pre>
 <p>Convert a <code>Query Result</code> to JSON using its <code>toJSON()</code> accessor method.</p>
 </div>
 <div id="ex-json" class="exampleblock">
-<div class="title">Example 12. Using JSON Results</div>
+<div class="title">Example 16. Using JSON Results</div>
 <div class="content">
 <div class="paragraph">
 <p>Use <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON">CBLResult.toJSON</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQueryResultSet *rs = [query execute:&amp;error];
+<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQueryResultSet *rs = [query execute:&amp;error];
 for (CBLQueryResult *result in rs) {
 
     // Get result as a JSON string
@@ -2542,155 +2788,6 @@ for (CBLQueryResult *result in rs) {
   key1: "value1",
   keyx: "valuex"
 }</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="batch-operations"><a class="anchor" href="#batch-operations"></a>Batch operations</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>If you&#8217;re making multiple changes to a database at once, it&#8217;s faster to group them together.
-The following example persists a few documents in batch.</p>
-</div>
-<div id="ex-batch-ops" class="exampleblock">
-<div class="title">Example 13. Batch operations</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">[self.database inBatch:&amp;error usingBlock:^{
-    for (int i = 0; i &lt; 10; i++) {
-        CBLMutableDocument *doc = [[CBLMutableDocument alloc] init];
-        [doc setValue:@"user" forKey:@"type"];
-        [doc setValue:[NSString stringWithFormat:@"user %d", i] forKey:@"name"];
-        [doc setBoolean:NO forKey:@"admin"];
-
-        NSError *err = nil;
-        [self.database saveDocument:doc error:&amp;err];
-    }
-}];</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>At the <strong>local</strong> level this operation is still transactional: no other <code>Database</code> instances, including ones managed by the replicator can make changes during the execution of the block, and other instances will not see partial changes.
-But Couchbase Mobile is a distributed system, and due to the way replication works, there&#8217;s no guarantee that Sync Gateway or other devices will receive your changes all at once.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="document-change-events"><a class="anchor" href="#document-change-events"></a>Document change events</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>It&#8217;s also possible to register for document changes.
-The following example registers for changes to the document with ID <code>user.john</code> and prints the <code>verified_account</code> property.</p>
-</div>
-<div id="ex-doc-events" class="exampleblock">
-<div class="title">Example 14. Document change events</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">[self.database addDocumentChangeListenerWithID:@"user.john" listener:^(CBLDocumentChange  *change) {
-    CBLDocument *document = [wSelf.database documentWithID:change.documentID];
-    NSLog(@"Status ::%@)", [document stringForKey:@"verified_account"]);
-}];</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="document-expiration"><a class="anchor" href="#document-expiration"></a>Document Expiration</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Document expiration allows users to set the expiration date to a document.
-When the document is expired, the document will be purged from the database.
-The purge will not be replicated to Sync Gateway.</p>
-</div>
-<div id="ex-set-doc-exp" class="exampleblock">
-<div class="title">Example 15. Set document expiration</div>
-<div class="content">
-<div class="paragraph">
-<p>This example sets the TTL for a document to 5 minutes from the current time.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/objc/examples/code_snippets/SampleCodeTest.m">// Purge the document one day from now
-NSDate *ttl = [[NSCalendar currentCalendar] dateByAddingUnit:NSCalendarUnitDay
-                                                       value:1
-                                                      toDate:[NSDate date]
-                                                     options:0];
-[self.database setDocumentExpirationWithID:@"doc123" expiration:ttl error:&amp;error];
-
-// Reset expiration
-[self.database setDocumentExpirationWithID:@"doc1" expiration:nil error:&amp;error];
-
-// Query documents that will be expired in less than five minutes
-NSTimeInterval fiveMinutesFromNow = [[NSDate dateWithTimeIntervalSinceNow:60 * 5] timeIntervalSince1970];
-CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:[CBLQueryMeta id]]]
-                                     from:[CBLQueryDataSource database:self.database]
-                                    where:[[CBLQueryMeta expiration]
-                                            lessThan:[CBLQueryExpression double:fiveMinutesFromNow]]];</code></pre>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="lbl-doc-constraints"><a class="anchor" href="#lbl-doc-constraints"></a>Document Constraints</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Couchbase Lite APIs do not explicitly disallow the use of attributes with the underscore prefix at the top level of document.
-This is to facilitate the creation of documents for use either in <em>local only</em> mode where documents are not synced, or when used exclusively in peer-to-peer sync.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-"_id", :"_rev" and "_sequence" are reserved keywords and must not be used as top-level attributes&#8201;&#8212;&#8201;see <a href="#res-keys">Example 16</a>.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Users are cautioned that any attempt to sync such documents to Sync Gateway will result in an error.
-To be future proof, you are advised to avoid creating such documents.
-Use of these attributes for user-level data may result in undefined system behavior.</p>
-</div>
-<div class="paragraph">
-<p>For more guidance&#8201;&#8212;&#8201;see: <a href="../../../sync-gateway/current/data-modeling.html" class="page">Sync Gateway - data modeling guidelines</a></p>
-</div>
-<div id="res-keys" class="exampleblock">
-<div class="title">Example 16. Reserved Keys List</div>
-<div class="content">
-<div class="ulist">
-<ul>
-<li>
-<p>_attachments</p>
-</li>
-<li>
-<p>_deleted <sup class="footnote" id="_footnote_fn1">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
-</li>
-<li>
-<p>_id <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
-</li>
-<li>
-<p>_removed</p>
-</li>
-<li>
-<p>_rev <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></p>
-</li>
-<li>
-<p>_sequence</p>
-</li>
-</ul>
 </div>
 </div>
 </div>

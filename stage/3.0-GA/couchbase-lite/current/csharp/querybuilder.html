@@ -1902,7 +1902,7 @@
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="https://github.com/ibsoln/docs-couchbase-lite/edit/staging/3.0-GA/modules/csharp/pages/querybuilder.adoc" title="Edit Page" target="_blank" rel="noopener" class="remove-ext-icon">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/pages/querybuilder.adoc" title="Edit Page" target="_blank" rel="noopener" class="remove-ext-icon">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -2077,10 +2077,6 @@ We recommend working through the query section of the <a href="https://docs.couc
 <div class="sect1">
 <h2 id="indexing"><a class="anchor" href="#indexing"></a>Indexing</h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Before we begin querying documents, let&#8217;s briefly mention the importance of having a query index.
-A query can only be fast if there&#8217;s a pre-existing database index it can search to narrow down the set of documents to examine&#8201;&#8212;&#8201;see: <a href="#lb-indexing">[lb-indexing]</a>, which shows how to create an index and our <a href="query-troubleshooting.html" class="page">Query Troubleshooting</a> topic.</p>
-</div>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -2093,15 +2089,37 @@ See the <a href="indexing.html" class="page">Indexing</a> topic to learn more ab
 </tr>
 </table>
 </div>
-<div class="sect2">
-<h3 id="lbl-indexing"><a class="anchor" href="#lbl-indexing"></a>Creating a New Index</h3>
 <div class="paragraph">
-<p>This example creates a new index for the <code>type</code> and <code>name</code> properties in the <a href="#lbl-data-format">Example 2</a> shown.</p>
+<p>Before we begin querying documents, let&#8217;s briefly mention the importance of having a query index.</p>
 </div>
-<div id="lbl-data-format" class="exampleblock">
-<div class="title">Example 2. Index Query Data Format</div>
+<div class="paragraph">
+<p>A query can only be fast if there&#8217;s a pre-existing database index it can search to narrow down the set of documents to examine&#8201;&#8212;&#8201;see: <a href="#ex-indexing">Example 2</a>, which shows how to create an index and our <a href="query-troubleshooting.html" class="page">Query Troubleshooting</a> topic.</p>
+</div>
+<div class="paragraph">
+<p>However, every index has to be updated whenever a document is updated.
+So too many indexes can hurt performance.</p>
+</div>
+<div class="paragraph">
+<p>Good performance depends on designing and creating the <em>right</em> indexes to go along with your queries.</p>
+</div>
+<div id="ex-indexing" class="exampleblock">
+<div class="title">Example 2. Creating a New Index</div>
 <div class="content">
+<div class="paragraph">
+<p>This example creates a new index for the `type` and `name` properties in the <a href="#ex-data-format">Data Model</a>.</p>
+</div>
 <div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var db = _database;
+string[] indexProperties = new string[] {"type", "name" };
+var config = new ValueIndexConfiguration(indexProperties);
+db.CreateIndex("TypeNameIndex", config);</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="ex-data-format" class="listingblock">
+<div class="title">Data Model</div>
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">[
   { <i class="conum" data-value="1"></i><b>(1)</b>
@@ -2115,35 +2133,6 @@ See the <a href="indexing.html" class="page">Indexing</a> topic to learn more ab
     "name": "Hotel Deluxe",
   }
 ]</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div id="ex-query-index" class="exampleblock">
-<div class="title">Example 3. Code to Create Index</div>
-<div class="content">
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var db = _database;
-string[] indexProperties = new string[] {"type", "name" };
-var config = new ValueIndexConfiguration(indexProperties);
-db.CreateIndex("TypeNameIndex", config);</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Every index has to be updated whenever a document is updated, so too many indexes can hurt performance.
-Good performance depends on designing and creating the <em>right</em> indexes to go along with your queries.
-</td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -2174,17 +2163,17 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 <div class="sect2">
 <h3 id="lbl-return-all"><a class="anchor" href="#lbl-return-all"></a>Return All Properties</h3>
 <div class="paragraph">
-<p>Use the <code>SelectResult.all()</code> method to return all the properties of selected documents&#8201;&#8212;&#8201;see: <a href="#ex-select-all">Example 4</a>.</p>
+<p>Use the <code>SelectResult.all()</code> method to return all the properties of selected documents&#8201;&#8212;&#8201;see: <a href="#ex-select-all">Example 3</a>.</p>
 </div>
 <div id="ex-select-all" class="exampleblock">
-<div class="title">Example 4. Using SELECT to Retrieve All Properties</div>
+<div class="title">Example 3. Using SELECT to Retrieve All Properties</div>
 <div class="content">
 <div class="paragraph">
 <p>This query shows how to retrieve all properties from all documents in your database.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(SelectResult.All())
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(SelectResult.All())
     .From(DataSource.Database(db))) {
     // All user properties will be available here
 }</code></pre>
@@ -2193,10 +2182,10 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 </div>
 </div>
 <div class="paragraph">
-<p>The query.execute statement returns the results in a dictionary, where the key is the database name&#8201;&#8212;&#8201;see <a href="#ex-return-all">Example 5</a>.</p>
+<p>The query.execute statement returns the results in a dictionary, where the key is the database name&#8201;&#8212;&#8201;see <a href="#ex-return-all">Example 4</a>.</p>
 </div>
 <div id="ex-return-all" class="exampleblock">
-<div class="title">Example 5. ResultSet Format from SelectResult.all()</div>
+<div class="title">Example 4. ResultSet Format from SelectResult.all()</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2247,17 +2236,17 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 <div class="sect2">
 <h3 id="lbl-return-properties"><a class="anchor" href="#lbl-return-properties"></a>Return Selected Properties</h3>
 <div class="paragraph">
-<p>To access only specific properties, specify a comma separated list of <code>SelectResult</code> expressions, one for each property, in the select statement of your query &#8201;&#8212;&#8201;see: <a href="#ex-select-properties">Example 6</a></p>
+<p>To access only specific properties, specify a comma separated list of <code>SelectResult</code> expressions, one for each property, in the select statement of your query &#8201;&#8212;&#8201;see: <a href="#ex-select-properties">Example 5</a></p>
 </div>
 <div id="ex-select-properties" class="exampleblock">
-<div class="title">Example 6. Using SELECT to Retrieve Specific Properties</div>
+<div class="title">Example 5. Using SELECT to Retrieve Specific Properties</div>
 <div class="content">
 <div class="paragraph">
 <p>In this query we retrieve and then print the <code>_id</code>, <code>type</code> and <code>name</code> properties of each document.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
         SelectResult.Expression(Meta.ID),
         SelectResult.Property("type"),
         SelectResult.Property("name"))
@@ -2272,10 +2261,10 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>query.execute</code> statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key&#8201;&#8212;&#8201;see <a href="#ex-return-properties">Example 7</a></p>
+<p>The <code>query.execute</code> statement returns one or more key-value pairs, one for each SelectResult expression, with the property-name as the key&#8201;&#8212;&#8201;see <a href="#ex-return-properties">Example 6</a></p>
 </div>
 <div id="ex-return-properties" class="exampleblock">
-<div class="title">Example 7. Select Result Format</div>
+<div class="title">Example 6. Select Result Format</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2356,11 +2345,11 @@ In the example below, we use the <code>equalTo</code> operator to query document
 </div>
 </div>
 <div class="exampleblock">
-<div class="title">Example 8. Using Where</div>
+<div class="title">Example 7. Using Where</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(SelectResult.All())
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(SelectResult.All())
     .From(DataSource.Database(db))
     .Where(Expression.Property("type").EqualTo(Expression.String("hotel")))
     .Limit(Expression.Int(10))) {
@@ -2395,7 +2384,7 @@ In the example below, we use the <code>equalTo</code> operator to query document
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
         SelectResult.Expression(Meta.ID),
         SelectResult.Property("name"),
         SelectResult.Property("public_likes"))
@@ -2420,7 +2409,7 @@ The following example looks for documents whose <code>first</code>, <code>last</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var values = new IExpression[]
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var values = new IExpression[]
     { Expression.Property("first"), Expression.Property("last"), Expression.Property("username") };
 
 using (var query = QueryBuilder.Select(
@@ -2452,7 +2441,7 @@ using (var query = QueryBuilder.Select(
 <div class="sect3">
 <h4 id="lbl-string-match"><a class="anchor" href="#lbl-string-match"></a>String Matching</h4>
 <div class="paragraph">
-<p>The <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_Like_Couchbase_Lite_Query_IExpression_">Like()</a> operator can be used for string matching&#8201;&#8212;&#8201;see <a href="#ex-like-case-insensitive">Example 9</a></p>
+<p>The <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-net/api/Couchbase.Lite.Query.IExpression.html#Couchbase_Lite_Query_IExpression_Like_Couchbase_Lite_Query_IExpression_">Like()</a> operator can be used for string matching&#8201;&#8212;&#8201;see <a href="#ex-like-case-insensitive">Example 8</a></p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2471,11 +2460,11 @@ To perform case insensitive matching, use <code>Function.lower</code> or <code>F
 <p>This query returns <code>landmark</code> type documents where the <code>name</code> matches the string "Royal Engineers Museum", regardless of how it is capitalized (so, it selects "royal engineers museum", "ROYAL ENGINEERS MUSEUM" and so on).</p>
 </div>
 <div id="ex-like-case-insensitive" class="exampleblock">
-<div class="title">Example 9. Like with case-insensitive matching</div>
+<div class="title">Example 8. Like with case-insensitive matching</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
         SelectResult.Expression(Meta.ID),
         SelectResult.Property("name"))
     .From(DataSource.Database(db))
@@ -2501,7 +2490,7 @@ To perform case insensitive matching, use <code>Function.lower</code> or <code>F
 Using wildcards allows you to have some fuzziness in your search string.</p>
 </div>
 <div class="paragraph">
-<p>In <a href="#ex-wldcd-match">Example 10</a> below, we are looking for documents of <code>type</code> "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
+<p>In <a href="#ex-wldcd-match">Example 9</a> below, we are looking for documents of <code>type</code> "landmark" where the name property matches any string that begins with "eng" followed by zero or more characters, the letter "e", followed by zero or more characters.
 Once again, we are using <code>Function.lower</code> to make the search case insensitive.</p>
 </div>
 <div class="paragraph">
@@ -2509,11 +2498,11 @@ Once again, we are using <code>Function.lower</code> to make the search case ins
 Notice that the matches may span word boundaries.</p>
 </div>
 <div id="ex-wldcd-match" class="exampleblock">
-<div class="title">Example 10. Wildcard Matches</div>
+<div class="title">Example 9. Wildcard Matches</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
         SelectResult.Expression(Meta.ID),
         SelectResult.Property("name"))
     .From(DataSource.Database(db))
@@ -2535,15 +2524,15 @@ Notice that the matches may span word boundaries.</p>
 <p>We can use an <code>_</code> sign within a like expression to do a wildcard match against a single character.</p>
 </div>
 <div class="paragraph">
-<p>In <a href="#ex-wldcd-char-match">Example 11</a> below, we are looking for documents of type "landmark" where the <code>name</code> property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
+<p>In <a href="#ex-wldcd-char-match">Example 10</a> below, we are looking for documents of type "landmark" where the <code>name</code> property matches any string that begins with "eng" followed by exactly 4 wildcard characters and ending in the letter "r".
 The query returns "landmark" type documents with names such as "Engineer", "engineer" and so on.</p>
 </div>
 <div id="ex-wldcd-char-match" class="exampleblock">
-<div class="title">Example 11. Wildcard Character Matching</div>
+<div class="title">Example 10. Wildcard Character Matching</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
         SelectResult.Expression(Meta.ID),
         SelectResult.Property("name"))
     .From(DataSource.Database(db))
@@ -2563,7 +2552,7 @@ The query returns "landmark" type documents with names such as "Engineer", "engi
 <div class="sect2">
 <h3 id="lbl-regex-ops"><a class="anchor" href="#lbl-regex-ops"></a>Regex Operator</h3>
 <div class="paragraph">
-<p>Similar to the wildcards in <code>like</code> expressions, <code>regex</code> based pattern matching allow you to introduce an element of fuzziness in your search string&#8201;&#8212;&#8201;see the code shown in <a href="#ex-regex">Example 12</a>.</p>
+<p>Similar to the wildcards in <code>like</code> expressions, <code>regex</code> based pattern matching allow you to introduce an element of fuzziness in your search string&#8201;&#8212;&#8201;see the code shown in <a href="#ex-regex">Example 11</a>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2578,14 +2567,14 @@ The <code>regex</code> operator is case sensitive, use <code>upper</code> or <co
 </table>
 </div>
 <div id="ex-regex" class="exampleblock">
-<div class="title">Example 12. Using Regular Expressions</div>
+<div class="title">Example 11. Using Regular Expressions</div>
 <div class="content">
 <div class="paragraph">
 <p>This example returns documents with a `type` of "landmark" and a `name` property that matches any string that begins with "eng" and ends in the letter "e".</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
         SelectResult.Expression(Meta.ID),
         SelectResult.Property("name"))
     .From(DataSource.Database(db))
@@ -2625,17 +2614,17 @@ For more on the regex spec used by Couchbase&#160;Lite see <a href="http://www.c
 <h3 id="lbl-deleted-ops"><a class="anchor" href="#lbl-deleted-ops"></a>Deleted Document</h3>
 <div class="paragraph">
 <p>You can query documents that have been deleted (tombstones)
-<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> as shown in <a href="#ex-del-qry">Example 13</a>.</p>
+<sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> as shown in <a href="#ex-del-qry">Example 12</a>.</p>
 </div>
 <div id="ex-del-qry" class="exampleblock">
-<div class="title">Example 13. Query to select Deleted Documents</div>
+<div class="title">Example 12. Query to select Deleted Documents</div>
 <div class="content">
 <div class="paragraph">
 <p>This example shows how to query deleted documents in the database. It returns is an array of key-value pairs.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">// Query documents that have been deleted
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">// Query documents that have been deleted
 var query = QueryBuilder
     .Select(SelectResult.Expression(Meta.ID))
     .From(DataSource.Database(db))
@@ -2652,17 +2641,17 @@ var query = QueryBuilder
 <div class="sectionbody">
 <div class="paragraph">
 <p>The JOIN clause enables you to select data from multiple documents that have been linked by criteria specified in the JOIN statement.
-For example to combine airline details with route details, linked by the airline id&#8201;&#8212;&#8201;see <a href="#ex-join">Example 14</a>.</p>
+For example to combine airline details with route details, linked by the airline id&#8201;&#8212;&#8201;see <a href="#ex-join">Example 13</a>.</p>
 </div>
 <div id="ex-join" class="exampleblock">
-<div class="title">Example 14. Using JOIN to Combine Document Details</div>
+<div class="title">Example 13. Using JOIN to Combine Document Details</div>
 <div class="content">
 <div class="paragraph">
 <p>This example JOINS the document of type <code>route</code> with documents of type <code>airline</code> using the document ID (<code><em>id</code>) on the _airline</em> document and <code>airlineid</code> on the <em>route</em> document.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
         SelectResult.Expression(Expression.Property("name").From("airline")),
         SelectResult.Expression(Expression.Property("callsign").From("airline")),
         SelectResult.Expression(Expression.Property("destinationairport").From("route")),
@@ -2706,14 +2695,14 @@ For example to combine airline details with route details, linked by the airline
 </div>
 </div>
 <div id="ex-grpby-qry" class="exampleblock">
-<div class="title">Example 15. Query using GroupBy</div>
+<div class="title">Example 14. Query using GroupBy</div>
 <div class="content">
 <div class="paragraph">
 <p>This example shows a query that selects all airports with an altitude above 300ft. The output (a count, $1) is grouped by country, within timezone.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
         SelectResult.Expression(Function.Count(Expression.All())),
         SelectResult.Property("country"),
         SelectResult.Property("tz"))
@@ -2731,7 +2720,7 @@ For example to combine airline details with route details, linked by the airline
 </div>
 </div>
 <div class="paragraph">
-<p>The query shown in <a href="#ex-grpby-qry">Example 15</a> generates the following output:</p>
+<p>The query shown in <a href="#ex-grpby-qry">Example 14</a> generates the following output:</p>
 </div>
 <div class="openblock">
 <div class="content">
@@ -2750,17 +2739,17 @@ There are 123 airports on the America/Denver timezone located in United States a
 <h2 id="lbl-order"><a class="anchor" href="#lbl-order"></a>ORDER BY statement</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>It is possible to sort the results of a query based on a given expression result&#8201;&#8212;&#8201;see <a href="#ex-orderby-qry">Example 16</a></p>
+<p>It is possible to sort the results of a query based on a given expression result&#8201;&#8212;&#8201;see <a href="#ex-orderby-qry">Example 15</a></p>
 </div>
 <div id="ex-orderby-qry" class="exampleblock">
-<div class="title">Example 16. Query using OrderBy</div>
+<div class="title">Example 15. Query using OrderBy</div>
 <div class="content">
 <div class="paragraph">
 <p>This example shows a query that returns documents of type equal to "hotel" sorted in ascending order by the value of the title property.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">using (var query = QueryBuilder.Select(
         SelectResult.Expression(Meta.ID),
         SelectResult.Property("title"))
     .From(DataSource.Database(db))
@@ -2776,7 +2765,7 @@ There are 123 airports on the America/Denver timezone located in United States a
 </div>
 </div>
 <div class="paragraph">
-<p>The query shown in <a href="#ex-orderby-qry">Example 16</a> generates the following output:</p>
+<p>The query shown in <a href="#ex-orderby-qry">Example 15</a> generates the following output:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -2894,14 +2883,14 @@ To unpack these result sets you need to iterate this array.</p>
 <div class="sect3">
 <h4 id="query"><a class="anchor" href="#query"></a>Query</h4>
 <div class="paragraph">
-<p>The <code>Select</code> statement for this type of query, which returns all document properties for each document matching the query criteria, is fairly straightforward&#8201;&#8212;&#8201;see <a href="#ex-all-qry">Example 17</a></p>
+<p>The <code>Select</code> statement for this type of query, which returns all document properties for each document matching the query criteria, is fairly straightforward&#8201;&#8212;&#8201;see <a href="#ex-all-qry">Example 16</a></p>
 </div>
 <div id="ex-all-qry" class="exampleblock">
-<div class="title">Example 17. Query selecting All Properties</div>
+<div class="title">Example 16. Query selecting All Properties</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var this_Db = new Database("hotels") ;
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var this_Db = new Database("hotels") ;
 
 var query = QueryBuilder
       .Select(SelectResult.All())
@@ -2917,10 +2906,10 @@ var query = QueryBuilder
 <p>The result set returned by queries using <code>SelectResult.all</code> is an array of dictionary objects&#8201;&#8212;&#8201;one for each document matching the query criteria.</p>
 </div>
 <div class="paragraph">
-<p>For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair&#8201;&#8212;&#8201;see: <a href="#ex-all-rtn">Example 18</a>.</p>
+<p>For each result object, the key is the database name and the 'value' is a dictionary representing each document property as a key-value pair&#8201;&#8212;&#8201;see: <a href="#ex-all-rtn">Example 17</a>.</p>
 </div>
 <div id="ex-all-rtn" class="exampleblock">
-<div class="title">Example 18. Format of Result Set (All Properties)</div>
+<div class="title">Example 17. Format of Result Set (All Properties)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -2968,14 +2957,14 @@ var query = QueryBuilder
 <div class="sect3">
 <h4 id="result-set-access"><a class="anchor" href="#result-set-access"></a>Result Set Access</h4>
 <div class="paragraph">
-<p>In this case access the retrieved document properties by converting each row&#8217;s value, in turn, to a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-all-acc">Example 19</a>.</p>
+<p>In this case access the retrieved document properties by converting each row&#8217;s value, in turn, to a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-all-acc">Example 18</a>.</p>
 </div>
 <div id="ex-all-acc" class="exampleblock">
-<div class="title">Example 19. Using Document Properties (All)</div>
+<div class="title">Example 18. Using Document Properties (All)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var results = query.Execute().AllResults();
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var results = query.Execute().AllResults();
 
 if (results?.Count &gt; 0)
 {
@@ -3021,14 +3010,14 @@ You can add this dictionary to an array of returned matches, for processing else
 <div class="sect3">
 <h4 id="query-2"><a class="anchor" href="#query-2"></a>Query</h4>
 <div class="paragraph">
-<p>Here we use <code>SelectResult.expression(property("&lt;property-name&gt;")))</code> to specify the document properties we want our query to return&#8201;&#8212;&#8201;see: <a href="#ex-specific-qry">Example 20</a>.</p>
+<p>Here we use <code>SelectResult.expression(property("&lt;property-name&gt;")))</code> to specify the document properties we want our query to return&#8201;&#8212;&#8201;see: <a href="#ex-specific-qry">Example 19</a>.</p>
 </div>
 <div id="ex-specific-qry" class="exampleblock">
-<div class="title">Example 20. Query selecting Specific Properties</div>
+<div class="title">Example 19. Query selecting Specific Properties</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var this_Db = new Database("hotels") ;
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var this_Db = new Database("hotels") ;
 
 Dictionary&lt;string, object&gt; hotel = new Dictionary&lt;string, object&gt;();
 
@@ -3049,10 +3038,10 @@ var query = QueryBuilder.Select(
 <p>The result set returned when selecting only specific document properties is an array of dictionary objects&#8201;&#8212;&#8201;one for each document matching the query criteria.</p>
 </div>
 <div class="paragraph">
-<p>Each result object comprises a key-value pair for each selected document property&#8201;&#8212;&#8201;see <a href="#ex-specific-rtn">Example 21</a></p>
+<p>Each result object comprises a key-value pair for each selected document property&#8201;&#8212;&#8201;see <a href="#ex-specific-rtn">Example 20</a></p>
 </div>
 <div id="ex-specific-rtn" class="exampleblock">
-<div class="title">Example 21. Format of Result Set (Specific Properties)</div>
+<div class="title">Example 20. Format of Result Set (Specific Properties)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -3088,14 +3077,14 @@ var query = QueryBuilder.Select(
 <div class="sect3">
 <h4 id="result-set-access-2"><a class="anchor" href="#result-set-access-2"></a>Result Set Access</h4>
 <div class="paragraph">
-<p>Access the retrieved properties by converting each row into a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-specific-acc">Example 22</a>.</p>
+<p>Access the retrieved properties by converting each row into a dictionary&#8201;&#8212;&#8201;as shown in <a href="#ex-specific-acc">Example 21</a>.</p>
 </div>
 <div id="ex-specific-acc" class="exampleblock">
-<div class="title">Example 22. Using Returned Document Properties (Specific Properties)</div>
+<div class="title">Example 21. Using Returned Document Properties (Specific Properties)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var results = query.Execute().AllResults();
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var results = query.Execute().AllResults();
 foreach (var result in results)
 {
 
@@ -3122,14 +3111,14 @@ foreach (var result in results)
 <div class="sect3">
 <h4 id="query-3"><a class="anchor" href="#query-3"></a>Query</h4>
 <div class="paragraph">
-<p>You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time&#8201;&#8212;&#8201;see: <a href="#ex-id-qry">Example 23</a>.</p>
+<p>You would typically use this type of query if retrieval of document properties directly would consume excessive amounts of memory and-or processing time&#8201;&#8212;&#8201;see: <a href="#ex-id-qry">Example 22</a>.</p>
 </div>
 <div id="ex-id-qry" class="exampleblock">
-<div class="title">Example 23. Query selecting only Doc Id</div>
+<div class="title">Example 22. Query selecting only Doc Id</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var this_Db = new Database("hotels") ;
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var this_Db = new Database("hotels") ;
 
 var query = QueryBuilder
         .Select(SelectResult.Expression(Meta.ID).As("this_ID"))
@@ -3143,10 +3132,10 @@ var query = QueryBuilder
 <h4 id="result-set-format-3"><a class="anchor" href="#result-set-format-3"></a>Result Set Format</h4>
 <div class="paragraph">
 <p>The result set returned by queries using a SelectResult expression of the form <code>SelectResult.expression(meta.id)</code> is an array of dictionary objects&#8201;&#8212;&#8201;one for each document matching the query criteria.
-Each result object has <code>id</code> as the key and the ID value as its value&#8201;&#8212;&#8201;-see <a href="#ex-id-rtn">Example 24</a>.</p>
+Each result object has <code>id</code> as the key and the ID value as its value&#8201;&#8212;&#8201;-see <a href="#ex-id-rtn">Example 23</a>.</p>
 </div>
 <div id="ex-id-rtn" class="exampleblock">
-<div class="title">Example 24. Format of Result Set (Doc Id only)</div>
+<div class="title">Example 23. Format of Result Set (Doc Id only)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -3166,14 +3155,14 @@ Each result object has <code>id</code> as the key and the ID value as its value&
 <div class="sect3">
 <h4 id="result-set-access-3"><a class="anchor" href="#result-set-access-3"></a>Result Set Access</h4>
 <div class="paragraph">
-<p>In this case, access the required document&#8217;s properties by unpacking the <code>id</code> and using it to get the document from the database&#8201;&#8212;&#8201;see: <a href="#ex-id-acc">Example 25</a>.</p>
+<p>In this case, access the required document&#8217;s properties by unpacking the <code>id</code> and using it to get the document from the database&#8201;&#8212;&#8201;see: <a href="#ex-id-acc">Example 24</a>.</p>
 </div>
 <div id="ex-id-acc" class="exampleblock">
-<div class="title">Example 25. Using Returned Document Properties (Document Id)</div>
+<div class="title">Example 24. Using Returned Document Properties (Document Id)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var results = query.Execute().AllResults();
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var results = query.Execute().AllResults();
 foreach (var result in results)
 {
 
@@ -3199,11 +3188,11 @@ foreach (var result in results)
 <div class="sect3">
 <h4 id="query-4"><a class="anchor" href="#query-4"></a>Query</h4>
 <div id="ex-count-qry" class="exampleblock">
-<div class="title">Example 26. Query selecting a Count-only</div>
+<div class="title">Example 25. Query selecting a Count-only</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var this_Db = new Database("hotels") ;
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var this_Db = new Database("hotels") ;
 
 var query =
   QueryBuilder
@@ -3226,10 +3215,10 @@ var query =
 <h4 id="result-set-format-4"><a class="anchor" href="#result-set-format-4"></a>Result Set Format</h4>
 <div class="paragraph">
 <p>The result set returned by a count such as <code>Select.expression(Function.count(Expression.all)))</code> is a key-value pair.
-The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&#8212;&#8201;see: <a href="#ex-count-rtn">Example 27</a> for the format and <a href="#ex-count-qry">Example 26</a> for the query.</p>
+The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&#8212;&#8201;see: <a href="#ex-count-rtn">Example 26</a> for the format and <a href="#ex-count-qry">Example 25</a> for the query.</p>
 </div>
 <div id="ex-count-rtn" class="exampleblock">
-<div class="title">Example 27. Format of Result Set (Count)</div>
+<div class="title">Example 26. Format of Result Set (Count)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
@@ -3252,14 +3241,14 @@ The key is the count name, as defined using <code>SelectResult.as</code>&#8201;&
 <div class="sect3">
 <h4 id="result-set-access-4"><a class="anchor" href="#result-set-access-4"></a>Result Set Access</h4>
 <div class="paragraph">
-<p>Access the count using its alias name (<code>mycount</code> in this example)&#8201;&#8212;&#8201;see <a href="#ex-count-acc">Example 28</a></p>
+<p>Access the count using its alias name (<code>mycount</code> in this example)&#8201;&#8212;&#8201;see <a href="#ex-count-acc">Example 27</a></p>
 </div>
 <div id="ex-count-acc" class="exampleblock">
-<div class="title">Example 28. Using Returned Document Properties (Count)</div>
+<div class="title">Example 27. Using Returned Document Properties (Count)</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">
 var results = query.Execute().AllResults();
 
 foreach (var result in results)
@@ -3286,14 +3275,14 @@ foreach (var result in results)
 <h3 id="lbl-pagination"><a class="anchor" href="#lbl-pagination"></a>Handling Pagination</h3>
 <div class="paragraph">
 <p>One way to handle pagination in high-volume queries is to retrieve the results in batches.
-Use the <code>limit</code> and <code>offset</code> feature, to return a defined number of results starting from a given offset&#8201;&#8212;&#8201;see: <a href="#ex-pagination">Example 29</a>.</p>
+Use the <code>limit</code> and <code>offset</code> feature, to return a defined number of results starting from a given offset&#8201;&#8212;&#8201;see: <a href="#ex-pagination">Example 28</a>.</p>
 </div>
 <div id="ex-pagination" class="exampleblock">
-<div class="title">Example 29. Query Pagination</div>
+<div class="title">Example 28. Query Pagination</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var this_Db = new Database("hotels") ;
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var this_Db = new Database("hotels") ;
 
 var thisLimit = 20;
 var thisOffset = 0;
@@ -3361,14 +3350,14 @@ For more on using the QueryBuilder API, see our blog: <a href="https://blog.couc
 <p>Couchbase Lite for C#.Net provides a convenience API to convert query results to JSON strings.</p>
 </div>
 <div id="ex-json" class="exampleblock">
-<div class="title">Example 30. Using JSON Results</div>
+<div class="title">Example 29. Using JSON Results</div>
 <div class="content">
 <div class="paragraph">
 <p>Use <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-net/api/Couchbase.Lite.Query.Result.html#Couchbase_Lite_Query_Result_ToJson">Result.ToJson()</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">
 foreach (var result in query.Execute().AsEnumerable()) {
 
     // get the result into a JSON String
@@ -3498,14 +3487,14 @@ Predictive Query is an <a href="https://www.couchbase.com/products/editions">Ent
 <div class="sect2">
 <h3 id="integrate-the-model"><a class="anchor" href="#integrate-the-model"></a>Integrate the Model</h3>
 <div class="paragraph">
-<p>To integrate a model with Couchbase Lite, you must implement the <code>PredictiveModel</code> interface which has only one function called <code>predict()</code>&#8201;&#8212;&#8201;see: <a href="#int-pred-model">Example 31</a>.</p>
+<p>To integrate a model with Couchbase Lite, you must implement the <code>PredictiveModel</code> interface which has only one function called <code>predict()</code>&#8201;&#8212;&#8201;see: <a href="#int-pred-model">Example 30</a>.</p>
 </div>
 <div id="int-pred-model" class="exampleblock">
-<div class="title">Example 31. Integrating a predictive model</div>
+<div class="title">Example 30. Integrating a predictive model</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">// <code>TensorFlowModel</code> is a fake implementation
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">// tensorFlowModel is a fake implementation
 // this would be the implementation of the ml model you have chosen
 class TensorFlowModel
 {
@@ -3526,7 +3515,7 @@ class ImageClassifierModel : IPredictiveModel
         }
 
         var imageData = blob.Content;
-        // <code>TensorFlowModel</code> is a fake implementation
+        // tensorFlowModel is a fake implementation
         // this would be the implementation of the ml model you have chosen
         var modelOutput = TensorFlowModel.PredictImage(imageData);
         return new MutableDictionaryObject(modelOutput); <i class="conum" data-value="1"></i><b>(1)</b>
@@ -3553,11 +3542,11 @@ Therefore, the supported data type will be constrained by the data type that the
 <p>To register the model you must create a new instance and pass it to the <code>Database.prediction.registerModel</code> static method.</p>
 </div>
 <div id="reg-pred-model" class="exampleblock">
-<div class="title">Example 32. Registering a predictive model</div>
+<div class="title">Example 31. Registering a predictive model</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var model = new ImageClassifierModel();
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var model = new ImageClassifierModel();
 Database.Prediction.RegisterModel("ImageClassifier", model);</code></pre>
 </div>
 </div>
@@ -3590,11 +3579,11 @@ By computing the predictions during writes and building a prediction index, you 
 When documents are added or updated, the index will call the prediction function to update the city value in the index.</p>
 </div>
 <div id="crt-val-index" class="exampleblock">
-<div class="title">Example 33. Creating a value index</div>
+<div class="title">Example 32. Creating a value index</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var index = IndexBuilder.ValueIndex(ValueIndexItem.Property("label"));
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var index = IndexBuilder.ValueIndex(ValueIndexItem.Property("label"));
 db.CreateIndex("value-index-image-classifier", index);</code></pre>
 </div>
 </div>
@@ -3608,14 +3597,14 @@ db.CreateIndex("value-index-image-classifier", index);</code></pre>
 It differs from the value index in that it caches the predictive results and creates a value index from that cache when the predictive results values are specified.</p>
 </div>
 <div id="crt-val-index" class="exampleblock">
-<div class="title">Example 34. Creating a predictive index</div>
+<div class="title">Example 33. Creating a predictive index</div>
 <div class="content">
 <div class="paragraph">
 <p>Here we create a predictive index from the <code>label</code> value of the prediction result.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var input = Expression.Dictionary(new Dictionary&lt;string, object&gt;
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var input = Expression.Dictionary(new Dictionary&lt;string, object&gt;
 {
     ["photo"] = Expression.Property("photo")
 });
@@ -3634,11 +3623,11 @@ db.CreateIndex("predictive-index-image-classifier", index);</code></pre>
 <p>The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.</p>
 </div>
 <div id="crt-val-index" class="exampleblock">
-<div class="title">Example 35. Creating a value index</div>
+<div class="title">Example 34. Creating a value index</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">var input = Expression.Dictionary(new Dictionary&lt;string, object&gt;
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">var input = Expression.Dictionary(new Dictionary&lt;string, object&gt;
 {
     ["photo"] = Expression.Property("photo")
 });
@@ -3682,11 +3671,11 @@ The null value returned by the prediction method will be interpreted as MISSING 
 <p>To deregister the model you must call the <code>Database.prediction.unregisterModel</code> static method.</p>
 </div>
 <div id="dereg-val-index" class="exampleblock">
-<div class="title">Example 36. Deregister a value index</div>
+<div class="title">Example 35. Deregister a value index</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="https://github.com/ibsoln/docs-couchbase-lite/blob/7e797422872b9142094aa4188b58e509a458e2c5/modules/csharp/examples/code_snippets/Program.cs">Database.Prediction.UnregisterModel("ImageClassifier");</code></pre>
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/csharp/examples/code_snippets/Program.cs">Database.Prediction.UnregisterModel("ImageClassifier");</code></pre>
 </div>
 </div>
 </div>

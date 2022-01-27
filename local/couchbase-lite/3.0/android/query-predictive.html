@@ -3735,6 +3735,7 @@ class QueryExamples(private val database: Database) {
     // Wildcard Character Match
     @Throws(CouchbaseLiteException::class)
     fun testWildCharacterMatch() {
+
         val rs = QueryBuilder
             .select(
                 SelectResult.expression(Meta.id),
@@ -3994,7 +3995,25 @@ class QueryExamples(private val database: Database) {
     }
 /* end func testQuerySyntaxJson */
 
-  fun docsOnlyQuerySyntaxN1QL(argDb: Database): List&lt;Result&gt; {
+
+
+    fun testQuerySyntaxProps(currentUser: String) {
+
+        val rs = QueryBuilder
+            .select(
+                SelectResult.expression(Meta.id),
+                SelectResult.property("country"),
+                SelectResult.property("name")
+            )
+            .from(DataSource.database(database))
+
+
+        for (result in rs.execute) {
+            Log.i(TAG, "name -&gt; ${result.getString("name")}")
+        }
+    }
+
+    fun docsOnlyQuerySyntaxN1QL(argDb: Database): List&lt;Result&gt; {
       // For Documentation -- N1QL Query using parameters
       val db = argDb
       val thisQuery = db.createQuery(

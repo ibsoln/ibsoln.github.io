@@ -114,7 +114,7 @@
       <div class="component_list-version">
         <span class="component_list_title">Couchbase Lite</span>
         <select class="version_list" data-component="couchbase-lite">
-          <option value="3.0" data-url="../index.html" selected>3.0.0</option>
+          <option value="3.0" data-url="../index.html" selected>3.0</option>
           <option value="2.8" data-url="../../2.8/index.html">2.8</option>
         </select>
       </div>
@@ -127,7 +127,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../cbl-whatsnew.html">New in 3.0 BETA</a>
+    <a class="menu_title menu_link" href="../cbl-whatsnew.html">New in 3.0</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -355,7 +355,7 @@
 <ul class="menu_row">
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="../c/gs-downloads.html">BETA Downloads</a>
+    <a class="menu_title menu_link" href="../c/gs-downloads.html">Download</a>
   </span>
 </li>
 <li class="menu_list" data-depth="2">
@@ -834,7 +834,7 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="dep-upgrade.html">Upgrade</a>
+    <a class="menu_title menu_link" href="upgrade.html">Upgrade</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -1816,12 +1816,12 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0.{base}/couchbase-lite-java/index.html?">API&#160;References</a>
+    <a class="menu_title menu_link" href="https://ibsoln.github.io/api/mobile/3.0.{base}/couchbase-lite-java/">API&#160;References</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="dep-upgrade.html">Upgrade</a>
+    <a class="menu_title menu_link" href="upgrade.html">Upgrade</a>
   </span>
 </li>
 <li class="menu_list is-parent closed" data-depth="1">
@@ -3599,6 +3599,19 @@ Ensure you added the Couchbase&#160;Lite dependency to your <code>build.gradle</
 <div class="paragraph">
 <p>This section explains how to set-up a build project to create <em>Couchbase&#160;Lite</em> on Java web apps using gradle and Intellij IDEA.</p>
 </div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+For an example of using Maven to build a Web App, see the example POM and To Do application here:
+<a href="https://github.com/couchbaselabs/mobile-training-todo/tree/release/lithium/java-ws" class="bare">https://github.com/couchbaselabs/mobile-training-todo/tree/release/lithium/java-ws</a>.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p><strong>Steps</strong></p>
 </div>
@@ -3608,53 +3621,7 @@ Ensure you added the Couchbase&#160;Lite dependency to your <code>build.gradle</
 <p>Create a new project folder and add a <code>build.gradle</code> file containing the following:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">
-ext{
-  TOMCAT_VERSION="9.0.24"
-}
-
-apply plugin: 'java'
-apply plugin: 'war'
-apply plugin: 'com.bmuschko.tomcat'
-
-sourceCompatibility = 1.8
-
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.bmuschko:gradle-tomcat-plugin:2.5'
-    }
-}
-
-repositories {
-    mavenCentral()
-}
-
-dependencies {
-    //  Use for Enterprise version
-    compileOnly "com.couchbase.lite:couchbase-lite-java-ee:2.7.0"
-    //  Use for community versions
-    //    compileOnly "com.couchbase.lite:couchbase-lite-java:2.7.0"
-    compileOnly "javax.servlet:javax.servlet-api:4.0.1"
-    tomcat "org.apache.tomcat.embed:tomcat-embed-core:${TOMCAT_VERSION}",
-        "org.apache.tomcat.embed:tomcat-embed-logging-juli:9.0.0.M6",
-        "org.apache.tomcat.embed:tomcat-embed-jasper:${TOMCAT_VERSION}"
-}
-
-tomcat {
-    httpPort = 8080
-    httpProtocol = 'org.apache.coyote.http11.Http11Nio2Protocol'
-    ajpProtocol  = 'org.apache.coyote.ajp.AjpNio2Protocol'
-    contextPath = '/'
-}
-
-[tomcatRun, tomcatRunWar].each { task -&gt;
-    fileTree("libs").visit { FileVisitDetails details -&gt;
-        task.additionalRuntimeResources &lt;&lt; file(details.file.path)
-    }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy"></code></pre>
 </div>
 </div>
 </li>
@@ -3668,20 +3635,10 @@ tomcat {
 <p>Create a Java class <em>GettingStarted</em> using this code:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">import com.couchbase.lite.*;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
-@WebServlet( value = "/GettingStarted")
-public class GettingStarted extends javax.servlet.http.HttpServlet {
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">
+//@WebServlet( value = "/GettingStarted")
+//public class GettingStartedWebApp extends javax.servlet.http.HttpServlet {
+public class GettingStartedWebApp {
     private static final String DB_DIR = "/usr/local/var/tomcat/data"; <i class="conum" data-value="1"></i><b>(1)</b>
     private static final String DB_NAME = "getting-started";
     /*      Credentials declared this way purely for expediency in this demo - use OAUTH in production code */
@@ -3844,17 +3801,18 @@ public class GettingStarted extends javax.servlet.http.HttpServlet {
 <p>Create a Java class <em>Listener</em> using this code:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-import javax.servlet.annotation.WebListener;
-
-@WebListener
-public class Application implements ServletContextListener {
-  @Override
-  public void contextInitialized(ServletContextEvent event) {
-      DatabaseManager.manager().init();
-  }
-}</code></pre>
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">//    import javax.servlet.ServletContextEvent;
+//    import javax.servlet.ServletContextListener;
+//    import javax.servlet.annotation.WebListener;
+//
+//    @WebListener
+//    public class Application implements ServletContextListener {
+public class GsWebApp_Listener {
+      @Override
+      public void contextInitialized(ServletContextEvent event) {
+          DatabaseManager.manager().init();
+      }
+    }</code></pre>
 </div>
 </div>
 </li>
@@ -3862,9 +3820,9 @@ public class Application implements ServletContextListener {
 <p>Create a Java class <em>Database Manager</em> using this code:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">import com.couchbase.lite.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">//import com.couchbase.lite.*;
+//import java.net.URI;
+//import java.net.URISyntaxException;
 
 public class DatabaseManager {
 
@@ -3966,18 +3924,7 @@ public class DatabaseManager {
 <p>Create an <code>index.html</code> file in <code>src/main/web app</code> with the following content:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-html hljs" data-lang="html" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">&lt;%@ page contentType="text/html;charset=UTF-8" language="java" %&gt;
-&lt;html&gt;
-&lt;head&gt;
-    &lt;title&gt;Couchbase Lite (Java Jvm) :: Getting Started App&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;h1&gt;Couchbase Lite (Java Jvm) :: Getting Started App&lt;/h1&gt;
-
-&lt;p&gt;To invoke the GettingStarted servlet click &lt;a href="GettingStarted"&gt;here&lt;/a&gt;&lt;/p&gt;
-
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-html hljs" data-lang="html"></code></pre>
 </div>
 </div>
 </li>
@@ -3985,20 +3932,7 @@ public class DatabaseManager {
 <p>Create a <code>showDbItems.jsp</code> file in <code>src/main/web app</code> with the following content:</p>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-html hljs" data-lang="html" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/java/examples/codesnippet_collection.java">&lt;html&gt;
-&lt;head&gt;
-    &lt;title&gt;Couchbase Lite (Java Jvm) :: Getting Started App&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-&lt;h1&gt;Couchbase Lite (Java Jvm) :: Getting Started App&lt;/h1&gt;
-&lt;h2&gt;List all current DB rows&lt;/h2&gt;
-&lt;hr&gt;
-&lt;p&gt;NumRows = ${myRowCount}&lt;/p&gt;
-&lt;hr&gt;
-${myResults}
-&lt;hr&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
+<pre class="highlightjs highlight"><code class="language-html hljs" data-lang="html"></code></pre>
 </div>
 </div>
 </li>
