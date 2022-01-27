@@ -4614,7 +4614,22 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 <div class="tab-pane" aria-labelledby="tabset15_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">QueryBuilder
+.select(SelectResult.expression(Meta.id).as("metaId"))
+.from(DataSource.database(srcDb))
+.execute()
+.forEach {
+  it.getString("metaId")?.let { thisId -&gt;
+    srcDb.getDocument(thisId)?.toJSON()?.let { json -&gt; <i class="conum" data-value="1"></i><b>(1)</b>
+      Log.i(TAG, "JSON String = $json")
+      val hotelFromJSON = MutableDocument(thisId, json) <i class="conum" data-value="2"></i><b>(2)</b>
+      dstDb.save(hotelFromJSON)
+      dstDb.getDocument(thisId)?.toMap()?.forEach { e -&gt;
+        Log.i(TAG, "$e.key =&gt; $e.value")
+      } <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+  }
+}</code></pre>
 </div>
 </div>
 </div>

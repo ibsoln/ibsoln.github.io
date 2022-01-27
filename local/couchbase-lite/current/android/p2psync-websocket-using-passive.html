@@ -5577,8 +5577,21 @@ class QueryExamples(private val database: Database) {
 
   }
 
-    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser)
-}
+  fun testQuerySyntaxPagination(currentUser: String) {
+    val limit = 20
+    val offset = 0
+
+    val rs = QueryBuilder
+      .select(SelectResult.all())
+      .from(DataSource.database(database))
+      .where(Expression.property("type").equalTo(Expression.string("hotel")))
+      .limit(Expression.intValue(limit), Expression.intValue(offset))
+
+  }
+
+    fun openOrCreateDatabaseForUser(argUser: String): Database = Database(argUser) {
+
+    }
 
 
 
@@ -5658,26 +5671,26 @@ class KtJSONExamples {
         for (key in mDict.keys) {
           Log.i(TAG, key + " =&gt; " + mDict.getValue(key))
         }
-    }
+      }
 
-    @Throws(CouchbaseLiteException::class)
-    fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
+      @Throws(CouchbaseLiteException::class)
+      fun jsonDocumentExample(srcDb: Database, dstDb: Database) {
         QueryBuilder
-            .select(SelectResult.expression(Meta.id).<code>as</code>("metaId"))
-            .from(DataSource.database(srcDb))
-            .execute()
-            .forEach {
-                it.getString("metaId")?.let { thisId -&gt;
-                    srcDb.getDocument(thisId)?.toJSON()?.let { json -&gt; <i class="conum" data-value="52"></i><b>(52)</b>
-                        Log.i(TAG, "JSON String = $json")
-                        val hotelFromJSON = MutableDocument(thisId, json) <i class="conum" data-value="53"></i><b>(53)</b>
-                        dstDb.save(hotelFromJSON)
-                        dstDb.getDocument(thisId)?.toMap()?.forEach { e -&gt;
-                            Log.i(TAG, "$e.key =&gt; $e.value")
-                        } <i class="conum" data-value="54"></i><b>(54)</b>
-                    }
-                }
+        .select(SelectResult.expression(Meta.id).as("metaId"))
+        .from(DataSource.database(srcDb))
+        .execute()
+        .forEach {
+          it.getString("metaId")?.let { thisId -&gt;
+            srcDb.getDocument(thisId)?.toJSON()?.let { json -&gt; <i class="conum" data-value="52"></i><b>(52)</b>
+              Log.i(TAG, "JSON String = $json")
+              val hotelFromJSON = MutableDocument(thisId, json) <i class="conum" data-value="53"></i><b>(53)</b>
+              dstDb.save(hotelFromJSON)
+              dstDb.getDocument(thisId)?.toMap()?.forEach { e -&gt;
+                Log.i(TAG, "$e.key =&gt; $e.value")
+              } <i class="conum" data-value="54"></i><b>(54)</b>
             }
+          }
+        }
     }
 
     @Throws(CouchbaseLiteException::class, JSONException::class)
