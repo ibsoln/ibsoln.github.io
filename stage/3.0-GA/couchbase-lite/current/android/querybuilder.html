@@ -2090,7 +2090,20 @@ See the <a href="indexing.html" class="page">Indexing</a> topic to learn more ab
 </table>
 </div>
 <div class="paragraph">
-<p>Before we begin querying documents, let&#8217;s briefly mention the importance of having a query index.</p>
+<p>Before we begin querying documents, let&#8217;s briefly mention the importance of having a query index.
+A query can only be fast if there&#8217;s a pre-existing database index it can search to narrow down the set of documents to examine&#8201;&#8212;&#8201;see: <a href="#lbl-indexing">[lbl-indexing]</a>, which shows how to create an index, and also the <a href="query-troubleshooting.html" class="page">Query Troubleshooting</a> topic.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+See the <a href="indexing.html" class="page">Indexing</a> topic to learn more about indexing.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>A query can only be fast if there&#8217;s a pre-existing database index it can search to narrow down the set of documents to examine&#8201;&#8212;&#8201;see: <a href="#ex-indexing">Example 2</a>, which shows how to create an index and our <a href="query-troubleshooting.html" class="page">Query Troubleshooting</a> topic.</p>
@@ -2307,7 +2320,22 @@ You can opt to retrieve entire documents, or just the specific properties you ne
 <div class="tab-pane" aria-labelledby="tabset3_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">val rs = QueryBuilder
+    .select(
+        SelectResult.expression(Meta.id),
+        SelectResult.property("name"),
+        SelectResult.property("type")
+    )
+    .from(DataSource.database(database))
+    .where(Expression.property("type").equalTo(Expression.string("hotel")))
+    .orderBy(Ordering.expression(Meta.id))
+    .execute()
+
+for (result in rs) {
+    Log.i(TAG, "hotel id -&gt;${result.getString("id")}")
+    Log.i(TAG, "hotel name -&gt; ${result.getString("name")}")
+}
+
 val rs = QueryBuilder
     .select(
         SelectResult.expression(Meta.id),
@@ -2326,7 +2354,25 @@ for (result in rs.execute().allResults()) {
 <div class="tab-pane" aria-labelledby="tabset3_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">try {
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">    Query query = QueryBuilder
+        .select(
+            SelectResult.expression(Meta.id),
+            SelectResult.property("name"),
+            SelectResult.property("type"))
+        .from(DataSource.database(database))
+        .where(Expression.property("type").equalTo(Expression.string("hotel")))
+        .orderBy(Ordering.expression(Meta.id));
+
+    try {
+        ResultSet rs = query.execute();
+        for (Result result : rs) {
+            Log.i("Sample", String.format("hotel id -&gt; %s", result.getString("id")));
+            Log.i("Sample", String.format("hotel name -&gt; %s", result.getString("name")));
+        }
+    } catch (CouchbaseLiteException e) {
+        Log.e("Sample", e.getLocalizedMessage());
+    }
+try {
   this_Db = new Database("hotels");
 } catch (CouchbaseLiteException e) {
   e.printStackTrace();

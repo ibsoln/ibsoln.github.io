@@ -5267,6 +5267,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
       public void StartReplication()
       {
+  }
 
           var url = new Uri("wss://localhost:4984/db"); <i class="conum" data-value="117"></i><b>(117)</b>
           var target = new URLEndpoint(url);
@@ -5298,109 +5299,110 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         // end::sgw-act-rep-initialize[]
       }
   }
-
-    public class supporting_datatypes
-    {
-        public void datatype_dictionary()
-        {
-            var database = new Database(name: "mydb");
-
-            // tag::datatype_dictionary[]
-            // NOTE: No error handling, for brevity (see getting started)
-            var document = database.GetDocument("doc1");
-
-            // Getting a dictionary from the document's properties
-            var dict = document.GetDictionary("address");
-
-            // Access a value with a key from the dictionary
-            var street = dict.GetString("street");
-
-            // Iterate dictionary
-            foreach (var key in dict.Keys)
-            {
-                Console.WriteLine($"Key {key} = {dict.GetValue(key)}");
-            }
-
-            // Create a mutable copy
-            var mutDict = dict.ToMutable();
-            // end::datatype_dictionary[]
-        }
-
-        public void datatype_mutable_dictionary()
-        {
-
-            var database = new Database("mydb");
-
-            // tag::datatype_mutable_dictionary[]
-            // NOTE: No error handling, for brevity (see getting started)
-
-            // Create a new mutable dictionary and populate some keys/values
-            var mutable_dict = new MutableDictionaryObject();
-            mutable_dict.SetString("street", "1 Main st.");
-            mutable_dict.SetString("city", "San Francisco");
-
-            // Add the dictionary to a document's properties and save the document
-            var doc = new MutableDocument("doc1");
-            doc.SetDictionary("address", mutable_dict);
-            database.Save(doc);
-
-            // end::datatype_mutable_dictionary[]
-        }
+ }
 
 
-        public void datatype_array()
-        {
-            var database = new Database("mydb");
 
-            // tag::datatype_array[]
-            // NOTE: No error handling, for brevity (see getting started)
+  public class supporting_datatypes
+  {
+      public void datatype_dictionary()
+      {
+          var database = new Database(name: "mydb");
 
-            var document = database.GetDocument("doc1");
+          // tag::datatype_dictionary[]
+          // NOTE: No error handling, for brevity (see getting started)
+          var document = database.GetDocument("doc1");
 
-            // Getting a phones array from the document's properties
-            var array = document.GetArray("phones");
+          // Getting a dictionary from the document's properties
+          var dict = document.GetDictionary("address");
 
-            // Get element count
-            var count = array.Count();
+          // Access a value with a key from the dictionary
+          var street = dict.GetString("street");
 
-            // Access an array element by index
-            if (count &gt;= 0) { var phone = array[1]; }
+          // Iterate dictionary
+          foreach (var key in dict.Keys)
+          {
+              Console.WriteLine($"Key {key} = {dict.GetValue(key)}");
+          }
 
-            // Iterate dictionary
-            for (int i = 0; i &lt; count; i++)
-            {
-                Console.WriteLine($"Item {i.ToString()} = {array[i]}");
-            }
+          // Create a mutable copy
+          var mutDict = dict.ToMutable();
+          // end::datatype_dictionary[]
+      }
 
-            // Create a mutable copy
-            var mutable_array = array.ToMutable();
-            // end::datatype_array[]
+      public void datatype_mutable_dictionary()
+      {
+
+          var database = new Database("mydb");
+
+          // tag::datatype_mutable_dictionary[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          // Create a new mutable dictionary and populate some keys/values
+          var mutable_dict = new MutableDictionaryObject();
+          mutable_dict.SetString("street", "1 Main st.");
+          mutable_dict.SetString("city", "San Francisco");
+
+          // Add the dictionary to a document's properties and save the document
+          var doc = new MutableDocument("doc1");
+          doc.SetDictionary("address", mutable_dict);
+          database.Save(doc);
+
+          // end::datatype_mutable_dictionary[]
+      }
 
 
-        }
+      public void datatype_array()
+      {
+          var database = new Database("mydb");
 
-         public void datatype_mutable_array()
-        {
-            var database = new Database("mydb");
+          // tag::datatype_array[]
+          // NOTE: No error handling, for brevity (see getting started)
 
-            // tag::datatype_mutable_array[]
-            // NOTE: No error handling, for brevity (see getting started)
+          var document = database.GetDocument("doc1");
 
-            // Create a new mutable array and populate data into the array
-            var mutable_array = new MutableArrayObject();
-            mutable_array.AddString("650-000-0000");
-            mutable_array.AddString("650-000-0001");
+          // Getting a phones array from the document's properties
+          var array = document.GetArray("phones");
 
-            // Set the array to document's properties and save the document
-            var doc = new MutableDocument("doc1");
-            doc.SetArray("phones", mutable_array);
-            database.Save(doc);
-            // end::datatype_mutable_array[]
-        }
+          // Get element count
+          var count = array.Count();
 
-    } // end  class supporting_datatypes
+          // Access an array element by index
+          if (count &gt;= 0) { var phone = array[1]; }
 
-  }</code></pre>
+          // Iterate dictionary
+          for (int i = 0; i &lt; count; i++)
+          {
+              Console.WriteLine($"Item {i.ToString()} = {array[i]}");
+          }
+
+          // Create a mutable copy
+          var mutable_array = array.ToMutable();
+          // end::datatype_array[]
+
+
+      }
+
+        public void datatype_mutable_array()
+      {
+          var database = new Database("mydb");
+
+          // tag::datatype_mutable_array[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          // Create a new mutable array and populate data into the array
+          var mutable_array = new MutableArrayObject();
+          mutable_array.AddString("650-000-0000");
+          mutable_array.AddString("650-000-0001");
+
+          // Set the array to document's properties and save the document
+          var doc = new MutableDocument("doc1");
+          doc.SetArray("phones", mutable_array);
+          database.Save(doc);
+          // end::datatype_mutable_array[]
+      }
+
+  } // end  class supporting_datatypes</code></pre>
 </div>
 </div>
 </div>
@@ -8597,6 +8599,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
       public void StartReplication()
       {
+  }
 
           var url = new Uri("wss://localhost:4984/db"); <i class="conum" data-value="117"></i><b>(117)</b>
           var target = new URLEndpoint(url);
@@ -8628,109 +8631,110 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         // end::sgw-act-rep-initialize[]
       }
   }
-
-    public class supporting_datatypes
-    {
-        public void datatype_dictionary()
-        {
-            var database = new Database(name: "mydb");
-
-            // tag::datatype_dictionary[]
-            // NOTE: No error handling, for brevity (see getting started)
-            var document = database.GetDocument("doc1");
-
-            // Getting a dictionary from the document's properties
-            var dict = document.GetDictionary("address");
-
-            // Access a value with a key from the dictionary
-            var street = dict.GetString("street");
-
-            // Iterate dictionary
-            foreach (var key in dict.Keys)
-            {
-                Console.WriteLine($"Key {key} = {dict.GetValue(key)}");
-            }
-
-            // Create a mutable copy
-            var mutDict = dict.ToMutable();
-            // end::datatype_dictionary[]
-        }
-
-        public void datatype_mutable_dictionary()
-        {
-
-            var database = new Database("mydb");
-
-            // tag::datatype_mutable_dictionary[]
-            // NOTE: No error handling, for brevity (see getting started)
-
-            // Create a new mutable dictionary and populate some keys/values
-            var mutable_dict = new MutableDictionaryObject();
-            mutable_dict.SetString("street", "1 Main st.");
-            mutable_dict.SetString("city", "San Francisco");
-
-            // Add the dictionary to a document's properties and save the document
-            var doc = new MutableDocument("doc1");
-            doc.SetDictionary("address", mutable_dict);
-            database.Save(doc);
-
-            // end::datatype_mutable_dictionary[]
-        }
+ }
 
 
-        public void datatype_array()
-        {
-            var database = new Database("mydb");
 
-            // tag::datatype_array[]
-            // NOTE: No error handling, for brevity (see getting started)
+  public class supporting_datatypes
+  {
+      public void datatype_dictionary()
+      {
+          var database = new Database(name: "mydb");
 
-            var document = database.GetDocument("doc1");
+          // tag::datatype_dictionary[]
+          // NOTE: No error handling, for brevity (see getting started)
+          var document = database.GetDocument("doc1");
 
-            // Getting a phones array from the document's properties
-            var array = document.GetArray("phones");
+          // Getting a dictionary from the document's properties
+          var dict = document.GetDictionary("address");
 
-            // Get element count
-            var count = array.Count();
+          // Access a value with a key from the dictionary
+          var street = dict.GetString("street");
 
-            // Access an array element by index
-            if (count &gt;= 0) { var phone = array[1]; }
+          // Iterate dictionary
+          foreach (var key in dict.Keys)
+          {
+              Console.WriteLine($"Key {key} = {dict.GetValue(key)}");
+          }
 
-            // Iterate dictionary
-            for (int i = 0; i &lt; count; i++)
-            {
-                Console.WriteLine($"Item {i.ToString()} = {array[i]}");
-            }
+          // Create a mutable copy
+          var mutDict = dict.ToMutable();
+          // end::datatype_dictionary[]
+      }
 
-            // Create a mutable copy
-            var mutable_array = array.ToMutable();
-            // end::datatype_array[]
+      public void datatype_mutable_dictionary()
+      {
+
+          var database = new Database("mydb");
+
+          // tag::datatype_mutable_dictionary[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          // Create a new mutable dictionary and populate some keys/values
+          var mutable_dict = new MutableDictionaryObject();
+          mutable_dict.SetString("street", "1 Main st.");
+          mutable_dict.SetString("city", "San Francisco");
+
+          // Add the dictionary to a document's properties and save the document
+          var doc = new MutableDocument("doc1");
+          doc.SetDictionary("address", mutable_dict);
+          database.Save(doc);
+
+          // end::datatype_mutable_dictionary[]
+      }
 
 
-        }
+      public void datatype_array()
+      {
+          var database = new Database("mydb");
 
-         public void datatype_mutable_array()
-        {
-            var database = new Database("mydb");
+          // tag::datatype_array[]
+          // NOTE: No error handling, for brevity (see getting started)
 
-            // tag::datatype_mutable_array[]
-            // NOTE: No error handling, for brevity (see getting started)
+          var document = database.GetDocument("doc1");
 
-            // Create a new mutable array and populate data into the array
-            var mutable_array = new MutableArrayObject();
-            mutable_array.AddString("650-000-0000");
-            mutable_array.AddString("650-000-0001");
+          // Getting a phones array from the document's properties
+          var array = document.GetArray("phones");
 
-            // Set the array to document's properties and save the document
-            var doc = new MutableDocument("doc1");
-            doc.SetArray("phones", mutable_array);
-            database.Save(doc);
-            // end::datatype_mutable_array[]
-        }
+          // Get element count
+          var count = array.Count();
 
-    } // end  class supporting_datatypes
+          // Access an array element by index
+          if (count &gt;= 0) { var phone = array[1]; }
 
-  }</code></pre>
+          // Iterate dictionary
+          for (int i = 0; i &lt; count; i++)
+          {
+              Console.WriteLine($"Item {i.ToString()} = {array[i]}");
+          }
+
+          // Create a mutable copy
+          var mutable_array = array.ToMutable();
+          // end::datatype_array[]
+
+
+      }
+
+        public void datatype_mutable_array()
+      {
+          var database = new Database("mydb");
+
+          // tag::datatype_mutable_array[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          // Create a new mutable array and populate data into the array
+          var mutable_array = new MutableArrayObject();
+          mutable_array.AddString("650-000-0000");
+          mutable_array.AddString("650-000-0001");
+
+          // Set the array to document's properties and save the document
+          var doc = new MutableDocument("doc1");
+          doc.SetArray("phones", mutable_array);
+          database.Save(doc);
+          // end::datatype_mutable_array[]
+      }
+
+  } // end  class supporting_datatypes</code></pre>
 </div>
 </div>
 </div>
@@ -11927,6 +11931,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
       public void StartReplication()
       {
+  }
 
           var url = new Uri("wss://localhost:4984/db"); <i class="conum" data-value="117"></i><b>(117)</b>
           var target = new URLEndpoint(url);
@@ -11958,109 +11963,110 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         // end::sgw-act-rep-initialize[]
       }
   }
-
-    public class supporting_datatypes
-    {
-        public void datatype_dictionary()
-        {
-            var database = new Database(name: "mydb");
-
-            // tag::datatype_dictionary[]
-            // NOTE: No error handling, for brevity (see getting started)
-            var document = database.GetDocument("doc1");
-
-            // Getting a dictionary from the document's properties
-            var dict = document.GetDictionary("address");
-
-            // Access a value with a key from the dictionary
-            var street = dict.GetString("street");
-
-            // Iterate dictionary
-            foreach (var key in dict.Keys)
-            {
-                Console.WriteLine($"Key {key} = {dict.GetValue(key)}");
-            }
-
-            // Create a mutable copy
-            var mutDict = dict.ToMutable();
-            // end::datatype_dictionary[]
-        }
-
-        public void datatype_mutable_dictionary()
-        {
-
-            var database = new Database("mydb");
-
-            // tag::datatype_mutable_dictionary[]
-            // NOTE: No error handling, for brevity (see getting started)
-
-            // Create a new mutable dictionary and populate some keys/values
-            var mutable_dict = new MutableDictionaryObject();
-            mutable_dict.SetString("street", "1 Main st.");
-            mutable_dict.SetString("city", "San Francisco");
-
-            // Add the dictionary to a document's properties and save the document
-            var doc = new MutableDocument("doc1");
-            doc.SetDictionary("address", mutable_dict);
-            database.Save(doc);
-
-            // end::datatype_mutable_dictionary[]
-        }
+ }
 
 
-        public void datatype_array()
-        {
-            var database = new Database("mydb");
 
-            // tag::datatype_array[]
-            // NOTE: No error handling, for brevity (see getting started)
+  public class supporting_datatypes
+  {
+      public void datatype_dictionary()
+      {
+          var database = new Database(name: "mydb");
 
-            var document = database.GetDocument("doc1");
+          // tag::datatype_dictionary[]
+          // NOTE: No error handling, for brevity (see getting started)
+          var document = database.GetDocument("doc1");
 
-            // Getting a phones array from the document's properties
-            var array = document.GetArray("phones");
+          // Getting a dictionary from the document's properties
+          var dict = document.GetDictionary("address");
 
-            // Get element count
-            var count = array.Count();
+          // Access a value with a key from the dictionary
+          var street = dict.GetString("street");
 
-            // Access an array element by index
-            if (count &gt;= 0) { var phone = array[1]; }
+          // Iterate dictionary
+          foreach (var key in dict.Keys)
+          {
+              Console.WriteLine($"Key {key} = {dict.GetValue(key)}");
+          }
 
-            // Iterate dictionary
-            for (int i = 0; i &lt; count; i++)
-            {
-                Console.WriteLine($"Item {i.ToString()} = {array[i]}");
-            }
+          // Create a mutable copy
+          var mutDict = dict.ToMutable();
+          // end::datatype_dictionary[]
+      }
 
-            // Create a mutable copy
-            var mutable_array = array.ToMutable();
-            // end::datatype_array[]
+      public void datatype_mutable_dictionary()
+      {
+
+          var database = new Database("mydb");
+
+          // tag::datatype_mutable_dictionary[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          // Create a new mutable dictionary and populate some keys/values
+          var mutable_dict = new MutableDictionaryObject();
+          mutable_dict.SetString("street", "1 Main st.");
+          mutable_dict.SetString("city", "San Francisco");
+
+          // Add the dictionary to a document's properties and save the document
+          var doc = new MutableDocument("doc1");
+          doc.SetDictionary("address", mutable_dict);
+          database.Save(doc);
+
+          // end::datatype_mutable_dictionary[]
+      }
 
 
-        }
+      public void datatype_array()
+      {
+          var database = new Database("mydb");
 
-         public void datatype_mutable_array()
-        {
-            var database = new Database("mydb");
+          // tag::datatype_array[]
+          // NOTE: No error handling, for brevity (see getting started)
 
-            // tag::datatype_mutable_array[]
-            // NOTE: No error handling, for brevity (see getting started)
+          var document = database.GetDocument("doc1");
 
-            // Create a new mutable array and populate data into the array
-            var mutable_array = new MutableArrayObject();
-            mutable_array.AddString("650-000-0000");
-            mutable_array.AddString("650-000-0001");
+          // Getting a phones array from the document's properties
+          var array = document.GetArray("phones");
 
-            // Set the array to document's properties and save the document
-            var doc = new MutableDocument("doc1");
-            doc.SetArray("phones", mutable_array);
-            database.Save(doc);
-            // end::datatype_mutable_array[]
-        }
+          // Get element count
+          var count = array.Count();
 
-    } // end  class supporting_datatypes
+          // Access an array element by index
+          if (count &gt;= 0) { var phone = array[1]; }
 
-  }</code></pre>
+          // Iterate dictionary
+          for (int i = 0; i &lt; count; i++)
+          {
+              Console.WriteLine($"Item {i.ToString()} = {array[i]}");
+          }
+
+          // Create a mutable copy
+          var mutable_array = array.ToMutable();
+          // end::datatype_array[]
+
+
+      }
+
+        public void datatype_mutable_array()
+      {
+          var database = new Database("mydb");
+
+          // tag::datatype_mutable_array[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          // Create a new mutable array and populate data into the array
+          var mutable_array = new MutableArrayObject();
+          mutable_array.AddString("650-000-0000");
+          mutable_array.AddString("650-000-0001");
+
+          // Set the array to document's properties and save the document
+          var doc = new MutableDocument("doc1");
+          doc.SetArray("phones", mutable_array);
+          database.Save(doc);
+          // end::datatype_mutable_array[]
+      }
+
+  } // end  class supporting_datatypes</code></pre>
 </div>
 </div>
 </div>
@@ -15257,6 +15263,7 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
 
       public void StartReplication()
       {
+  }
 
           var url = new Uri("wss://localhost:4984/db"); <i class="conum" data-value="117"></i><b>(117)</b>
           var target = new URLEndpoint(url);
@@ -15288,109 +15295,110 @@ thisConfig.authenticator = ListenerCertificateAuthenticator.init (rootCerts: [ro
         // end::sgw-act-rep-initialize[]
       }
   }
-
-    public class supporting_datatypes
-    {
-        public void datatype_dictionary()
-        {
-            var database = new Database(name: "mydb");
-
-            // tag::datatype_dictionary[]
-            // NOTE: No error handling, for brevity (see getting started)
-            var document = database.GetDocument("doc1");
-
-            // Getting a dictionary from the document's properties
-            var dict = document.GetDictionary("address");
-
-            // Access a value with a key from the dictionary
-            var street = dict.GetString("street");
-
-            // Iterate dictionary
-            foreach (var key in dict.Keys)
-            {
-                Console.WriteLine($"Key {key} = {dict.GetValue(key)}");
-            }
-
-            // Create a mutable copy
-            var mutDict = dict.ToMutable();
-            // end::datatype_dictionary[]
-        }
-
-        public void datatype_mutable_dictionary()
-        {
-
-            var database = new Database("mydb");
-
-            // tag::datatype_mutable_dictionary[]
-            // NOTE: No error handling, for brevity (see getting started)
-
-            // Create a new mutable dictionary and populate some keys/values
-            var mutable_dict = new MutableDictionaryObject();
-            mutable_dict.SetString("street", "1 Main st.");
-            mutable_dict.SetString("city", "San Francisco");
-
-            // Add the dictionary to a document's properties and save the document
-            var doc = new MutableDocument("doc1");
-            doc.SetDictionary("address", mutable_dict);
-            database.Save(doc);
-
-            // end::datatype_mutable_dictionary[]
-        }
+ }
 
 
-        public void datatype_array()
-        {
-            var database = new Database("mydb");
 
-            // tag::datatype_array[]
-            // NOTE: No error handling, for brevity (see getting started)
+  public class supporting_datatypes
+  {
+      public void datatype_dictionary()
+      {
+          var database = new Database(name: "mydb");
 
-            var document = database.GetDocument("doc1");
+          // tag::datatype_dictionary[]
+          // NOTE: No error handling, for brevity (see getting started)
+          var document = database.GetDocument("doc1");
 
-            // Getting a phones array from the document's properties
-            var array = document.GetArray("phones");
+          // Getting a dictionary from the document's properties
+          var dict = document.GetDictionary("address");
 
-            // Get element count
-            var count = array.Count();
+          // Access a value with a key from the dictionary
+          var street = dict.GetString("street");
 
-            // Access an array element by index
-            if (count &gt;= 0) { var phone = array[1]; }
+          // Iterate dictionary
+          foreach (var key in dict.Keys)
+          {
+              Console.WriteLine($"Key {key} = {dict.GetValue(key)}");
+          }
 
-            // Iterate dictionary
-            for (int i = 0; i &lt; count; i++)
-            {
-                Console.WriteLine($"Item {i.ToString()} = {array[i]}");
-            }
+          // Create a mutable copy
+          var mutDict = dict.ToMutable();
+          // end::datatype_dictionary[]
+      }
 
-            // Create a mutable copy
-            var mutable_array = array.ToMutable();
-            // end::datatype_array[]
+      public void datatype_mutable_dictionary()
+      {
+
+          var database = new Database("mydb");
+
+          // tag::datatype_mutable_dictionary[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          // Create a new mutable dictionary and populate some keys/values
+          var mutable_dict = new MutableDictionaryObject();
+          mutable_dict.SetString("street", "1 Main st.");
+          mutable_dict.SetString("city", "San Francisco");
+
+          // Add the dictionary to a document's properties and save the document
+          var doc = new MutableDocument("doc1");
+          doc.SetDictionary("address", mutable_dict);
+          database.Save(doc);
+
+          // end::datatype_mutable_dictionary[]
+      }
 
 
-        }
+      public void datatype_array()
+      {
+          var database = new Database("mydb");
 
-         public void datatype_mutable_array()
-        {
-            var database = new Database("mydb");
+          // tag::datatype_array[]
+          // NOTE: No error handling, for brevity (see getting started)
 
-            // tag::datatype_mutable_array[]
-            // NOTE: No error handling, for brevity (see getting started)
+          var document = database.GetDocument("doc1");
 
-            // Create a new mutable array and populate data into the array
-            var mutable_array = new MutableArrayObject();
-            mutable_array.AddString("650-000-0000");
-            mutable_array.AddString("650-000-0001");
+          // Getting a phones array from the document's properties
+          var array = document.GetArray("phones");
 
-            // Set the array to document's properties and save the document
-            var doc = new MutableDocument("doc1");
-            doc.SetArray("phones", mutable_array);
-            database.Save(doc);
-            // end::datatype_mutable_array[]
-        }
+          // Get element count
+          var count = array.Count();
 
-    } // end  class supporting_datatypes
+          // Access an array element by index
+          if (count &gt;= 0) { var phone = array[1]; }
 
-  }</code></pre>
+          // Iterate dictionary
+          for (int i = 0; i &lt; count; i++)
+          {
+              Console.WriteLine($"Item {i.ToString()} = {array[i]}");
+          }
+
+          // Create a mutable copy
+          var mutable_array = array.ToMutable();
+          // end::datatype_array[]
+
+
+      }
+
+        public void datatype_mutable_array()
+      {
+          var database = new Database("mydb");
+
+          // tag::datatype_mutable_array[]
+          // NOTE: No error handling, for brevity (see getting started)
+
+          // Create a new mutable array and populate data into the array
+          var mutable_array = new MutableArrayObject();
+          mutable_array.AddString("650-000-0000");
+          mutable_array.AddString("650-000-0001");
+
+          // Set the array to document's properties and save the document
+          var doc = new MutableDocument("doc1");
+          doc.SetArray("phones", mutable_array);
+          database.Save(doc);
+          // end::datatype_mutable_array[]
+      }
+
+  } // end  class supporting_datatypes</code></pre>
 </div>
 </div>
 </div>
