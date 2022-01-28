@@ -3412,7 +3412,9 @@ Related Content&#8201;&#8212;&#8201;<a href="database.html" class="page">Databas
 <h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>In Couchbase Lite, a document&#8217;s body is stored in an internal, efficient, binary form.
+<p>In Couchbase Lite, a document&#8217;s body is stored in an internal, efficient, binary form (
+<a href="https://github.com/couchbaselabs/fleece#readme">Fleece</a>
+).<br>
 This internal form is easily converted into a manageable native dictionary format for manipulation in applications by using the <code>toDictionary()</code> method.
 It then appears as collection of key-value (k-v) pairs where the values can be different types of data such as numbers, strings, arrays or even nested objects.</p>
 </div>
@@ -3509,6 +3511,23 @@ These accessors take care of converting to/from JSON encoding, and make sure you
 </tr>
 </tbody>
 </table>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="title">Fleece data encoding</div>
+<div class="paragraph">
+<p>Care should be taken when storing and recovering data in a document or converting that document to JSON and back.<br>
+Data encoding (Fleece) can result in <code>Long</code> values being converted to <code>Float</code> instead of <code>Double</code>.<br>
+Interpreting data as boolean can also give inconsistent results.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>In addition to these basic data types Couchbase Lite provides for the following:</p>
 </div>
@@ -3565,10 +3584,33 @@ Dates are a common data type, but JSON doesn&#8217;t natively support them, so t
 <div class="paragraph">
 <p>This example sets the date on the <code>createdAt</code> property and reads it back using the <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Protocols/CBLDictionary.html#/c:objc(pl)CBLDictionary(im)dateForKey:">dateForKey:</a> accessor method.</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset1_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[newTask setValue:[NSDate date] forKey:@"createdAt"];
 NSDate *date = [newTask dateForKey:@"createdAt"];</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset1_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="date-getter", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3590,6 +3632,19 @@ NSDate *date = [newTask dateForKey:@"createdAt"];</code></pre>
 <div id="ex-dict" class="exampleblock">
 <div class="title">Example 2. Read Only</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset2_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset2_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset2_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDocument *document = [self.database documentWithID:@"doc1"];
@@ -3613,10 +3668,33 @@ CBLMutableDictionary *mutableDict = [dict toMutable];
 </div>
 </div>
 </div>
+<div class="tab-pane" aria-labelledby="tabset2_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="datatype_dictionary", indent=0]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="ex-mutdict" class="exampleblock">
 <div class="title">Example 3. Mutable</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset3_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset3_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset3_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
@@ -3630,6 +3708,16 @@ CBLMutableDocument *document = [[CBLMutableDocument alloc] init];
 [document setDictionary:dict forKey:@"address"];
 NSError *error;
 [self.database saveDocument:document error:&amp;error];</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset3_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="datatype_mutable_dictionary", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3651,6 +3739,19 @@ NSError *error;
 <div id="ex-array" class="exampleblock">
 <div class="title">Example 4. Read Only</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset4_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset4_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset4_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDocument *document = [self.database documentWithID:@"doc1"];
@@ -3679,10 +3780,33 @@ CBLMutableArray *mutableArray = [array toMutable];
 </div>
 </div>
 </div>
+<div class="tab-pane" aria-labelledby="tabset4_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="datatype_array", indent=0]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="ex-mutarray" class="exampleblock">
 <div class="title">Example 5. Mutable</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset5_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset5_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset5_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Create a new mutable array and populate data into the array
@@ -3695,6 +3819,16 @@ CBLMutableDocument *document = [[CBLMutableDocument alloc] init];
 [document setArray:array forKey:@"address"];
 NSError *error;
 [self.database saveDocument:document error:&amp;error];</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset5_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="datatype_mutable_array", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3735,6 +3869,19 @@ This method can be used to check if a document with a given ID already exists in
 <div class="paragraph">
 <p>The following code example creates a document and persists it to the database.</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset6_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset6_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset6_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLMutableDocument *newTask = [[CBLMutableDocument alloc] init];
@@ -3742,6 +3889,16 @@ This method can be used to check if a document with a given ID already exists in
 [newTask setString:@"todo" forKey:@"owner"];
 [newTask setString:@"task" forKey:@"createdAt"];
 [self.database saveDocument:newTask error:&amp;error];</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset6_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="initializer", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3761,12 +3918,35 @@ The <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Class
 <div class="paragraph">
 <p>Changes to the document are persisted to the database when the <code>save</code> method is called.</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset7_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset7_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset7_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLDocument *document = [self.database documentWithID:@"xyz"];
 CBLMutableDocument *mutableDocument = [document toMutable];
 [mutableDocument setString:@"apples" forKey:@"name"];
 [self.database saveDocument:mutableDocument error:&amp;error];</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset7_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="update-document", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3795,6 +3975,19 @@ The following example persists a few documents in batch.</p>
 <div id="ex-batch-ops" class="exampleblock">
 <div class="title">Example 8. Batch operations</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset8_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset8_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset8_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[self.database inBatch:&amp;error usingBlock:^{
@@ -3808,6 +4001,16 @@ The following example persists a few documents in batch.</p>
         [self.database saveDocument:doc error:&amp;err];
     }
 }];</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset8_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="batch", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3828,12 +4031,80 @@ The following example registers for changes to the document with ID <code>user.j
 <div id="ex-doc-events" class="exampleblock">
 <div class="title">Example 9. Document change events</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset9_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset9_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset9_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">[self.database addDocumentChangeListenerWithID:@"user.john" listener:^(CBLDocumentChange  *change) {
     CBLDocument *document = [wSelf.database documentWithID:change.documentID];
     NSLog(@"Status ::%@)", [document stringForKey:@"verified_account"]);
 }];</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset9_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="document-listener", indent=0]</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="using-kotlin-flows-and-livedata"><a class="anchor" href="#using-kotlin-flows-and-livedata"></a>Using Kotlin Flows and LiveData</h3>
+<div class="paragraph">
+<p>Kotlin users can also take advantage of Flows and LiveData to monitor for changes.</p>
+</div>
+<div class="paragraph">
+<p>The following methods show how to watch for document changes in a given database or for changes to a specific document.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset10_database-changes"></a>Database Changes</p>
+</li>
+<li>
+<p><a id="tabset10_document-changes"></a>Document Changes</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset10_database-changes">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt#L37-L40">    val dbChanges: LiveData&lt;MutableList&lt;String&gt;&gt; = argDb.databaseChangeFlow()
+        .map { it.documentIDs }
+        .asLiveData()</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset10_document-changes">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/snippets/app/src/main/kotlin/com/couchbase/code_snippets/FlowExamples.kt#L43-L50">    val docChanges: LiveData&lt;DocumentChange?&gt; = argDb.documentChangeFlow("1001")
+        .map {
+            it.takeUnless {
+                it.database.getDocument(it.documentID)?.getString("owner").equals(argDocOwner)
+            }
+        }
+        .asLiveData()</code></pre>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3854,6 +4125,19 @@ The purge will not be replicated to Sync Gateway.</p>
 <div class="paragraph">
 <p>This example sets the TTL for a document to 5 minutes from the current time.</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset11_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset11_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset11_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">// Purge the document one day from now
@@ -3872,6 +4156,16 @@ CBLQuery *query = [CBLQueryBuilder select:@[[CBLQuerySelectResult expression:[CB
                                      from:[CBLQueryDataSource database:self.database]
                                     where:[[CBLQueryMeta expiration]
                                             lessThan:[CBLQueryExpression double:fiveMinutesFromNow]]];</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset11_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="document-expiration", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -3977,6 +4271,19 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-a
 <div id="ex-array" class="exampleblock">
 <div class="title">Example 12. Arrays as JSON strings</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset12_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset12_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset12_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSString *json = @"[\"1000\",\"1001\",\"1002\",\"1003\"]";
@@ -3986,6 +4293,16 @@ CBLMutableArray *myArray = [[CBLMutableArray alloc] initWithJSON:json error:&amp
 for (NSString *item in myArray) {
     NSLog(@"%@", item);
 }</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset12_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="tojson-array", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4025,6 +4342,19 @@ for (NSString *item in myArray) {
 <div id="ex-blob" class="exampleblock">
 <div class="title">Example 13. Blobs as JSON strings</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset13_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset13_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset13_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
@@ -4032,6 +4362,16 @@ CBLDocument *doc = [self.database documentWithID:@"doc-1000"];
 CBLBlob *blob = [doc blobForKey:@"avatar"];
 NSString *json = [blob toJSON];
 NSLog(@"json string is %@", json);</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset13_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="tojson-blob", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4062,6 +4402,19 @@ This is done using the <code>init(json)</code> constructor-- see: <a href="#ex-d
 <div id="ex-dictionary" class="exampleblock">
 <div class="title">Example 14. Dictionaries as JSON strings</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset14_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset14_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset14_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">NSString *aJSONstring = @"{\"id\":\"1002\",\"type\":\"hotel\",\"name\":\"Hotel Ned\","
@@ -4076,6 +4429,16 @@ NSString *name = [myDict stringForKey:@"name"];
 for (NSString *key in myDict) {
     NSLog(@"%@ %@", key, [myDict valueForKey:key]);
 }</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset14_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="tojson-dictionary", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4111,12 +4474,35 @@ This is done using the <code>init(json)</code> and-or <code>init(id: json:)</cod
 <div id="ex-document" class="exampleblock">
 <div class="title">Example 15. Documents as JSON strings</div>
 <div class="content">
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset15_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset15_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset15_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">
 CBLDocument *doc = [self.database documentWithID:@"doc-1000"];
 NSString *json = [doc toJSON];
 NSLog(@"json %@", json);</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset15_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="query-get-all;tojson-document", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -4149,6 +4535,19 @@ NSLog(@"json %@", json);</code></pre>
 <div class="paragraph">
 <p>Use <a href="https://ibsoln.github.io/api/mobile/3.0.0/couchbase-lite-objc/Classes/CBLQueryResult.html#/c:objc(cs)CBLQueryResult(im)toJSON">CBLResult.toJSON</a> to transform your result string into a JSON string, which can easily be serialized or used as required in your application. See <<ex-json>> for a working example.</p>
 </div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset16_objc"></a>objc</p>
+</li>
+<li>
+<p><a id="tabset16_source-language-alt"></a>{source-language-alt}</p>
+</li>
+</ul>
+</div>
+<div class="content">
+<div class="tab-pane" aria-labelledby="tabset16_objc">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-objc hljs" data-lang="objc" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/objc/examples/code_snippets/SampleCodeTest.m">CBLQueryResultSet *rs = [query execute:&amp;error];
@@ -4168,6 +4567,16 @@ for (CBLQueryResult *result in rs) {
     NSLog(@"Native Object %@", dict);
 
 }; // end for</code></pre>
+</div>
+</div>
+</div>
+<div class="tab-pane" aria-labelledby="tabset16_source-language-alt">
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-{source-language-alt} hljs" data-lang="{source-language-alt}">Unresolved directive in _block_tabbed_code_example.adoc - include::{snippet-alt}[tags="query-access-json", indent=0]</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
