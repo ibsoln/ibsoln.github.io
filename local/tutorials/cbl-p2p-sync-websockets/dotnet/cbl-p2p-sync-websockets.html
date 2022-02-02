@@ -574,7 +574,7 @@ Unresolved include directive in modules/ROOT/nav.adoc - include::tutorial-templa
   <div class="sidebar-box">
     <div class="tools" role="navigation">
 <ul>
-<li class="tool edit"><a href="https://github.com/ibsoln/couchbase-lite-peer-to-peer-sync-examples/edit/stage/3.0-GA/content/modules/cbl-p2p-sync-websockets/pages/dotnet/cbl-p2p-sync-websockets.adoc" title="Edit Page" target="_blank" rel="noopener" class="remove-ext-icon">Edit on GitHub</a></li>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseTutorials/bau/couchbase-lite-peer-to-peer-sync-examples/content/modules/cbl-p2p-sync-websockets/pages/dotnet/cbl-p2p-sync-websockets.adoc" title="Edit Page" target="_blank" rel="noopener" class="remove-ext-icon">Edit on GitHub</a></li>
 </ul>
 </div>
     <div class="toc-menu"></div>
@@ -836,7 +836,7 @@ The Listener IP endpoint is advertised over UDP type socket when users enter the
 </li>
 <li>
 <p>Build and run the project<br>
-If you are running Android apps on emulators, please see <a href="#Connecting to Android emulator over localhost">[Connecting to Android emulator over localhost]</a></p>
+If you are running Android apps on emulators, please see <a href="#Connecting to an Android emulator">[Connecting to an Android emulator]</a></p>
 </li>
 <li>
 <p>Verify that you see the login screen</p>
@@ -1671,16 +1671,39 @@ While the tutorial is for iOS, the concepts apply equally to other Couchbase Lit
 </ul>
 </div>
 <div class="paragraph">
-<p>=== Connecting to Android emulator over localhost</p>
+<p>=== Connecting to an Android emulator</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+Sync will not work between two emulators. At least one app must be running on a device.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>When starting a listener on Android emulator and trying to connect it from another emulator or iOS simulator on localhost, the following steps must be followed</p>
+<p>When starting a listener on Android emulator and trying to connect it from another emulator or iOS simulator on localhost, the following steps must be followed:</p>
 </div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Setup port forwarding.<br>
-For instance, if the listener is listening on port 35262, the command to run on the terminal of the host machine would be:</p>
+<p>Hard-code a port so you know what EP to use</p>
+</li>
+<li>
+<p>Start App on your device or iOS simulator</p>
+</li>
+<li>
+<p>Start Android emulator from Visual Studio&#8217;s device manager</p>
+</li>
+<li>
+<p>Use ADB bridge to set port forwarding using hard-coded port number</p>
+<div class="paragraph">
+<p>For instance, if the listener is listening on port 35262, the command to run on the terminal of the host machine would be:</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">adb forward tcp:35262 tcp:35262</code></pre>
@@ -1688,9 +1711,43 @@ For instance, if the listener is listening on port 35262, the command to run on 
 </div>
 </li>
 <li>
-<p>You cannot connect to emulator directly over localhost.<br>
-Regardless of the IP address in the displayed URL, the replicator app must ignore it and use "127.0.0.1" as the host address.<br>
-For example, if the listener is listening on "10.2.0.15: 35262" , then you must connect to URL "127.0.0.1: 35262".</p>
+<p>On your device or iOS simulator,</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Within the App, select <strong>Browser</strong></p>
+</li>
+<li>
+<p>Enter your required endpoint including thee hard-coded port number</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You cannot connect to an emulator directly over localhost.<br>
+Regardless of the IP address in the displayed URL, ignore it and use <code>127.0.0.1</code> as the host address.<br>
+For example, if the listener is listening on <code>10.2.0.15:35262</code>,<br>
+you must connect to URL <code>127.0.0.1:35262</code>.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Within the Android emulater app, <strong>Start listener</strong></p>
+</li>
+<li>
+<p>Make an inventory change</p>
+</li>
+<li>
+<p>Select browser to ‘connect’</p>
 </li>
 </ol>
 </div>
