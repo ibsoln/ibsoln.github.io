@@ -1021,7 +1021,7 @@ This is where the websockets listener for peer-to-peer sync is initialized</p>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/couchbase-lite-peer-to-peer-sync-examples/content/modules/cbl-p2p-sync-websockets/examples/code-samples.swift">        // Include websockets listener initializer code
-        let listenerConfig = URLEndpointListenerConfiguration(database: db) <i class="conum" data-value="1"></i><b>(1)</b>
+        var listenerConfig = URLEndpointListenerConfiguration(database: db) <i class="conum" data-value="1"></i><b>(1)</b>
         
         // Configure the appropriate auth test mode
         switch listenerTLSSupportMode { <i class="conum" data-value="2"></i><b>(2)</b>
@@ -1106,7 +1106,7 @@ Recommended combinations are shown in <a href="#tbl_mode_combos">Table 2</a>.</p
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/couchbase-lite-peer-to-peer-sync-examples/content/modules/cbl-p2p-sync-websockets/examples/code-samples.swift">         fileprivate let listenerCertValidationMode:ListenerCertValidationTestMode = .TLSEnableValidationWithCertPinning</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/couchbase-lite-peer-to-peer-sync-examples/content/modules/cbl-p2p-sync-websockets/examples/code-samples.swift">         fileprivate let listenerCertValidationMode:ListenerCertValidationTestMode = .TLSSkipValidation</code></pre>
 </div>
 </div>
 <table id="tbl_tls_modes" class="tableblock frame-all grid-all stretch">
@@ -1366,12 +1366,20 @@ We also register a Replication Listener to be notified of status to the replicat
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/couchbase-lite-peer-to-peer-sync-examples/content/modules/cbl-p2p-sync-websockets/examples/code-samples.swift">        if replicatorForUserDb == nil {
             // Start replicator to connect to the URLListenerEndpoint
-            guard let targetUrl = URL(string: "wss://\(peer)/\(kUserDBName)") else {
+            var target = URL(string: "wss://\(peer)/\(kUserDBName)")
+            switch listenerTLSSupportMode {
+            case .TLSDisabled:
+                target = URL(string: "ws://\(peer)/\(kUserDBName)")
+            default:
+                target = URL(string: "wss://\(peer)/\(kUserDBName)")
+            }
+            guard let targetUrl = target else {
                 throw ListDocError.URLInvalid
             }
-
+            print("\(#function) with \(targetUrl)")
+         
             
-            let config = ReplicatorConfiguration.init(database: userDb, target: URLEndpoint.init(url:targetUrl)) <i class="conum" data-value="1"></i><b>(1)</b>
+            var config = ReplicatorConfiguration.init(database: userDb, target: URLEndpoint.init(url:targetUrl)) <i class="conum" data-value="1"></i><b>(1)</b>
 
             config.replicatorType = .pushAndPull
             config.continuous =  true
@@ -1387,10 +1395,10 @@ We also register a Replication Listener to be notified of status to the replicat
                                 
                 
                 case .TLSEnableValidationWithCertPinning:
-                    // Use acceptOnlySelfSignedServerCertificate set to false to only accept CA signed certs
-                    // Self signed certs will fail validation
+                    // Set acceptOnlySelfSignedServerCertificate set to false if you are using CA signed certs
+                    // Set acceptOnlySelfSignedServerCertificate when listener is setup with self signed certs
                    
-                    config.acceptOnlySelfSignedServerCertificate = false
+                    config.acceptOnlySelfSignedServerCertificate = true // since app is bundled with self signed cert
                     
                     // Enable cert pinning to only allow certs that match pinned cert
                     
@@ -1473,7 +1481,7 @@ Recommended combinations are shown in <a href="#tbl_mode_combos">Table 2</a>.</p
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/couchbase-lite-peer-to-peer-sync-examples/content/modules/cbl-p2p-sync-websockets/examples/code-samples.swift">         fileprivate let listenerCertValidationMode:ListenerCertValidationTestMode = .TLSEnableValidationWithCertPinning</code></pre>
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/couchbase-lite-peer-to-peer-sync-examples/content/modules/cbl-p2p-sync-websockets/examples/code-samples.swift">         fileprivate let listenerCertValidationMode:ListenerCertValidationTestMode = .TLSSkipValidation</code></pre>
 </div>
 </div>
 <table id="tbl_cert_auth_modes" class="tableblock frame-all grid-all stretch">
