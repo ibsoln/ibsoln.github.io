@@ -2000,11 +2000,43 @@ the only constraints are that it must be unique within the database, and it can&
 The document also has a value which contains the actual application data.
 This value is stored as a dictionary collection of key-value (k-v) pairs where the values themselves may comprise different types of data such as numbers, strings, arrays or even nested objects&#8201;&#8212;&#8201;see: <a href="#data-types">Data Types</a></p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="data-encoding"><a class="anchor" href="#data-encoding"></a>Data Encoding</h3>
 <div class="paragraph">
 <p>The document body is stored in an internal, efficient, binary form (
 <a href="https://github.com/couchbaselabs/fleece#readme">Fleece</a>
 ).<br>
 This internal form is easily converted into a manageable native dictionary format for manipulation in applications.</p>
+</div>
+<div class="paragraph">
+<p>Fleece data is stored in the smallest format that will hold the value, whilst maintaining the integrity of the value.</p>
+</div>
+<div class="openblock">
+<div class="title">Fleece data encoding</div>
+<div class="content">
+<div class="paragraph">
+<p>When working with Android-Java, the Fleece encoding cycle can result in the Java type information being lost.</p>
+</div>
+<div class="paragraph">
+<p>So, care should be taken when storing and recovering data in a document - or converting that document to JSON and back - using non-explicit functions such as <code>toArray()</code> or <code>toMap()</code>.</p>
+</div>
+<div class="paragraph">
+<p>Always use explicit creation of the expected type, whenever the type of result is not itself explicit. For example:</p>
+</div>
+<div class="paragraph">
+<p>For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java">Map&lt;String, Object&gt; doc = db.getDocument(someDoc.getId()).toMap();
+Long testVal = Long.valueOf(doc.get(“test”))</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Similarly, interpreting data not stored as <code>boolean</code> as a boolean value can give inconsistent results.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -2049,37 +2081,7 @@ These accessors take care of converting to/from JSON encoding, and make sure you
 <td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
 <ul>
 <li>
-<p>Enumerator</p>
-</li>
-</ul>
-</div></div></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
-<ul>
-<li>
 <p>Float</p>
-</li>
-</ul>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
-<ul>
-<li>
-<p>HashCode</p>
-</li>
-</ul>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
-<ul>
-<li>
-<p>Int</p>
-</li>
-</ul>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
-<ul>
-<li>
-<p>Long</p>
 </li>
 </ul>
 </div></div></td>
@@ -2194,14 +2196,30 @@ If the database does not already exist, Couchbase Lite will create it for us.</p
 <div class="tab-pane" aria-labelledby="tabset1_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">// Initialize the Couchbase Lite system
+CouchbaseLite.init(context)
+
+// Get the database (and create it if it doesn’t exist).
+DatabaseConfiguration config = new DatabaseConfiguration()
+
+config.setDirectory(context.getFilesDir().getAbsolutePath())
+
+Database database = new Database("getting-started", config)</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset1_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">// Initialize the Couchbase Lite system
+CouchbaseLite.init(context);
+
+// Get the database (and create it if it doesn’t exist).
+DatabaseConfiguration config = new DatabaseConfiguration();
+
+config.setDirectory(context.getFilesDir().getAbsolutePath());
+
+Database database = new Database("getting-started", config);</code></pre>
 </div>
 </div>
 </div>
@@ -2234,14 +2252,18 @@ If the database does not already exist, Couchbase Lite will create it for us.</p
 <div class="tab-pane" aria-labelledby="tabset2_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">// Create your new document
+// The lack of 'const' indicates this document is mutable
+MutableDocument mutableDoc = new MutableDocument()</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset2_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">// Create your new document
+// The lack of 'const' indicates this document is mutable
+MutableDocument mutableDoc = new MutableDocument();</code></pre>
 </div>
 </div>
 </div>
@@ -2275,14 +2297,28 @@ Because we want to add values into the dictionary, we must create it in <em>muta
 <div class="tab-pane" aria-labelledby="tabset3_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">// Create and populate mutable dictionary
+// Create a new mutable dictionary and populate some keys/values
+MutableDictionary address = new MutableDictionary()
+address.setString("street", "1 Main st.")
+address.setString("city", "San Francisco")
+address.setString("state", "CA")
+address.setString("country", "USA")
+address.setString("code"), "90210")</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset3_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">// Create and populate mutable dictionary
+// Create a new mutable dictionary and populate some keys/values
+MutableDictionary address = new MutableDictionary();
+address.setString("street", "1 Main st.");
+address.setString("city", "San Francisco");
+address.setString("state", "CA");
+address.setString("country", "USA");
+address.setString("code"), "90210");</code></pre>
 </div>
 </div>
 </div>
@@ -2313,14 +2349,20 @@ Again, because we want to add values into the array, we create it in <em>mutable
 <div class="tab-pane" aria-labelledby="tabset4_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">// Create and populate mutable array
+MutableArray phones = new MutableArray()
+phones.addString("650-000-0000")
+phones.addString("650-000-0001")</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset4_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">// Create and populate mutable array
+MutableArray phones = new MutableArray();
+phones.addString("650-000-0000");
+phones.addString("650-000-0001");</code></pre>
 </div>
 </div>
 </div>
@@ -2350,14 +2392,46 @@ Again, because we want to add values into the array, we create it in <em>mutable
 <div class="tab-pane" aria-labelledby="tabset5_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">// Initialize and populate the document
+
+// Add document type to document properties <i class="conum" data-value="1"></i><b>(1)</b>
+mutable_doc.setString("type", "hotel"))
+
+// Add hotel name string to document properties <i class="conum" data-value="2"></i><b>(2)</b>
+mutable_doc.setString("name", "Hotel Java Mo"))
+
+// Add float to document properties <i class="conum" data-value="3"></i><b>(3)</b>
+mutable_doc.setFloat("room_rate", 121.75f)
+
+// Add dictionary to document's properties <i class="conum" data-value="4"></i><b>(4)</b>
+mutable_doc.setDictionary("address", address)
+
+
+// Add array to document's properties <i class="conum" data-value="5"></i><b>(5)</b>
+mutable_doc.setArray("phones", phones)</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset5_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">// Initialize and populate the document
+
+// Add document type to document properties <i class="conum" data-value="1"></i><b>(1)</b>
+mutable_doc.setString("type", "hotel"));
+
+// Add hotel name string to document properties <i class="conum" data-value="2"></i><b>(2)</b>
+mutable_doc.setString("name", "Hotel Java Mo"));
+
+// Add float to document properties <i class="conum" data-value="3"></i><b>(3)</b>
+mutable_doc.setFloat("room_rate", 121.75f);
+
+// Add dictionary to document's properties <i class="conum" data-value="4"></i><b>(4)</b>
+mutable_doc.setDictionary("address", address);
+
+
+// Add array to document's properties <i class="conum" data-value="5"></i><b>(5)</b>
+mutable_doc.setArray("phones", phones);</code></pre>
 </div>
 </div>
 </div>
@@ -2411,14 +2485,16 @@ The <code>phones</code> arrary is added to the document and stored with the key 
 <div class="tab-pane" aria-labelledby="tabset6_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">// Save the document changes <i class="conum" data-value="1"></i><b>(1)</b>
+database.save(mutable_doc)</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset6_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">// Save the document changes <i class="conum" data-value="1"></i><b>(1)</b>
+database.save(mutable_doc);</code></pre>
 </div>
 </div>
 </div>
@@ -2445,14 +2521,16 @@ The <code>phones</code> arrary is added to the document and stored with the key 
 <div class="tab-pane" aria-labelledby="tabset7_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">// Close the database <i class="conum" data-value="1"></i><b>(1)</b>
+database.close()</code></pre>
 </div>
 </div>
 </div>
 <div class="tab-pane" aria-labelledby="tabset7_java">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java"></code></pre>
+<pre class="highlightjs highlight"><code class="language-Java hljs" data-lang="Java" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.java">// Close the database <i class="conum" data-value="1"></i><b>(1)</b>
+database.close();</code></pre>
 </div>
 </div>
 </div>
@@ -2566,19 +2644,19 @@ Date date = newTask.getDate("createdAt");</code></pre>
 <div class="tab-pane" aria-labelledby="tabset9_kotlin">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">    // NOTE: No error handling, for brevity (see getting started)
-    val document = database!!.getDocument("doc1")
+<pre class="highlightjs highlight"><code class="language-Kotlin hljs" data-lang="Kotlin" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/android/examples/codesnippet_collection.kt">  // NOTE: No error handling, for brevity (see getting started)
+  val document = database!!.getDocument("doc1")
 
-    // Getting a dictionary from the document's properties
-    val dict = document?.getDictionary("address")
+  // Getting a dictionary from the document's properties
+  val dict = document?.getDictionary("address")
 
-    // Access a value with a key from the dictionary
-    val street = dict?.getString("street")
+  // Access a value with a key from the dictionary
+  val street = dict?.getString("street")
 
-    // Iterate dictionary
-    for (key in dict!!.keys) {
-        println("Key ${key} = ${dict.getValue(key)}")
-    }
+  // Iterate dictionary
+  for (key in dict!!.keys) {
+      println("Key ${key} = ${dict.getValue(key)}")
+  }
 
 // Create a mutable copy
 val mutable_Dict = dict.toMutable()</code></pre>
