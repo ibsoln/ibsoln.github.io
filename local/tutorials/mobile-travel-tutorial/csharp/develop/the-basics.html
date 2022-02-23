@@ -663,11 +663,11 @@ You can think of a database as a namespace for documents and several databases c
 We will review the <code>Task&lt;CouchbaseSession&gt; StartSessionAsync(string username, string password)</code> method.</p>
 </div>
 <div class="paragraph">
-<p><a href="https://github.com/couchbaselabs/mobile-travel-sample/blob/master/dotnet/TravelSample/TravelSample.Core/Models/LoginModel.cs#L54">LoginModel.cs</a></p>
+<p><a href="https://github.com/couchbaselabs/mobile-travel-samuwpple/blob/master/dotnet/TravelSample/TravelSample.Core/Models/LoginModel.cs#L54">LoginModel.cs</a></p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">public async Task&lt;CouchbaseSession&gt; StartSessionAsync(string username, string password) {
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">public async Task&lt;CouchbaseSession&gt; StartSessionAsync(string username, string password) {
   ...
 }</code></pre>
 </div>
@@ -678,7 +678,7 @@ Note the use of the service provider to find the default directory for the platf
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">var options = new DatabaseConfiguration();
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var options = new DatabaseConfiguration();
 
 // Borrow this functionality from Couchbase Lite
 var defaultDirectory = Service.Provider.GetService&lt;IDefaultDirectoryResolver&gt;().DefaultDirectory();
@@ -695,13 +695,14 @@ options.Directory = userFolder;</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">db = new Database(DbName, options);</code></pre>
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">db = new Database(DbName, options);</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="try-it-out"><a class="anchor" href="#try-it-out"></a>Try it out</h3>
-<div class="ulist">
-<ul>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Try it out</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>Build and Run the Travel Sample Mobile App</p>
 </li>
@@ -709,13 +710,14 @@ options.Directory = userFolder;</code></pre>
 <p>On Login screen select &#8220;Proceed as Guest&#8221; option.</p>
 </li>
 <li>
-<p>This will log you into app in Guest Mode. Signing in as Guest will create a new empty database for &#8220;guest&#8221; account if one does not exist</p>
+<p>This will log you into app in Guest Mode.
+Signing in as Guest will create a new empty database for &#8220;guest&#8221; account if one does not exist</p>
 </li>
 <li>
-<p>Confirm that you see the &#8220;Bookmarked Hotels&#8221; page. It will be empty the very first time.
-=</p>
+<p>Confirm that you see the &#8220;Bookmarked Hotels&#8221; page. It will be empty the very first time.</p>
 </li>
-</ul>
+</ol>
+</div>
 </div>
 </div>
 </div>
@@ -756,7 +758,7 @@ We will review the <code>void ToggleBookmark(HotelListCellModel hotel)</code> me
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">public void ToggleBookmark(HotelListCellModel hotel) {
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">public void ToggleBookmark(HotelListCellModel hotel) {
     ...
 }</code></pre>
 </div>
@@ -771,7 +773,7 @@ We will examine <code>queries</code> in a future lesson.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">using (var document = UserSession.FetchGuestBookmarkDocument()?.ToMutable()) {
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">using (var document = UserSession.FetchGuestBookmarkDocument()?.ToMutable()) {
   var doc = document;
   if (document == null) {
       ...
@@ -785,7 +787,7 @@ We will examine <code>queries</code> in a future lesson.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">var bookmarked = doc.GetArray("hotels") ?? new MutableArrayObject();
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">var bookmarked = doc.GetArray("hotels") ?? new MutableArrayObject();
 if (hotel.IsBookmarked) {
     // Remove the bookmark
     for (int i = 0; i &lt; bookmarked.Count(); i++) {
@@ -809,7 +811,7 @@ If not, create a new hotel document.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">// Add the hotel details document
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">// Add the hotel details document
 if (hotel.Source["id"] is string id) {
     using (var detailDoc = UserSession.Database.GetDocument(id)?.ToMutable() ?? new MutableDocument(id)) {
         detailDoc.SetData(hotel.Source.ToDictionary(x =&gt; x.Key, x =&gt; x.Value));
@@ -818,10 +820,11 @@ if (hotel.Source["id"] is string id) {
 }</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="try-it-out-2"><a class="anchor" href="#try-it-out-2"></a>Try it out</h3>
-<div class="ulist">
-<ul>
+<div id="lab-net-bookmk" class="sidebarblock">
+<div class="content">
+<div class="title">Try it out&#8201;&#8212;&#8201;add a bookmark</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>As Guest User, tap on &#8220;hotels&#8221; button</p>
 </li>
@@ -850,21 +853,18 @@ if (hotel.Source["id"] is string id) {
 <p>Tap "Back" button</p>
 </li>
 <li>
-<p>Verify that you see the bookmarked hotel in the &#8220;Bookmarked Hotels&#8221; screen. A motivation for having separate docs for each bookmarked hotel is if they become sharable between users via the sync function.</p>
+<p>Verify that you see the bookmarked hotel in the &#8220;Bookmarked Hotels&#8221; screen&#8201;&#8212;&#8201;see: <a href="#fig-net-hotelsearch">Figure 1</a>
+A motivation for having separate docs for each bookmarked hotel is if they become sharable between users via the sync function.</p>
 </li>
-</ul>
+</ol>
 </div>
-<div class="paragraph">
-<p>The screen capture is for UWP version of the app.</p>
 </div>
-<div class="imageblock">
+</div>
+<div id="fig-net-hotelsearch" class="imageblock">
 <div class="content">
 <img src="https://raw.githubusercontent.com/couchbaselabs/mobile-travel-sample/master/content/assets/uwp_basics_add_document.gif" alt="uwp basics add document">
 </div>
-</div>
-<div class="paragraph">
-<p>=</p>
-</div>
+<div class="title">Figure 1. Hotel Search <sup class="footnote" id="_footnote_uwp">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></div>
 </div>
 </div>
 </div>
@@ -884,7 +884,7 @@ We will review the <code>public void RemoveBookmark(HotelListCellModel bookmark)
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">public void RemoveBookmark(HotelListCellModel bookmark) {
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">public void RemoveBookmark(HotelListCellModel bookmark) {
   ...
 }</code></pre>
 </div>
@@ -895,7 +895,7 @@ Note that in addition to deleting the "hotels" document, the unbookmarking proce
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">if (bookmark.Source["id"] is string idToRemove) {
+<pre class="highlightjs highlight"><code class="language-csharp hljs" data-lang="csharp">if (bookmark.Source["id"] is string idToRemove) {
     var doc = UserSession.Database.GetDocument(idToRemove);
     if (doc != null) {
         UserSession.Database.Delete(doc);
@@ -903,15 +903,17 @@ Note that in addition to deleting the "hotels" document, the unbookmarking proce
 }</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="try-it-out-3"><a class="anchor" href="#try-it-out-3"></a>Try it out</h3>
-<div class="ulist">
-<ul>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Try it out</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
-<p>Follow the steps in <a href="http://docs.couchbase.com/tutorials/travel-sample/develop/csharp/#/2/1/1">Update a Document</a> section to bookmark a hotel</p>
+<p>Follow the steps in <a href="#lab-net-bookmk">Try it out&#8201;&#8212;&#8201;add a bookmark</a> section to bookmark a hotel</p>
 </li>
 <li>
-<p>Confirm that you see the bookmarked hotels in the "Bookmarked Hotels" screen. If not, make sure you go through the instructions in <a href="http://docs.couchbase.com/tutorials/travel-sample/develop/csharp/#/2/1/1">Update a Document</a> section</p>
+<p>Confirm that you see the bookmarked hotels in the "Bookmarked Hotels" screen.
+If not, make sure you go through the instructions <a href="#lab-net-bookmk">Try it out&#8201;&#8212;&#8201;add a bookmark</a> section</p>
 </li>
 <li>
 <p>Right click/tap on the first Hotel cell</p>
@@ -923,19 +925,24 @@ Note that in addition to deleting the "hotels" document, the unbookmarking proce
 <p>Tap &#8220;unbookmark&#8221;</p>
 </li>
 <li>
-<p>Verify that the unbookmarked hotel does not show up in list</p>
+<p>Verify that the unbookmarked hotel does not show up in list&#8201;&#8212;&#8201;see: <a href="#fig-net-unbookmk">Figure 2</a></p>
 </li>
-</ul>
+</ol>
 </div>
-<div class="paragraph">
-<p>The screen capture is for UWP version of the app.</p>
 </div>
-<div class="imageblock">
+</div>
+<div id="fig-net-unbookmk" class="imageblock">
 <div class="content">
-<img src="https://raw.githubusercontent.com/couchbaselabs/mobile-travel-sample/master/content/assets/uwp_basics_delete_document.gif" alt="uwp basics delete document">
+<img src="../../_images/uwp_basics_delete_document.gif" alt="uwp basics delete document">
+</div>
+<div class="title">Figure 2. Remove Hetel Bookmark <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup></div>
 </div>
 </div>
 </div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. The screen capture is for UWP version of the app.
 </div>
 </div>
 </article>
