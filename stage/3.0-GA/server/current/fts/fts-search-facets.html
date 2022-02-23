@@ -1377,6 +1377,11 @@
     <a class="menu_title menu_link" href="fts-supported-queries-match-none.html">Match None</a>
   </span>
 </li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="fts-supported-queries-DocID-query.html">DocID query</a>
+  </span>
+</li>
 </ul>
 </li>
 <li class="menu_list is-parent closed" data-depth="3">
@@ -8102,7 +8107,7 @@ When building a term facet, use the keyword analyzer. Otherwise, multi-term valu
 <p>Term Facet - computes facet on the type field which has two values: <code>beer</code> and <code>brewery</code>.</p>
 <div class="listingblock">
 <div class="content">
-<pre>curl -X POST -H "Content-Type: application/json" \
+<pre>curl -X POST -H "Content-Type: application/json" -u &lt;username&gt;:&lt;password&gt; \
 http://localhost:8094/api/index/bix/query -d \
 '{
     "size": 10,
@@ -8168,7 +8173,7 @@ Run the curl command to see the HTTP response containing the full results.</p>
 <p>Numeric Range Facet - computes facet on the <code>abv</code> field with 2 buckets describing <code>high</code> (greater than 7) and <code>low</code> (less than 7).</p>
 <div class="listingblock">
 <div class="content">
-<pre>curl -X POST -H "Content-Type: application/json" \
+<pre>curl -X POST -H "Content-Type: application/json" -u &lt;username&gt;:&lt;password&gt; \
 http://localhost:8094/api/index/bix/query -d \
 '{
     "size": 10,
@@ -8200,7 +8205,7 @@ http://localhost:8094/api/index/bix/query -d \
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">facets": {
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"facets": {
     "abv": {
         "field": "abv",
         "total": 70,
@@ -8248,31 +8253,36 @@ http://localhost:8094/api/index/bix/query -d \
 <p>Date Range Facet - computes facet on the ‘updated’ field that has 2 values old and new.</p>
 <div class="listingblock">
 <div class="content">
-<pre>curl -XPOST -H "Content-Type: application/json" -uAdministrator:asdasd http://&lt;node&gt;:8094/api/index/bix/query -d '{
-"ctl": {"timeout": 0},
-"from": 0,
-"size": 0,
-"query": {
-            "field": "country",
-            "term": "united"
-},
-        "facets": {
-        "types": {
-        "size": 10,
-        "field": "updated",
-        "date_ranges": [
-        {
-        "name": "old",
-        "end": "2010-08-01"
-        },
-        {
-        "name": "new",
-        "start": "2010-08-01"
-        }
-]
+<pre>curl -XPOST -H "Content-Type: application/json" -u &lt;username&gt;:&lt;password&gt; \
+http://&lt;node&gt;:8094/api/index/bix/query -d '{
+   "ctl":{
+      "timeout":0
+   },
+   "from":0,
+   "size":0,
+   "query":{
+      "field":"country",
+      "term":"united"
+   },
+   "facets":{
+      "types":{
+         "size":10,
+         "field":"updated",
+         "date_ranges":[
+            {
+               "name":"old",
+               "end":"2010-08-01"
+            },
+            {
+               "name":"new",
+               "start":"2010-08-01"
+            }
+         ]
+      }
+   }
 }
-}
-}'</pre>
+ABOUT
+'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -8280,26 +8290,26 @@ http://localhost:8094/api/index/bix/query -d \
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json"> "facets": {
-             "types": {
-                "field": "updated",
-                "total": 954,
-                "missing": 0,
-                "other": 0,
-             "date_ranges": [
-              {
-                "name": "old",
-                "end": "2010-08-01T00:00:00Z",
-                "count": 934
-              },
-              {
-                "name": "new",
-                "start": "2010-08-01T00:00:00Z",
-                "count": 20
-              }
-               ]
-             }
-           }</code></pre>
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"facets":{
+      "types":{
+         "field":"updated",
+         "total":954,
+         "missing":0,
+         "other":0,
+         "date_ranges":[
+            {
+               "name":"old",
+               "end":"2010-08-01T00:00:00Z",
+               "count":934
+            },
+            {
+               "name":"new",
+               "start":"2010-08-01T00:00:00Z",
+               "count":20
+            }
+         ]
+      }
+   }</code></pre>
 </div>
 </div>
 </li>

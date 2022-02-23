@@ -648,12 +648,10 @@ Unresolved include directive in modules/ROOT/nav.adoc - include::tutorial-templa
 <span class="last-commit-date" id="commitdate">    </span>
 <ul id="contributorList"></ul>
 <span  id="otherContributor"> + </span>
-</div><div class="sect1">
-<h2 id="full-text-search"><a class="anchor" href="#full-text-search"></a>Full Text Search</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Couchbase Lite 2.0 now supports Full Text Search (FTS). FTS is accomplished using the <code>match</code> query.
-FTS matches are case-insenstive.
+</div><div class="paragraph">
+<p>Couchbase Lite <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup> supports Full Text Search (FTS).
+FTS is accomplished using the <code>match</code> query.
+FTS matches are case-insensitive.
 In the Travel App, the FTS query is against local "travel-sample" documents that is pre-built with the app.</p>
 </div>
 <div class="paragraph">
@@ -669,7 +667,7 @@ This code snippet creates an FTS index on the property named <code>description</
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">func createDatabaseIndexes() throws{
+<pre class="highlightjs highlight"><code class="language-{param-language} hljs" data-lang="{param-language}">func createDatabaseIndexes() throws{
   ...
 
 
@@ -691,7 +689,7 @@ You will review the <code>fetchHotelsFromLocalDatabaseMatchingDescription</code>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">fileprivate func fetchHotelsFromLocalDatabaseMatchingDescription( _ descriptionStr:String?,location locationStr:String, handler:@escaping(_ hotels:Hotels?, _ error:Error?)-&gt;Void) {
+<pre class="highlightjs highlight"><code class="language-{param-language} hljs" data-lang="{param-language}">fileprivate func fetchHotelsFromLocalDatabaseMatchingDescription( _ descriptionStr:String?,location locationStr:String, handler:@escaping(_ hotels:Hotels?, _ error:Error?)-&gt;Void) {
   ...
 }</code></pre>
 </div>
@@ -701,20 +699,20 @@ You will review the <code>fetchHotelsFromLocalDatabaseMatchingDescription</code>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">guard let db = dbMgr.db else {
+<pre class="highlightjs highlight"><code class="language-{param-language} hljs" data-lang="{param-language}">guard let db = dbMgr.db else {
     fatalError("db is not initialized at this point!")
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
 <p>Next, you will create an FTS <code>Expressions</code> using the <code>match()</code> operator.
-In this particular example, the <code>match</code> expression looks for the <code>desciptionStr</code> value in the <code>description</code> property.
+In this particular example, the <code>match</code> expression looks for the <code>descriptionStr</code> value in the <code>description</code> property.
 This <code>match</code> expression is logically ANDed with an <code>equalTo</code> comparison expression which looks for the <code>location</code> in the <code>country</code>,<code>city</code>,<code>state</code> or <code>address</code> properties.
 This expression is then used in the <code>where</code> clause of the query the usual way.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">var descExp:ExpressionProtocol?
+<pre class="highlightjs highlight"><code class="language-{param-language} hljs" data-lang="{param-language}">var descExp:ExpressionProtocol?
 if let descriptionStr = descriptionStr , descriptionStr != ""{
   descExp = FullTextExpression.index("descFTSIndex").match(descriptionStr)
 }
@@ -744,7 +742,7 @@ let hotelSearchQuery = QueryBuilder
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">var matches:Hotels = []
+<pre class="highlightjs highlight"><code class="language-{param-language} hljs" data-lang="{param-language}">var matches:Hotels = []
 do {
     for (_,row) in try hotelSearchQuery.execute().enumerated() {
 
@@ -761,10 +759,11 @@ catch {
 }</code></pre>
 </div>
 </div>
-<div class="sect2">
-<h3 id="try-it-out"><a class="anchor" href="#try-it-out"></a>Try it out</h3>
-<div class="ulist">
-<ul>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Try it out</div>
+<div class="olist arabic">
+<ol class="arabic">
 <li>
 <p>Log into the Travel Sample Mobile app as &#8220;demo&#8221; user and password as &#8220;password&#8221;</p>
 </li>
@@ -780,14 +779,19 @@ catch {
 <li>
 <p>Verify that you see one hotel listed named "Novotel London West"</p>
 </li>
-</ul>
+</ol>
+</div>
+</div>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="https://raw.githubusercontent.com/couchbaselabs/mobile-travel-sample/master/content/assets/ios_fts_query.gif" alt="ios fts query">
+<img src="../../_images/ios_fts_query.gif" alt="ios fts query">
 </div>
 </div>
-</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. 2.0+
 </div>
 </div>
 </article>
