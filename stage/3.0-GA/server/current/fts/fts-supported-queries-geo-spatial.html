@@ -1430,7 +1430,7 @@
 <li class="menu_list is-parent closed" data-depth="2">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="fts-cluster-operations.html">Cluster Configurations</a>
+    <a class="menu_title menu_link" href="#fts:fts-cluster-operations.adoc">Cluster Level Options</a>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
@@ -8369,15 +8369,68 @@ For initial experimentation with geospatial querying, the <code>geo</code> field
 </div>
 </div>
 <div class="paragraph">
-<p>The index so created can also be specified by means of the Couchbase REST API.
-See <a href="#fts-demonstration-indexes.adoc" class="page unresolved">Demonstration Indexes</a> for the body of the index to be used, and see <a href="fts-creating-index-with-rest-api.html" class="page">Index Creation with the REST API</a> for information on using the REST syntax.</p>
+<p>The following query examples in this page will require the following index definition ..</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "type": "fulltext-index",
+  "name": "geoIndex",
+  "uuid": "",
+  "sourceType": "gocbcore",
+  "sourceName": "travel-sample",
+  "sourceUUID": "",
+  "planParams": {
+    "indexPartitions": 1
+  },
+  "params": {
+    "doc_config": {
+      "mode": "type_field",
+      "type_field": "type"
+    },
+    "mapping": {
+      "default_analyzer": "standard",
+      "default_datetime_parser": "dateTimeOptional",
+      "default_field": "_all",
+      "default_mapping": {
+        "dynamic": true,
+        "enabled": true,
+        "properties": {
+          "geo": {
+            "dynamic": false,
+            "enabled": true,
+            "fields": [
+              {
+                "include_in_all": true,
+                "include_term_vectors": true,
+                "index": true,
+                "name": "geo",
+                "store": true,
+                "type": "geopoint"
+              }
+            ]
+          }
+        }
+      },
+      "default_type": "_default",
+      "index_dynamic": true,
+      "store_dynamic": false
+    },
+    "store": {
+      "indexType": "scorch",
+      "segmentVersion": 15
+    }
+  },
+  "sourceParams": {}
+}</code></pre>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="creating_geospatial_rest_query_radius_based"><a class="anchor" href="#creating_geospatial_rest_query_radius_based"></a>Creating a Query: Radius-Based</h3>
 <div class="paragraph">
 <p>This section and those following, provide examples of the query-bodies required to make geospatial queries with the Couchbase REST API.
-Note that more detailed information on performing queries with the Couchbase REST API can be found in <a href="#fts-searching-with-the-rest-api.adoc" class="page unresolved">Searching with the REST API</a>; which shows how to use the full <code>curl</code> command and how to incorporate query-bodies into it.</p>
+Note that more detailed information on performing queries with the Couchbase REST API can be found in <a href="fts-searching-with-curl-http-requests.html" class="page">Searching with the REST API</a>; which shows how to use the full <code>curl</code> command and how to incorporate query-bodies into it.</p>
 </div>
 <div class="paragraph">
 <p>The following query-body specifies a longitude of <code>-2.235143</code> and a latitude of <code>53.482358</code>.
