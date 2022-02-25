@@ -1431,7 +1431,7 @@
 <li class="menu_list is-parent closed" data-depth="2">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="#fts:fts-cluster-operations.adoc">Cluster Level Options</a>
+    <a class="menu_title menu_link" href="../../fts/fts-cluster-options.html">Cluster Level Options</a>
   </span>
 <ul class="menu_row">
 <li class="menu_list" data-depth="3">
@@ -8282,11 +8282,21 @@ For more details, refer to <a href="../../fts/fts-sorting.html" class="page">Sor
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-<div class="paragraph">
-<p>When specifying a complete full text search request with the N1QL SEARCH() function, if the value of the <code>size</code> parameter is greater than the <a href="#fts:fts-response-object-schema.adoc#request" class="page unresolved">maximum number of full text search results</a>, the query ignores the <code>size</code> parameter and returns all matching results.</p>
-</div>
-<div class="paragraph">
-<p>This is different to the behavior of a complete full text search request in the Search service, where the query returns an error if the value of the <code>size</code> parameter is greater than the maximum number of full text search results.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If size/from (pagination) settings aren&#8217;t set, the search index will "stream" all qualifying results to N1QL which can perform further filtering.</p>
+</li>
+<li>
+<p>If <code>size/limit</code>, <code>from/offset</code> are set within the search request within the SEARCH function, FTS handles the pagination.</p>
+</li>
+<li>
+<p>N1QL can hand down LIMIT/OFFSET settings to FTS. If this <code>limit+offset &#8656; bleveMaxResultWindow</code> - then the FTS index is deemed pageable and N1QL hands down these settings to FTS. If not, then FTS will stream results to N1QL and N1QL will be responsible for pagination and ordering.</p>
+</li>
+<li>
+<p>The default value for the cluster wide <a href="../../fts/fts-advanced-settings-bleveMaxResultWindow.html" class="page">bleveMaxResultWindow</a> setting is 10000.</p>
+</li>
+</ul>
 </div>
 </td>
 </tr>
@@ -8465,6 +8475,20 @@ To avoid this, use a USE INDEX hint.</p>
 <p>Order pushdown is possible only if query ORDER BY has only <a href="#search_score">SEARCH_SCORE()</a> on the leftmost keyspace.
 Offset and Limit pushdown is possible if the query only has a SEARCH() predicate, using a single search index&#8201;&#8212;&#8201;no IntersectScan or OrderIntersectScan.
 Group aggregates and projection are not pushed.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If the "index" setting isn&#8217;t specified within the options argument of the <em>SEARCH</em> function, N1QL can pick any FTS index available in the system that qualifies for the query. If a number of FTS indexes qualify, then one that is defined most precise will be chosen.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
