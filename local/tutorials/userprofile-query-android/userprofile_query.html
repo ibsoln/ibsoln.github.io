@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv=content-security-policy content="default-src 'none'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https://fonts.gstatic.com; frame-src 'self' https:; img-src 'self' data: https:; connect-src 'self' https:; worker-src blob:;">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>User Profile Sample: Couchbase Lite Query Introduction | Couchbase Docs</title>
+<link rel="canonical" href="http://127.0.0.1:5000/tutorials/userprofile-query-android/userprofile_query.html">
+<link rel="stylesheet" href="../../_/css/site.css">
+<script src="../../_/js/vendor/jquery.js"></script>
+<link rel="schema.dcterms" href="https://purl.org/dc/terms/">
+
+
+<meta name="dcterms.subject" content="tutorials">
+<meta name="dcterms.identifier" content="master">
+<meta name="page-url" content="/tutorials/userprofile-query-android/userprofile_query.html">
+<meta name="generator" content="Antora 3.0.0-alpha.5">
+<link rel="icon" href="../../_/img/favicon.ico" type="image/x-icon">
+</head>
+<body class="article">
+<header class="header fixed-top">
+  <div class="header-top-row">
+      <div class="container">
+          <nav class="navbar navbar-expand-md flex-nowrap justify-content-between navbar-new-top">
+              <ul class="navbar-brand-list">
+                <li class="brand-logo">
+                  <a class="navbar-brand" href="https://www.couchbase.com">
+                    <img src="../../_/img/couchbase-logo.svg" alt="Couchbase" />
+                  </a>
+                </li>
+                <li>
+                  <a class="navbar-brand cb-documentation" href="http://127.0.0.1:5000/home/index.html">
+                    <img src="../../_/img/cb-documentation.svg" alt="Couchbase Documentation" class="cb-docs" />
+                    <img src="../../_/img/cb-docs-hover.svg" alt="Couchbase Documentation" class="hide cb-hover-docs" />
+                  </a>
+                </li>
+              </ul>
+              <button class="navbar-burger" data-target="topbar-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+              </button>
+
+          </nav>
+      </div>
+  </div>
+  <div class="header-bottom-row" id="topbar-menu">
+    <div class="container">
+        <nav  class="navbar navbar-new-bottom">
+
+              <div class="navbar-collapse collapse" id="navbar2">
+                <ul class="navbar-nav w-100 justify-content-start">
+                  <li class="nav-item">
+                    <a href="http://127.0.0.1:5000/home/index.html" class="nav-link">
+                      <i class="fas fa-home"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/server.html">
+                      Server
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/mobile.html">
+                      Mobile Local
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/cloud.html">
+                      Cloud
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../../home/sdk.html">
+                      SDKs
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="../index.html">
+                      Tutorials
+                      <span class="arrow">
+                        <i class="fas fa-arrow-right"></i>
+                      </span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="primary-action">
+                <a class="btn btn-primary btn-grey-reverse" onclick="(window.dataLayer=window.dataLayer||[]).push({'event':'customEvent', 'category':'CTA', 'action':'Button Click',  'label':'Download'});" href="https://www.couchbase.com/downloads">
+                  Downloads
+                  <i class="far fa-arrow-to-bottom fa-fw"></i>
+                </a>
+                <a href="https://cloud.couchbase.com/sign-up" class="btn btn-primary" onclick="(window.dataLayer=window.dataLayer||[]).push({'event':'customEvent', 'category':'CTA', 'action':'Button Click',  'label':'Free Trial'});" >
+                  Start Free Trial
+                  <i class="far fa-cloud fa-fw"></i>
+                </a>
+
+              </div>
+
+        </nav>
+    </div>
+   </div>
+</header>
+<div class="body container">
+<aside class="nav left-sidebar">
+  <div class="nav-container">
+    <a href="#" class="menu-expand-toggle"><span>Navigation</span><i class="fas fa-times-circle"></i><i class="fas fa-chevron-circle-left"></i></a>
+<div class="components">
+  <div class="components_group-title">
+    <a href="../index.html">Tutorials</a>
+  </div>
+  <ul class="components_list">
+    <li class="components_list-items">
+      <div class="component_list-version">
+        <span class="component_list_title">Tutorials</span>
+      </div>
+      <div class="version_items hide" data-version="master">
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Couchbase Server</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="#:session-storage:partial$nav.adoc">:session-storage:partial$nav.adoc</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <span class="menu_title menu_text">User Profile Storage
+Unresolved include directive in modules/ROOT/nav.adoc - include::profile-store:partial$nav.adoc[]</span>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Couchbase Mobile</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Couchbase Mobile Workshop</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/introduction.html">Introduction</a>
+  </span>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Swift</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="3">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/installation/index.html">Backend Installation</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/installation/manual.html">Manual</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/installation/docker.html">Docker (Local)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/installation/cloud.html">Cloud (RightScale)</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/installation/travel-mobile-app.html">Installation</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/design/data-modeling.html">Data Modeling</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/develop/mvp-architecture.html">MVP Architecture</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/develop/the-basics.html">The Basics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/develop/security.html">Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/develop/sync.html">Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/develop/pre-built-database.html">Pre-built database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/develop/query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/swift/develop/full-text-search.html">Full Text Search</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Android-Java</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="3">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/installation/index.html">Backend Installation</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/installation/manual.html">Manual</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/installation/docker.html">Docker (Local)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/installation/cloud.html">Cloud (RightScale)</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/installation/travel-mobile-app.html">Installation</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/design/data-modeling.html">Data Modeling</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/develop/mvp-architecture.html">MVP Architecture</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/develop/the-basics.html">The Basics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/develop/security.html">Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/develop/sync.html">Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/develop/pre-built-database.html">Pre-built database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/develop/query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/android/develop/full-text-search.html">Full Text Search</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Java</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="3">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/installation/index.html">Backend Installation</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/installation/manual.html">Manual</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/installation/docker.html">Docker (Local)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/installation/cloud.html">Cloud (RightScale)</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/installation/travel-mobile-app.html">Installation</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/design/data-modeling.html">Data Modeling</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/develop/mvp-architecture.html">MVP Architecture</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/develop/the-basics.html">The Basics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/develop/security.html">Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/develop/sync.html">Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/develop/pre-built-database.html">Pre-built database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/develop/query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/java/develop/full-text-search.html">Full Text Search</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="2">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">C#</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list is-parent closed" data-depth="3">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/installation/index.html">Backend Installation</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/installation/manual.html">Manual</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/installation/docker.html">Docker (Local)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="4">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/installation/cloud.html">Cloud (RightScale)</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/installation/travel-mobile-app.html">Installation</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/design/data-modeling.html">Data Modeling</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/develop/mvvm-architecture.html">MVVM Architecture</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/develop/the-basics.html">The Basics</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/develop/security.html">Security</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/develop/sync.html">Sync</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/develop/pre-built-database.html">Pre-built database</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/develop/query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="3">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../mobile-travel-tutorial/csharp/develop/full-text-search.html">Full Text Search</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Getting Started on iOS</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-standalone/userprofile_basic.html">Standalone</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-query/userprofile_query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-sync/userprofile_sync.html">Sync</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Getting Started on Xamarin</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-standalone-xamarin/userprofile_basic.html">Standalone</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-query-xamarin/userprofile_query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-sync-xamarin/userprofile_sync.html">Sync</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Getting Started on Android</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-standalone-android/userprofile_basic.html">Standalone</a>
+  </span>
+</li>
+<li class="menu_list is-current-page" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link is-current-page" href="userprofile_query.html">Query</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../userprofile-sync-android/userprofile_sync.html">Sync</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Getting Started with Peer-to-Peer Sync</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../cbl-p2p-sync-websockets/swift/cbl-p2p-sync-websockets.html">iOS/Swift</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../cbl-p2p-sync-websockets/dotnet/cbl-p2p-sync-websockets.html">Xamarin/C#</a>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Build Your Own</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <span class="menu_title menu_text">Tutorial Template
+Unresolved include directive in modules/ROOT/nav.adoc - include::tutorial-template:partial$nav.adoc[]</span>
+  </span>
+</li>
+</ul>
+</li>
+</ul>
+      </div>
+    </li>
+  </ul>
+</div>
+  </div>
+</aside>
+<aside class="toc sidebar"
+      data-title="Contents"
+      data-levels="3@">
+  <div class="sidebar-box">
+    <div class="tools" role="navigation">
+<ul>
+<li class="tool edit"><a href="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/pages/userprofile_query.adoc" title="Edit Page" target="_blank" rel="noopener" class="remove-ext-icon">Edit on GitHub</a></li>
+</ul>
+</div>
+    <div class="toc-menu"></div>
+    <div class="is-this-helpful-box">
+      <h4> Is this page helpful?</h4>
+      <div class="btn-row">
+        <a href="#" class="like-btn helpful-btn" id="yesBtn" data-page-rating="like" >
+                <i class="far fa-thumbs-up"></i>
+            Yes
+
+            </a>
+        <a href="#" class="dislike-btn helpful-btn" id="noBtn"  data-page-rating="dislike"> <i class="far fa-thumbs-down"></i> No</a>
+      </div>
+      <div class="any-feedback">
+        <a href="#" class="btn any-feedback-btn" id="myCustomTrigger">Leave Additional Feedback? </a>
+      </div>
+      <div class="dialog-box" id="dialogBox">
+        <form>
+            <div class="form-group " id="additionalFeedbackBox">
+              <textarea class="input-control feed-back-msg" rows="8" placeholder="Any Additonal Feedback?"></textarea>
+
+              <div class="action-btn-row ">
+                <a href="#" class="skip-btn" id="skipBtnMsg">Skip</a>
+                  <button class="submit-btn btn blue-btn disabled" > Submit  </button>
+                  <a href="#" class="info-btn"><i class="fas fa-info-circle"></i></a>
+              </div>
+
+
+            </div>
+
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+</aside>
+
+<div class="feedback-modal modal-popup">
+  <div class="modal-popup-dialogue">
+    <div class="popup-header">
+      <a href="#" class="close-popup"><i class="fa fa-times"></i></a>
+    </div>
+    <div class="popup-content">
+      <p>
+        Please use the form below to provide your feedback. Because your feedback is valuable to us,
+         the information you submit in this form is recorded in our issue tracking system (JIRA), which is publicly available.
+        You can track the status of your feedback using the ticket number displayed in the dialog once you submit the form.
+      </p>
+    </div>
+  </div>
+</div>
+
+<main class="article" data-ceiling="topbar">
+<div class="article-header">
+<nav class="crumbs" aria-label="breadcrumbs">
+<ul>
+<li class="crumb"><a href="../index.html">Tutorials</a></li>
+<li class="crumb">Couchbase Mobile</li>
+<li class="crumb">Getting Started on Android</li>
+<li class="crumb"><a href="userprofile_query.html">Query</a></li>
+</ul>
+</nav>
+</div>
+<article class="doc">
+<div class="page-heading-title">
+<h1 class="page">User Profile Sample: Couchbase Lite Query Introduction</h1>
+</div>
+<div class="contributor-list-box">
+<span class="last-commit-date" id="commitdate">    </span>
+<ul id="contributorList"></ul>
+<span  id="otherContributor"> + </span>
+</div><div id="preamble">
+<div class="sectionbody">
+<!-- toc disabled -->
+</div>
+</div>
+<div class="sect1">
+<h2 id="introduction"><a class="anchor" href="#introduction"></a>Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Lite brings powerful querying and Full-Text-Search(FTS) capabilities to the edge.</p>
+</div>
+<div class="paragraph">
+<p>Its query interface is based on
+<a href="https://www.couchbase.com/products/n1ql">N1QL</a>,
+Couchbase’s declarative query language, which implements the emerging SQL++ standard.</p>
+</div>
+<div class="paragraph">
+<p>The query API is designed using the
+<a href="https://en.wikipedia.org/wiki/Fluent_interface">Fluent API Design Pattern</a>,
+and uses method cascading to read like a Domain Specific Language (DSL).
+This makes the interface very intuitive and easy to understand.</p>
+</div>
+<div class="paragraph">
+<p>Couchbase Lite can be used as a standalone embedded database within your mobile app.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">What You Will Learn</div>
+<div class="paragraph">
+<p>This tutorial will walk through a simple Android app that will:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Demonstrate how you can bundle, load and use a <strong><em>prebuilt</em></strong> instance of Couchbase Lite</p>
+</li>
+<li>
+<p>Introduce you to the basics of the <code>QueryBuilder</code> interface</p>
+</li>
+</ul>
+</div>
+<div class="exampleblock">
+<div class="content">
+<div class="paragraph">
+<p>You can learn more about Couchbase Mobile
+<a href="https://developer.couchbase.com/mobile">here</a></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="prerequisites"><a class="anchor" href="#prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This tutorial assumes familiarity with building
+<a href="https://www.android.com/">Android</a>
+apps using
+<a href="https://www.java.com">Java</a>
+and with the basics of Couchbase Lite.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you are unfamiliar with the basics of Couchbase Lite, it is recommended that you walk through the
+<a href="../userprofile-standalone-android/userprofile_basic.html" class="page">Standalone tutorial</a>, covering the fundamentals of using Couchbase Lite as a standalone database</p>
+</li>
+<li>
+<p><a href="https://developer.android.com/studio">Android Studio</a></p>
+</li>
+<li>
+<p>Android device or emulator running API level 22 or above</p>
+</li>
+<li>
+<p>Android SDK 29+</p>
+</li>
+<li>
+<p>Android Build Tools 29+</p>
+</li>
+<li>
+<p><a href="https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html">JDK 8</a></p>
+</li>
+<li>
+<p>git (Optional)
+This is required if you would prefer to pull the source code from GitHub repo.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Create a
+<a href="https://github.com">free github account</a>
+if you don&#8217;t already have one</p>
+</li>
+<li>
+<p>git can be downloaded from
+<a href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git">git-scm.org</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="app-overview"><a class="anchor" href="#app-overview"></a>App Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We will be working with a very simple "User Profile" app.
+If you have walked through the <a href="../userprofile-standalone-android/userprofile_basic.html" class="page">Standalone tutorial</a>, you will quickly realize that this version extends the functionality introduced in that tutorial.</p>
+</div>
+<div class="paragraph">
+<p>This app does the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Allows users to log in and create or update his/her user profile information, which was also possible in the <a href="../userprofile-standalone-android/userprofile_basic.html" class="page">Standalone tutorial</a></p>
+</li>
+<li>
+<p>As part of profile information, users can now select a <code>University</code> from a list of possible options.<br>
+This list of universities is queried (using the new Query API) from a local <em>prebuilt</em> "University" Couchbase Lite database that is bundled in the app.</p>
+</li>
+<li>
+<p>When saved, the user profile information is persisted as a <code>Document</code> in a local Couchbase Lite database.
+So, when the user logs back in again, the profile information is loaded from the <code>Database</code>.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/university_app_overview.gif" alt="App Overview">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="installation"><a class="anchor" href="#installation"></a>Installation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Clone the <strong><em>query</em></strong> branch of the <code>User Profile Demo</code> solution from GitHub.
+Assuming that you have installed
+<a href="https://git-scm.com/downloads">Git</a>
+you can use the following command to do this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">git clone -b query https://github.com/couchbaselabs/userprofile-couchbase-mobile-android.git</code></pre>
+</div>
+</div>
+<div class="sect2">
+<h3 id="installing-couchbase-lite"><a class="anchor" href="#installing-couchbase-lite"></a>Installing Couchbase Lite</h3>
+<div class="paragraph">
+<p>This
+<a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/query/content/modules/userprofile-query-android/examples/src">sample project</a>
+already contains the appropriate additions for downloading, and utilizing the Android Couchbase Lite dependency module.
+However, in the future, to include Couchbase Lite support within an Android app add the the following within
+<a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/query/content/modules/userprofile-query-android/examples/src/app/build.gradle">app/build.gradle</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-gradle hljs" data-lang="gradle">  dependencies {
+    ...
+
+    implementation 'com.couchbase.lite:couchbase-lite-android-ee:3.0.0'
+}</code></pre>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Try it out</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open
+<a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/query/content/modules/userprofile-query-android/examples/src/build.gradle">build.gradle</a>
+using Android Studio.</p>
+</li>
+<li>
+<p>Build and run the project.</p>
+</li>
+<li>
+<p>Verify that you see the login screen.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/user_profile_login.png" alt="User Profile Login Screen Image">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="sample-app-architecture"><a class="anchor" href="#sample-app-architecture"></a>Sample App Architecture</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The sample app follows the
+<a href="https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93presenter">MVP pattern</a>,
+separating the internal data model, from a passive view through a presenter that handles the logic of our application and acts as the conduit between the model and the view.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/mvp_architecture.png" alt="MVP Architecture">
+</div>
+</div>
+<div class="paragraph">
+<p>In the Android Studio project, the code is structured by feature.
+You can select the Android option in the left navigator to view the files by package.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/mvp_as.png" alt="MVP Android Studio">
+</div>
+</div>
+<div class="paragraph">
+<p>Each package comprises the following:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Activity</strong>: This is where all the view logic resides.</p>
+</li>
+<li>
+<p><strong>Presenter</strong>: This is where all the business logic resides to fetch and persist data to a web service or the embedded Couchbase Lite database.</p>
+</li>
+<li>
+<p><strong>Contract</strong>: An interface that the <code>Presenter</code> and <code>Activity</code> implement.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="_images/mvp_package.png" alt="MVP Package">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="data-model"><a class="anchor" href="#data-model"></a>Data Model</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Couchbase Lite is a JSON Document Store.
+A Document is a logical collection of named fields and values.
+The values are any valid JSON types.
+In addition to the standard JSON types, Couchbase Lite supports some special types like <code>Date</code> and <code>Blob</code>.
+While it is not required or enforced, it is a recommended practice to include a <em>"type"</em> property that can serve as a namespace for related.</p>
+</div>
+<div class="sect2">
+<h3 id="the-user-profile-document"><a class="anchor" href="#the-user-profile-document"></a>The User Profile Document</h3>
+<div class="paragraph">
+<p>The app deals with a single <code>Document</code> with a <em>"type"</em> property of <em>"user"</em>.
+The document ID is of the form <em>"user::&lt;email&gt;"</em>.</p>
+</div>
+<div class="paragraph">
+<p>An example of a document would be</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "type":"user",
+    "name":"Jane Doe",
+    "email":"jame.doe@earth.org",
+    "address":"101 Main Street",
+    "image":CBLBlob (image/jpg),
+    "university":"Missouri State University"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="user-profile"><a class="anchor" href="#user-profile"></a>UserProfile</h3>
+<div class="paragraph">
+<p>For the purpose of this tutorial the <em>"user"</em> <code>Document</code> is first stored within an <code>Object</code> of type <code>Map&lt;String, Object&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/profile/UserProfileActivity.java">Map&lt;String, Object&gt; profile = new HashMap&lt;&gt;();
+profile.put("name", nameInput.getText().toString());
+profile.put("email", emailInput.getText().toString());
+profile.put("address", addressInput.getText().toString());
+profile.put("university", universityText.getText().toString());
+
+byte[] imageViewBytes = getImageViewBytes();
+
+if (imageViewBytes != null) {
+    profile.put("imageData", new com.couchbase.lite.Blob("image/jpeg", imageViewBytes));
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>Map&lt;String, Object&gt;</code> object functions used as a data storage mechanism between the app&#8217;s UI and the backing functionality of the Couchbase Lite <code>Document</code> object.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="university-document"><a class="anchor" href="#university-document"></a>The University Document</h3>
+<div class="paragraph">
+<p>The app comes bundled with a collection of Documents of type <em>"university"</em>. Each <code>Document</code> represents a university.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+    "type":"university","web_pages": [
+      "http://www.missouristate.edu/"
+    ],
+    "name": "Missouri State University",
+    "alpha_two_code": "US",
+    "state-province": MO,
+    "domains": [
+      "missouristate.edu"
+    ],
+    "country": "United States"
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="the-university-record"><a class="anchor" href="#the-university-record"></a>The University Record</h3>
+<div class="paragraph">
+<p>When <em>"university"</em> <code>Document</code> is retrieved from the database it is stored within an <code>Object</code> of type <code>Map&lt;String, Object&gt;</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/universities/UniversitiesPresenter.java">Map&lt;String, Object&gt; properties = new HashMap&lt;&gt;(); <i class="conum" data-value="1"></i><b>(1)</b>
+properties.put("name", row.getDictionary("universities").getString("name")); <i class="conum" data-value="2"></i><b>(2)</b>
+properties.put("country", row.getDictionary("universities").getString("country")); <i class="conum" data-value="2"></i><b>(2)</b>
+properties.put("web_pages", row.getDictionary("universities").getArray("web_pages")); <i class="conum" data-value="3"></i><b>(3)</b></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="using-a-prebuilt-database"><a class="anchor" href="#using-a-prebuilt-database"></a>Using a Prebuilt Database</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>There are several reasons why you may want to bundle your app with a prebuilt database.
+This would be suited for data that does not change or change that often, so you can avoid the bandwidth and latency involved in fetching/syncing this data from a remote server.
+This also improves the overall user experience by reducing the start-up time.</p>
+</div>
+<div class="paragraph">
+<p>In our app, the instance of Couchbase Lite that holds the pre-loaded <em>"university"</em> data is separate from the Couchbase Lite instance that holds <em>"user"</em> data hold the pre-loaded data.
+A separate Couchbase Lite instance is not required.
+However, in our case, since there can be many users potentially using the app on a given device, it makes more sense to keep it separate.
+This is to avoid duplication of pre-loaded data for every user.</p>
+</div>
+<div class="sect2">
+<h3 id="location-of-the-cblite-file"><a class="anchor" href="#location-of-the-cblite-file"></a>Location of the cblite file</h3>
+<div class="paragraph">
+<p>The pre-built database is in the form of a <code>cblite</code> file.
+It will be be in your app project bundle</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In the <code>universities.zip</code> file within the <code>Assets</code> folder.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/cblite_location.png" alt="Prebuilt Database Location">
+</div>
+</div>
+<div class="paragraph">
+<p>Note: The cblite folder will be extracted from the zip file.</p>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="prebuilt-database"><a class="anchor" href="#prebuilt-database"></a>Loading the Prebuilt Database</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Open the
+<a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/query/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java"><strong>DatabaseManager.java</strong></a>
+file and locate the <code>openPrebuiltDatabase()</code> function.
+The prebuilt database is common to all users of the app (on the device).
+So it will be loaded once and shared by all users on the device.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">public void openPrebuiltDatabase(Context context)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>First, we create an instance of <code>DatabaseConfiguration</code> object and specify the path where the database would be located</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">DatabaseConfiguration config = new DatabaseConfiguration();
+config.setDirectory(context.getFilesDir().toString());</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Then we determine if the "universities" database already exists at the specified location.
+It would not be present if this is the first time we are using the app, in which case, we locate the <em>"universities.cblite"</em> resource in the App&#8217;s main bundle and we copy it over to the Database folder.</p>
+<div class="paragraph">
+<p>If the database is already present at the specified Database location, we simply open the database.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">if (!dbFile.exists()) {
+    AssetManager assetManager = context.getAssets();
+    try {
+        File path = new File(context.getFilesDir().toString());
+
+        unzip(assetManager.open("universities.zip"), path);
+
+        universityDatabase = new Database("universities", config);
+        createUniversityDatabaseIndexes();
+    } catch (IOException e) {
+        e.printStackTrace();
+    } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+    }
+}
+else {
+    try {
+        universityDatabase = new Database("universities", config);
+    } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+    }
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="indexing-the-prebuilt-database"><a class="anchor" href="#indexing-the-prebuilt-database"></a>Indexing the Prebuilt Database</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Creating indexes for non-FTS based queries is optional.
+However, in order to speed up queries, you can create indexes on the properties that you would query against.
+Indexing is handled eagerly.</p>
+</li>
+<li>
+<p>In the <a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/query/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java"><strong>DatabaseManager.java</strong></a> file, locate the <code>createUniversityDatabaseIndexes()</code> function.
+We create an index on the <code>name</code> and <code>location</code> properties of the documents in the <em>university</em> database.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">private void createUniversityDatabaseIndexes() {
+    try {
+        universityDatabase.createIndex("nameLocationIndex", IndexBuilder.valueIndex(ValueIndexItem.expression(Expression.property("name")),
+                ValueIndexItem.expression(Expression.property("location"))));
+    } catch (CouchbaseLiteException e) {
+        e.printStackTrace();
+    }
+}</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="closing-the-database"><a class="anchor" href="#closing-the-database"></a>Closing the Database</h3>
+<div class="paragraph">
+<p>When a user logs out, we close the Prebuilt Database along with other user-specific databases</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In the <a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/query/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java"><strong>DatabaseManager.java</strong></a> file, locate the <code>closePrebuiltDatabase()</code> function.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">public void closePrebuiltDatabase()</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>Closing the database is pretty straightforward</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/util/DatabaseManager.java">userprofileDatabase.close();</code></pre>
+</div>
+</div>
+</li>
+</ul>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Try It Out</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>The app should be running in the simulator</p>
+</li>
+<li>
+<p>Log into the app with any email Id and password.
+Let&#8217;s use the values <em>"<a href="mailto:demo@example.com">demo@example.com</a>"</em> and <em>"password"</em> for user Id and password fields respectively.
+If this is the first time that <em>any</em> user is signing in to the app, the pre-built database will be loaded from the App Bundle.
+In addition, new user-specific Database will be created / opened.</p>
+</li>
+<li>
+<p>Confirm that the console log output has a message similar to the one below.
+In my example, I am logging in with a user email Id of <em>"<a href="mailto:demo@example.com">demo@example.com</a>"</em>.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">2019-06-12 13:07:12.542 24206-24206/com.couchbase.userprofile I/CB-Update: Will open Prebuilt DB  at path /data/user/0/com.couchbase.userprofile/files</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>The above log message indicate the location of the Prebuilt database as well as the Database for the user. This would be within the <em>files</em> folder.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="exploring-the-query-api"><a class="anchor" href="#exploring-the-query-api"></a>Exploring the Query API</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The Query API in Couchbase Lite is extensive.
+In our app, we will be using the <code>QueryBuilder</code> API to make a simple <em>pattern matching</em> query using the <code>like</code> operator.</p>
+</div>
+<div class="sect2">
+<h3 id="fetching-university-document"><a class="anchor" href="#fetching-university-document"></a>Fetching University Document</h3>
+<div class="paragraph">
+<p>From the "Your Profile" screen, when the user taps on the "University" cell, a search screen is displayed where the user can enter the search criteria (name and optionally, the location) for the university.
+When the search criteria is entered, the local <em>"universities"</em> Database is queried for the <a href="#university-document">University</a> documents that match the specified search criteria.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Open the <a href="https://github.com/couchbaselabs/userprofile-couchbase-mobile-android/tree/query/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/universities/UniversitiesPresenter.java"><strong>UniversitiesPresenter.java</strong></a> file and locate the <code>fetchUniversities</code> function.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/universities/UniversitiesPresenter.java">public void fetchUniversities(String name) {
+    fetchUniversities(name, null);
+}
+
+public void fetchUniversities(String name, String country)</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>We build the Query using the <code>QueryBuilder</code> API that will look for Documents that match the specified criteria.</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/universities/UniversitiesPresenter.java">Expression whereQueryExpression = Function.lower(Expression.property("name")).like(Expression.string("%" + name.toLowerCase() + "%")); <i class="conum" data-value="1"></i><b>(1)</b>
+
+if (country != null &amp;&amp; !country.isEmpty()) {
+    Expression countryQueryExpression = Function.lower(Expression.property("country")).like(Expression.string("%" + country.toLowerCase() + "%")); <i class="conum" data-value="2"></i><b>(2)</b>
+
+    whereQueryExpression = whereQueryExpression.and(countryQueryExpression);
+}
+
+Query query = QueryBuilder.select(SelectResult.all()) <i class="conum" data-value="3"></i><b>(3)</b>
+                          .from(DataSource.database(database)) <i class="conum" data-value="4"></i><b>(4)</b>
+                          .where(whereQueryExpression); <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Build a <code>QueryExpression</code> that uses the <code>like</code> operator to look for the specified <em>"name"</em> string in the <em>"name"</em> property.
+Notice couple of things here:<br>
+(a) The use of <strong>wildcard "%" operator</strong> to denote that we are looking for the presence of the string anywhere in the <em>"name"</em> property<br>
+(b) The use of <code>Function.lower()</code> to convert the search string into lowercase equivalent.
+This is because the <code>like</code> operator does <em>case-sensitive matching</em>, so we must convert the search string and the property value to lowercase equivalents and compare the two.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>If the location criteria was specified in the search, then Build a <code>QueryExpression</code> that uses the <code>like</code> operator to look for the specified <em>"location"</em> string in the <em>"location"</em> property.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>The <code>SelectResult.all()</code> specifiees that we are interested in all properties in Documents that match the specified criteria</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>The <code>DataSource.database(db)</code> specified the Data Source</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>We include the <code>where</code> clause that is the logical ANDing of the QueryExpression in &lt;1&gt; and &lt;2&gt;</td>
+</tr>
+</table>
+</div>
+</li>
+<li>
+<p>We run the Query by calling the <code>execute()</code> method on the Query that was constructed in the previous step</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java" data-source-url="file:///Users/ianbridge/CouchbaseTutorials/bau/userprofile-couchbase-mobile-android/content/modules/userprofile-query-android/examples/src/app/src/main/java/com/couchbase/userprofile/universities/UniversitiesPresenter.java">try {
+    rows = query.execute();
+} catch (CouchbaseLiteException e) {
+    e.printStackTrace();
+    return;
+}
+
+List&lt;Map&lt;String, Object&gt;&gt; data = new ArrayList&lt;&gt;();
+
+Result row;
+
+while((row = rows.next()) != null) {
+    Map&lt;String, Object&gt; properties = new HashMap&lt;&gt;(); <i class="conum" data-value="1"></i><b>(1)</b>
+    properties.put("name", row.getDictionary("universities").getString("name")); <i class="conum" data-value="2"></i><b>(2)</b>
+    properties.put("country", row.getDictionary("universities").getString("country")); <i class="conum" data-value="2"></i><b>(2)</b>
+    properties.put("web_pages", row.getDictionary("universities").getArray("web_pages")); <i class="conum" data-value="3"></i><b>(3)</b>
+
+    data.add(properties);
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Create an instance of <a href="#university-document">UniversityRecord</a> (via <code>HashMap</code>).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Use specific type getters to fetch property values.
+The <a href="#university-document">UniversityRecord</a> instance is populated with these property values.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Getters also available for <code>array</code> types.
+This returns a Couchbase Lite <code>ArrayObject</code> type.</td>
+</tr>
+</table>
+</div>
+</li>
+</ul>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Try It Out</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>You should have followed the steps discussed in the "Try It Out" section under <a href="#prebuilt-database">Loading the Prebuilt Database</a></p>
+</li>
+<li>
+<p>Tap on "University" table cell</p>
+</li>
+<li>
+<p>You should see a screen show that allows you enter the search criteria for the university</p>
+</li>
+<li>
+<p>Enter "Missouri State" for name . You can optionally enter "united states" for location</p>
+</li>
+<li>
+<p>Confirm that you see a list of universities that match the criteria</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/university_list.gif" alt="University List">
+</div>
+</div>
+</li>
+<li>
+<p>Select a university</p>
+</li>
+<li>
+<p>Press "Done" button</p>
+</li>
+<li>
+<p>Confirm that the university you selected shows up in the University table cell</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/university_selection.gif" alt="University Selection">
+</div>
+</div>
+</li>
+<li>
+<p>You can optionally fill in other entries in the User Profile screen</p>
+</li>
+<li>
+<p>Tap "Done" button</p>
+</li>
+<li>
+<p>Confirm that you see an alert message "Succesfully Updated Profile". The Document will be updated this time.</p>
+</li>
+<li>
+<p>Tap "Log Off" and log out of the app</p>
+</li>
+<li>
+<p>Log back into the app with the same user email Id and password that you used earlier.
+In my example, I used <em>"<a href="mailto:demo@example.com">demo@example.com</a>"</em> and <em>"password"</em>.
+So I will log in with those credentials again.</p>
+</li>
+<li>
+<p>Confirm that you see the profile screen  with the <em>university</em> value that you set earlier.</p>
+<div class="imageblock">
+<div class="content">
+<img src="_images/profile_update.gif" alt="Log Off and Log Back On">
+</div>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="learn-more"><a class="anchor" href="#learn-more"></a>Learn More</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Congratulations on completing this tutorial!</p>
+</div>
+<div class="paragraph">
+<p>This tutorial walked you through an example of how to use a pre-built Couchbase Lite database.
+We looked at a simple Query example.
+Check out the following links for further details on the Query API.</p>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Further Reading</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://blog.couchbase.com/sql-for-json-query-interface-couchbase-mobile/">Fundamentals of the Couchbase Lite Query API</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/querying-array-collections-couchbase-mobile/">Handling Arrays in Queries</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/full-text-search-couchbase-mobile-2-0/">Couchbase Lite Full Text Search API</a></p>
+</li>
+<li>
+<p><a href="https://blog.couchbase.com/join-queries-couchbase-mobile/">Couchbase Lite JOIN Query</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</article>
+</main>
+</div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-links">
+      <div class="col">
+        <div class="footer-logo">
+          <a href="https://www.couchbase.com" class="icon">
+            <img src="../../_/img/couchbase-logo.svg" alt="Couchbase">
+          </a>
+        </div>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://docs.couchbase.com" target="_blank" rel="noopener">Documentation</a></li>
+          <li><a href="https://forums.couchbase.com" target="_blank" rel="noopener">Forums</a></li>
+          <li><a href="https://support.couchbase.com" target="_blank" rel="noopener">Support</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://developer.couchbase.com" target="_blank" rel="noopener">Developer Portal</a></li>
+          <li><a href="https://blog.couchbase.com" target="_blank" rel="noopener">Blog</a></li>
+          <li><a href="https://www.couchbase.com/resources">Resources</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul>
+          <li><a href="https://www.couchbase.com/get-started-developing-nosql">Get Started</a></li>
+          <li><a href="https://www.couchbase.com/downloads">Downloads</a></li>
+          <li><a href="https://learn.couchbase.com/store?utf8=%E2%9C%93&ss=1&ct=78327&commit=Filter" target="_blank" rel="noopener">Training</a></li>
+        </ul>
+      </div>
+      <div class="col">
+        <ul class="social-icons">
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32.1 26.1"> <path id="twitter" class="cls-1" d="M32,7.1a11.836,11.836,0,0,1-3.8,1,6.462,6.462,0,0,0,2.9-3.6,12.606,12.606,0,0,1-4.2,1.6A6.492,6.492,0,0,0,22.1,4a6.594,6.594,0,0,0-6.6,6.6,7.719,7.719,0,0,0,.2,1.5A18.458,18.458,0,0,1,2.2,5.2a6.294,6.294,0,0,0-.9,3.3A6.765,6.765,0,0,0,4.2,14a6.109,6.109,0,0,1-3-.8v.1a6.543,6.543,0,0,0,5.3,6.4,4.678,4.678,0,0,1-1.7.2,4.869,4.869,0,0,1-1.2-.1,6.679,6.679,0,0,0,6.1,4.6,12.917,12.917,0,0,1-8.2,2.8,9.151,9.151,0,0,1-1.6-.1,18.438,18.438,0,0,0,10.1,3c12.1,0,18.7-10,18.7-18.7v-.8A13.336,13.336,0,0,0,32,7.2Z" transform="translate(0.1 -4)"/></svg>
+            <a href="https://twitter.com/couchbase" class="icon">
+              Twitter
+            </a>
+          </li>
+          <li>
+          <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="linkedin" class="cls-1" d="M29,0H3A3.076,3.076,0,0,0,0,3V29a3.009,3.009,0,0,0,3,3H29a2.946,2.946,0,0,0,3-3V3A3.009,3.009,0,0,0,29,0ZM12,26H8V12h4ZM10,10a2,2,0,1,1,2-2A2.006,2.006,0,0,1,10,10ZM26,26H22V18a2,2,0,0,0-4,0v8H14V12h4v2.5c.8-1.1,2.1-2.5,3.5-2.5A4.736,4.736,0,0,1,26,17Z"/></svg>
+              <a href="https://www.linkedin.com/company/couchbase" class="icon">
+             Linkedin
+            </a>
+          </li>
+          <li>
+            <svg  width="14" height="14" viewBox="0 0 32 32"> <path id="facebook" class="cls-1" d="M29,0H3A2.652,2.652,0,0,0,0,3V29a2.652,2.652,0,0,0,3,3H16V18H12V14h4V12a6.452,6.452,0,0,1,6-6h4v4H22a2.151,2.151,0,0,0-2,2v2h6l-1,4H20V32h9a2.652,2.652,0,0,0,3-3V3A2.652,2.652,0,0,0,29,0Z"/></svg>
+            <a href="https://www.facebook.com/Couchbase" class="icon">
+            Facebook
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-terms">
+      <div class="footer-terms-copyright">
+          <span>© 2022 Couchbase, Inc. Couchbase, Couchbase Lite and the Couchbase logo are registered trademarks of Couchbase, Inc.</span>
+      </div>
+      <div class="footer-terms-links">
+        <a href="https://www.couchbase.com/terms-of-use">Terms of Use</a>
+        <a href="https://www.couchbase.com/privacy-policy">Privacy Policy</a>
+        <a href="https://www.couchbase.com/cookie-policy">Cookie Policy</a>
+        <a href="https://www.couchbase.com/support-policy">Support Policy</a>
+        <a href="https://info.couchbase.com/unsubscribe-or-manage-preferences.html" target="_blank" rel="noopener">Marketing Preference Center</a>
+      </div>
+    </div>
+  </div>
+</footer>
+<template id="run-code-panel">
+<div class="action-panel">
+  <form class="action-panel-control" method="POST" action="https://couchbase.live/run" target="run-code-output">
+    <input type="hidden" name="lang">
+    <input type="hidden" name="code">
+    <input type="hidden" name="from" value="docs">
+    <div class="controls">
+      <button class="control-button rerun" type="submit"><i class="fas fa-redo"></i></button>
+      <span class="shell-name control-label">Output</span>
+      <button class="control-button close"><i class="fas fa-times"></i> Close</button>
+    </div>
+  </form>
+  <iframe class="run-code-output" name="run-code-output"></iframe>
+</div>
+</template>
+<script id="site-script" src="../../_/js/site.js"></script>
+<script defer src="../../_/js/vendor/fontawesome-icon-defs.js"></script>
+<script defer src="../../_/js/vendor/fontawesome.js" data-search-pseudo-elements="true"></script>
+<script async src="../../_/js/vendor/highlight.js"></script>
+</body>
+</html>
