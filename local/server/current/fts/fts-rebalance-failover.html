@@ -3008,18 +3008,10 @@
     <a class="menu_title menu_link" href="../cli/cbanalyze-core-tool.html">cbanalyze-core</a>
   </span>
 </li>
-<li class="menu_list is-parent closed" data-depth="2">
+<li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="#cli:cbtools/cbbackup.adoc">cbbackup</a>
   </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="3">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="#cli:cbtools/guides/cbbackup-guide.adoc">Guide</a>
-  </span>
-</li>
-</ul>
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
@@ -3092,23 +3084,10 @@
     <a class="menu_title menu_link" href="#cli:cbtools/cbrecovery.adoc">cbrecovery</a>
   </span>
 </li>
-<li class="menu_list is-parent closed" data-depth="2">
+<li class="menu_list" data-depth="2">
   <span class="menu_line">
-    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="#cli:cbtools/cbrestore.adoc">cbrestore</a>
   </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="3">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="#cli:cbtools/guides/cbrestore-guide.adoc">Guide</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="3">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="#cli:cbtools/guides/cbrestore-rehash1-guide.adoc">rehash=1</a>
-  </span>
-</li>
-</ul>
 </li>
 <li class="menu_list" data-depth="2">
   <span class="menu_line">
@@ -4604,7 +4583,7 @@ If the user has mutations happening on their data service nodes, the new data wi
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl -XPUT -u &lt;username&gt;:&lt;password&gt; http://&lt;nodeIP&gt;:8094/api/managerOptions -d '
-{"maxConcurrentPartitionMovesPerNode":"5"}'</code></pre>
+{"maxConcurrentPartitionMovesPerNode":"3"}'</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -4616,7 +4595,7 @@ If the user has mutations happening on their data service nodes, the new data wi
 </div>
 </div>
 <div class="paragraph">
-<p>Note: When multiple partitions are built parallel, it needs more RAM and mandates a higher RAM quota. As the rebalance operations consume resources, it is always advisable to plan them during non-peak hours. One way to speed up the rebalance operation is to enable the movement of partitions in parallell in a configurable way.</p>
+<p>Note: When multiple partitions are built parallel, it needs more RAM and mandates a higher RAM quota. As the rebalance operations consume resources, it is always advisable to plan them during non-peak hours. One way to speed up the rebalance operation is to enable the movement of partitions in parallel by configuring the manager option <code>maxConcurrentPartitionMovesPerNode</code> as shown above.</p>
 </div>
 </div>
 </div>
@@ -4657,6 +4636,43 @@ The index partitions residing on the recovered node would be reused during a rec
 <p>Cluster is back to normal/pre-failover safe state.</p>
 </li>
 </ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="why-rebalance-button-remains-active-even-after-a-successful-rebalance"><a class="anchor" href="#why-rebalance-button-remains-active-even-after-a-successful-rebalance"></a>Why rebalance button remains active even after a successful rebalance</h3>
+<div class="paragraph">
+<p>Even after a successful Search rebalance operation, if the rebalance button remains active then it is indicative of the cluster not containing enough nodes that host the Search service to support the configured number of replicas for the index.</p>
+</div>
+<div class="paragraph">
+<p>Though validation checks ensures that there are enough search nodes to support the configured number of <code>replica</code> partitions, the number of search nodes
+could get compromised during the lifespan of a cluster due to various unforeseen events like hardware/network failures. And the <code>active</code> rebalance button issue surfaces if the subsequent recovery or node addition rebalance operations for Search service isn&#8217;t bringing in enough nodes to support the configured replica count
+for the partitions.</p>
+</div>
+<div class="paragraph">
+<p>The user could resolve this by either,</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>adding enough Search nodes to the cluster to support the configured <code>replica</code> count.</p>
+</li>
+<li>
+<p>editing the index definition(s) to adjust the replica count plausible in the cluster.</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The maximum number of replica count feasible in a cluster is one less than the total number of Search nodes in the cluster.
+Maximum feasible replica count = Total number of search nodes - 1.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
