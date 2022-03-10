@@ -883,29 +883,6 @@
 <li class="menu_list is-parent closed" data-depth="0">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/javascript/quickstart.html">Javascript</a>
-  </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/javascript/ionic.html">Ionic</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/javascript/cordova.html">Cordova</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/javascript/react.html">React</a>
-  </span>
-</li>
-</ul>
-</li>
-<li class="menu_list is-parent closed" data-depth="0">
-  <span class="menu_line">
-    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="../../couchbase-lite/current/objc/quickstart.html">Objective-C</a>
   </span>
 <ul class="menu_row">
@@ -1314,6 +1291,11 @@
 </ul>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/javascript.html">JavaScript</a>
+  </span>
 </li>
 </ul>
       </div>
@@ -1817,12 +1799,12 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#couchbase-operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
+    <a class="menu_title menu_link" href="../../operator/current/tutorial-sync-gateway-manage.html">Manage a Sync Gateway Cluster</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#couchbase-operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
+    <a class="menu_title menu_link" href="../../operator/current/tutorial-sync-gateway-clients.html">Expose Sync Gateway to Couchbase Lite clients</a>
   </span>
 </li>
 </ul>
@@ -3109,25 +3091,29 @@ That assignment to <code>hoopy</code> is what makes it available to our <code>fr
 <div class="sect1">
 <h2 id="lbl-xattrs"><a class="anchor" href="#lbl-xattrs"></a>Use Extended Attributes (XATTRS)</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p><em>Related Concepts</em>: <a href="access-control-model.html" class="page">Access control Model</a> |  <a href="access-control-how-control-document-access.html" class="page">Control Document Access</a></p>
+</div>
 <div class="sect2">
 <h3 id="why-use-xattrs"><a class="anchor" href="#why-use-xattrs"></a>Why use XATTRS</h3>
 <div class="paragraph">
-<p>XATTRS can be used to hold data used for document routing and access control securely within a document.
-When retrieved by the Sync Function, the data can be used to drive access grants <sup class="footnote" id="_footnote_fn-3x0">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.
-This approach has the benefit of:</p>
+<p>XATTRs can be used to hold data used for document routing and access control <sup class="footnote" id="_footnote_fn-3x0">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.
+When retrieved by the Sync Function, this data can be used to drive access grants.
+This approach has a few benefits:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Providing an added level of security, users can no longer identify the channels and users a document is available to from reading its contents, because the information is in metadata that is inaccessible to them</p>
+<p>It provide an added level of security, users can no longer identify the channels and users a document is available to by reading its contents, because the information is in metadata that is inaccessible to them</p>
 </li>
 <li>
-<p>Removing the necessity to create a new revision and push the full document to a client following changes to access-control information only</p>
+<p>Separation of concerns.
+By separating access grant metadata from document contents, changes to access grants will not create a new document revision that is subsequently pushed to a client</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>Sync Gateway exposes a single user-definable XATTR for this purpose. Learn how to configure it in  <a href="#lbl-config">Configuration</a> and how to use it in <a href="#lbl-set">Setting</a> and <a href="#lbl-using">Using</a>.</p>
+<p>Sync Gateway exposes a single user-definable XATTR for this purpose. Learn how to configure it in <a href="#lbl-config">Configuration</a> and how to use it in <a href="#lbl-set">Setting</a> and <a href="#lbl-using">Use XATTRs in a Sync Function</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -3203,10 +3189,10 @@ Content-Length: 999
 <h3 id="lbl-set"><a class="anchor" href="#lbl-set"></a>Setting</h3>
 <div class="paragraph">
 <p>You can set and maintain the value of the XATTR using a Couchbase Server SDK API.
-You cannot set it using the <em>Sync Gateway</em> REST API.</p>
+You cannot set it using the Sync Gateway REST API.</p>
 </div>
 <div class="paragraph">
-<p>For an example of setting the value of the XATTR using the C# SDK, see <a href="#ex-cbs-metadata-setting">Example 9</a>, this cn be easily translated to any of the available SDK languages.
+<p>For an example of setting the value of the XATTR using the C# SDK, see <a href="#ex-cbs-metadata-setting">Example 9</a>, this can be easily translated to any of the available SDK languages.
 See <a href="#ex-cbs-metadata">Example 10</a> for an example of the metadata model.</p>
 </div>
 <div id="ex-cbs-metadata-setting" class="exampleblock">
@@ -3214,7 +3200,7 @@ See <a href="#ex-cbs-metadata">Example 10</a> for an example of the metadata mod
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/examples/code/csharp/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs">using System;
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">using System;
 using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.KeyValue; <i class="conum" data-value="1"></i><b>(1)</b>
@@ -3234,7 +3220,9 @@ namespace examples
                                     "Administrator",
                                     "password");
 
-            var bucket = await cluster.BucketAsync("hotels");
+
+
+            var bucket = await cluster.BucketAsync("travel-sample");
             var collection = bucket.DefaultCollection();
 
             // Set required  user_xattr_key name and value
@@ -3248,7 +3236,7 @@ namespace examples
             // Find our documents and get their ids
             var queryResult =
                await cluster.QueryAsync&lt;dynamic&gt;(
-                   "select meta().id from `hotels`.`_default`.`_default` h where h.type = $1",
+                   "select meta().id from `travel-sample`.`_default`.`_default` h where h.type = $1",
                         new Couchbase.Query.QueryOptions().Parameter(ourDocumentType)); <i class="conum" data-value="4"></i><b>(4)</b>
             await foreach (var row in queryResult)
             {
@@ -3350,9 +3338,11 @@ namespace examples
 <td><i class="conum" data-value="11"></i><b>11</b></td>
 <td>Insert the XATTR&#8201;&#8212;&#8201;specify the item is an XATTR</td>
 </tr>
-<tr>
-<td><i class="conum" data-value="12"></i><b>12</b></td>
-<td>Running the code produces the following output:
+</table>
+</div>
+<div class="paragraph">
+<p>Running the code produces the following output:</p>
+</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">Working with document id: 1000
@@ -3365,9 +3355,6 @@ Inserted New user_xattr_key:
 
 Completed Changes</code></pre>
 </div>
-</div></td>
-</tr>
-</table>
 </div>
 </div>
 </div>
@@ -3411,14 +3398,14 @@ You will set the value of the xattr using the SDK API when the document is creat
 </tr>
 </table>
 </div>
-</div>
-</div>
 <div class="paragraph">
 <p>For more on Couchbase Server metadata and extended attributes&#8201;&#8212;&#8201;see Couchbase Server topics:  <a href="../../server/current/learn/data/data.html#metadata" class="page">Metadata</a> | <a href="../../server/current/learn/data/extended-attributes-fundamentals.html" class="page">Extended Attributes</a></p>
 </div>
 </div>
+</div>
+</div>
 <div class="sect2">
-<h3 id="lbl-using"><a class="anchor" href="#lbl-using"></a>Using</h3>
+<h3 id="lbl-using"><a class="anchor" href="#lbl-using"></a>Use XATTRs in a Sync Function</h3>
 <div class="paragraph">
 <p>The designated XATTR is exposed to the <a href="sync-function.html" class="page">Sync Function</a> as an additional argument <code>meta.xattrs.&lt;xattr name&gt;</code></p>
 </div>

@@ -884,29 +884,6 @@
 <li class="menu_list is-parent closed" data-depth="0">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/javascript/quickstart.html">Javascript</a>
-  </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/javascript/ionic.html">Ionic</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/javascript/cordova.html">Cordova</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../../couchbase-lite/current/javascript/react.html">React</a>
-  </span>
-</li>
-</ul>
-</li>
-<li class="menu_list is-parent closed" data-depth="0">
-  <span class="menu_line">
-    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="../../couchbase-lite/current/objc/quickstart.html">Objective-C</a>
   </span>
 <ul class="menu_row">
@@ -1315,6 +1292,11 @@
 </ul>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../../couchbase-lite/current/javascript.html">JavaScript</a>
+  </span>
 </li>
 </ul>
       </div>
@@ -1818,12 +1800,12 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#couchbase-operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
+    <a class="menu_title menu_link" href="../../operator/current/tutorial-sync-gateway-manage.html">Manage a Sync Gateway Cluster</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#couchbase-operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
+    <a class="menu_title menu_link" href="../../operator/current/tutorial-sync-gateway-clients.html">Expose Sync Gateway to Couchbase Lite clients</a>
   </span>
 </li>
 </ul>
@@ -2022,7 +2004,7 @@ Use XATTRs for Access Grants</p>
 In this case, the document content itself is used to govern access and routing.</p>
 </div>
 <div class="paragraph">
-<p>Starting <strong>v3.0</strong>, you can use user XATTRs for specifying channels and roles.</p>
+<p>Alternatively, a more secure option is to store this information in user XATTRs for specifying channels and roles.</p>
 </div>
 </div>
 </div>
@@ -2030,8 +2012,8 @@ In this case, the document content itself is used to govern access and routing.<
 <h2 id="why-use-xattrs"><a class="anchor" href="#why-use-xattrs"></a>Why use XATTRS</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>XATTRs can be used to hold data used for document routing and access control
-When retrieved by the Sync Function, the data can be used to drive access grants.
+<p>XATTRs can be used to hold data used for document routing and access control <sup class="footnote" id="_footnote_fn-3x0">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>.
+When retrieved by the Sync Function, this data can be used to drive access grants.
 This approach has a few benefits:</p>
 </div>
 <div class="ulist">
@@ -2137,7 +2119,7 @@ See <a href="#ex-cbs-metadata">Example 3</a> for an example of the metadata mode
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-c# hljs" data-lang="c#" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/sgw/modules/ROOT/examples/code/csharp/cbsSdkUserXattrKeySol/cbsSdkUserXattrKeyProj/Program.cs">using System;
+<pre class="highlightjs highlight"><code class="language-C# hljs" data-lang="C#">using System;
 using System.Threading.Tasks;
 using Couchbase;
 using Couchbase.KeyValue; <i class="conum" data-value="1"></i><b>(1)</b>
@@ -2157,7 +2139,9 @@ namespace examples
                                     "Administrator",
                                     "password");
 
-            var bucket = await cluster.BucketAsync("hotels");
+
+
+            var bucket = await cluster.BucketAsync("travel-sample");
             var collection = bucket.DefaultCollection();
 
             // Set required  user_xattr_key name and value
@@ -2171,7 +2155,7 @@ namespace examples
             // Find our documents and get their ids
             var queryResult =
                await cluster.QueryAsync&lt;dynamic&gt;(
-                   "select meta().id from `hotels`.`_default`.`_default` h where h.type = $1",
+                   "select meta().id from `travel-sample`.`_default`.`_default` h where h.type = $1",
                         new Couchbase.Query.QueryOptions().Parameter(ourDocumentType)); <i class="conum" data-value="4"></i><b>(4)</b>
             await foreach (var row in queryResult)
             {
@@ -2460,6 +2444,12 @@ You will set the value of the xattr using the SDK API when the document is creat
 </ul>
 </div>
 </div>
+</div>
+</div>
+<div id="footnotes">
+<hr>
+<div class="footnote" id="_footnotedef_1">
+<a href="#_footnoteref_1">1</a>. From release 3.0
 </div>
 </div>
 </article>

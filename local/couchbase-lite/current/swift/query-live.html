@@ -883,29 +883,6 @@
 <li class="menu_list is-parent closed" data-depth="0">
   <span class="menu_line">
     <span class="in-toggle"></span>
-    <a class="menu_title menu_link" href="../javascript/quickstart.html">Javascript</a>
-  </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../javascript/ionic.html">Ionic</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../javascript/cordova.html">Cordova</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../javascript/react.html">React</a>
-  </span>
-</li>
-</ul>
-</li>
-<li class="menu_list is-parent closed" data-depth="0">
-  <span class="menu_line">
-    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="../objc/quickstart.html">Objective-C</a>
   </span>
 <ul class="menu_row">
@@ -1314,6 +1291,11 @@
 </ul>
 </li>
 </ul>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../javascript.html">JavaScript</a>
+  </span>
 </li>
 </ul>
       </div>
@@ -1817,12 +1799,12 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#couchbase-operator::tutorial-sync-gateway-manage.adoc">Manage a Sync Gateway Cluster</a>
+    <a class="menu_title menu_link" href="../../../operator/current/tutorial-sync-gateway-manage.html">Manage a Sync Gateway Cluster</a>
   </span>
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="#couchbase-operator::tutorial-sync-gateway-clients.adoc">Expose Sync Gateway to Couchbase Lite clients</a>
+    <a class="menu_title menu_link" href="../../../operator/current/tutorial-sync-gateway-clients.html">Expose Sync Gateway to Couchbase Lite clients</a>
   </span>
 </li>
 </ul>
@@ -2002,12 +1984,6 @@ Couchbase mobile database live query concepts
 </div>
 </div>
 <div class="sect1">
-<h2 id="overview"><a class="anchor" href="#overview"></a>Overview</h2>
-<div class="sectionbody">
-
-</div>
-</div>
-<div class="sect1">
 <h2 id="activating-a-live-query"><a class="anchor" href="#activating-a-live-query"></a>Activating a Live Query</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -2075,248 +2051,6 @@ Save the token in order to detach the listener and stop the query later&#8201;&#
 Doing so stops the live query.</td>
 </tr>
 </table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="predictive-query"><a class="anchor" href="#predictive-query"></a>Predictive Query</h2>
-<div class="sectionbody">
-<div class="admonitionblock important">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-important" title="Important"></i>
-</td>
-<td class="content">
-<div class="title">Enterprise Edition only</div>
-Predictive Query is an <a href="https://www.couchbase.com/products/editions">Enterprise Edition</a> feature.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Predictive Query enables Couchbase Lite queries to use machine learning, by providing query functions that can process document data (properties or blobs) via trained ML models.</p>
-</div>
-<div class="paragraph">
-<p>Let&#8217;s consider an image classifier model that takes a picture as input and outputs a label and probability.</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="../_images/predictive-diagram.png" alt="predictive diagram">
-</div>
-</div>
-<div class="paragraph">
-<p>To run a predictive query with a model as the one shown above, you must implement the following steps.</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p><a href="#integrate-the-model">Integrate the Model</a></p>
-</li>
-<li>
-<p><a href="#register-the-model">Register the Model</a></p>
-</li>
-<li>
-<p><a href="#create-an-index">Create an Index (Optional)</a></p>
-</li>
-<li>
-<p><a href="#run-a-prediction-query">Run a Prediction Query</a></p>
-</li>
-<li>
-<p><a href="#unregister-the-model">Unregister the Model</a></p>
-</li>
-</ol>
-</div>
-<div class="sect2">
-<h3 id="integrate-the-model"><a class="anchor" href="#integrate-the-model"></a>Integrate the Model</h3>
-<div class="paragraph">
-<p>To integrate a model with Couchbase Lite, you must implement the <code>PredictiveModel</code> interface which has only one function called <code>predict()</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// `myMLModel` is a fake implementation
-// this would be the implementation of the ml model you have chosen
-class myMLModel {
-    static func predictImage(data: Data) -&gt; [String : AnyObject] { return [:] }
-}
-
-class ImageClassifierModel: PredictiveModel {
-    func predict(input: DictionaryObject) -&gt; DictionaryObject? {
-        guard let blob = input.blob(forKey: "photo") else {
-            return nil
-        }
-
-        let imageData = blob.content!
-        // `myMLModel` is a fake implementation
-        // this would be the implementation of the ml model you have chosen
-        let modelOutput = myMLModel.predictImage(data: imageData)
-
-        let output = MutableDictionaryObject(data: modelOutput)
-        return output <i class="conum" data-value="1"></i><b>(1)</b>
-    }
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>predict(input) -&gt; output</code> method provides the input and expects the result of using the machine learning model.
-The input and output of the predictive model is a <code>DictionaryObject</code>.
-Therefore, the supported data type will be constrained by the data type that the <code>DictionaryObject</code> supports.</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="register-the-model"><a class="anchor" href="#register-the-model"></a>Register the Model</h3>
-<div class="paragraph">
-<p>To register the model you must create a new instance and pass it to the <code>Database.prediction.registerModel</code> static method.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let model = ImageClassifierModel()
-Database.prediction.registerModel(model, withName: "ImageClassifier")</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="create-an-index"><a class="anchor" href="#create-an-index"></a>Create an Index</h3>
-<div class="paragraph">
-<p>Creating an index for a predictive query is highly recommended.
-By computing the predictions during writes and building a prediction index, you can significantly improve the speed of prediction queries (which would otherwise have to be computed during reads).</p>
-</div>
-<div class="paragraph">
-<p>There are two types of indexes for predictive queries:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><a href="#value-index">Value Index</a></p>
-</li>
-<li>
-<p><a href="#predictive-index">Predictive Index</a></p>
-</li>
-</ul>
-</div>
-<div class="sect3">
-<h4 id="value-index"><a class="anchor" href="#value-index"></a>Value Index</h4>
-<div class="paragraph">
-<p>The code below creates a value index from the "label" value of the prediction result.
-When documents are added or updated, the index will call the prediction function to update the city value in the index.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let input = Expression.dictionary(["photo": Expression.property("photo")])
-let prediction = Function.prediction(model: "ImageClassifier", input: input)
-
-let index = IndexBuilder.valueIndex(items: ValueIndexItem.expression(prediction.property("label")))
-try database.createIndex(index, withName: "value-index-image-classifier")</code></pre>
-</div>
-</div>
-</div>
-<div class="sect3">
-<h4 id="predictive-index"><a class="anchor" href="#predictive-index"></a>Predictive Index</h4>
-<div class="paragraph">
-<p>Predictive Index is a new index type used for predictive query.
-The Predictive Index is different from the value index in that the Predictive Index caches the predictive result and creates the value index from the cached predictive result when the predictive results values are specified.</p>
-</div>
-<div class="paragraph">
-<p>The code below creates a predictive index from the "label" value of the prediction result.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let input = Expression.dictionary(["photo": Expression.property("photo")])
-
-let index = IndexBuilder.predictiveIndex(model: "ImageClassifier", input: input)
-try database.createIndex(index, withName: "predictive-index-image-classifier")</code></pre>
-</div>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="run-a-prediction-query"><a class="anchor" href="#run-a-prediction-query"></a>Run a Prediction Query</h3>
-<div class="paragraph">
-<p>The code below creates a query that calls the prediction function to return the "label" value for the first 10 results in the database.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let input = Expression.dictionary(["photo": Expression.property("photo")])
-let prediction = Function.prediction(model: "ImageClassifier", input: input) <i class="conum" data-value="1"></i><b>(1)</b>
-
-let query = QueryBuilder
-    .select(SelectResult.all())
-    .from(DataSource.database(database))
-    .where(
-        prediction.property("label").equalTo(Expression.string("car"))
-            .and(
-                prediction.property("probablity")
-                    .greaterThanOrEqualTo(Expression.double(0.8))
-            )
-    )
-
-// Run the query.
-do {
-    let result = try query.execute()
-    print("Number of rows :: \(result.allResults().count)")
-} catch {
-    fatalError("Error running the query")
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>The <code>PredictiveModel.predict()</code> method returns a constructed Prediction Function object which can be used further to specify a property value extracted from the output dictionary of the <code>PredictiveModel.predict()</code> function.
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The null value returned by the prediction method will be interpreted as MISSING value in queries.
-</td>
-</tr>
-</table>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="unregister-the-model"><a class="anchor" href="#unregister-the-model"></a>Unregister the Model</h3>
-<div class="paragraph">
-<p>To unregister the model you must call the <code>Database.prediction.unregisterModel</code> static method.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">Database.prediction.unregisterModel(withName: "ImageClassifier")</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="integrate-a-model-with-coremlpredictivemodel-ios-only"><a class="anchor" href="#integrate-a-model-with-coremlpredictivemodel-ios-only"></a>Integrate a Model with CoreMLPredictiveModel (iOS only)</h3>
-<div class="paragraph">
-<p><code>CoreMLPredictiveModel</code> is a Core ML based implementation of the <code>PredictiveModel</code> protocol that facilitates the integration of Core ML models with Couchbase Lite.</p>
-</div>
-<div class="paragraph">
-<p>The following example describes how to load a Core ML model using <code>CoreMLPredictiveModel</code>.
-All other steps (register, indexing, query, unregister) are the same as with a model that is integrated using your own <code>PredictiveModel</code> implementation.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift#L1204-L1211">// Load MLModel from `ImageClassifier.mlmodel`
-let modelURL = Bundle.main.url(forResource: "ImageClassifier", withExtension: "mlmodel")!
-let compiledModelURL = try MLModel.compileModel(at: modelURL)
-let model = try MLModel(contentsOf: compiledModelURL)
-let predictiveModel = CoreMLPredictiveModel(mlModel: model)
-
-// Register model
-Database.prediction.registerModel(predictiveModel, withName: "ImageClassifier")</code></pre>
-</div>
-</div>
 </div>
 </div>
 </div>
