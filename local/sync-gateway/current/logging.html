@@ -1609,6 +1609,29 @@
     <a class="menu_title menu_link" href="rest-api-access-rbac-roles.html">RBAC Role - Endpoint Cross-Reference</a>
   </span>
 </li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Static API Pages</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest_api_admin_static.html">Admin REST API (Static Page)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest_api_public_static.html">Public REST API (Static Page)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest_api_metrics_static.html">Metrics REST API (Static Page)</a>
+  </span>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1761,11 +1784,6 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="integrating-external-stores.html">External Stores</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
     <a class="menu_title menu_link" href="stats-prometheus.html">Prometheus Feed</a>
   </span>
 </li>
@@ -1856,29 +1874,6 @@
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
     <a class="menu_title menu_link" href="compatibility.html">Compatibility Matrix</a>
-  </span>
-</li>
-</ul>
-</li>
-<li class="menu_list is-parent closed" data-depth="0">
-  <span class="menu_line">
-    <span class="in-toggle"></span>
-    <span class="menu_title menu_text">Legacy Features</span>
-  </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="legacy-sg-replicate.html">SG Replicate</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="legacy-sgreplicate-resolving-conflicts.html">SG Replicate - Resolving Conflicts</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="legacy-logging-pre2-1.html">Legacy Pre-2.1 Logging</a>
   </span>
 </li>
 </ul>
@@ -2072,7 +2067,8 @@ All without interfering with the logging required by Couchbase Support for the i
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Here we define the <a href="#lbl-console-logs">Console Logging</a> levels we require for debugging. In this instance turning on <em>debug</em> level output for <em>all</em> available log_keys&#8201;&#8212;&#8201;see: <a href="configuration-schema-bootstrap.html#logging-console-log_keys" class="page">logging.console.log_keys</a> <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></td>
+<td>Here we define the <a href="#lbl-console-logs">Console Logging</a> levels we require for debugging.
+In this instance turning on <em>debug</em> level output for <em>all</em> available log_keys&#8201;&#8212;&#8201;see: <a href="configuration-schema-bootstrap.html#logging-console-log_keys" class="page">logging.console.log_keys</a> <sup class="footnoteref">[<a class="footnote" href="#_footnotedef_2" title="View footnote.">2</a>]</sup></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="4"></i><b>4</b></td>
@@ -2155,16 +2151,23 @@ You can easily fine-tune their diagnostic content to meet the needs of a particu
 <div class="sect2">
 <h3 id="lbl-log-api"><a class="anchor" href="#lbl-log-api"></a>Admin REST API</h3>
 <div class="paragraph">
-<p>You can define console log settings in the configuration file, or more conveniently, you can use the Admin REST API to adjust them&#8201;&#8212;&#8201;see: <a href="#eg-setloggingwithapi">Example 2</a>.</p>
+<p>You can define console log settings in the bootstrap configuration file, or more conveniently, you can use the Admin REST API&#8217;s <code>_config</code> endpoint to set them&#8201;&#8212;&#8201;see: <a href="#eg-setloggingwithapi">Example 2</a>.</p>
 </div>
 <div id="eg-setloggingwithapi" class="exampleblock">
 <div class="title">Example 2. Setting log_level and log_keys with API</div>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl --location --request POST 'http://localhost:4985/_logging?logLevel=trace' \ <i class="conum" data-value="1"></i><b>(1)</b>
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl --location --request PUT 'http://localhost:4985/_config' \
 --header 'Content-Type: application/json' \
---data-raw '{"HTTP":false, "WS": true, "WSFrame": true, "Replicate": true}' <i class="conum" data-value="2"></i><b>(2)</b></code></pre>
+--data-raw '{
+    "console": {
+
+        "log_level": "trace", <i class="conum" data-value="1"></i><b>(1)</b>
+        "log_keys": "[\"WS\",\"WSFrame\",\"Replicate\"]",  <i class="conum" data-value="2"></i><b>(2)</b>
+
+    }
+  }'</code></pre>
 </div>
 </div>
 <div class="colist arabic">
@@ -2175,7 +2178,8 @@ You can easily fine-tune their diagnostic content to meet the needs of a particu
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Here we specify the particular <em>log_keys</em> we want to focus on; perhaps we suspect a websocket or replication issue?</td>
+<td>Here we specify the particular <em>log_keys</em> we want to focus on.<br>
+Note here we have chosen to exclude <code>http</code>; perhaps we want to focus on a websocket or replication issue.</td>
 </tr>
 </table>
 </div>
@@ -2208,7 +2212,7 @@ When debugging, setting the <em>console log&#8217;s</em> log-level to <code>debu
 </div>
 <div class="paragraph">
 <p>Console logs have six levels of verbosity&#8201;&#8212;&#8201;see: <a href="#tbl-loglevels">Table 1</a>.
-The default  <em>log level</em> is <strong><code>info</code></strong></p>
+The default  <em>log level</em> is <strong><code>none</code></strong></p>
 </div>
 <div class="paragraph">
 <p>Note that the log levels are inclusive, so if you enable <code>info</code> level, then <code>warn</code> and <code>error</code> logs are also enabled.</p>
@@ -2298,15 +2302,23 @@ By default, only <strong><code>HTTP</code></strong> related information is enabl
 <th class="tableblock halign-left valign-top"><p class="tableblock">Description</p></th>
 </tr>
 <tr>
-<td class="tableblock halign-center valign-top"><p class="tableblock">*</p></td>
+<td class="tableblock halign-center valign-top"><div class="content"><div class="paragraph">
+<p>*</p>
+</div></div></td>
 <td class="tableblock halign-left valign-top"><div class="content"><div class="paragraph">
 <p>This wildcard log key, enables all log keys</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl --location --request PUT 'http://localhost:4985/_logging?logLevel=trace' \
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl --location --request PUT 'http://localhost:4985/_config' \
 --header 'Content-Type: application/json' \
---data-raw '{"*": true}'</code></pre>
+--data-raw '{
+    "console": {
+
+      "log_keys": "[\"*\"]
+
+    }
+  }'</code></pre>
 </div>
 </div></div></td>
 </tr>
@@ -2317,9 +2329,15 @@ By default, only <strong><code>HTTP</code></strong> related information is enabl
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl --location --request PUT 'http://localhost:4985/_logging?logLevel=trace' \
+<pre class="highlightjs highlight"><code class="language-console hljs" data-lang="console">curl --location --request PUT 'http://localhost:4985/_config' \
 --header 'Content-Type: application/json' \
---data-raw '{"none": true}'</code></pre>
+--data-raw '{
+    "console": {
+
+        "log_keys": "[\"none\"]
+
+    }
+  }'</code></pre>
 </div>
 </div></div></td>
 </tr>
@@ -2373,11 +2391,12 @@ By default, only <strong><code>HTTP</code></strong> related information is enabl
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Import</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Introduced in Sync Gateway 1.5 to help troubleshoot the import process of a document (this is the Sync Gateway process to make a document that was added through N1QL or the Server SDKs mobile-aware). This log key can be useful to troubleshoot why a given document was not successfully imported.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This log key can be useful to troubleshoot why a given document was not successfully imported.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Javascript</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">All logging from Javascript. This includes: sync function, import filters, webhook filter function, and the custom ISGR conflict resolvers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All logging from Javascript.
+This includes: sync function, import filters, webhook filter function, and custom inter-Sync&#160;Gateway&#160;replication conflict resolvers</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Migrate</p></td>
@@ -2389,7 +2408,8 @@ By default, only <strong><code>HTTP</code></strong> related information is enabl
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">Replicate</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Log messages related to replications between Sync Gateways (using sg-replicate). This tag cannot be used for replications initiated by Couchbase Lite.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Log messages related to replications between Sync Gateways (using sg-replicate).
+This tag cannot be used for replications initiated by Couchbase Lite.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-center valign-top"><p class="tableblock">SGCluster</p></td>
@@ -2573,7 +2593,8 @@ Once rotated, they are compressed (gzip) to reduce the disk usage.</p>
 <p>Configure log rotation using the <a href="configuration-schema-bootstrap.html#logging-console-rotation" class="page">logging.console.rotation</a> property.</p>
 </div>
 <div class="paragraph">
-<p>For pre-2.1 log rotation&#8201;&#8212;&#8201;see: <a href="legacy-logging-pre2-1.html" class="page">Legacy Logging Pre2 1</a></p>
+<p>For pre-2.1 log rotation&#8201;&#8212;&#8201;see:
+<a href="#2.0@sync-gateway::logging.adoc" class="page unresolved">Pre 2.1 Log Rotation</a></p>
 </div>
 <hr>
 <h5 id="" class="discrete"></h5>

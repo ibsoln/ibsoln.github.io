@@ -8061,14 +8061,16 @@
 <div class="sectionbody">
 <div class="quoteblock abstract">
 <blockquote>
-Whereas a <em>type identifier</em> tells the index how to determine the position in each document of the characters that specify the document&#8217;s type, a <em>type mapping</em> specifies the characters themselves.
+<em>Type Mappings</em> allow an index to filter documents obtained from a bucket or collection(s). A <em>type mapping</em> is a string that qualifies for the chosen <a href="fts-type-identifiers.html" class="page">type identifier</a>.
 </blockquote>
 </div>
 <div class="paragraph">
-<p>If <strong>Doc ID up to separator</strong> is used as a type identifier, and the underscore is specified as the separator-character, a type mapping of <em>hotel</em> ensures that <code>hotel_10123</code>, rather than <code>airline_10</code>, is indexed.</p>
+<p>Here&#8217;re a couple of examples ..
+* If <strong>JSON type field</strong> is selected as type identifier, and field name "country" is chosen, a type mapping of <em>France</em> ensures that a document with the field <code>country:France</code> is indexed and not one with <code>country:Germany</code>.
+* If <strong>Doc ID up to separator</strong> is selected as type identifier, and the underscore is specified as the separator-character, a type mapping of <em>hotel</em> ensures that a document with ID: <code>hotel_10123</code> is indexed and not one with ID: <code>airline_10</code>.</p>
 </div>
 <div class="paragraph">
-<p>When the <strong class="ui">Add Index</strong>, <strong class="ui">Edit Index</strong>, or <strong class="ui">Clone Index</strong> screen is accessed, the <strong class="ui">Type Mappings</strong> panel can be opened.</p>
+<p>When the <strong class="ui">Add Index</strong>, <strong class="ui">Edit Index</strong>, or <strong class="ui">Clone Index</strong> screen is accessed, the <strong class="ui">Type Mappings</strong> panel can be viewed.</p>
 </div>
 <div class="paragraph">
 <p>The default setting is displayed:</p>
@@ -8091,8 +8093,8 @@ The display now appears as follows:</p>
 <p>The display indicates that a single type mapping is currently defined, which is <code>default</code>.</p>
 </div>
 <div class="paragraph">
-<p>This is a special type mapping created by every index automatically: it is applied to each document whose type <em>either</em> does not match a user-specified type mapping, <em>or</em> has no recognized type attribute.
-Therefore, if the default mapping is left enabled, all documents are included in the index, regardless of whether the user actively specifies type mappings.</p>
+<p><em>default</em> is a special type mapping which if enabled is applied to every document received from a bucket or collection(s). It does not work any selected <em>type identifier</em>.
+Therefore, if the default mapping is left enabled - all documents are included in the index, regardless of whether the user actively specifies type mappings.</p>
 </div>
 <div class="paragraph">
 <p>To ensure that only documents corresponding to the user&#8217;s specified type mappings are included in the index, the default type mapping must be disabled (see below for an example).</p>
@@ -8101,7 +8103,7 @@ Therefore, if the default mapping is left enabled, all documents are included in
 <p>Each type mapping is listed as either <strong>dynamic</strong>, meaning that all fields are considered available for indexing, or <strong>only index specified fields</strong>, meaning that only fields specified by the user are indexed.</p>
 </div>
 <div class="paragraph">
-<p>Therefore, specifying the default index with dynamic mapping creates a large index whose response times may be relatively slow; and is, as such, an option potentially unsuitable for the most production deployments.</p>
+<p>Enabling a dynamic default mapping can create a large index whose response times may be relatively slow; and is, as such, an option potentially unsuitable for the most production deployments.</p>
 </div>
 <div class="paragraph">
 <p>For information on how values are data-typed when dynamic mapping is specified, see the section below, <a href="#document-fields-and-data-types">Document Fields and Data Types</a>.</p>
@@ -8109,10 +8111,10 @@ Therefore, if the default mapping is left enabled, all documents are included in
 <div class="paragraph">
 <p>To specify a type mapping, type an appropriate string (for example, <code>hotel</code>) into the interactive text field.
 Note the <strong class="ui">only index specified fields</strong> checkbox: if this is checked, only user-specified fields from the document are included in the index.
-(For an example, see <a href="fts-type-mapping-specifying-fields.html" class="page">Specifying Fields</a>, below.)</p>
+(For an example, see <a href="#specifying-fields-for-type-mapping">Specifying Fields</a>, below.)</p>
 </div>
 <div class="paragraph">
-<p>Optionally, an <em>analyzer</em> can be specified for the type mapping: for all queries that do indeed support the use of an analyzer, the specified analyzer will be applied, rather than the default analyzer (which is itself specified in the <strong>Advanced</strong> pane, as described below, in <a href="fts-creating-index-specifying-advanced-settings.html" class="page">Specifying Advanced Settings</a>).</p>
+<p>Optionally, an <em>analyzer</em> can be specified for the type mapping: for all queries that support the use of an analyzer, the specified analyzer will be applied, rather than the default analyzer (which is itself specified in the <strong>Advanced</strong> pane, as described below, in <a href="fts-default-settings.html" class="page">Default Settings</a>).</p>
 </div>
 <div class="paragraph">
 <p>A list of available analyzers can be accessed and selected from, by means of the pull-down menu to the right of the interactive text-field:</p>
@@ -8124,11 +8126,11 @@ Note the <strong class="ui">only index specified fields</strong> checkbox: if th
 </div>
 <div class="paragraph">
 <p>The default value, <code>inherit</code>, means that the type mapping inherits the default analyzer.
-Note that custom analyzers can be created and stored for the index that is being defined using the <strong class="ui">Analyzers</strong> panel, described below in <a href="fts-analyzers.html#Creating-Analyzers" class="page">Creating Analyzers</a>.
+Note that custom analyzers can be created and stored for the index that is being defined using the <strong class="ui">Analyzers</strong> panel, described below in <a href="fts-index-analyzers.html#Creating-Analyzers" class="page">Creating Analyzers</a>.
 On creation, all custom analyzers are available for association with a type mapping, and so appear in the pull-down menu shown above.</p>
 </div>
 <div class="paragraph">
-<p>Additional information on analyzers can also be found on the page <a href="fts-analyzers.html#Understanding-Analyzers" class="page">Understanding Analyzers</a>.</p>
+<p>Additional information on analyzers can also be found on the page <a href="fts-index-analyzers.html#Understanding-Analyzers" class="page">Understanding Analyzers</a>.</p>
 </div>
 <div class="paragraph">
 <p>The <strong class="ui">Type Mappings</strong> panel now appears as follows:</p>
@@ -8162,13 +8164,13 @@ The panel now appears as follows:</p>
 </div>
 </div>
 <div class="sect1">
-<h2 id="specifying-type-mapping-for-collection"><a class="anchor" href="#specifying-type-mapping-for-collection"></a>Specifying Type Mapping for Collection</h2>
+<h2 id="Specifying-Type-Mapping-for-Collection"><a class="anchor" href="#Specifying-Type-Mapping-for-Collection"></a>Specifying Type Mapping for Collection</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Type Mapping will allow you to search for documents from the selected scope, selected collections from the scope, and for a specific document type from the selected scope and collections.</p>
 </div>
 <div class="paragraph">
-<p>For using non-default scope/collections, please refer: <a href="fts-creating-index-from-UI.html#using-non-default-scope-collections" class="page">Using Non-Default Scope/Collections</a>.</p>
+<p>For using non-default scope/collections, please refer: <a href="fts-creating-index-from-UI-classic-editor.html#using-non-default-scope-collections" class="page">Using Non-Default Scope/Collections</a>.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -8438,10 +8440,10 @@ FTS Indexing does not work for fields having a dot (. or period) in the field na
 <div class="ulist">
 <ul>
 <li>
-<p><a href="fts-type-mappings-add-child-mappings.html" class="page">Add Child Mapping</a></p>
+<p><a href="#inserting-a-child-mapping">Add Child Mapping</a></p>
 </li>
 <li>
-<p><a href="fts-type-mappings-add-child-field.html" class="page">Add Child Field</a></p>
+<p><a href="#inserting-a-child-field">Add Child Field</a></p>
 </li>
 </ul>
 </div>
@@ -8497,7 +8499,7 @@ Left-click on this, and a child-field, such as <code>content</code>, can be spec
 </div>
 </div>
 <div class="sect1">
-<h2 id="add-child-field"><a class="anchor" href="#add-child-field"></a>Add Child Field</h2>
+<h2 id="inserting-a-child-field"><a class="anchor" href="#inserting-a-child-field"></a>Add Child Field</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>The option <strong class="ui">insert child field</strong> allows a field to be individually included for (or excluded from) indexing, provided that it contains a single value or an array rather than a JSON object.
@@ -8739,10 +8741,10 @@ For Example, a search on description:modern can be accomplished simply by specif
 <div class="sect2">
 <h3 id="docvalues"><a class="anchor" href="#docvalues"></a>DocValues</h3>
 <div class="paragraph">
-<p>To include the value for each instance of the field in the index, the docvalues checkbox must be checked. This is essential for <a href="fts-search-response-facets.html" class="page">Facets</a>.</p>
+<p>To include the value for each instance of the field in the index, the docvalues checkbox must be checked. This is essential for <a href="fts-search-response.html#Facets" class="page">Facets</a>.</p>
 </div>
 <div class="paragraph">
-<p>For sorting of search results based on field values: see <a href="fts-sorting.html" class="page">Sorting Query Results</a>.</p>
+<p>For sorting of search results based on field values: see <a href="fts-search-response.html#sorting-query-results" class="page">Sorting Query Results</a>.</p>
 </div>
 <div class="paragraph">
 <p>By default, this checkbox is selected. If it is <em>unchecked</em>, the values are <em>not</em> added to the index; and in consequence, neither Search Facets nor value-based result-sorting is supported.</p>
@@ -8885,8 +8887,7 @@ When you hover the mouse over this row, an <strong>Edit</strong> button appears,
 </div>
 </div>
 <div class="paragraph">
-<p>Note: The golang regexp support is based on
-<a href="#https://github.com/google/re2/wiki/Syntax">Access the github link</a></p>
+<p>Note: The golang regexp support is based on <a href="#https://github.com/google/re2/wiki/Syntax">Access the github link</a></p>
 </div>
 </div>
 </div>

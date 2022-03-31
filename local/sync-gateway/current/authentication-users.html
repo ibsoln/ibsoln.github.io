@@ -1610,6 +1610,29 @@
     <a class="menu_title menu_link" href="rest-api-access-rbac-roles.html">RBAC Role - Endpoint Cross-Reference</a>
   </span>
 </li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Static API Pages</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest_api_admin_static.html">Admin REST API (Static Page)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest_api_public_static.html">Public REST API (Static Page)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest_api_metrics_static.html">Metrics REST API (Static Page)</a>
+  </span>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1762,11 +1785,6 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="integrating-external-stores.html">External Stores</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
     <a class="menu_title menu_link" href="stats-prometheus.html">Prometheus Feed</a>
   </span>
 </li>
@@ -1857,29 +1875,6 @@
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
     <a class="menu_title menu_link" href="compatibility.html">Compatibility Matrix</a>
-  </span>
-</li>
-</ul>
-</li>
-<li class="menu_list is-parent closed" data-depth="0">
-  <span class="menu_line">
-    <span class="in-toggle"></span>
-    <span class="menu_title menu_text">Legacy Features</span>
-  </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="legacy-sg-replicate.html">SG Replicate</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="legacy-sgreplicate-resolving-conflicts.html">SG Replicate - Resolving Conflicts</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="legacy-logging-pre2-1.html">Legacy Pre-2.1 Logging</a>
   </span>
 </li>
 </ul>
@@ -2062,14 +2057,44 @@ The following sample command enables the GUEST account and allows it access to a
 Under the hood, the replicator will send the credentials in the first request to retrieve a <code>SyncGatewaySession</code> cookie and use it for all subsequent requests during the replication.
 This is the recommended way of using basic authentication.</p>
 </div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Related Couchbase Lite content</dt>
+<dd>
+<div class="openblock">
+<div class="content">
 <div class="paragraph">
-<p>Unresolved directive in authentication-users.adoc - include::{root-partials}blocklinks-cbl.adoc[]</p>
+<p><a href="../../couchbase-lite/current/android/replication.html#basic-authentication" class="page">Android</a> |
+<a href="../../couchbase-lite/current/c/replication.html#basic-authentication" class="page">C</a> |
+<a href="../../couchbase-lite/current/csharp/replication.html#basic-authentication" class="page">C#</a> |
+<a href="../../couchbase-lite/current/java/replication.html#basic-authentication" class="page">Java</a> |
+<a href="../../couchbase-lite/current/objc/replication.html#basic-authentication" class="page">Objective-C</a> |
+<a href="../../couchbase-lite/current/swift/replication.html#basic-authentication" class="page">Swift</a></p>
+</div>
+</div>
+</div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="auth-providers"><a class="anchor" href="#auth-providers"></a>Auth Providers</h2>
 <div class="sectionbody">
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="title">Deprecation Notice</div>
+This feature is deprecated.<br>
+It can be enabled <strong>only</strong> when running in legacy mode.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>sync&#160;gateway provides a turn-key solution to authenticate with Facebook or Google.</p>
 </div>
@@ -2199,7 +2224,8 @@ The implicit flow with sync&#160;gateway is as follows:</p>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>The client obtains a <strong>signed</strong> Open ID token directly from an OpenID Connect provider. Note that only signed tokens are supported.
+<p>The client obtains a <strong>signed</strong> Open ID token directly from an OpenID Connect provider.
+Note that only signed tokens are supported.
 To verify that the Open ID token being sent is indeed signed, you can use the <a href="https://jwt.io/#debugger-io">jwt.io Debugger</a>.
 In the algorithm dropdown, make sure to select <code>RS256</code> as the signing algorithm (other options such as <code>HS256</code> are not yet supported by sync&#160;gateway).</p>
 </li>
@@ -2218,16 +2244,28 @@ In the algorithm dropdown, make sure to select <code>RS256</code> as the signing
 </ol>
 </div>
 <div class="paragraph">
-<p>Since Open ID tokens are typically large, the usual approach is to use the Open ID token to obtain a sync&#160;gateway session id (using the <a href="rest-api.html#/session/post__db___session" class="page">POST /db/_session</a> endpoint), and then use the returned session id for subsequent authentication requests.</p>
+<p>Since Open ID tokens are typically large, the usual approach is to use the Open ID token to obtain a sync&#160;gateway session id (using the
+<a href="rest-api.html#/session/post__db___session" class="page">POST /db/_session</a>
+endpoint), and then use the returned session id for subsequent authentication requests.</p>
 </div>
 <div class="exampleblock">
 <div class="content">
-<div class="dlist">
-<dl>
-<dt class="hdlist1">REST API</dt>
-<dd>
-<div class="openblock">
+<div class="paragraph">
+<p><strong>Note:</strong> This example is based on a deployment using legacy configuration.</p>
+</div>
+<div class="tabset is-loading">
+<div class="ulist tabs">
+<ul>
+<li>
+<p><a id="tabset1_rest-api"></a>REST API</p>
+</li>
+<li>
+<p><a id="tabset1_configuration-file"></a>Configuration File</p>
+</li>
+</ul>
+</div>
 <div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_rest-api">
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://localhost:4985/ourdb/_config' \
@@ -2247,12 +2285,7 @@ In the algorithm dropdown, make sure to select <code>RS256</code> as the signing
 </div>
 </div>
 </div>
-</div>
-</dd>
-<dt class="hdlist1">Configuration File</dt>
-<dd>
-<div class="openblock">
-<div class="content">
+<div class="tab-pane" aria-labelledby="tabset1_configuration-file">
 <div class="paragraph">
 <p>Here is a sample sync&#160;gateway config file, configured to use the Implicit Flow.</p>
 </div>
@@ -2279,16 +2312,6 @@ In the algorithm dropdown, make sure to select <code>RS256</code> as the signing
 </div>
 </div>
 </div>
-</dd>
-</dl>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Use <code>register</code> to auto-register a sync&#160;gateway user on successful completion of the validation</td>
-</tr>
-</table>
 </div>
 </div>
 </div>

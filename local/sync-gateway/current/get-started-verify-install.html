@@ -1609,6 +1609,29 @@
     <a class="menu_title menu_link" href="rest-api-access-rbac-roles.html">RBAC Role - Endpoint Cross-Reference</a>
   </span>
 </li>
+<li class="menu_list is-parent closed" data-depth="1">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
+    <span class="menu_title menu_text">Static API Pages</span>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest_api_admin_static.html">Admin REST API (Static Page)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest_api_public_static.html">Public REST API (Static Page)</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="2">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="rest_api_metrics_static.html">Metrics REST API (Static Page)</a>
+  </span>
+</li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="menu_list is-parent closed" data-depth="0">
@@ -1761,11 +1784,6 @@
 </li>
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
-    <a class="menu_title menu_link" href="integrating-external-stores.html">External Stores</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
     <a class="menu_title menu_link" href="stats-prometheus.html">Prometheus Feed</a>
   </span>
 </li>
@@ -1856,29 +1874,6 @@
 <li class="menu_list" data-depth="1">
   <span class="menu_line">
     <a class="menu_title menu_link" href="compatibility.html">Compatibility Matrix</a>
-  </span>
-</li>
-</ul>
-</li>
-<li class="menu_list is-parent closed" data-depth="0">
-  <span class="menu_line">
-    <span class="in-toggle"></span>
-    <span class="menu_title menu_text">Legacy Features</span>
-  </span>
-<ul class="menu_row">
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="legacy-sg-replicate.html">SG Replicate</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="legacy-sgreplicate-resolving-conflicts.html">SG Replicate - Resolving Conflicts</a>
-  </span>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="legacy-logging-pre2-1.html">Legacy Pre-2.1 Logging</a>
   </span>
 </li>
 </ul>
@@ -2062,7 +2057,7 @@ You will have successfully completed installation and can now build on this with
   "bootstrap": {
     "server": "couchbases://localhost", <i class="conum" data-value="1"></i><b>(1)</b>
     "username": "sync_gateway", <i class="conum" data-value="2"></i><b>(2)</b>
-    "password": "password", //
+    "password": "password",
     "server_tls_skip_verify": true, <i class="conum" data-value="3"></i><b>(3)</b>
     "use_tls_server": true <i class="conum" data-value="4"></i><b>(4)</b>
   },
@@ -2076,38 +2071,30 @@ You will have successfully completed installation and can now build on this with
 }</code></pre>
 </div>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1">About the Configuration Properties</dt>
-<dd>
+<div class="paragraph">
+<p>About the Configuration Properties:</p>
+</div>
 <div class="colist arabic">
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
 <td>Here we point to the Couchbase&#160;Server cluster using secure connection. Server ships with self signed certs that work out of the box, as long as <code>server_tls_skip_verify</code> is set, as it is below.</td>
 </tr>
-</table>
-</div>
-</dd>
-</dl>
-</div>
-<div class="colist arabic">
-<table>
 <tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
 <td>Here we provide the credentials for the RBAC user that you created on the Couchbase&#160;Server Admin Console&#8201;&#8212;&#8201;see <a href="get-started-prepare.html#configure-server" class="page">Configure Server for Sync Gateway</a></td>
 </tr>
 <tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Here we opt to ignore CA Cert verification of the certificate presented by the server; allowing for example use of self-signed certificate. The connection is unverified but encrypted.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
 <td>Optionally, you can choose to run without TLS, by setting this value <code>false</code>.
 In that case you should also use the plaintext URI <code>couchbase://localhost</code> to connect.</td>
 </tr>
 <tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Define your logging requirements:<br>
 Here we set general diagnostic console logs on.
 If you&#8217;re having issues then refer to <a href="logging.html" class="page">Logging</a> for how to tune diagnostics to provide additional troubleshooting help</td>
@@ -2233,13 +2220,14 @@ It adds a user called <code>sgwuser1</code>.</p>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location --request PUT 'http://127.0.0.1:4985/traveldb/_user/sgwuser1' \ <i class="conum" data-value="1"></i><b>(1)</b>
---header 'Authorization: Basic c3luY19nYXRld2F5OnBhc3N3b3Jk' \
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">curl --location -g --request POST 'http://localhost:4985/traveldb/_user/' \ <i class="conum" data-value="1"></i><b>(1)</b>
 --header 'Content-Type: application/json' \
+--header 'Authorization: Basic e3tkYmFkbWlufX06cGFzc3dvcmQ=' \ <i class="conum" data-value="2"></i><b>(2)</b>
 --data-raw '{
-    "name": "sgwuser1", //
-    "roles": ["stdrole"] <i class="conum" data-value="2"></i><b>(2)</b>
-    "admin_channels": ["public"] <i class="conum" data-value="3"></i><b>(3)</b>
+    "name": "sgwuser1", <i class="conum" data-value="3"></i><b>(3)</b>
+    "password": "passwordstring",
+    "roles": ["stdrole"] <i class="conum" data-value="4"></i><b>(4)</b>
+    "admin_channels": ["public"] <i class="conum" data-value="5"></i><b>(5)</b>
 }'</code></pre>
 </div>
 </div>
@@ -2247,17 +2235,23 @@ It adds a user called <code>sgwuser1</code>.</p>
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Here we identify<br>
-The name of the sync&#160;gateway database&#8201;&#8212;&#8201;<code>traveldb</code><br>
-The create user action, <code>_user</code> and<br>
-The user&#8217;s name <code>sgwuser1</code></td>
+<td>Here we identify the name of the sync&#160;gateway database&#8201;&#8212;&#8201;<code>traveldb</code> and the required object, <code>_user</code></td>
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Now we identify any roles accessible to this user; it will inherit any channels associated with the role(s).</td>
+<td>The user/password credential represented in the <em>Authorization</em> header relate to the Sync Gateway admin user</td>
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Here we give the credentials of the user we want to create. So, the user&#8217;s name <code>sgwuser1</code> and required password.
+If we omit the password a random password is generated.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Now we identify any roles accessible to this user; it will inherit any channels associated with the role(s).</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
 <td>Now we identify any channels accessible to this user, in addition to those inherited from the role; these will be used by the Sync Function to control access.</td>
 </tr>
 </table>
@@ -2277,7 +2271,7 @@ The user&#8217;s name <code>sgwuser1</code></td>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-You can use <a href="logging.html#lbl-console-logs" class="page">Console Logs</a> to aid diagnosis of connection issues
+You can use <a href="#{sgw-pg-logging}.adoc#lbl-console-logs" class="page unresolved">Console Logs</a> to aid diagnosis of connection issues
 </td>
 </tr>
 </table>
@@ -2303,8 +2297,8 @@ You can use <a href="logging.html#lbl-console-logs" class="page">Console Logs</a
 </div>
 </div>
 <div class="paragraph">
-<p>If there are issues then check the <a href="logging.html#lbl-console-logs" class="page">Console Logs</a> for more information.
-Where necessary you can redirect console output to a file&#8201;&#8212;&#8201;see: <a href="logging.html#lbl-log-redirect" class="page">Redirect Console Logs</a>.</p>
+<p>If there are issues then check the <a href="#{sgw-pg-logging}.adoc#lbl-console-logs" class="page unresolved">Console Logs</a> for more information.
+Where necessary you can redirect console output to a file&#8201;&#8212;&#8201;see: <a href="#{sgw-pg-logging}.adoc#lbl-log-redirect" class="page unresolved">Redirect Console Logs</a>.</p>
 </div>
 </li>
 </ol>
@@ -2708,7 +2702,7 @@ So, you can explore more complex scenarios with confidence.</p>
 <p><a href="compatibility.html" class="page">Compatibility Matrix</a></p>
 </li>
 <li>
-<p><a href="#pn-supported-os.adoc" class="page unresolved">Supported OS</a></p>
+<p><a href="supported-environments.html" class="page">Supported OS</a></p>
 </li>
 </ul>
 </div>
