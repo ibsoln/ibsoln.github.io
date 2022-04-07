@@ -4682,63 +4682,11 @@ Note that the call pipes output to the <a href="https://stedolan.github.io/jq/" 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>curl -u Administrator:password -v -X GET \
-http://10.143.192.101:8091/pools/default/tasks | jq '.'</pre>
+<pre>curl -v -X GET http://10.144.212.101:8091/settings/replications/e3eba31fac3f776c182feea700e9da5d%2Ftravel-sample%2Fts -u Administrator:password | jq '.'</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>If successful, the call returns an array of ongoing cluster tasks, similar to the following:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>[
-  {
-    "statusId": "2bbbeac0668c700f43ad694361e1a948",
-    "type": "rebalance",
-    "status": "notRunning",
-    "statusIsStale": false,
-    "masterRequestTimedOut": false,
-    "lastReportURI": "/logs/rebalanceReport?reportID=8fccd4f0764db237f64487afe5f06bb7"
-  },
-  {
-    "cancelURI": "/controller/cancelXDCR/c371211ec399a7b20acc1ea264f0841e%2Ftravel-sample%2Fts",
-    "settingsURI": "/settings/replications/c371211ec399a7b20acc1ea264f0841e%2Ftravel-sample%2Fts",
-    "status": "running",
-    "replicationType": "xmem",
-    "continuous": true,
-    "filterBypassExpiry": false,
-    "filterDeletion": false,
-    "filterExpiration": false,
-    "filterExpression": "",
-    "id": "c371211ec399a7b20acc1ea264f0841e/travel-sample/ts",
-    "pauseRequested": false,
-    "source": "travel-sample",
-    "target": "/remoteClusters/c371211ec399a7b20acc1ea264f0841e/buckets/ts",
-    "type": "xdcr",
-    "recommendedRefreshPeriod": 10,
-    "changesLeft": 0,
-    "docsChecked": 84792,
-    "docsWritten": 0,
-    "maxVBReps": null,
-    "errors": []
-  }
-]</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>A <code>settings_URI</code> if provided for the single ongoing replication, within the second member of the array.
-The <code>settings_URI</code> can be used to retrieve information on the corresponding replication.</p>
-</div>
-<div class="paragraph">
-<p>For example, enter the following:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>curl -u Administrator:password -X GET http://10.144.210.101:8091/settings/replications/c371211ec399a7b20acc1ea264f0841e%2Ftravel-sample%2Fts | jq '.'</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If the call is successful, an object containing the settings for the specified replication is returned:</p>
+<p>If successful, the call returns output similar to the following:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4783,7 +4731,7 @@ The <code>settings_URI</code> can be used to retrieve information on the corresp
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>curl -X POST -u Administrator:password http://10.144.210.101:8091/settings/replications/c371211ec399a7b20acc1ea264f0841e%2Ftravel-sample%2Fts -d checkpointInterval=700 | jq '.'</pre>
+<pre>curl -X POST http://10.144.212.101:8091/settings/replications/e3eba31fac3f776c182feea700e9da5d%2Ftravel-sample%2Fts -u Administrator:password -d checkpointInterval=700 | jq '.'</pre>
 </div>
 </div>
 <div class="paragraph">
@@ -5064,7 +5012,9 @@ This together with <code>source_nozzle_per_node</code> controls the parallelism 
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>type</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">String "xmem"</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The replication type, which must be "xmem".</p>
-<p class="tableblock">This setting can only be established for and retrieved from an individual replication: it cannot be established or retrieved as part of global settings.</p></td>
+<p class="tableblock">This setting can only be established for and retrieved from an individual replication: it cannot be established or retrieved as part of global settings.</p>
+<p class="tableblock">Note that the <code>capi</code> protocol is no longer supported in Couchbase Server Version 7.0+.
+Attempting to establish the <code>type</code> version as <code>capi</code> produces the following error: <code>"type": "CAPI replication mode is now deprecated"</code>.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>workerBatchSize</code></p></td>

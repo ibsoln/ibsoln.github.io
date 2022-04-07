@@ -2221,7 +2221,7 @@ They create and use an FTS index built from the hotel&#8217;s <code>Overview</co
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Create index with N1QL
 do {
     let index = FullTextIndexConfiguration(["overview"])
-    try database.createIndex(index, withName: "overviewFTSIndex")
+    try database.createIndex(index, name: "overviewFTSIndex")
 } catch let error {
     print(error.localizedDescription)
 }</code></pre>
@@ -2249,7 +2249,7 @@ do {
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
 let ftsStr = "SELECT Meta().id FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan') ORDER BY RANK(overviewFTSIndex)"
 
-let query = database.createQuery(query: ftsStr)
+let query = try database.createQuery(ftsStr)
 
 let rs = try query.execute()
 for result in rs {
@@ -2296,7 +2296,7 @@ try database.createIndex(index, withName: "overviewFTSIndex")</code></pre>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let whereClause = FullTextFunction.match(indexName: "overviewFTSIndex"), query: "'michigan'")
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let whereClause = FullTextFunction.match(indexName: "overviewFTSIndex", query: "'michigan'")
 let query = QueryBuilder
     .select(SelectResult.expression(Meta.id))
     .from(DataSource.database(database))

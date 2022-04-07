@@ -883,6 +883,29 @@
 <li class="menu_list is-parent closed" data-depth="0">
   <span class="menu_line">
     <span class="in-toggle"></span>
+    <a class="menu_title menu_link" href="../javascript/quickstart.html">Javascript</a>
+  </span>
+<ul class="menu_row">
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../javascript/ionic.html">Ionic</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../javascript/cordova.html">Cordova</a>
+  </span>
+</li>
+<li class="menu_list" data-depth="1">
+  <span class="menu_line">
+    <a class="menu_title menu_link" href="../javascript/react.html">React</a>
+  </span>
+</li>
+</ul>
+</li>
+<li class="menu_list is-parent closed" data-depth="0">
+  <span class="menu_line">
+    <span class="in-toggle"></span>
     <a class="menu_title menu_link" href="../objc/quickstart.html">Objective-C</a>
   </span>
 <ul class="menu_row">
@@ -1291,11 +1314,6 @@
 </ul>
 </li>
 </ul>
-</li>
-<li class="menu_list" data-depth="1">
-  <span class="menu_line">
-    <a class="menu_title menu_link" href="../javascript.html">JavaScript</a>
-  </span>
 </li>
 </ul>
       </div>
@@ -2012,7 +2030,7 @@ They create and use an FTS index built from the hotel&#8217;s <code>Overview</co
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">// Create index with N1QL
 do {
     let index = FullTextIndexConfiguration(["overview"])
-    try database.createIndex(index, withName: "overviewFTSIndex")
+    try database.createIndex(index, name: "overviewFTSIndex")
 } catch let error {
     print(error.localizedDescription)
 }</code></pre>
@@ -2040,7 +2058,7 @@ do {
 <pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">
 let ftsStr = "SELECT Meta().id FROM _ WHERE MATCH(overviewFTSIndex, 'Michigan') ORDER BY RANK(overviewFTSIndex)"
 
-let query = database.createQuery(query: ftsStr)
+let query = try database.createQuery(ftsStr)
 
 let rs = try query.execute()
 for result in rs {
@@ -2087,7 +2105,7 @@ try database.createIndex(index, withName: "overviewFTSIndex")</code></pre>
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let whereClause = FullTextFunction.match(indexName: "overviewFTSIndex"), query: "'michigan'")
+<pre class="highlightjs highlight"><code class="language-swift hljs" data-lang="swift" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/swift/examples/code_snippets/SampleCodeTest.swift">let whereClause = FullTextFunction.match(indexName: "overviewFTSIndex", query: "'michigan'")
 let query = QueryBuilder
     .select(SelectResult.expression(Meta.id))
     .from(DataSource.database(database))

@@ -2491,7 +2491,39 @@ static FLSliceResult property_decryptor(void* context, FLString documentID, FLDi
 <div class="content">
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-C hljs" data-lang="C">incude::{snippet}[tag=replicator_property_encryption]</code></pre>
+<pre class="highlightjs highlight"><code class="language-C hljs" data-lang="C" data-source-url="file:///Users/ianbridge/CouchbaseDocs/bau/cbl/modules/c/examples/code_snippets/main.c#L2158-L2180">// Purpose: Declare property-level encryptor callback functions
+static FLSliceResult my_cipher_function(FLSlice input) {
+    FLSliceResult result = FLSliceResult_New(input.size);
+    for(int i = 0; i &lt; input.size; ++i) {
+        uint8_t*)(result.buf[i] = uint8_t*)input.buf)[i] ^ 'K';}     return result; }   static FLSliceResult property_encryptor(void* context, FLString docID, FLDict props, FLString path,                                         FLSlice input, FLStringResult* algorithm, FLStringResult* keyID, CBLError* error) {     *algorithm = FLSlice_Copy(FLSTR("MyEnc";
+    return my_cipher_function(input);
+}
+
+
+static FLSliceResult property_decryptor(void* context, FLString documentID, FLDict properties, FLString keyPath,
+                                        FLSlice input, FLString algorithm, FLString keyID, CBLError* error) {
+    return my_cipher_function(input);
+}
+
+    // Purpose: Show how to declare en(de)cryptors in replicator config
+    // NOTE: No error handling, for brevity (see getting started)
+
+    CBLError err;
+    FLString url = FLSTR("ws://localhost:4984/db");
+    CBLEndpoint* target = CBLEndpoint_CreateWithURL(url, &amp;err);
+
+    CBLReplicatorConfiguration config;
+    memset(&amp;config, 0, sizeof(CBLReplicatorConfiguration));
+
+    config.database = db;
+    config.endpoint = target;
+    config.propertyEncryptor = property_encryptor; <i class="conum" data-value="1"></i><b>(1)</b>
+    config.propertyDecryptor = property_decryptor; <i class="conum" data-value="2"></i><b>(2)</b>
+
+    CBLReplicator* replicator = CBLReplicator_Create(&amp;config, &amp;err);
+    CBLEndpoint_Free(target);
+
+    CBLReplicator_Start(replicator, false);</code></pre>
 </div>
 </div>
 </div>
